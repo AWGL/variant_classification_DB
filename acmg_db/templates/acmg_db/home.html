@@ -1,0 +1,26 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+{% load crispy_forms_tags %}
+<br>
+
+<center>
+<div>
+
+{% crispy form %}
+<center>
+ <p class="text-muted">
+
+                        Example: 20-31024425-CT-C</a>,
+</center>
+{% if error %}
+<div class="alert alert-danger col-lg-2-8">
+   Error: {{ error}}
+</div>
+{% endif %}
+</div>
+</center>
+{% endblock %}  
