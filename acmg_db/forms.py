@@ -32,3 +32,13 @@ class SearchForm(forms.Form):
 					Field(
 						'search',
 						placeholder='Enter a variant to classify', title=False))
+
+
+class NewClassificationForm(forms.Form):
+
+	"""
+	Form for doing a new classification.
+
+
+
+	"""

@@ -1,12 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .forms import *
 from django.conf import settings
 from .models import *
 from .utils.variant_utils import *
-
-# Create your views here.
+from django.utils import timezone
 
 def home(request):
+	"""
+	The view for the home page.
+
+	Allows users to create a new classification for a variant.
+
+
+	"""
 
 	form = SearchForm()
 
@@ -48,7 +54,6 @@ def home(request):
     				alt = alt
 					)
 
-
 			# Loop through each transcript and gene in the variant info list and add to DB \
 			# if we have not seen it before.
 			for variant_transcript in variant_info[1]:
@@ -70,8 +75,41 @@ def home(request):
 					)
 
 
+			new_classication = Classification.objects.create(
+				variant= variant,
+				creation_date = timezone.now(),
+				user_creator = request.user,
+				status = '0'
+				)
+
+			new_classication.save()
+
+			new_classication.initiate_classification()
 
 
+			return redirect(new_classification, new_classication.pk)
 
 
 	return render(request, 'acmg_db/home.html', {'form': form, 'error': None})
+
+
+
+def new_classification(request, pk):
+	"""
+	Page for entering new classifications
+
+
+	"""
+
+	classification = get_object_or_404(Classification, pk=pk)
+
+	answers = ClassificationAnswer.objects.filter(classification=classification)
+
+
+
+
+	return render(request, 'acmg_db/new_classifications.html', {'answers': answers})
+
+
+
+

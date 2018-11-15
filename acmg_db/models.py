@@ -43,8 +43,8 @@ class TranscriptVariant(models.Model):
 
 	"""
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
-	transcript = models.ForeignKey(Transcript,on_delete=models.CASCADE)
-	hgvs_c = models.TextField()
+	transcript = models.ForeignKey(Transcript,on_delete=models.CASCADE, null=True, blank=True)
+	hgvs_c = models.TextField(null=True, blank=True)
 
 
 
@@ -62,7 +62,7 @@ class Classification(models.Model):
 	SAMPLE_TYPE_CHOICES = (('G', 'Germline'), ('S', 'Somatic'))
 
 	variant = models.ForeignKey(Variant,on_delete=models.CASCADE)
-	creation_date = models.DateTimeField(null=True, blank=True)
+	creation_date = models.DateTimeField()
 	second_check_date = models.DateTimeField(null=True, blank=True)
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='user_creator')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
@@ -74,38 +74,76 @@ class Classification(models.Model):
 	sample_comment = models.TextField(null=True, blank=True)
 
 
-	PVS1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS3 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS4 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM2 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM3 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM4 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM5 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM6 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP2 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP3 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP4 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP5 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
+
+	def initiate_classification(self):
 
 
-	BA1 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS1 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS2 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS3 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS4 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP1 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP2 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP3 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP4 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP5 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP6 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP7 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
+		answers = ClassificationAnswer.objects.filter(classification=self)
+
+		if len(answers) == 0:
+
+			questions = ClassificationQuestion.objects.all()
+
+			questions = questions.order_by('order')
+
+			for question in questions:
+
+				new_answer = ClassificationAnswer.objects.create(
+					classification = self,
+					classification_question=question,
+					selected = False,
+					strength = question.default_strength
+					)
+
+				new_answer.save()
+
+		return None
 
 
+
+class ClassificationQuestion(models.Model):
+
+	STRENGTH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'),
+	 ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ),
+	 ('BA', 'STAND_ALONE'))
+
+
+	acmg_code = models.CharField(max_length=5)
+	order = models.IntegerField()
+	text = models.TextField()
+	default_strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	allowed_strength_change = models.BooleanField()
+	pathogenic_question = models.BooleanField()
+
+
+	def strength_options(self):
+
+		if self.allowed_strength_change == False:
+
+			return default_strength
+
+		else:
+
+			if self.pathogenic_question == True:
+
+				return ['ST', 'MO', 'PP']
+
+			else:
+
+				return ['ST' 'PP']
+
+
+
+class ClassificationAnswer(models.Model):
+
+	STRENGTH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'),
+	 ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ),
+	 ('BA', 'STAND_ALONE'))
+
+	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
+	classification_question = models.ForeignKey(ClassificationQuestion, on_delete=models.CASCADE)
+	selected = models.BooleanField()
+	strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
 
 class UserComment(models.Model):
 

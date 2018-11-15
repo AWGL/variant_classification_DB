@@ -1,0 +1,106 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<br>
+
+ <table id="acmg_question_table" class = "table table-hover table-bordered">
+
+    <thead>
+
+        <tr>
+          <th style="display:none;" class='answer_pk'> Answer PK </th>
+          <th class='question'> Evidence Category </th>
+          <th class='strength'> Strength </th>
+          <th class='selected'> Decision </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+      	{% for answer in answers %}
+
+      	<tr class='answer'>
+
+        <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+        <td class='question'> {{ answer.classification_question.acmg_code  }} </td>
+        <td class='strength'> 
+
+        	{% if answer.classification_question.allowed_strength_change == False %}
+
+  					{{answer.classification_question.default_strength}}
+
+  			{% else %}
+
+
+
+        	<select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
+
+
+
+
+  					{% for strength in answer.classification_question.strength_options %}
+
+  						{% if strength == answer.classification_question.default_strength %}
+
+  							<option value="{{strength}}" selected> {{strength}} </option>
+
+  						{% else %}
+
+  							<option value="{{strength}}"> {{strength}} </option>
+
+  						{% endif %}
+
+  					{% endfor %}
+
+
+
+
+        		
+
+        	</select>
+
+        	{% endif %}
+
+
+
+
+
+        </td>
+
+
+        <td class='selected'> 
+
+        	<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}">
+
+        		<option value="{{answer.selected}}" selected> {{answer.selected}} </option>
+
+        		{% if answer.selected == False %}
+
+
+        			<option value=True> True </option>
+
+        		{% elif answer.selected == True %}
+
+        			<option value=False> False </option>
+
+
+        		{% endif %}
+
+        	</select>
+
+
+
+         </td>
+
+      </tbody>
+
+      {% endfor %}
+
+
+
+
+{% endblock %}  
