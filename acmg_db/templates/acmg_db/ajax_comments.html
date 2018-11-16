@@ -1,0 +1,31 @@
+{% for comment in comments %}
+
+
+<div class="card">
+<h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+<div class="card-body">
+
+  {{comment.text}}
+
+
+   {% if comment.get_evidence == None %}
+
+  {% else %}
+
+    <hr>
+
+    {% for evidence in comment.get_evidence %}
+
+      <p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+
+
+    {% endfor %}
+
+  {% endif %}
+
+</div>
+</div>
+
+<hr>
+
+{% endfor %}

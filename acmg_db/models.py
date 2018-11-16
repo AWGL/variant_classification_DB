@@ -1,4 +1,6 @@
 from django.db import models
+from .utils import acmg_classifier
+
 
 class Variant(models.Model):
 
@@ -45,8 +47,8 @@ class TranscriptVariant(models.Model):
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
 	transcript = models.ForeignKey(Transcript,on_delete=models.CASCADE, null=True, blank=True)
 	hgvs_c = models.TextField(null=True, blank=True)
-
-
+	hgvs_p = models.TextField(null=True, blank=True)
+	exon = models.CharField(max_length=10,null=True, blank=True)
 
 class Classification(models.Model):
 
@@ -59,7 +61,6 @@ class Classification(models.Model):
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	STATUS_CHOICES = (('0', 'NONE'), ('1', 'Awaiting Second Check'), ('2', 'Complete'))
-	SAMPLE_TYPE_CHOICES = (('G', 'Germline'), ('S', 'Somatic'))
 
 	variant = models.ForeignKey(Variant,on_delete=models.CASCADE)
 	creation_date = models.DateTimeField()
@@ -69,13 +70,30 @@ class Classification(models.Model):
 	status = models.CharField(max_length=1, choices =STATUS_CHOICES, default='0')
 	acmg_class = models.CharField(max_length=25, null=True, blank=True)
 	final_class = models.CharField(max_length=25, null=True, blank=True)
-	sample = models.CharField(max_length=25, null =True, blank=True)
-	sample_type = models.CharField(max_length=1, choices=SAMPLE_TYPE_CHOICES, null=True, blank=True)
-	sample_comment = models.TextField(null=True, blank=True)
+
+
+
+	sample_lab_number = models.CharField(max_length=25, null =True, blank=True)
+	analysis_performed = models.CharField(max_length=25, null =True, blank=True)
+	other_changes = models.CharField(max_length=25, null =True, blank=True)
+	affected_with = models.CharField(max_length=25, null =True, blank=True)
+	trio_de_novo = models.BooleanField(null =True, blank=True)
+	inheritance_pattern = models.CharField(max_length=30)
+	conditions = models.TextField()
+
+
 
 
 
 	def initiate_classification(self):
+		"""
+		When a user creates a new classicication for a variant then we \
+		need to create the ClassificationAnswer objects.
+
+		This function does that.
+
+
+		"""
 
 
 		answers = ClassificationAnswer.objects.filter(classification=self)
@@ -100,12 +118,47 @@ class Classification(models.Model):
 		return None
 
 
+	def calculate_acmg_score(self):
+
+		classification_answers = ClassificationAnswer.objects.filter(classification=self)
+
+		all_questions_count = ClassificationQuestion.objects.all().count()
+
+		if len(classification_answers) != all_questions_count:
+
+			return False
+
+		results = []
+
+		tags = []
+
+		for answer in classification_answers:
+
+			if answer.selected == True:
+
+				results.append((answer.classification_question.acmg_code, answer.strength))
+
+				tags.append(answer.classification_question.acmg_code)
+
+
+		if acmg_classifier.valid_input(tags) == True:
+
+			updated_acmg_codes = acmg_classifier.adjust_strength(results)
+
+			return acmg_classifier.classify(updated_acmg_codes)
+
+		return False
+
+
+
+
+
 
 class ClassificationQuestion(models.Model):
 
-	STRENGTH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'),
-	 ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ),
-	 ('BA', 'STAND_ALONE'))
+	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
+	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
+	 ('BA', 'BENIGN_STAND_ALONE'), ('BS', 'BENIGN_STRONG'), ('BP', 'BENIGN_SUPPORTING'))
 
 
 	acmg_code = models.CharField(max_length=5)
@@ -114,6 +167,9 @@ class ClassificationQuestion(models.Model):
 	default_strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
 	allowed_strength_change = models.BooleanField()
 	pathogenic_question = models.BooleanField()
+
+	def __str__ (self):
+		return self.acmg_code
 
 
 	def strength_options(self):
@@ -126,19 +182,19 @@ class ClassificationQuestion(models.Model):
 
 			if self.pathogenic_question == True:
 
-				return ['ST', 'MO', 'PP']
+				return ['PV','PS', 'PM', 'PP']
 
 			else:
 
-				return ['ST' 'PP']
+				return ['BA', 'BS', 'BP']
 
 
 
 class ClassificationAnswer(models.Model):
 
-	STRENGTH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'),
-	 ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ),
-	 ('BA', 'STAND_ALONE'))
+	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
+	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
+	 ('BA', 'BENIGN_STAND_ALONE'), ('BS', 'BENIGN_STRONG'), ('BP', 'BENIGN_SUPPORTING'))
 
 	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
 	classification_question = models.ForeignKey(ClassificationQuestion, on_delete=models.CASCADE)
@@ -158,12 +214,23 @@ class UserComment(models.Model):
 	time = models.DateTimeField()
 
 
+	def get_evidence(self):
+
+		evidence = Evidence.objects.filter(comment=self)
+
+		if len(evidence) == 0:
+
+			return None
+
+		return evidence
+
+
 class Evidence(models.Model):
 	"""
 	Model to hold files that relate to evidence e.g. pdfs, screenshots.
 	Must be associated with a comment.
 	"""
-	file = models.FileField(upload_to='uploads/%y/%m/', null=True, blank=True)
+	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
 
 

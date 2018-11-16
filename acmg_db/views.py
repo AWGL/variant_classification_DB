@@ -4,6 +4,11 @@ from django.conf import settings
 from .models import *
 from .utils.variant_utils import *
 from django.utils import timezone
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+import json
+import base64
+from django.core.files.base import ContentFile
 
 def home(request):
 	"""
@@ -103,12 +108,138 @@ def new_classification(request, pk):
 
 	classification = get_object_or_404(Classification, pk=pk)
 
+	variant = classification.variant
+
+	transcript_variants = TranscriptVariant.objects.filter(variant=variant)
+
 	answers = ClassificationAnswer.objects.filter(classification=classification)
 
+	comments = UserComment.objects.filter(classification=classification)
+
+	return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
+								 'classification': classification,
+								 'variant': variant,
+								 'transcript_variants': transcript_variants,
+								 'comments': comments})
+
+
+def ajax_acmg_classification(request):
+	"""
+	Gets the ajax results from the new_classifcations.html page \
+	and stores them in the database - also returns the calculated result.
+	
+
+	"""
+
+	if request.is_ajax():
+
+		classification_answers = request.POST.get('classifications')
+
+		classification_answers = json.loads(classification_answers)
+
+		classification_pk = request.POST.get('classification_pk').strip()
+
+		classification = get_object_or_404(Classification, pk =classification_pk)
+
+		for classification_answer in classification_answers:
+
+			pk = classification_answer.strip()
+
+			classification_answer_obj = get_object_or_404(ClassificationAnswer, pk=pk)
+
+			print (classification_answers[classification_answer])
+
+			classification_answer_obj.strength = classification_answers[classification_answer][1].strip()
+
+			classification_answer_obj.selected = classification_answers[classification_answer][2].strip()
+
+			classification_answer_obj.save()
+
+		result = classification.calculate_acmg_score()
+
+		html = render_to_string('acmg_db/acmg_results.html', {'result': result})
+
+	return HttpResponse(html)
 
 
 
-	return render(request, 'acmg_db/new_classifications.html', {'answers': answers})
+def ajax_comments(request):
+	"""
+	Ajax View - when the user clicks the upload comment/file button \
+	this updates the comment section of the page. 
+	Clipboard paste only works on HTML5 enabled browser.
+	"""
+
+	if request.is_ajax():
+
+		classification_pk = request.POST.get('classification_pk')
+		comment_text = request.POST.get('comment_text')
+
+		classification_pk = classification_pk.strip()
+		comment_text = comment_text.strip()
+
+		classification = get_object_or_404(Classification, pk =classification_pk)
+
+		if len(comment_text) >1: #Check user has entered a comment
+
+			new_comment = UserComment(user=request.user,
+								text=comment_text,
+								time=timezone.now(),
+								classification=classification)
+
+			new_comment.save()
+			#Deal with files selected using the file selector html widget 
+			if request.FILES.get("file", False) != False:
+
+				file = request.FILES.get("file")
+
+				new_evidence = Evidence()
+
+				new_evidence.file = file
+
+				new_evidence.comment= new_comment
+
+				new_evidence.save()
+
+			#Deal with images pasted in from the clipboard
+			if request.POST.get("image_data") != None: 
+
+				image_data = request.POST.get("image_data")
+				#strip of any leading characters
+				image_data = image_data.strip() 
+
+				#add appropiate file header
+				dataUrlPattern = re.compile("data:image/(png|jpeg);base64,(.*)$") 
+
+				ImageData = dataUrlPattern.match(image_data).group(2)
+
+				ImageData = base64.b64decode(ImageData) #to binary
+
+				new_evidence = Evidence()
+
+				new_evidence.comment= new_comment
+				#save image
+				img_file_string = "{}_{}_clip_image.png".format(classification.pk,new_comment.pk)
+				new_evidence.file.save(img_file_string, ContentFile(ImageData)) 
+
+				new_evidence.save()
+
+		comments = UserComment.objects.filter(classification=classification)
+
+		html = render_to_string("acmg_db/ajax_comments.html",
+								{"comments": comments})
+
+		return HttpResponse(html)
+
+	else:
+
+		raise Http404
+
+
+
+
+
+
 
 
 
