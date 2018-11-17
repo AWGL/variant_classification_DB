@@ -1,0 +1,33 @@
+{% extends 'acmg_db/base.html' %}
+
+
+
+{% block content %}
+
+	<br>
+
+<div class="card bg-light mb-3" style="max-width: 45rem;">
+  <div class="card-header">Login</div>
+  <div class="card-body">
+   <form class="form-horizontal" method="post">{% csrf_token %}
+
+            {{ form.as_p }}
+
+        <br>
+
+        <div class="form-actions">
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        </div>
+    
+        </form>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}

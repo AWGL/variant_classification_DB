@@ -1,0 +1,17 @@
+{% extends 'acmg_db/base.html' %}
+
+{% block content %}
+
+	<br>
+
+<div class="card bg-light mb-3" style="max-width: 18rem;">
+  <div class="card-header">You logged out.</div>
+  <div class="card-body">
+    <a href="{% url 'login' %}"> Click here to Login again</a>
+  </div>
+</div>  
+
+
+
+{% endblock %}
+

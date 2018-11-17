@@ -9,7 +9,10 @@ from django.http import HttpResponse
 import json
 import base64
 from django.core.files.base import ContentFile
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def home(request):
 	"""
 	The view for the home page.

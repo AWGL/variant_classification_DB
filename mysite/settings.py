@@ -130,11 +130,12 @@ MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 MUTALYZER_BUILD = 'hg19' 
 
 ENV_PATH = os.path.abspath(os.path.dirname(__file__))
-MEDIA_ROOT = os.path.join(ENV_PATH, "media/")
-MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
+MEDIA_URL = '/media/'
 
 
-
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = '/login/'
 
 
 
