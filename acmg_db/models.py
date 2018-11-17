@@ -68,18 +68,15 @@ class Classification(models.Model):
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='user_creator')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
 	status = models.CharField(max_length=1, choices =STATUS_CHOICES, default='0')
-	acmg_class = models.CharField(max_length=25, null=True, blank=True)
 	final_class = models.CharField(max_length=25, null=True, blank=True)
-
-
 
 	sample_lab_number = models.CharField(max_length=25, null =True, blank=True)
 	analysis_performed = models.CharField(max_length=25, null =True, blank=True)
 	other_changes = models.CharField(max_length=25, null =True, blank=True)
 	affected_with = models.CharField(max_length=25, null =True, blank=True)
 	trio_de_novo = models.BooleanField(null =True, blank=True)
-	inheritance_pattern = models.CharField(max_length=30)
-	conditions = models.TextField()
+	inheritance_pattern = models.CharField(max_length=30, null=True, blank=True)
+	conditions = models.TextField(null=True, blank=True)
 
 
 
