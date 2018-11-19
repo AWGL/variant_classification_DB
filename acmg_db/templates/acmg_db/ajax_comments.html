@@ -5,7 +5,7 @@
 <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
 <div class="card-body">
 
-  {{comment.text}}
+  {{comment.text|linebreaks}}
 
 
    {% if comment.get_evidence == None %}

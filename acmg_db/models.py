@@ -17,6 +17,15 @@ class Variant(models.Model):
 	alt = models.TextField()
 
 
+	def get_genes(self):
+
+		variant_transcripts = TranscriptVariant.objects.filter(variant=self).exclude(transcript__name = 'None')
+
+		genes = ';'.join(list(set([transcript.transcript.gene.name for transcript in variant_transcripts])))
+
+		return genes
+
+
 class Gene(models.Model):
 
 	"""
@@ -60,9 +69,10 @@ class Classification(models.Model):
 
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
-	STATUS_CHOICES = (('0', 'NONE'), ('1', 'Awaiting Second Check'), ('2', 'Complete'))
+	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
 
-	variant = models.ForeignKey(Variant,on_delete=models.CASCADE)
+	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+	selected_transcript_variant = models.ForeignKey(TranscriptVariant, on_delete=models.CASCADE, null=True, blank=True)
 	creation_date = models.DateTimeField()
 	second_check_date = models.DateTimeField(null=True, blank=True)
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='user_creator')

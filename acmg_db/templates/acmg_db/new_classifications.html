@@ -2,8 +2,14 @@
 {% load static %}
 {% block content %}
 
+{% load crispy_forms_tags %}
 
 <br>
+
+<div class="alert alert-success">
+  You are analysing variant: <strong>{{variant.chromosome}}:g.{{variant.position}}{{variant.ref}}>{{variant.alt}} </strong>
+</div>
+
 
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -18,20 +24,63 @@
 
   	<br>
 
-  	<table id="variant_table" class = "table table-hover table-bordered" style="width:50%">
+  <button class ="btn btn-success" data-toggle="collapse" data-target="#demo">Variant Detail</button>
+
+
+<button class="btn"><i class="fa fa-plus"></i></button>
+
+
+<div id="demo" class="collapse"> 
+
+	<br>
+<table id="variant_detail" class = "table table-hover table-bordered" style="width:100%">
+
+    <thead>
+
+        <tr>
+          <th class='transcript'> Transcript </th>
+          <th class='gene'> Gene </th>
+          <th class='hgvs_c'> HGVSc </th>
+          <th class='hgvs_p'> HGVSp </th>
+          <th class='exon_number'> Exon </th>
+        </tr>
+
+      </thead>
 
       <tbody>
 
-      	<tr>
 
-      		<td> Variant: </td>
-      		<td> {{variant.chromosome}}:g.{{variant.position}}{{variant.ref}}>{{variant.alt}} </td>
+      	{% for transcript in transcript_variants %}
+
+      	<tr>	
+
+      		<td> {{transcript.transcript.name}} </td>
+      		<td> {{transcript.transcript.gene.name}} </td>
+      		<td> {{transcript.hgvs_c}} </td>
+      		<td> {{transcript.hgvs_p}} </td>
+      		<td> {{transcript.exon}} </td>
+
 
       	</tr>
+
+
+
+      	{% endfor %}
+
+
 
       </tbody>
 
   </table>
+
+</div>
+
+
+
+  <hr> 
+
+
+  {% crispy sample_form %}
 
 
 </div>
@@ -43,11 +92,21 @@
   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
 
 
-  	<button type="button" class="btn btn-primary" id='submit_acmg' >Classify</button>
+  	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Classify</button>
 
   	<hr> 
 
-  	<div id ='class_box'> </div>
+  	<div id ='class_box'>
+
+  		<div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+  			<div class="card-header">ACMG Classification Result</div>
+  			<div class="card-body">
+    		<p class="card-text">{{result}}</p></div>
+  		
+
+  		</div>
+
+  	</div>
 
   	<hr>
 
@@ -94,7 +153,13 @@
 
   					{% for strength in answer.classification_question.strength_options %}
 
-  						{% if strength == answer.classification_question.default_strength %}
+  						{% if strength == answer.strength %}
+
+
+
+
+
+
 
   							<option value="{{strength}}" selected> {{strength}} </option>
 
@@ -293,7 +358,9 @@ $(document).ready(function(){
 
 
 	// When we click the submit ACMG
-	$("#submit_acmg").click(function(){
+	$(".acmg_submit").click(function(){
+
+		console.log('hi')
 
 		// construct a dictionary of objects to submit to server
 

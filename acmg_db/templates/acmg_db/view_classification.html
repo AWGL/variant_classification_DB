@@ -1,0 +1,226 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<hr>
+
+<h3> Classification Information </h3>
+
+<hr>
+
+<table id="classification_info" class = "table table-hover table-bordered" style="width:100%">
+
+
+  <thead>
+
+
+
+  </thead>
+
+  <tbody>
+
+    <tr>
+
+      <td> Classification ID </td>
+      <td> {{classification.pk}} </td>
+
+    </tr>
+
+
+      <tr>
+
+      <td> Variant </td>
+      <td> {{classification.variant.chromosome}}:g.{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Transcript </td>
+      <td> {{classification.selected_transcript_variant.transcript.name }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> HGVSc </td>
+      <td> {{classification.selected_transcript_variant.hgvs_c }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> HGVSp </td>
+      <td> {{classification.selected_transcript_variant.hgvs_p }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Exon </td>
+      <td> {{classification.selected_transcript_variant.exon }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Created Date </td>
+      <td> {{classification.creation_date }} </td>
+
+    </tr>
+
+
+
+    <tr>
+
+      <td> Creation User</td>
+      <td> {{classification.user_creator }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Second Check Date</td>
+      <td> {{classification.second_check_date }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Second Check User</td>
+      <td> {{classification.user_second_checker }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Status </td>
+      <td> {{classification.status }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Sample Lab Number </td>
+      <td> {{classification.sample_lab_number }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Analysis Performed </td>
+      <td> {{classification.analysis_performed|linebreaksbr }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Other Changes </td>
+      <td> {{classification.other_changes|linebreaksbr }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Affected With </td>
+      <td> {{classification.affected_with|linebreaksbr }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Trio De Novo? </td>
+      <td> {{classification.trio_de_novo }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Inheritance Pattern </td>
+      <td> {{classification.inheritance_pattern|linebreaksbr }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Conditions </td>
+      <td> {{classification.conditions|linebreaksbr }} </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+
+<hr>
+
+<h3> ACMG Details </h3>
+<hr>
+
+<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+
+    <thead>
+
+        <tr>
+          <th style="display:none;" class='answer_pk'> Answer PK </th>
+          <th class='question'> Evidence Category </th>
+          <th class='strength'> Strength </th>
+          <th class='selected'> Decision </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {% for answer in classification_answers %}
+
+        <tr class='answer'>
+
+        <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+        <td class='question'> {{ answer.classification_question.acmg_code  }} </td>
+        <td class='strength'> 
+
+            {{answer.strength}}
+
+        </td>
+
+        <td>
+
+
+          {{answer.selected}}
+
+
+         </td>
+
+      </tr>
+
+     
+
+      {% endfor %}
+
+  </tbody>
+
+</table>
+
+{% endblock %}  
+
+
+
+
+
+
+
+
+
+
+
+
+

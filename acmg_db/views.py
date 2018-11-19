@@ -110,20 +110,84 @@ def new_classification(request, pk):
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
-
 	variant = classification.variant
 
-	transcript_variants = TranscriptVariant.objects.filter(variant=variant)
 
-	answers = ClassificationAnswer.objects.filter(classification=classification)
+	if request.method == 'POST':
 
-	comments = UserComment.objects.filter(classification=classification)
+		sample_form = SampleInformationForm(request.POST, classification_pk = classification.pk)
 
-	return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
-								 'classification': classification,
-								 'variant': variant,
-								 'transcript_variants': transcript_variants,
-								 'comments': comments})
+		if sample_form.is_valid():
+
+			cleaned_data = sample_form.cleaned_data
+
+			if cleaned_data['transcript_variants'] == 'None':
+
+				gene, created = Gene.objects.get_or_create(
+					name = 'None'
+					)
+
+				transcript, created = Transcript.objects.get_or_create(
+					name = 'None',
+					gene = gene
+					)
+
+				transcript_variants = TranscriptVariant.objects.filter(
+					variant = variant,
+					transcript = transcript,
+					)
+
+				if len(transcript_variants) == 0:
+
+					transcript_variant = TranscriptVariant(variant=variant,
+						transcript= transcript)
+
+					transcript_variant.save()
+
+				else:
+
+					transcript_variant = transcript_variants[0]
+
+
+			else:
+
+				transcript_variant = get_object_or_404(TranscriptVariant, pk =cleaned_data['transcript_variants'])
+
+			classification.sample_lab_number = cleaned_data['sample_lab_number']
+			classification.analysis_performed = cleaned_data['analysis_performed']
+			classification.other_changes = cleaned_data['other_changes']
+			classification.affected_with = cleaned_data['affected_with']
+			classification.trio_de_novo = cleaned_data['trio_de_novo']
+			classification.inheritance_pattern = cleaned_data['inheritance_pattern']
+			classification.final_class = cleaned_data['final_classification']
+			classification.selected_transcript_variant = transcript_variant
+			classification.conditions = cleaned_data['conditions']
+			classification.status = '1'
+
+			classification.save()
+
+			return redirect(home)
+
+	else:
+
+
+		transcript_variants = TranscriptVariant.objects.filter(variant=variant).exclude(transcript__name ='None')
+
+		answers = ClassificationAnswer.objects.filter(classification=classification)
+
+		comments = UserComment.objects.filter(classification=classification)
+
+		sample_form = SampleInformationForm(classification_pk = classification.pk)
+
+		result = classification.calculate_acmg_score()
+
+		return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
+									 'classification': classification,
+									 'variant': variant,
+									 'transcript_variants': transcript_variants,
+									 'comments': comments,
+									 'sample_form': sample_form,
+									 'result': result })
 
 
 def ajax_acmg_classification(request):
@@ -238,12 +302,30 @@ def ajax_comments(request):
 
 		raise Http404
 
+def view_previous_classifications(request):
+	"""
+	Page to view previous classifications
+
+	"""
+
+
+	classifications = Classification.objects.all().order_by('-creation_date')
+
+	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 
 
 
+def view_classification(request, pk):
+	"""
+	View a read only version of a classification of a variant
 
 
+	"""
 
+	classification = get_object_or_404(Classification, pk=pk)
 
+	classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
+
+	return render(request, 'acmg_db/view_classification.html', {'classification': classification, 'classification_answers': classification_answers})
 
 

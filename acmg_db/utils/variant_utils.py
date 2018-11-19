@@ -82,6 +82,7 @@ def validate_variant(variant, mutalyzer_url, mutalyzer_build):
 
 		for transcript in response_positions['string']:
 
+
 			# Only look at NM genes
 			if transcript[0:2] == 'NM':
 
