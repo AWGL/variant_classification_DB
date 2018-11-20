@@ -5,12 +5,11 @@ from .models import *
 from .utils.variant_utils import *
 from django.utils import timezone
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 import json
 import base64
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
-
 
 @login_required
 def home(request):
@@ -79,7 +78,8 @@ def home(request):
 				transcript_variant, created = TranscriptVariant.objects.get_or_create(
 					variant = variant,
 					transcript = transcript,
-					hgvs_c = variant_transcript[0]
+					hgvs_c = variant_transcript[0],
+					hgvs_p = variant_transcript[2]
 					)
 
 
@@ -113,81 +113,88 @@ def new_classification(request, pk):
 	variant = classification.variant
 
 
-	if request.method == 'POST':
+	#reject if wrong status or user
+	if classification.status != '0' or request.user != classification.user_creator:
 
-		sample_form = SampleInformationForm(request.POST, classification_pk = classification.pk)
-
-		if sample_form.is_valid():
-
-			cleaned_data = sample_form.cleaned_data
-
-			if cleaned_data['transcript_variants'] == 'None':
-
-				gene, created = Gene.objects.get_or_create(
-					name = 'None'
-					)
-
-				transcript, created = Transcript.objects.get_or_create(
-					name = 'None',
-					gene = gene
-					)
-
-				transcript_variants = TranscriptVariant.objects.filter(
-					variant = variant,
-					transcript = transcript,
-					)
-
-				if len(transcript_variants) == 0:
-
-					transcript_variant = TranscriptVariant(variant=variant,
-						transcript= transcript)
-
-					transcript_variant.save()
-
-				else:
-
-					transcript_variant = transcript_variants[0]
-
-
-			else:
-
-				transcript_variant = get_object_or_404(TranscriptVariant, pk =cleaned_data['transcript_variants'])
-
-			classification.sample_lab_number = cleaned_data['sample_lab_number']
-			classification.analysis_performed = cleaned_data['analysis_performed']
-			classification.other_changes = cleaned_data['other_changes']
-			classification.affected_with = cleaned_data['affected_with']
-			classification.trio_de_novo = cleaned_data['trio_de_novo']
-			classification.inheritance_pattern = cleaned_data['inheritance_pattern']
-			classification.final_class = cleaned_data['final_classification']
-			classification.selected_transcript_variant = transcript_variant
-			classification.conditions = cleaned_data['conditions']
-			classification.status = '1'
-
-			classification.save()
-
-			return redirect(home)
+		return HttpResponseForbidden()
 
 	else:
 
+		if request.method == 'POST':
 
-		transcript_variants = TranscriptVariant.objects.filter(variant=variant).exclude(transcript__name ='None')
+			sample_form = SampleInformationForm(request.POST, classification_pk = classification.pk)
 
-		answers = ClassificationAnswer.objects.filter(classification=classification)
+			if sample_form.is_valid():
 
-		comments = UserComment.objects.filter(classification=classification)
+				cleaned_data = sample_form.cleaned_data
 
-		sample_form = SampleInformationForm(classification_pk = classification.pk)
+				if cleaned_data['transcript_variants'] == 'None':
 
-		result = classification.calculate_acmg_score()
+					gene, created = Gene.objects.get_or_create(
+						name = 'None'
+						)
 
-		return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
-									 'classification': classification,
-									 'variant': variant,
-									 'transcript_variants': transcript_variants,
-									 'comments': comments,
-									 'sample_form': sample_form,
-									 'result': result })
+					transcript, created = Transcript.objects.get_or_create(
+						name = 'None',
+						gene = gene
+						)
+
+					transcript_variants = TranscriptVariant.objects.filter(
+						variant = variant,
+						transcript = transcript,
+						)
+
+					if len(transcript_variants) == 0:
+
+						transcript_variant = TranscriptVariant(variant=variant,
+							transcript= transcript)
+
+						transcript_variant.save()
+
+					else:
+
+						transcript_variant = transcript_variants[0]
+
+
+				else:
+
+					transcript_variant = get_object_or_404(TranscriptVariant, pk =cleaned_data['transcript_variants'])
+
+				classification.sample_lab_number = cleaned_data['sample_lab_number']
+				classification.analysis_performed = cleaned_data['analysis_performed']
+				classification.other_changes = cleaned_data['other_changes']
+				classification.affected_with = cleaned_data['affected_with']
+				classification.trio_de_novo = cleaned_data['trio_de_novo']
+				classification.inheritance_pattern = cleaned_data['inheritance_pattern']
+				classification.final_class = cleaned_data['final_classification']
+				classification.selected_transcript_variant = transcript_variant
+				classification.conditions = cleaned_data['conditions']
+				classification.status = '1'
+
+				classification.save()
+
+				return redirect(home)
+
+		else:
+
+
+			transcript_variants = TranscriptVariant.objects.filter(variant=variant).exclude(transcript__name ='None')
+
+			answers = ClassificationAnswer.objects.filter(classification=classification)
+
+			comments = UserComment.objects.filter(classification=classification)
+
+			sample_form = SampleInformationForm(classification_pk = classification.pk)
+
+			result = classification.calculate_acmg_score()
+
+			return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
+										 'classification': classification,
+										 'variant': variant,
+										 'transcript_variants': transcript_variants,
+										 'comments': comments,
+										 'sample_form': sample_form,
+										 'result': result })
 
 
 def ajax_acmg_classification(request):
@@ -324,8 +331,86 @@ def view_classification(request, pk):
 
 	classification = get_object_or_404(Classification, pk=pk)
 
-	classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
+	classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
+		.order_by('classification_question__order')
+		.filter(selected=True))
 
-	return render(request, 'acmg_db/view_classification.html', {'classification': classification, 'classification_answers': classification_answers})
+	comments = UserComment.objects.filter(classification=classification)
+
+	return render(request, 'acmg_db/view_classification.html', {'classification': classification,
+									 'classification_answers': classification_answers,
+									 'comments': comments})
+
+
+def second_check(request, pk):
+	"""
+	Page for user to perform second check.
+
+
+	"""
+
+	classification = get_object_or_404(Classification, pk=pk)
+
+	if request.method == 'POST':
+
+		form = SecondCheckForm(request.POST, classification_pk=pk )
+
+		if form.is_valid():
+
+			data = form.cleaned_data
+
+			accept_or_reject = data['accept']
+
+			# if we have accepted the classification
+			if accept_or_reject == '1':
+
+
+
+				classification.status = '2'
+
+				classification.second_check_date = timezone.now()
+				classification.user_second_checker = request.user
+
+				classification.save()
+
+			else:
+
+				classification.status = '0'
+				classification.save()
+
+
+			return redirect(home)
+
+	else:
+
+		classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
+		.order_by('classification_question__order')
+		.filter(selected=True))
+
+		comments = UserComment.objects.filter(classification=classification)
+
+		second_check_form = SecondCheckForm(classification_pk=classification.pk)
+
+		return render(request, 'acmg_db/second_check.html', {'classification': classification,
+									 'classification_answers': classification_answers,
+									 'comments': comments,
+									 'second_check_form': second_check_form})
+
+def add_transcript_variant(request):
+
+	"""
+	Page for the user to add a transcript variant if needed.
+
+
+	"""
+
+	pass
+
+
+
+
+
+
+
 
 

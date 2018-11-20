@@ -1,0 +1,460 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<br>
+
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="variant_info" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Information</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Comments and Evidence</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+
+
+
+<hr>
+
+
+<h3> Classification Information </h3>
+
+<hr>
+
+<table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
+
+
+  <thead>
+
+
+
+  </thead>
+
+  <tbody>
+
+    <tr>
+
+      <td> Classification ID </td>
+      <td> {{classification.pk}} </td>
+
+    </tr>
+
+
+      <tr>
+
+      <td> Variant </td>
+      <td> {{classification.variant.chromosome}}:g.{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+
+    </tr>
+
+          <tr>
+
+      <td> Classification </td>
+      <td> {{classification.final_class}} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Transcript </td>
+      <td> {{classification.selected_transcript_variant.transcript.name }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> HGVSc </td>
+      <td> {{classification.selected_transcript_variant.hgvs_c }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> HGVSp </td>
+      <td> {{classification.selected_transcript_variant.hgvs_p }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Exon </td>
+      <td> {{classification.selected_transcript_variant.exon }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Created Date </td>
+      <td> {{classification.creation_date }} </td>
+
+    </tr>
+
+
+
+    <tr>
+
+      <td> Creation User</td>
+      <td> {{classification.user_creator }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Second Check Date</td>
+      <td> {{classification.second_check_date }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Second Check User</td>
+      <td> {{classification.user_second_checker }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Status </td>
+      <td> {{classification.display_status }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Sample Lab Number </td>
+      <td> {{classification.sample_lab_number }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Analysis Performed </td>
+      <td> {{classification.analysis_performed|linebreaksbr }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Other Changes </td>
+      <td> {{classification.other_changes|linebreaksbr }} </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td> Affected With </td>
+      <td> {{classification.affected_with|linebreaksbr }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Trio De Novo? </td>
+      <td> {{classification.trio_de_novo }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Inheritance Pattern </td>
+      <td> {{classification.inheritance_pattern|linebreaksbr }} </td>
+
+    </tr>
+
+    <tr>
+
+      <td> Conditions </td>
+      <td> {{classification.conditions|linebreaksbr }} </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+
+<hr>
+
+<h3> ACMG Details </h3>
+<hr>
+
+<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+
+    <thead>
+
+        <tr>
+          <th style="display:none;" class='answer_pk'> Answer PK </th>
+          <th class='question'> Evidence Category </th>
+          <th class='strength'> Strength </th>
+          <th class='selected'> Decision </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {% for answer in classification_answers %}
+
+        <tr class='answer'>
+
+        <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+        <td class='question'> {{ answer.classification_question.acmg_code  }} </td>
+        <td class='strength'> 
+
+            {{answer.strength}}
+
+        </td>
+
+        <td>
+
+
+          {{answer.selected}}
+
+
+         </td>
+
+      </tr>
+
+     
+
+      {% endfor %}
+
+  </tbody>
+
+</table>
+
+{% crispy second_check_form %}
+
+
+</div>
+
+
+ <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+<br>
+
+<h4>Evidence</h4>
+
+                 <div id='comment_box'> 
+
+                 <!-- Comment box folds the comments and files for the variant - updated via ajax --> 
+
+                 {% for comment in comments %}
+
+                 <div class="card">
+                    <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+                    <div class="card-body">
+
+                      {{comment.text|linebreaks}}
+
+
+                       {% if comment.get_evidence == None %}
+
+                      {% else %}
+
+                        <hr>
+
+                        {% for evidence in comment.get_evidence %}
+
+                          <p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+
+
+                        {% endfor %}
+
+                      {% endif %}
+
+                    </div>
+                  </div>
+                  <hr>
+
+
+
+
+                 {% endfor %}
+
+
+                 </div>
+
+             
+                 <hr>
+
+                  <form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
+                    <div class="form-group">
+                     <label for="comment">Comment:</label>
+                    <textarea class="form-control" rows="5" id="comment_text" style="resize:none;"></textarea>
+                   </div>
+
+                  <button type="button" class="btn btn-success btn-sm" id='comment_button'>
+                    <span ></span> Add Comment/File
+                  </button>
+
+                    <div class="btn btn-default btn-sm">
+                      Attach File <input type="file"  id='file_upload' name='file'> 
+                  </div>
+
+
+                  <hr>
+
+                  <div class="alert alert-info" id='file_name' style="display: none;">
+                    
+                  </div>
+
+
+
+
+                  <input type="hidden" id='hidden_image_field'>
+
+
+
+                  </form>
+
+                  <canvas style="border:1px solid grey;" id="my_canvas" width="300" height="300"></canvas>
+
+
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  </div>
+
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+$(document).ready(function(){
+
+
+  $('#file_upload').on('change', function() { //runs when a file is selected
+      var file = this.files[0];
+      $('#file_name').text(file.name + " has been selected. Click Add Comment/File to upload.");
+      $('#file_name').show();
+  });
+
+
+  $("#comment_button").click(function(){
+
+      var comment_text = $("#comment_text").val();
+      var formData = new FormData(); //create empty form data
+      formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
+      formData.append('classification_pk', "{{classification.pk}}"); //add sample primary key
+      formData.append('comment_text', comment_text); //add comment text
+      var file = $('#file_upload')[0].files[0];
+      var canvas = document.getElementById('my_canvas');
+      var dataURL = canvas.toDataURL("image/png");
+      document.getElementById('hidden_image_field').value = dataURL;
+      formData.append('file', file); //add file
+      if (canvas_entered ==true){
+        formData.append('image_data', $("#hidden_image_field").val()); //add image file
+      }
+   
+      $.ajax({
+        url: '/ajax/comments/',
+        type: 'POST', 
+        data: formData,
+        contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+        processData: false, // NEEDED, DON'T OMIT THIS
+        success: function(data) {
+            $("#comment_box").html(data);
+            $("#comment_text").val('');
+            $('#file_name').hide();
+            $('#file_upload').val('');
+            var c = document.getElementById("my_canvas");
+            var ctx = c.getContext("2d");
+            ctx.clearRect(0,0,300,300);
+        },
+
+        failure: function(data) { 
+
+            alert('Got an error');
+        }
+
+        }); 
+    
+    });
+
+
+//copy and paste from clipboard
+//Taken from https://stackoverflow.com/questions/18377891/how-can-i-let-user-paste-image-data-from-the-clipboard-into-a-canvas-element-in
+var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);
+var canvas_entered =false;
+function CLIPBOARD_CLASS(canvas_id, autoresize) {
+  var _self = this;
+  var canvas = document.getElementById(canvas_id);
+  var ctx = document.getElementById(canvas_id).getContext("2d");
+  //handlers
+  document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
+  //on paste
+  this.paste_auto = function (e) {
+    if (e.clipboardData) {
+      var items = e.clipboardData.items;
+      if (!items) return;
+      
+      //access data directly
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          //image
+          var blob = items[i].getAsFile();
+          var URLObj = window.URL || window.webkitURL;
+          var source = URLObj.createObjectURL(blob);
+          this.paste_createImage(source);
+        }
+      }
+      e.preventDefault();
+    }
+  };
+  //draw pasted image to canvas
+  this.paste_createImage = function (source) {
+    var pastedImage = new Image();
+    canvas_entered =true;
+    pastedImage.onload = function () {
+      if(autoresize == true){
+        //resize
+        canvas.width = pastedImage.width;
+        canvas.height = pastedImage.height;
+      }
+      else{
+        //clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(pastedImage, 0, 0);
+    };
+    pastedImage.src = source;
+  };
+}
+
+
+
+});
+
+
+</script>
+
+{% csrf_token %}
+
+
+{% endblock %}  
+
+
+
+
+
+

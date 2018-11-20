@@ -9,7 +9,7 @@
 
 <hr>
 
-<table id="classification_info" class = "table table-hover table-bordered" style="width:100%">
+<table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
 
 
   <thead>
@@ -32,6 +32,14 @@
 
       <td> Variant </td>
       <td> {{classification.variant.chromosome}}:g.{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+
+    </tr>
+
+
+      <tr>
+
+      <td> Classification </td>
+      <td> {{classification.final_class}} </td>
 
     </tr>
 
@@ -98,7 +106,7 @@
     <tr>
 
       <td> Status </td>
-      <td> {{classification.status }} </td>
+      <td> {{classification.display_status }} </td>
 
     </tr>
 
@@ -209,6 +217,49 @@
   </tbody>
 
 </table>
+
+
+<hr>
+
+<h3> Comments and Evidence </h3>
+<hr>
+
+ <div id='comment_box'> 
+
+  <!-- Comment box folds the comments and files for the variant - updated via ajax --> 
+
+   {% for comment in comments %}
+
+   <div class="card">
+      <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+      <div class="card-body">
+
+        {{comment.text|linebreaks}}
+
+
+         {% if comment.get_evidence == None %}
+
+        {% else %}
+
+          <hr>
+
+          {% for evidence in comment.get_evidence %}
+
+            <p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+
+
+          {% endfor %}
+
+        {% endif %}
+
+      </div>
+    </div>
+    <hr>
+
+
+
+
+                 {% endfor %}
 
 {% endblock %}  
 

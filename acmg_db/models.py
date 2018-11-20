@@ -89,6 +89,31 @@ class Classification(models.Model):
 	conditions = models.TextField(null=True, blank=True)
 
 
+	def display_status(self):
+		"""
+		Take the status in the database e.g. 0 and return the string \
+		which corresponds to that e.g.g Awaiting Analysis
+
+		"""
+		STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
+
+		return STATUS_CHOICES[int(self.status)][1]
+
+
+	def display_classification(self):
+		"""
+		For instances where we only want to display the final class if the \
+		classification has been completed i.e. second check has been done.
+
+		"""
+
+		if self.status == '2':
+
+			return self.final_class
+
+		else:
+
+			return 'Not Displayed'
 
 
 

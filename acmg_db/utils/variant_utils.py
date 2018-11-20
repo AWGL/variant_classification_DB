@@ -2,6 +2,34 @@ from suds.client import Client
 import hashlib
 import re
 
+def process_variant(hgvs_g):
+	"""
+	splits a hgvsg description such as chr17:g.41197732G>A
+
+	into [var_hash, chr, pos, ref, alt]
+
+	where  var_hash is the result of calling get_variant_hash() on the results.
+
+
+	"""
+
+	chromosome = hgvs_g.split(':')[0]
+
+	position = re.findall('\d+',hgvs_g.split(':')[1])[0]
+
+	ref = re.sub('[0-9]', '', hgvs_g.split('.')[1]).split('>')[0]
+	alt = re.sub('[0-9]', '', hgvs_g.split('.')[1]).split('>')[1]
+
+	var_hash = get_variant_hash(chromosome, position,ref, alt)
+
+	key = '{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=position, ref=ref, alt=alt)
+
+	return [var_hash, chromosome, position, ref, alt, key]
+
+
+
+
+
 def validate_variant(variant, mutalyzer_url, mutalyzer_build):
 	"""
 	Checks whether a variant is valid and gets some information about it \
@@ -64,6 +92,9 @@ def validate_variant(variant, mutalyzer_url, mutalyzer_build):
 
 		return [False, ['Mutalyzer does not recognise this as a valid variant.']]
 
+
+	variant_info = process_variant(variant)
+
 	response_name_check = wsdl_o.runMutalyzerLight(variant_to_validate)
 
 	response_name_check = dict(response_name_check)
@@ -82,13 +113,37 @@ def validate_variant(variant, mutalyzer_url, mutalyzer_build):
 
 		for transcript in response_positions['string']:
 
+			if transcript[0:2] != 'NR':
 
-			# Only look at NM genes
-			if transcript[0:2] == 'NM':
+				response_name_check = wsdl_o.runMutalyzerLight(transcript)
+			
+				response_name_check = dict(response_name_check)
+			
+				protein_info = response_name_check['proteinDescriptions']
 
-				gene = wsdl_o.getGeneName(build=mutalyzer_build, accno=transcript.split(':')[0])
+				if protein_info != None:
 
-				transcript_and_genes.append([transcript, gene])
+					protein_hgvs = dict(response_name_check['proteinDescriptions'])
+
+					protein_hgvs = protein_hgvs['string'][0]
+
+					if transcript[0:3] != 'LRG':
+
+						protein_hgvs_start = protein_hgvs.split(':')[0]
+						protein_hgvs_end = protein_hgvs.split(':')[1]
+
+						open_parentheses_location = protein_hgvs_start.find('(')
+
+						protein_hgvs = protein_hgvs_start[0:open_parentheses_location]+ ':' + protein_hgvs_end 
+
+
+				legend = dict(response_name_check['legend'])
+
+				gene =  dict(legend['LegendRecord'][0])['name']
+
+				gene = gene.split('_')[0]
+
+				transcript_and_genes.append([transcript, gene, protein_hgvs ])
 
 		return [True, transcript_and_genes]
 
@@ -113,29 +168,6 @@ def get_variant_hash(chromosome, pos, ref,alt):
 	return hash_id
 
 
-def process_variant(hgvs_g):
-	"""
-	splits a hgvsg description such as chr17:g.41197732G>A
-
-	into [var_hash, chr, pos, ref, alt]
-
-	where  var_hash is the result of calling get_variant_hash() on the results.
-
-
-	"""
-
-	chromosome = hgvs_g.split(':')[0]
-
-	position = re.findall('\d+',hgvs_g.split(':')[1])[0]
-
-	ref = re.sub('[0-9]', '', hgvs_g.split('.')[1]).split('>')[0]
-	alt = re.sub('[0-9]', '', hgvs_g.split('.')[1]).split('>')[1]
-
-	var_hash = get_variant_hash(chromosome, position,ref, alt)
-
-	key = '{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=position, ref=ref, alt=alt)
-
-	return [var_hash, chromosome, position, ref, alt, key]
 
 
 

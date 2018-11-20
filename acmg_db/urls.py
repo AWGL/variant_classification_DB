@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('classification/<int:pk>/', views.new_classification, name='new_classification'),
     path('view_classification/<int:pk>/', views.view_classification, name='view_classification'),
+    path('second_check/<int:pk>/', views.second_check, name='second_check'),
     path('ajax/acmg_classification/', views.ajax_acmg_classification, name='ajax_acmg_classification'),
     path('ajax/comments/', views.ajax_comments, name='ajax_comments'),
     path('view_previous_classifications', views.view_previous_classifications, name='view_previous_classifications'),

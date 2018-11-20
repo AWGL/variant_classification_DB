@@ -7,6 +7,33 @@ from crispy_forms.layout import Submit, Layout, Div
 from django.contrib.auth.models import User
 
 
+class SecondCheckForm(forms.Form):
+	"""
+	Form for user to accept or reject classification of variant.
+
+	"""
+
+	accept = forms.ChoiceField()
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+
+		super(SecondCheckForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.fields['accept'].choices = [('1', 'Accept'), ('2', 'Reject')]
+		self.helper.form_id = 'accept-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check', kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+
+					Field('accept'))
+
+
 class SearchForm(forms.Form):
 	'''
 	A search form.

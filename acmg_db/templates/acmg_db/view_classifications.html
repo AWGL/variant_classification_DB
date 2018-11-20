@@ -17,6 +17,7 @@
           <th class='status'> Status </th>
           <th class='user'> User </th>
           <th class='creation_date'> Variant Classification </th>
+          <th class='action'> Action </th>
 
         </tr>
 
@@ -33,9 +34,31 @@
         <td> {{ classification.variant.get_genes}}</td>
         <td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
         <td> {{ classification.creation_date}}</td>
-        <td> {{ classification.status}} </td>
+        <td> {{ classification.display_status}} </td>
         <td> {{ classification.user_creator}} </td>
-        <td> {{ classification.final_class}} </td>
+        <td> {{ classification.display_classification}} </td>
+
+
+        <td> {% if classification.status == '0' %}
+
+
+        	<a href="{% url 'new_classification' pk=classification.pk %}" > Initial Analysis </a>
+
+
+        	{% elif classification.status == '1' %}
+
+
+        	<a href="{% url 'second_check' pk=classification.pk %}" > Second Check </a>
+
+        	{% else %}
+
+        	None
+
+
+        	{% endif %}
+
+
+         </td>
 
 
     </tr>
