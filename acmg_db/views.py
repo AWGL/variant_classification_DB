@@ -30,7 +30,8 @@ def home(request):
 
 		search_query = search_query.strip()
 
-		variant_info = validate_variant(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD )
+		variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
+
 
 		# If the variant has failed validation return to search screen and display error.
 		if variant_info[0] == False:
@@ -43,7 +44,7 @@ def home(request):
 
 			# Get varaint information e.g. chr, pos, ref, alt from the input
 
-			variant_data = process_variant(search_query)
+			variant_data = process_variant_input(search_query)
 
 			variant_hash = variant_data[0]
 			chromosome = variant_data[1]
@@ -67,18 +68,18 @@ def home(request):
 
 
 				gene, created = Gene.objects.get_or_create(
-					name = variant_transcript[1]
+					name = variant_transcript[3]
 					)
 
 				transcript, created = Transcript.objects.get_or_create(
-					name = variant_transcript[0].split(':')[0],
+					name = variant_transcript[1].split(':')[0],
 					gene = gene
 					)
 				
 				transcript_variant, created = TranscriptVariant.objects.get_or_create(
 					variant = variant,
 					transcript = transcript,
-					hgvs_c = variant_transcript[0],
+					hgvs_c = variant_transcript[1],
 					hgvs_p = variant_transcript[2]
 					)
 
@@ -96,7 +97,6 @@ def home(request):
 
 
 			return redirect(new_classification, new_classication.pk)
-
 
 	return render(request, 'acmg_db/home.html', {'form': form, 'error': None})
 
@@ -177,6 +177,7 @@ def new_classification(request, pk):
 
 		else:
 
+			n_previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).count()
 
 			transcript_variants = TranscriptVariant.objects.filter(variant=variant).exclude(transcript__name ='None')
 
@@ -194,7 +195,8 @@ def new_classification(request, pk):
 										 'transcript_variants': transcript_variants,
 										 'comments': comments,
 										 'sample_form': sample_form,
-										 'result': result })
+										 'result': result,
+										 'n_previous_classifications': n_previous_classifications })
 
 
 def ajax_acmg_classification(request):

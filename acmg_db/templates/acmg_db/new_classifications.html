@@ -7,7 +7,18 @@
 <br>
 
 <div class="alert alert-success">
-  You are analysing variant: <strong>{{variant.chromosome}}:g.{{variant.position}}{{variant.ref}}>{{variant.alt}} </strong>
+  You are analysing variant: <strong>{{variant.chromosome}}:{{variant.position}}{{variant.ref}}>{{variant.alt}}. </strong> 
+
+  {% if n_previous_classifications > 0 %}
+
+  	This variant has been classified <strong> {{n_previous_classifications}} times </strong> before.
+
+  {% endif %}
+
+
+
+
+
 </div>
 
 
@@ -24,60 +35,6 @@
 
   	<br>
 
-  <button class ="btn btn-success" data-toggle="collapse" data-target="#demo">Variant Detail</button>
-
-
-<button class="btn"><i class="fa fa-plus"></i></button>
-
-
-<div id="demo" class="collapse"> 
-
-	<br>
-<table id="variant_detail" class = "table table-hover table-bordered" style="width:100%">
-
-    <thead>
-
-        <tr>
-          <th class='transcript'> Transcript </th>
-          <th class='gene'> Gene </th>
-          <th class='hgvs_c'> HGVSc </th>
-          <th class='hgvs_p'> HGVSp </th>
-          <th class='exon_number'> Exon </th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-
-      	{% for transcript in transcript_variants %}
-
-      	<tr>	
-
-      		<td> {{transcript.transcript.name}} </td>
-      		<td> {{transcript.transcript.gene.name}} </td>
-      		<td> {{transcript.hgvs_c}} </td>
-      		<td> {{transcript.hgvs_p}} </td>
-      		<td> {{transcript.exon}} </td>
-
-
-      	</tr>
-
-
-
-      	{% endfor %}
-
-
-
-      </tbody>
-
-  </table>
-
-</div>
-
-
-
-  <hr> 
 
 
   {% crispy sample_form %}
@@ -129,7 +86,21 @@
 
       	{% for answer in answers %}
 
-      	<tr class='answer'>
+
+      	  {% if answer.classification_question.pathogenic_question == True and answer.selected == True %}
+
+            <tr class='answer table-danger'>
+
+          {% elif answer.classification_question.pathogenic_question == False and  answer.selected == True%}
+
+            <tr class='answer table-success'>
+
+           {% else %}
+
+           <tr class='answer'>
+
+
+            {% endif %}
 
         <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
         <td class='question'> {{ answer.classification_question.acmg_code  }} </td>
@@ -347,14 +318,41 @@ $(document).ready(function(){
 
 	$(".answer-selected").change(function(){
 
-		$(this).parent().parent()
+		// what is the value of the drop down
+		value = $(this).val()
+
+
+		// if true set the value to red or green depending on whether it is a P or B question
+		if (value == 'True'){
+
+			question = $(this).parent().siblings('td.question').text();
+
+			path = question.trim().substring(0, 1);
+
+
+			if (path == 'P'){
+
+				$(this).parent().parent().addClass("table-danger")
+
+
+			} else {
+
+				$(this).parent().parent().addClass("table-success")
+
+			}
+
+			
+
+		} else {
+
+			// remove classes when moving to false
+			$(this).parent().parent().removeClass("table-danger");
+			$(this).parent().parent().removeClass("table-success");
+
+
+		}
 
 	});
-
-
-
-
-
 
 
 	// When we click the submit ACMG

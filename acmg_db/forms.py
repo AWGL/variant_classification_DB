@@ -63,6 +63,10 @@ class SampleInformationForm(forms.Form):
 
 
 	sample_lab_number = forms.CharField(max_length=25)
+	transcript = forms.CharField(max_length=25)
+	hgvs_c = forms.CharField(max_length=50)
+	hgvs_p = forms.CharField(max_length=50)
+	exon = forms.CharField(max_length=10)
 	analysis_performed = forms.CharField(max_length=25)
 	other_changes = forms.CharField(max_length=25)
 	affected_with = forms.CharField(max_length=25)
@@ -108,7 +112,10 @@ class SampleInformationForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Submit for 2nd Check', css_class='btn-success acmg_submit'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-						Div('transcript_variants'),
+						Div('transcript'),
+						Div('hgvs_c'),
+						Div('hgvs_p'),
+						Div('exon'),
 						Field('sample_lab_number'),
 						Div('analysis_performed'),
 						Div('other_changes'),

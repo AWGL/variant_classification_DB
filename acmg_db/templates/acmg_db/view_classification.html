@@ -31,7 +31,7 @@
       <tr>
 
       <td> Variant </td>
-      <td> {{classification.variant.chromosome}}:g.{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+      <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
 
     </tr>
 
@@ -190,7 +190,16 @@
 
         {% for answer in classification_answers %}
 
-        <tr class='answer'>
+          {% if answer.classification_question.pathogenic_question %}
+
+            <tr class='answer table-danger'>
+
+          {% else %}
+
+            <tr class='answer table-success'>
+
+
+            {% endif %}
 
         <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
         <td class='question'> {{ answer.classification_question.acmg_code  }} </td>

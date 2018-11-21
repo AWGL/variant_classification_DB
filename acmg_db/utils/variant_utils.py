@@ -2,155 +2,6 @@ from suds.client import Client
 import hashlib
 import re
 
-def process_variant(hgvs_g):
-	"""
-	splits a hgvsg description such as chr17:g.41197732G>A
-
-	into [var_hash, chr, pos, ref, alt]
-
-	where  var_hash is the result of calling get_variant_hash() on the results.
-
-
-	"""
-
-	chromosome = hgvs_g.split(':')[0]
-
-	position = re.findall('\d+',hgvs_g.split(':')[1])[0]
-
-	ref = re.sub('[0-9]', '', hgvs_g.split('.')[1]).split('>')[0]
-	alt = re.sub('[0-9]', '', hgvs_g.split('.')[1]).split('>')[1]
-
-	var_hash = get_variant_hash(chromosome, position,ref, alt)
-
-	key = '{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=position, ref=ref, alt=alt)
-
-	return [var_hash, chromosome, position, ref, alt, key]
-
-
-
-
-
-def validate_variant(variant, mutalyzer_url, mutalyzer_build):
-	"""
-	Checks whether a variant is valid and gets some information about it \
-	from Mutalyzer.
-
-	Input:
-	variant = String: A string representing the genomic description of a variant e.g. 'chr17:g.41197732G>A'
-	mutalyzer_url = String: A string showing the mutalyzer wdsl URL e.g. 'https://mutalyzer.nl/services/?wsdl'
-	mutalyzer_build = String: A string showing the mutalyzer build e.g. 'hg19'
-
-	Returns:
-
-	list of lists showing whether the variant passed validation and information about a valid variant.
-
-	e.g.
-
-	[True, [['NM_007298.3:c.2243C>T', 'BRCA1'], ['NM_007297.3:c.5414C>T', 'BRCA1']]
-
-	or 
-
-	[False, ['Not a valid variant']]
-
-	"""
-
-	# Check that the user has inputted genomic coordinates
-
-	if variant[0:3] != 'chr':
-
-		return [False, ['variant not in right format e.g. chr17:g.41197732G>A']]
-
-	try:
-
-		# Make a connection to Mutalyzer
-		client = Client(mutalyzer_url, cache=None)
-		wsdl_o = client.service
-
-	except:
-
-		return [False, ['Could not connect to Mutalyzer.']]
-
-	# Convert the position to a number of various locations in the genome i.e. \
-	# convert an entered genomic coordinate into transcript hgvs c
-
-	try:
-		response_positions = wsdl_o.numberConversion(build=mutalyzer_build, variant=variant)
-		response_positions = dict(response_positions)
-
-	except:
-
-		return [False, ['Mutalyzer does not recognise this as a valid variant.']]
-
-	
-	# get the first of these and validate that the user has entered a real variant!
-
-	try:
-
-		variant_to_validate = response_positions['string'][0]
-
-	except:
-
-		return [False, ['Mutalyzer does not recognise this as a valid variant.']]
-
-
-	variant_info = process_variant(variant)
-
-	response_name_check = wsdl_o.runMutalyzerLight(variant_to_validate)
-
-	response_name_check = dict(response_name_check)
-
-	# Check the number of errors - if 0 then we pass
-
-	n_errors = response_name_check['errors']
-
-	if n_errors == 0:
-
-		transcript_and_genes = []
-
-		gene_name = variant_to_validate
-
-		#Now get the gene name for each transcript
-
-		for transcript in response_positions['string']:
-
-			if transcript[0:2] != 'NR':
-
-				response_name_check = wsdl_o.runMutalyzerLight(transcript)
-			
-				response_name_check = dict(response_name_check)
-			
-				protein_info = response_name_check['proteinDescriptions']
-
-				if protein_info != None:
-
-					protein_hgvs = dict(response_name_check['proteinDescriptions'])
-
-					protein_hgvs = protein_hgvs['string'][0]
-
-					if transcript[0:3] != 'LRG':
-
-						protein_hgvs_start = protein_hgvs.split(':')[0]
-						protein_hgvs_end = protein_hgvs.split(':')[1]
-
-						open_parentheses_location = protein_hgvs_start.find('(')
-
-						protein_hgvs = protein_hgvs_start[0:open_parentheses_location]+ ':' + protein_hgvs_end 
-
-
-				legend = dict(response_name_check['legend'])
-
-				gene =  dict(legend['LegendRecord'][0])['name']
-
-				gene = gene.split('_')[0]
-
-				transcript_and_genes.append([transcript, gene, protein_hgvs ])
-
-		return [True, transcript_and_genes]
-
-	else:
-
-		return [False, ['Not a valid variant.']]
-
 
 def get_variant_hash(chromosome, pos, ref,alt):
 	"""
@@ -166,6 +17,199 @@ def get_variant_hash(chromosome, pos, ref,alt):
 	hash_id = hashlib.sha256(hash_string).hexdigest()
 
 	return hash_id
+
+
+def process_variant_input(variant_input):
+
+	chromosome = variant_input.split(':')[0]
+
+	position = re.findall('\d+',variant_input.split(':')[1])[0]
+
+	ref = re.sub('[0-9]', '', variant_input.split(':')[1].split('>')[0])
+
+	alt = re.sub('[0-9]', '', variant_input.split(':')[1].split('>')[1])
+
+	var_hash = get_variant_hash(chromosome, position,ref, alt)
+
+	key = '{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=position, ref=ref, alt=alt)
+
+	return (var_hash, chromosome, position, ref, alt, key)
+
+
+def get_variant_info_mutalzer(variant, mutalyzer_url, mutalyzer_build):
+	"""
+	Checks whether a variant is valid and gets some information about it \
+	from Mutalyzer.
+
+	Input:
+	variant = String: A string representing the genomic description of a variant e.g. '17:41197732G>A'
+	mutalyzer_url = String: A string showing the mutalyzer wdsl URL e.g. 'https://mutalyzer.nl/services/?wsdl'
+	mutalyzer_build = String: A string showing the mutalyzer build e.g. 'hg19'
+
+	Returns:
+
+	list of lists showing whether the variant passed validation and information about a valid variant.
+
+	
+
+	"""
+
+	try:
+
+		# Make a connection to Mutalyzer
+		client = Client(mutalyzer_url, cache=None)
+		wsdl_o = client.service
+
+	except:
+
+		return [False, ['Could not connect to Mutalyzer website - Please contact Bioinformatics Department.']]
+
+	# Convert the position to a number of various locations in the genome i.e. \
+	# convert an entered genomic coordinate into transcript hgvs c
+
+
+	# Build a variant for input to Mutalyzer 
+
+	variant_info = process_variant_input(variant)
+
+	chromosome = variant_info[1]
+
+	del_start = variant_info[2]
+
+	ref = variant_info[3]
+
+	alt = variant_info[4]
+
+	del_end = int(del_start) + len(ref)-1
+
+	
+	variant_desc = f'chr{chromosome}:g.{del_start}_{del_end}del{ref}ins{alt}'
+
+	try:
+
+		mutalyzer_pos_response = wsdl_o.numberConversion(build=mutalyzer_build, variant=variant_desc)
+		mutalyzer_pos_response = dict(mutalyzer_pos_response)
+
+	except:
+
+		return [False, ['Mutalyzer does not recognise this as a valid variant.']]
+
+
+	#Now check if we have a valid variant description
+
+	try:
+
+		mutalyzer_chrom_response = wsdl_o.chromAccession(build=mutalyzer_build, name = 'chr'+str(chromosome))
+
+		new_variant_description = f'{mutalyzer_chrom_response}:g.{del_start}_{del_end}del{ref}ins{alt}'
+
+		mutalyzer_light_response = wsdl_o.runMutalyzerLight(new_variant_description)
+
+		print (mutalyzer_light_response)
+
+		mutalyzer_light_response = dict(mutalyzer_light_response)
+
+		if mutalyzer_light_response['errors'] > 0:
+
+			return [False, ['Mutalyzer does not recognise this as a valid variant.']]
+
+	except:
+
+		return [False, ['Mutalyzer does not recognise this as a valid variant.']]
+
+
+	transcript_variant_list = mutalyzer_pos_response['string']
+
+	print (transcript_variant_list)
+
+	try:
+
+		first_variant = transcript_variant_list[0]
+
+	except:
+
+		return [False, ['Mutalyzer does not recognise this as a valid variant.']]
+
+
+	transcript_variant_info = []
+
+	for transcript_variant in transcript_variant_list:
+
+		if transcript_variant[0:2] != 'NR':
+
+			mutalyzer_light_response =  wsdl_o.runMutalyzerLight(transcript_variant)
+
+			mutalyzer_light_response = dict(mutalyzer_light_response)
+
+			if mutalyzer_light_response['errors'] == 0:
+
+				#Get corrrect hgvs c info
+
+				hgvs_c = mutalyzer_light_response['transcriptDescriptions']
+
+				if hgvs_c != None:
+
+					hgvs_c = dict(hgvs_c)
+
+					hgvs_c = hgvs_c['string'][0]
+
+					if transcript_variant[0:3] != 'LRG':
+
+							hgvsc_start = hgvs_c.split(':')[0]
+							hgvsc_end = hgvs_c.split(':')[1]
+
+							open_parentheses_location = hgvsc_start.find('(')
+
+							hgvs_c = hgvsc_start[0:open_parentheses_location]+ ':' + hgvsc_end
+
+				#Get correct hgvs_p info
+
+				hgsv_p = mutalyzer_light_response['proteinDescriptions']
+
+				if hgsv_p != None:
+
+					hgvs_p = dict(hgsv_p)
+
+					hgvs_p = hgvs_p['string'][0]
+
+					if transcript_variant[0:3] != 'LRG':
+
+						hgvs_p_start = hgvs_p.split(':')[0]
+						hgvs_p_end = hgvs_p.split(':')[1]
+
+						open_parentheses_location = hgvs_p.find('(')
+
+						hgvs_p = hgvs_p_start[0:open_parentheses_location]+ ':' + hgvs_p_end
+
+				#get gene info
+
+				legend = mutalyzer_light_response['legend']
+
+				if legend != None:
+
+					gene =  dict(legend['LegendRecord'][0])['name']
+
+					gene = gene.split('_')[0]
+
+				else:
+
+					gene = None
+
+				transcript_variant_info.append([variant,hgvs_c, hgvs_p, gene])
+
+
+
+			else:
+
+				pass
+
+
+	print (transcript_variant_info)
+
+	return [True,transcript_variant_info]
+
+
+
 
 
 
