@@ -36,11 +36,15 @@ First install Conda/Miniconda from [2]. Then type the following commands in your
 
 There are also some options in mysite/settings.py that may need to be changed:
 
+SECRET_KEY = 'xxxxxx'
+
+ALLOWED_HOSTS = ['127.0.0.1']
+
 MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 
 MUTALYZER_BUILD = 'hg19' 
 
-Set these to your preferred settings or use the default.
+Set these to your preferred settings or use the default. The secret key should be changed if running in production.
 
 ## Test
 

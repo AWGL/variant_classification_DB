@@ -25,7 +25,7 @@ SECRET_KEY = '-#^pc5%n_!*d0s_t1xq83vzx%706#u+0y$itz*ltbc(((yzu*1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '10.59.210.245', '10.59.210.247']
 
 
 # Application definition
@@ -125,7 +125,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 
 MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 
