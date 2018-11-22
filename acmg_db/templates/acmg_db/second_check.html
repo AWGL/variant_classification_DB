@@ -116,9 +116,14 @@
         <tbody>
 
           {% for answer in classification_answers %}
-            <tr class='answer'>
+
+          {% if answer.classification_question.pathogenic_question %}
+          <tr class='answer table-danger'>
+        {% else %}
+            <tr class='answer table-success'>
+            {% endif %}
               <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
-              <td class='question'> {{ answer.classification_question.acmg_code  }} </td>
+              <td class='question'> <a href="#" data-toggle="tooltip" title="" data-original-title="{{answer.classification_question.text}}"> {{ answer.classification_question.acmg_code  }}</a> </td>
               <td class='strength'>
                 {{answer.strength}}
               </td>
@@ -201,7 +206,13 @@
 <script>
 
 $(document).ready(function(){
-  //runs when a file is selected
+ 
+  //activate toggle hover overs
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
+   //runs when a file is selected
   $('#file_upload').on('change', function() { 
 
     var file = this.files[0];

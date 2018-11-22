@@ -107,7 +107,7 @@
             <tr class='answer table-success'>
             {% endif %}
             <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
-            <td class='question'> {{ answer.classification_question.acmg_code  }} </td>
+            <td class='question'> <a href="#" data-toggle="tooltip" title="" data-original-title="{{answer.classification_question.text}}"> {{ answer.classification_question.acmg_code  }}</a> </td>
             <td class='strength'>
               {{answer.strength}}
             </td>
@@ -140,4 +140,18 @@
         </div>
         <hr>
       {% endfor %}
-    {% endblock %}
+
+
+
+<script>
+$(document).ready(function(){
+
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
+});
+
+</script>
+
+{% endblock %}
