@@ -241,8 +241,16 @@ def adjust_strength(user_classifications):
 
 	"""
 	Takes a user list of classifications such as [('PVS1', 'PS'), ('PS1', 'PS')]] \
-
+	where the first item in the tuple is the ACMG tag and the second is the strength.
 	and adjusts the strength of the ACMG tags if needed.
+
+	Input:
+
+	user_classifications: list: e.g. [('PVS1', 'PS'), ('PS1', 'PS')]]
+
+	Output:
+
+	updated_classifications: list:  e.g. [PSS1, PS1]
 
 	"""
 
@@ -254,6 +262,7 @@ def adjust_strength(user_classifications):
 		acmg_code = classification[0]
 		strength = classification[1]
 
+		# if the furst two letters do not match the strength.
 		if strength != acmg_code[:2]:
 
 			new_acmg_code = strength + acmg_code[2:]
@@ -271,6 +280,10 @@ def adjust_strength(user_classifications):
 
 
 def classify(user_classifications):
+	"""
+	Combine the functions and calculate final class
+
+	"""
 
 	pathogenic_class = get_pathogenicity_classification(user_classifications)
 	benign_class = get_benign_classification(user_classifications)
@@ -288,7 +301,6 @@ def main():
 
 	path_rating = get_pathogenicity_classification(user_classifications)
 	benign_rating = get_benign_classification(user_classifications)
-
 
 	print (classify(user_classifications))
 

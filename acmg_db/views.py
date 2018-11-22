@@ -18,18 +18,26 @@ def home(request):
 
 	Allows users to create a new classification for a variant.
 
-
 	"""
 
 	form = SearchForm()
 
 	# If the user has searched for something
-	if request.GET.get("search") != "" and request.GET.get("search") != None:
+	if request.GET.get('search') != '' and request.GET.get('search') != None:
 
-		search_query = request.GET.get("search")
 
+		# Get the user input from the form.
+		search_query = request.GET.get('search')
 		search_query = search_query.strip()
+		gene_query = request.GET.get('gene').strip()
+		transcript_query = request.GET.get('transcript').strip()
+		hgvs_c_query = request.GET.get('hgvs_c').strip()
+		hgvs_p_query = request.GET.get('hgvs_p').strip()
+		exon_query = request.GET.get('exon').strip()
 
+
+		# Validate the variant using Mutalyzer - i.e. is the variant real?
+		# We only check if the chr-pos-ref-alt is real not if gene etc is correct.
 		variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
 
 
@@ -41,7 +49,6 @@ def home(request):
 		else:
 
 			# Add variant to DB if not already present
-
 			# Get varaint information e.g. chr, pos, ref, alt from the input
 
 			variant_data = process_variant_input(search_query)
@@ -53,6 +60,9 @@ def home(request):
 			alt = variant_data[4]
 			key = variant_data[5]
 
+
+			# Create the objects
+
 			variant, created = Variant.objects.get_or_create(
     				key = key,
     				variant_hash = variant_hash,
@@ -62,56 +72,58 @@ def home(request):
     				alt = alt
 					)
 
-			# Loop through each transcript and gene in the variant info list and add to DB \
-			# if we have not seen it before.
-			for variant_transcript in variant_info[1]:
 
+			gene, created = Gene.objects.get_or_create(
+				name = gene_query
+				)
 
-				gene, created = Gene.objects.get_or_create(
-					name = variant_transcript[3]
-					)
+			transcript, created = Transcript.objects.get_or_create(
+				name = transcript_query,
+				gene = gene
+				)
 
-				transcript, created = Transcript.objects.get_or_create(
-					name = variant_transcript[1].split(':')[0],
-					gene = gene
-					)
-				
-				transcript_variant, created = TranscriptVariant.objects.get_or_create(
-					variant = variant,
-					transcript = transcript,
-					hgvs_c = variant_transcript[1],
-					hgvs_p = variant_transcript[2]
-					)
+			transcript_variant, created = TranscriptVariant.objects.get_or_create(
+				variant = variant,
+				transcript = transcript,
+				hgvs_c = hgvs_c_query,
+				hgvs_p = hgvs_p_query,
+				exon = exon_query
 
+				)
 
-			new_classication = Classification.objects.create(
+			new_classification_obj = Classification.objects.create(
 				variant= variant,
 				creation_date = timezone.now(),
 				user_creator = request.user,
-				status = '0'
+				status = '0',
+				selected_transcript_variant = transcript_variant
 				)
 
-			new_classication.save()
+			new_classification_obj.save()
 
-			new_classication.initiate_classification()
+			new_classification_obj.initiate_classification()
 
-
-			return redirect(new_classification, new_classication.pk)
+			# Go to the new_classification page.
+			return redirect(new_classification, new_classification_obj.pk)
 
 	return render(request, 'acmg_db/home.html', {'form': form, 'error': None})
 
 
-
+@login_required
 def new_classification(request, pk):
 	"""
-	Page for entering new classifications
+	Page for entering new classifications.
 
+	Has the following featues:
+
+	1) Form for entering classification data e.g. sample_lab_number
+	2) ACMG classifier.
+	3) Comments and Evidence.
 
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
 	variant = classification.variant
-
 
 	#reject if wrong status or user
 	if classification.status != '0' or request.user != classification.user_creator:
@@ -120,46 +132,15 @@ def new_classification(request, pk):
 
 	else:
 
+		# If the user has submitted the SampleInformationForm
 		if request.method == 'POST':
 
 			sample_form = SampleInformationForm(request.POST, classification_pk = classification.pk)
 
 			if sample_form.is_valid():
 
+				# Update models
 				cleaned_data = sample_form.cleaned_data
-
-				if cleaned_data['transcript_variants'] == 'None':
-
-					gene, created = Gene.objects.get_or_create(
-						name = 'None'
-						)
-
-					transcript, created = Transcript.objects.get_or_create(
-						name = 'None',
-						gene = gene
-						)
-
-					transcript_variants = TranscriptVariant.objects.filter(
-						variant = variant,
-						transcript = transcript,
-						)
-
-					if len(transcript_variants) == 0:
-
-						transcript_variant = TranscriptVariant(variant=variant,
-							transcript= transcript)
-
-						transcript_variant.save()
-
-					else:
-
-						transcript_variant = transcript_variants[0]
-
-
-				else:
-
-					transcript_variant = get_object_or_404(TranscriptVariant, pk =cleaned_data['transcript_variants'])
-
 				classification.sample_lab_number = cleaned_data['sample_lab_number']
 				classification.analysis_performed = cleaned_data['analysis_performed']
 				classification.other_changes = cleaned_data['other_changes']
@@ -167,7 +148,6 @@ def new_classification(request, pk):
 				classification.trio_de_novo = cleaned_data['trio_de_novo']
 				classification.inheritance_pattern = cleaned_data['inheritance_pattern']
 				classification.final_class = cleaned_data['final_classification']
-				classification.selected_transcript_variant = transcript_variant
 				classification.conditions = cleaned_data['conditions']
 				classification.status = '1'
 
@@ -177,9 +157,8 @@ def new_classification(request, pk):
 
 		else:
 
+			# How many times have we seen the variant before.
 			n_previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).count()
-
-			transcript_variants = TranscriptVariant.objects.filter(variant=variant).exclude(transcript__name ='None')
 
 			answers = ClassificationAnswer.objects.filter(classification=classification)
 
@@ -192,19 +171,16 @@ def new_classification(request, pk):
 			return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
 										 'classification': classification,
 										 'variant': variant,
-										 'transcript_variants': transcript_variants,
 										 'comments': comments,
 										 'sample_form': sample_form,
 										 'result': result,
 										 'n_previous_classifications': n_previous_classifications })
 
-
+@login_required
 def ajax_acmg_classification(request):
 	"""
 	Gets the ajax results from the new_classifcations.html page \
 	and stores them in the database - also returns the calculated result.
-	
-
 	"""
 
 	if request.is_ajax():
@@ -238,7 +214,7 @@ def ajax_acmg_classification(request):
 	return HttpResponse(html)
 
 
-
+@login_required
 def ajax_comments(request):
 	"""
 	Ajax View - when the user clicks the upload comment/file button \
@@ -311,23 +287,22 @@ def ajax_comments(request):
 
 		raise Http404
 
+@login_required
 def view_previous_classifications(request):
 	"""
 	Page to view previous classifications
 
 	"""
 
-
 	classifications = Classification.objects.all().order_by('-creation_date')
 
 	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 
 
-
+@login_required
 def view_classification(request, pk):
 	"""
 	View a read only version of a classification of a variant
-
 
 	"""
 
@@ -343,15 +318,20 @@ def view_classification(request, pk):
 									 'classification_answers': classification_answers,
 									 'comments': comments})
 
-
+@login_required
 def second_check(request, pk):
 	"""
 	Page for user to perform second check.
 
+	User selects Accept or Reject
 
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
+
+	if classification.status != '1':
+
+		return HttpResponseForbidden()
 
 	if request.method == 'POST':
 
@@ -366,20 +346,16 @@ def second_check(request, pk):
 			# if we have accepted the classification
 			if accept_or_reject == '1':
 
-
-
+				# Update classification with new data e.g. change status to complete.
 				classification.status = '2'
-
 				classification.second_check_date = timezone.now()
 				classification.user_second_checker = request.user
-
 				classification.save()
 
 			else:
-
+				# Set status to Initial Analysis.
 				classification.status = '0'
 				classification.save()
-
 
 			return redirect(home)
 
@@ -397,22 +373,6 @@ def second_check(request, pk):
 									 'classification_answers': classification_answers,
 									 'comments': comments,
 									 'second_check_form': second_check_form})
-
-def add_transcript_variant(request):
-
-	"""
-	Page for the user to add a transcript variant if needed.
-
-
-	"""
-
-	pass
-
-
-
-
-
-
 
 
 

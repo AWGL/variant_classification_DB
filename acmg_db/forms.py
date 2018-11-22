@@ -40,6 +40,12 @@ class SearchForm(forms.Form):
 	See the seach view for more information.
 	'''
 	search = forms.CharField(required=False, max_length=255)
+	gene = forms.CharField(max_length=25)
+	transcript = forms.CharField(max_length=25)
+	hgvs_c = forms.CharField(max_length=50)
+	hgvs_p = forms.CharField(max_length=50)
+	exon = forms.CharField(max_length=10)
+
 
 	def __init__(self, *args, **kwargs):
 
@@ -54,26 +60,35 @@ class SearchForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 
-					Field(
-						'search',
-						placeholder='Enter a variant to classify', title=False))
+					Field('search',placeholder='Enter a variant to classify', title=False),
+					Field('gene', placeholder='Enter a gene name', title=False),
+					Field('transcript',placeholder='Enter a transcript name', title=False),
+					Field('hgvs_c',placeholder='Enter the HGVSc for the variant', title=False),
+					Field('hgvs_p',placeholder='Enter the HGVSc for the variant', title=False),
+					Field('exon',placeholder='Enter the exon number for the variant', title=False)
+
+					)
 
 
 class SampleInformationForm(forms.Form):
+	"""
+	Form for storing Sample Information.
 
+	Note that this form originally had data from multiple models in hence the \
+	unneeded complexity - could just be a model form really.
+
+	Keep it this way in case we add automatic transcript-gene annotation back in.
+
+	"""
 
 	sample_lab_number = forms.CharField(max_length=25)
-	transcript = forms.CharField(max_length=25)
-	hgvs_c = forms.CharField(max_length=50)
-	hgvs_p = forms.CharField(max_length=50)
-	exon = forms.CharField(max_length=10)
-	analysis_performed = forms.CharField(max_length=25)
-	other_changes = forms.CharField(max_length=25)
-	affected_with = forms.CharField(max_length=25)
+	analysis_performed = forms.CharField(max_length=50)
+	other_changes = forms.CharField(max_length=50)
+	affected_with = forms.CharField(max_length=50)
 	trio_de_novo = forms.BooleanField(required=False)
 	inheritance_pattern = forms.CharField(max_length=30)
 	conditions = forms.CharField(widget=forms.Textarea)
-	final_classification = forms.CharField(max_length=25)
+	final_classification = forms.CharField(max_length=50)
 	transcript_variants = forms.ChoiceField(required=False)
 
 
@@ -81,15 +96,10 @@ class SampleInformationForm(forms.Form):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
-		self.variant = Variant.objects.get(key = self.classification.variant.key)
-		self.transcript_variants = TranscriptVariant.objects.filter(variant=self.variant).exclude(transcript__name = 'None')
-		self.choices = [(transcript_variant.pk, transcript_variant.hgvs_c) for transcript_variant in self.transcript_variants] + [('None', 'None')]
 
 		super(SampleInformationForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-
-		self.fields['transcript_variants'].choices = self.choices
 		self.fields['sample_lab_number'].initial = self.classification.sample_lab_number
 		self.fields['analysis_performed'].initial = self.classification.analysis_performed
 		self.fields['other_changes'].initial = self.classification.other_changes
@@ -98,12 +108,6 @@ class SampleInformationForm(forms.Form):
 		self.fields['inheritance_pattern'].initial = self.classification.inheritance_pattern
 		self.fields['conditions'].initial = self.classification.conditions
 		self.fields['final_classification'].initial = self.classification.final_class
-
-		try:
-			self.fields['transcript_variants'].initial = self.classification.selected_transcript_variant.pk
-		except:
-			pass
-
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -112,10 +116,6 @@ class SampleInformationForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Submit for 2nd Check', css_class='btn-success acmg_submit'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-						Div('transcript'),
-						Div('hgvs_c'),
-						Div('hgvs_p'),
-						Div('exon'),
 						Field('sample_lab_number'),
 						Div('analysis_performed'),
 						Div('other_changes'),

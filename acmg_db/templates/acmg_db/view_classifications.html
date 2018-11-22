@@ -1,95 +1,58 @@
 {% extends 'acmg_db/base.html' %}
 {% load static %}
 {% block content %}
-
-<br> 
-
-<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
-
-    <thead>
-
-        <tr>
-          <th class='classifiation_pk'> Classification ID </th>
-          <th class='variant'> Variant </th>
-          <th class='gene'> Gene </th>
-          <th class='hgvsc'> HGVSc </th>
-          <th class='creation_date'> Created Date </th>
-          <th class='status'> Status </th>
-          <th class='user'> User </th>
-          <th class='creation_date'> Variant Classification </th>
-          <th class='action'> Action </th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-      	{% for classification in classifications %}
-
-      	<tr>
-
-        <td> <a href="{% url 'view_classification' pk=classification.pk %}" >{{classification.pk}} </a></td>
-        <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
-        <td> {{ classification.variant.get_genes}}</td>
-        <td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
-        <td> {{ classification.creation_date}}</td>
-        <td> {{ classification.display_status}} </td>
-        <td> {{ classification.user_creator}} </td>
-        <td> {{ classification.display_classification}} </td>
-
-
-        <td> {% if classification.status == '0' %}
-
-
-        	<a href="{% url 'new_classification' pk=classification.pk %}" > Initial Analysis </a>
-
-
-        	{% elif classification.status == '1' %}
-
-
-        	<a href="{% url 'second_check' pk=classification.pk %}" > Second Check </a>
-
-        	{% else %}
-
-        	None
-
-
-        	{% endif %}
-
-
-         </td>
-
-
-    </tr>
-
-
-    {% endfor %}
-
-</tbody>
-
-
+	<br>
+	<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+		<thead>
+			<tr>
+				<th class='classifiation_pk'> Classification ID </th>
+				<th class='variant'> Variant </th>
+				<th class='gene'> Gene </th>
+				<th class='hgvsc'> HGVSc </th>
+				<th class='sample'> Sample </th>
+				<th class='creation_date'> Created Date </th>
+				<th class='status'> Status </th>
+				<th class='user'> User </th>
+				<th class='creation_date'> Variant Classification </th>
+				<th class='action'> Action </th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for classification in classifications %}
+				<tr>
+					<td> <a href="{% url 'view_classification' pk=classification.pk %}" >{{classification.pk}} </a></td>
+					<td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
+					<td> {{ classification.variant.get_genes}}</td>
+					<td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
+					<td> {{ classification.sample_lab_number}}</td>
+					<td> {{ classification.creation_date}}</td>
+					<td> {{ classification.display_status}} </td>
+					<td> {{ classification.user_creator}} </td>
+					<td> {{ classification.display_classification}} </td>
+					<td>
+						 {% if classification.status == '0' %}
+						<a href="{% url 'new_classification' pk=classification.pk %}" > Initial Analysis </a>
+						{% elif classification.status == '1' %}
+						<a href="{% url 'second_check' pk=classification.pk %}" > Second Check </a>
+						{% else %}
+						None
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+	</tbody>
 </table>
 
 <script>
-
-
 $(document).ready(function(){
-
 	// Inititialise DataTable
 	var table = $('#classifications').DataTable({
-        "paging":   false,
-        "ordering": true,
-        "info":     false,
-        "searching": true,
-        "aaSorting": []
-    });
-
-
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"searching": true,
+		"aaSorting": []
+	});
 });
-
 </script>
-
-
-
-{% endblock %}  
+{% endblock %}

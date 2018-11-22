@@ -1,6 +1,23 @@
 from django.db import models
 from .utils import acmg_classifier
+from auditlog.registry import auditlog
+from auditlog.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 
+"""
+Some models for the Database
+
+- Please note that the software was originally designed with the idea that a variant could be /
+found in many different transcripts and the user would select one from a selection automatcally pulled from \
+an annotation source. This feature was removed but the overall models still reflect this so that it can be added \
+at a future date if required.
+
+- This software is designed simply and is not fully normalised. Should still provide enough structure so that the \
+data can be exported and inported into a futire variant database.
+
+
+
+"""
 
 class Variant(models.Model):
 
@@ -19,6 +36,11 @@ class Variant(models.Model):
 
 	def get_genes(self):
 
+		"""
+		Return a list of all genes the variant is found in.
+
+		"""
+
 		variant_transcripts = TranscriptVariant.objects.filter(variant=self).exclude(transcript__name = 'None')
 
 		genes = ';'.join(list(set([transcript.transcript.gene.name for transcript in variant_transcripts])))
@@ -31,7 +53,6 @@ class Gene(models.Model):
 	"""
 	Class to hold a gene model.
 
-
 	"""
 
 	name = models.CharField(max_length=25, primary_key=True)
@@ -40,7 +61,7 @@ class Gene(models.Model):
 class Transcript(models.Model):
 
 	"""
-	Class to hold a transcript e.g NM0001.2
+	Class to hold a transcript e.g NM_007298.3
 
 	"""
 
@@ -50,7 +71,11 @@ class Transcript(models.Model):
 
 class TranscriptVariant(models.Model):
 	"""
-	Class to link a variant with a transcript
+	Class to link a variant with a transcript.
+
+	A variant can potentially fall within many transcripts.
+
+	Holds data on HGVS as well as exon
 
 	"""
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
@@ -62,32 +87,38 @@ class TranscriptVariant(models.Model):
 class Classification(models.Model):
 
 	"""
-	Class to hold results of ACMG classification
+	Class to hold results of ACMG classification.
 
+	The overall model for storing classifications is as follows;
+
+	1) Classification class holds a unique classification. A variant can be classified many times.
+	2) Each classification is initiated and the ACMG answers (ClassificationAnswer) are created from ClassificationQuestions
+	3) The ClassificationAnswer class stores what the user selected for each question.
 
 	"""
 
+	# Some choices for the CharFields
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
 
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+	#which variant transcript is associated with the classification.
 	selected_transcript_variant = models.ForeignKey(TranscriptVariant, on_delete=models.CASCADE, null=True, blank=True)
 	creation_date = models.DateTimeField()
 	second_check_date = models.DateTimeField(null=True, blank=True)
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='user_creator')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
 	status = models.CharField(max_length=1, choices =STATUS_CHOICES, default='0')
-	final_class = models.CharField(max_length=25, null=True, blank=True)
+	final_class = models.CharField(max_length=50, null=True, blank=True)
 
 	sample_lab_number = models.CharField(max_length=25, null =True, blank=True)
-	analysis_performed = models.CharField(max_length=25, null =True, blank=True)
-	other_changes = models.CharField(max_length=25, null =True, blank=True)
-	affected_with = models.CharField(max_length=25, null =True, blank=True)
+	analysis_performed = models.CharField(max_length=50, null =True, blank=True)
+	other_changes = models.CharField(max_length=50, null =True, blank=True)
+	affected_with = models.CharField(max_length=50, null =True, blank=True)
 	trio_de_novo = models.BooleanField(null =True, blank=True)
 	inheritance_pattern = models.CharField(max_length=30, null=True, blank=True)
 	conditions = models.TextField(null=True, blank=True)
-
 
 	def display_status(self):
 		"""
@@ -119,17 +150,13 @@ class Classification(models.Model):
 
 	def initiate_classification(self):
 		"""
-		When a user creates a new classicication for a variant then we \
-		need to create the ClassificationAnswer objects.
-
-		This function does that.
-
+		Creates the needed ClassificationAnswer objects for a new classification.
 
 		"""
 
-
 		answers = ClassificationAnswer.objects.filter(classification=self)
 
+		#Check we're not running the function twice
 		if len(answers) == 0:
 
 			questions = ClassificationQuestion.objects.all()
@@ -147,15 +174,25 @@ class Classification(models.Model):
 
 				new_answer.save()
 
+		else:
+
+			return HttpResponseForbidden()
+
+
 		return None
 
 
 	def calculate_acmg_score(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+
+		"""
 
 		classification_answers = ClassificationAnswer.objects.filter(classification=self)
 
 		all_questions_count = ClassificationQuestion.objects.all().count()
 
+		#Check we have all the answers
 		if len(classification_answers) != all_questions_count:
 
 			return False
@@ -164,6 +201,7 @@ class Classification(models.Model):
 
 		tags = []
 
+		# Only get the ones where the user has selected True
 		for answer in classification_answers:
 
 			if answer.selected == True:
@@ -182,11 +220,14 @@ class Classification(models.Model):
 		return False
 
 
-
-
-
-
 class ClassificationQuestion(models.Model):
+	"""
+	Model to hold the possible questions that a user may be asked.
+
+	That is hold all the ACMG questions e.g. PVS1
+
+
+	"""
 
 	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
 	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
@@ -197,14 +238,19 @@ class ClassificationQuestion(models.Model):
 	order = models.IntegerField()
 	text = models.TextField()
 	default_strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
-	allowed_strength_change = models.BooleanField()
+	allowed_strength_change = models.BooleanField() #Can the user change the strength?
 	pathogenic_question = models.BooleanField()
 
 	def __str__ (self):
 		return self.acmg_code
 
-
 	def strength_options(self):
+		"""
+		Returns the strength options for a question.
+
+		Used to create a choice field in the relevant forms.
+
+		"""
 
 		if self.allowed_strength_change == False:
 
@@ -223,6 +269,11 @@ class ClassificationQuestion(models.Model):
 
 
 class ClassificationAnswer(models.Model):
+	"""
+	Stores the user selected answer (True, False) and the selected strength for each \
+	ClassificationQuestion in a Classification.
+
+	"""
 
 	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
 	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
@@ -237,7 +288,7 @@ class UserComment(models.Model):
 
 	"""
 
-	A class to hold a comment by a user against a classification.
+	A class to hold a comment by a user against a Classification object.
 
 	"""
 	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
@@ -247,7 +298,10 @@ class UserComment(models.Model):
 
 
 	def get_evidence(self):
+		"""
+		Return the evidence associated with a comment.
 
+		"""
 		evidence = Evidence.objects.filter(comment=self)
 
 		if len(evidence) == 0:
@@ -255,7 +309,6 @@ class UserComment(models.Model):
 			return None
 
 		return evidence
-
 
 class Evidence(models.Model):
 	"""
@@ -265,6 +318,10 @@ class Evidence(models.Model):
 	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
 
-
+auditlog.register(Variant)
+auditlog.register(Classification)
+auditlog.register(ClassificationQuestion)
+auditlog.register(ClassificationAnswer)
+auditlog.register(UserComment)
 
 
