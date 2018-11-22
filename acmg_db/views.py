@@ -318,9 +318,12 @@ def view_classification(request, pk):
 
 	comments = UserComment.objects.filter(classification=classification)
 
+	acmg_result = classification.calculate_acmg_score()
+
 	return render(request, 'acmg_db/view_classification.html', {'classification': classification,
 									 'classification_answers': classification_answers,
-									 'comments': comments})
+									 'comments': comments,
+									 'acmg_result': acmg_result})
 
 @login_required
 def second_check(request, pk):
@@ -373,10 +376,13 @@ def second_check(request, pk):
 
 		second_check_form = SecondCheckForm(classification_pk=classification.pk)
 
+		acmg_result = classification.calculate_acmg_score()
+
 		return render(request, 'acmg_db/second_check.html', {'classification': classification,
 									 'classification_answers': classification_answers,
 									 'comments': comments,
-									 'second_check_form': second_check_form})
+									 'second_check_form': second_check_form,
+									 'acmg_result': acmg_result})
 
 def signup(request):
 

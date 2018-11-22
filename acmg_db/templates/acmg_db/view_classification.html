@@ -19,7 +19,7 @@
       </tr>
       <tr>
         <td> Classification </td>
-        <td> {{classification.final_class}} </td>
+        <td> <strong> {{classification.final_class}} </strong> </td>
       </tr>
       <tr>
         <td> Transcript </td>
@@ -119,6 +119,16 @@
         {% endfor %}
       </tbody>
     </table>
+
+
+    <div class="alert alert-warning">
+    <strong> ACMG Classification : {{acmg_result}} </strong>
+    </div>
+
+
+
+
+
     <hr>
     <h3> Comments and Evidence </h3>
     <hr>

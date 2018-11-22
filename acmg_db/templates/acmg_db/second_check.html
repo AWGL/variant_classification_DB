@@ -30,8 +30,8 @@
             <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
           </tr>
           <tr>
-            <td> Classification </td>
-            <td> {{classification.final_class}} </td>
+            <td> Final Classification </td>
+            <td><strong>{{classification.final_class}}</strong> </td>
           </tr>
           <tr>
             <td> Transcript </td>
@@ -136,6 +136,10 @@
 
         </tbody>
       </table>
+
+      <div class="alert alert-warning">
+        <strong> ACMG Classification : {{acmg_result}} </strong>
+      </div>
 
       {% crispy second_check_form %}
 
