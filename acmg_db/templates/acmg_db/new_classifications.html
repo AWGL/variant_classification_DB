@@ -155,9 +155,11 @@
 
 <script>
 $(document).ready(function(){
+
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip()
 	})
+	
 	// Inititialise DataTable
 	var table = $('#acmg_question_table').DataTable({
 		"paging":   false,
@@ -165,6 +167,7 @@ $(document).ready(function(){
 		"info":     false,
 		"searching": false
 		});
+
 	//Colour row when clicked
 	$(".answer-selected").change(function(){
 		// what is the value of the drop down

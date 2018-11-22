@@ -13,8 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
-
-
 @login_required
 def home(request):
 	"""
@@ -298,7 +296,7 @@ def view_previous_classifications(request):
 
 	"""
 
-	classifications = Classification.objects.all().order_by('-creation_date')
+	classifications = Classification.objects.all().order_by('-creation_date').exclude(status ='3')
 
 	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 
@@ -385,20 +383,25 @@ def second_check(request, pk):
 									 'acmg_result': acmg_result})
 
 def signup(request):
+	"""
+	Allow users to sign up
+	User accounts are inactive by default - an admin must activate it using the admin page.
 
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            user.is_active = False
-            user.save()
-            return redirect('home')
-    else:
-        form = UserCreationForm()
-    return render(request, 'acmg_db/signup.html', {'form': form})
+	"""
+
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			username = form.cleaned_data.get('username')
+			raw_password = form.cleaned_data.get('password1')
+			user = authenticate(username=username, password=raw_password)
+			user.is_active = False
+			user.save()
+			return redirect('home')
+	else:
+		form = UserCreationForm()
+		return render(request, 'acmg_db/signup.html', {'form': form})
 
 
 
