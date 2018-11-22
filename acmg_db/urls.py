@@ -13,6 +13,7 @@ urlpatterns = [
     path('ajax/acmg_classification/', views.ajax_acmg_classification, name='ajax_acmg_classification'),
     path('ajax/comments/', views.ajax_comments, name='ajax_comments'),
     path('view_previous_classifications', views.view_previous_classifications, name='view_previous_classifications'),
+    path('signup/', views.signup, name="signup"),
     path('login/', auth_views.LoginView.as_view(template_name="acmg_db/login.html"), name="login"),
     path('logout/', auth_views.LogoutView.as_view(template_name="acmg_db/logout.html"), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

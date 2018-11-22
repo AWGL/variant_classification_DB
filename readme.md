@@ -63,7 +63,9 @@ To run using the development server:
 
 ### Setup an Account
 
-No registration page - login using admin credentials (or contact an admin) (createsuperuser) at {your-url}/admin and follow the instructions to make a new account.
+Click the Register An Account link and sign up. Contact an administrator and ask them to activate your account.
+
+An account can be activated in the Admin page ({your-url}/admin) > Users > Set Active checkbox to True.
 
 ### Analyse a Variant
 

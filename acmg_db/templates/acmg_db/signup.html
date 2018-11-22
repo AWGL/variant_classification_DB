@@ -1,5 +1,6 @@
 {% extends 'acmg_db/base.html' %}
-
+{% load static %}
+{% load crispy_forms_tags %}
 
 
 {% block content %}
@@ -23,13 +24,6 @@
     
         </form>
   </div>
-</div>
-
-
-
-
-<div class="alert alert-success" style="max-width: 45rem;">
-  <div> <a href="{% url 'signup'  %}" > Register An Account </a> </div>
 </div>
 
 
