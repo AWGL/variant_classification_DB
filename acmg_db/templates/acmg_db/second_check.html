@@ -28,10 +28,6 @@
               <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
             </tr>
             <tr>
-              <td> Classification </td>
-              <td> <strong> {{classification.final_class}} </strong> </td>
-            </tr>
-            <tr>
               <td> Gene </td>
               <td> {{classification.variant.get_genes}} </td>
             </tr>
@@ -109,12 +105,14 @@
       <button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Classify</button>
       <hr>
       <div id ='class_box'>
-        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+        <div class="card text-white bg-success mb-3" style="max-width: 25rem;">
           <div class="card-header">ACMG Classification Result</div>
           <div class="card-body">
-            <p class="card-text">{{acmg_result}}</p></div>
+            <p class="card-text"> First Analysis: {{acmg_result_first}}</p>
+            <p class="card-text"> Second Analysis: {{acmg_result_second}}</p>
             
           </div>
+        </div>
         </div>
         <hr>
         <table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">

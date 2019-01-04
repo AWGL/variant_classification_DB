@@ -2,6 +2,17 @@
 {% load static %}
 {% block content %}
 
+<br>
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="variant_info" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Information</a>
+      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">History</a>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+
   <hr>
   <h3> Classification Information </h3>
   <hr>
@@ -19,7 +30,7 @@
             </tr>
             <tr>
               <td> Classification </td>
-              <td> <strong> {{classification.final_class}} </strong> </td>
+              <td> <strong> {{classification.display_classification}} </strong> </td>
             </tr>
             <tr>
               <td> Gene </td>
@@ -141,6 +152,9 @@
       </tbody>
     </table>
 
+  </tr>
+
+
 
 
     <hr>
@@ -164,6 +178,41 @@
         </div>
         <hr>
       {% endfor %}
+
+</div>
+
+</div>
+<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+  <br>
+
+ <table id="history" class = "table table-hover table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <th> ID </th>
+        <th> Time </th>
+        <th> User</th>
+        <th> Changes </th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for history in classification.history.all %}
+
+            <td>{{history.object_pk}}</td>
+            <td>{{history.timestamp}}</td>
+            <td>{{history.actor}}</td>
+            <td>{{history.changes}}</td>
+          </tr>
+          
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+</div>
+</div>
+
 
 <script>
 $(document).ready(function(){

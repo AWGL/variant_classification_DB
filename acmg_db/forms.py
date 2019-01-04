@@ -89,14 +89,15 @@ class ClassificationInformationForm(forms.Form):
 	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
-
+	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+		('6', 'Artefact'), ('7', 'NA'))
 
 	
 	inheritance_pattern = forms.CharField(max_length=30)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
-	final_classification = forms.CharField(max_length=50)
-
+	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
 
 
 	def __init__(self, *args, **kwargs):
@@ -139,13 +140,15 @@ class ClassificationInformationSecondCheckForm(forms.Form):
 	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
-
+	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+		('6', 'Artefact'), ('7', 'NA'))
 
 	
 	inheritance_pattern = forms.CharField(max_length=30)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
-	final_classification = forms.CharField(max_length=50)
+	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
 
 
 

@@ -11,12 +11,13 @@
 				<th> Variant </th>
 				<th> Gene </th>
 				<th> HGVSc </th>
+				<th> HGVSp </th>
 				<th> Sample </th>
 				<th> Worklist </th>
-				<th> Created Date </th>
+				<th> Date </th>
 				<th> Status </th>
 				<th> User </th>
-				<th> Variant Classification </th>
+				<th> Classification </th>
 				<th> Action </th>
 			</tr>
 		</thead>
@@ -27,6 +28,7 @@
 					<td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
 					<td> {{ classification.variant.get_genes}}</td>
 					<td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
+					<td> {{ classification.selected_transcript_variant.hgvs_p}}</td>
 					<td> {{ classification.sample.name}}</td>
 					<td> {{ classification.sample.worklist.name}}</td>
 					<td> {{ classification.creation_date}}</td>
@@ -52,12 +54,13 @@
 				<th> Variant </th>
 				<th> Gene </th>
 				<th> HGVSc </th>
+				<th> HGVSp </th>
 				<th> Sample </th>
 				<th> Worklist </th>
-				<th> Created Date </th>
+				<th> Date </th>
 				<th> Status </th>
 				<th> User </th>
-				<th> Variant Classification </th>
+				<th> Classification </th>
 				<th> Action </th>
             </tr>
         </tfoot>

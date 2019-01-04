@@ -112,6 +112,7 @@ def home(request):
 			user_creator = request.user,
 			status = '0',
 			is_trio_de_novo = False,
+			final_class = '7',
 			selected_transcript_variant = transcript_variant
 			)
 
@@ -171,7 +172,7 @@ def new_classification(request, pk):
 		else:
 
 			# How many times have we seen the variant before.
-			n_previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).count()
+			previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
 
 			answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 
@@ -186,7 +187,8 @@ def new_classification(request, pk):
 										 'variant': variant,
 										 'comments': comments,
 										 'result': result,
-										 'sample_form': sample_form
+										 'sample_form': sample_form,
+										 'previous_classifications': previous_classifications
 										 })
 
 @login_required
@@ -227,7 +229,7 @@ def ajax_acmg_classification_first(request):
 
 		result = classification.calculate_acmg_score_first()
 
-		html = render_to_string('acmg_db/acmg_results.html', {'result': result})
+		html = render_to_string('acmg_db/acmg_results_first.html', {'result': result})
 
 	return HttpResponse(html)
 
@@ -267,9 +269,11 @@ def ajax_acmg_classification_second(request):
 
 			classification_answer_obj.save()
 
-		result = classification.calculate_acmg_score_second()
+		acmg_result_first = classification.calculate_acmg_score_first()
 
-		html = render_to_string('acmg_db/acmg_results.html', {'result': result})
+		acmg_result_second = classification.calculate_acmg_score_second()
+
+		html = render_to_string('acmg_db/acmg_results_second.html', {'result_first': acmg_result_first, 'result_second': acmg_result_second})
 
 	return HttpResponse(html)
 
@@ -420,20 +424,21 @@ def second_check(request, pk):
 
 		classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 
-		#answers = ClassificationAnswer.objects.filter(classification=classification)
-
 		comments = UserComment.objects.filter(classification=classification)
 
 		sample_form = ClassificationInformationSecondCheckForm(classification_pk=classification.pk)
 
-		acmg_result = classification.calculate_acmg_score_second()
+		acmg_result_first = classification.calculate_acmg_score_first()
+
+		acmg_result_second = classification.calculate_acmg_score_second()
 
 		return render(request, 'acmg_db/second_check.html', {'classification': classification,
 									 'classification_answers': classification_answers,
 									 'comments': comments,
 									 'answers': classification_answers,
 									 'sample_form': sample_form,
-									 'acmg_result': acmg_result})
+									 'acmg_result_first': acmg_result_first,
+									 'acmg_result_second': acmg_result_second})
 
 def signup(request):
 	"""

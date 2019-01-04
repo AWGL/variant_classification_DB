@@ -2,7 +2,17 @@
 {% load static %}
 {% block content %}
 	{% load crispy_forms_tags %}
+
 	<br>
+
+	 {% if previous_classifications|length  > 0 %}
+
+	<div class="alert alert-warning" role="alert">
+
+  	This variant has been classified {{ previous_classifications|length }} times before. Most recently on {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}. Click  <a href="{% url 'view_classification' pk=previous_classifications.0.pk %}"> here </a> to see that classification.
+	</div>
+
+	{% endif %}
 
 	<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -27,10 +37,6 @@
       <tr>
         <td> Variant </td>
         <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
-      </tr>
-      <tr>
-        <td> Classification </td>
-        <td> <strong> {{classification.final_class}} </strong> </td>
       </tr>
       <tr>
         <td> Gene </td>
@@ -100,16 +106,6 @@
 <hr>
 
   {% crispy sample_form %}
-
-
-
-
-
-
-
-
-
-
 
 		</div>
 		<br>

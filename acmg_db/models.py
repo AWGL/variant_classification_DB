@@ -2,6 +2,7 @@ from django.db import models
 from .utils import acmg_classifier
 from auditlog.registry import auditlog
 from auditlog.models import LogEntry
+from auditlog.models import AuditlogHistoryField
 from django.contrib.contenttypes.models import ContentType
 
 """
@@ -128,6 +129,11 @@ class Classification(models.Model):
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
+	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+		('6', 'Artefact'), ('7', 'NA'))
+
+	history = AuditlogHistoryField()
 
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
 	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
@@ -138,7 +144,7 @@ class Classification(models.Model):
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='user_creator')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
 	status = models.CharField(max_length=1, choices =STATUS_CHOICES, default='0')
-	final_class = models.CharField(max_length=50, null=True, blank=True)
+	final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)
 
 	is_trio_de_novo = models.BooleanField()
 	inheritance_pattern = models.CharField(max_length=15, null=True, blank=True)
@@ -148,12 +154,26 @@ class Classification(models.Model):
 	def display_status(self):
 		"""
 		Take the status in the database e.g. 0 and return the string \
-		which corresponds to that e.g.g Awaiting Analysis
+		which corresponds to that e.g Awaiting Analysis
 
 		"""
 		STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
 
 		return STATUS_CHOICES[int(self.status)][1]
+
+	def display_final_classification(self):
+
+		"""
+		Take the classification in the database e.g. 0 and return the string \
+		which corresponds to that e.g Pathogenic
+
+		"""
+
+		FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+		('6', 'Artefact'), ('7', 'NA'))
+
+		return FINAL_CLASS_CHOICES[int(self.final_class)][1]		
 
 
 	def display_classification(self):
@@ -165,7 +185,7 @@ class Classification(models.Model):
 
 		if self.status == '2':
 
-			return self.final_class
+			return self.display_final_classification()
 
 		else:
 
@@ -352,6 +372,8 @@ class ClassificationAnswer(models.Model):
 	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
 	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
 	 ('BA', 'BENIGN_STAND_ALONE'), ('BS', 'BENIGN_STRONG'), ('BP', 'BENIGN_SUPPORTING'))
+
+	history = AuditlogHistoryField()
 
 	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
 	classification_question = models.ForeignKey(ClassificationQuestion, on_delete=models.CASCADE)
