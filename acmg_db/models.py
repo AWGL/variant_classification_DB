@@ -19,6 +19,32 @@ data can be exported and inported into a futire variant database.
 
 """
 
+class Worklist(models.Model):
+	"""
+	Stores which worklist the sample was on.
+
+	"""
+	name = models.CharField(max_length=50, primary_key=True)
+
+
+
+class Sample(models.Model):
+
+	"""
+	Holds information specific to a sample
+
+	"""
+
+	name = models.CharField(max_length=50)
+	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
+	affected_with = models.TextField()
+	analysis_performed = models.TextField()
+	analysis_complete = models.BooleanField()
+	other_changes = models.TextField()
+
+
+
+
 class Variant(models.Model):
 
 	"""
@@ -46,6 +72,7 @@ class Variant(models.Model):
 		genes = ';'.join(list(set([transcript.transcript.gene.name for transcript in variant_transcripts])))
 
 		return genes
+
 
 
 class Gene(models.Model):
@@ -79,7 +106,7 @@ class TranscriptVariant(models.Model):
 
 	"""
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
-	transcript = models.ForeignKey(Transcript,on_delete=models.CASCADE, null=True, blank=True)
+	transcript = models.ForeignKey(Transcript, on_delete=models.CASCADE, null=True, blank=True)
 	hgvs_c = models.TextField(null=True, blank=True)
 	hgvs_p = models.TextField(null=True, blank=True)
 	exon = models.CharField(max_length=10,null=True, blank=True)
@@ -103,6 +130,7 @@ class Classification(models.Model):
 	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
 
 	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
 	#which variant transcript is associated with the classification.
 	selected_transcript_variant = models.ForeignKey(TranscriptVariant, on_delete=models.CASCADE, null=True, blank=True)
 	creation_date = models.DateTimeField()
@@ -112,13 +140,10 @@ class Classification(models.Model):
 	status = models.CharField(max_length=1, choices =STATUS_CHOICES, default='0')
 	final_class = models.CharField(max_length=50, null=True, blank=True)
 
-	sample_lab_number = models.CharField(max_length=25, null =True, blank=True)
-	analysis_performed = models.CharField(max_length=50, null =True, blank=True)
-	other_changes = models.CharField(max_length=50, null =True, blank=True)
-	affected_with = models.CharField(max_length=50, null =True, blank=True)
-	trio_de_novo = models.BooleanField(null =True, blank=True)
-	inheritance_pattern = models.CharField(max_length=30, null=True, blank=True)
+	is_trio_de_novo = models.BooleanField()
+	inheritance_pattern = models.CharField(max_length=15, null=True, blank=True)
 	conditions = models.TextField(null=True, blank=True)
+
 
 	def display_status(self):
 		"""
@@ -168,8 +193,10 @@ class Classification(models.Model):
 				new_answer = ClassificationAnswer.objects.create(
 					classification = self,
 					classification_question=question,
-					selected = False,
-					strength = question.default_strength
+					selected_first = False,
+					selected_second = False,
+					strength_first = question.default_strength,
+					strength_second = question.default_strength,
 					)
 
 				new_answer.save()
@@ -182,9 +209,11 @@ class Classification(models.Model):
 		return None
 
 
-	def calculate_acmg_score(self):
+	def calculate_acmg_score_first(self):
 		"""
 		Use the acmg_classifer util to generate the ACMG classification.
+
+		Calculates based on the first user's input
 
 		"""
 
@@ -204,9 +233,9 @@ class Classification(models.Model):
 		# Only get the ones where the user has selected True
 		for answer in classification_answers:
 
-			if answer.selected == True:
+			if answer.selected_first == True:
 
-				results.append((answer.classification_question.acmg_code, answer.strength))
+				results.append((answer.classification_question.acmg_code, answer.strength_first))
 
 				tags.append(answer.classification_question.acmg_code)
 
@@ -218,6 +247,46 @@ class Classification(models.Model):
 			return acmg_classifier.classify(updated_acmg_codes)
 
 		return False
+
+	def calculate_acmg_score_second(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+
+		Calculates based on the second user's input
+
+		"""
+
+		classification_answers = ClassificationAnswer.objects.filter(classification=self)
+
+		all_questions_count = ClassificationQuestion.objects.all().count()
+
+		#Check we have all the answers
+		if len(classification_answers) != all_questions_count:
+
+			return False
+
+		results = []
+
+		tags = []
+
+		# Only get the ones where the user has selected True
+		for answer in classification_answers:
+
+			if answer.selected_second == True:
+
+				results.append((answer.classification_question.acmg_code, answer.strength_second))
+
+				tags.append(answer.classification_question.acmg_code)
+
+
+		if acmg_classifier.valid_input(tags) == True:
+
+			updated_acmg_codes = acmg_classifier.adjust_strength(results)
+
+			return acmg_classifier.classify(updated_acmg_codes)
+
+		return False
+
 
 
 class ClassificationQuestion(models.Model):
@@ -234,12 +303,17 @@ class ClassificationQuestion(models.Model):
 	 ('BA', 'BENIGN_STAND_ALONE'), ('BS', 'BENIGN_STRONG'), ('BP', 'BENIGN_SUPPORTING'))
 
 
+	CATEGORY_CHOICES = (('A', 'A'), ('B', 'B'), ('C', 'C'),
+		('D', 'D'), ('E', 'E'), ('F', 'F'), ('G', 'G'), ('H', 'H'))
+		
+
 	acmg_code = models.CharField(max_length=5)
 	order = models.IntegerField()
 	text = models.TextField()
 	default_strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
 	allowed_strength_change = models.BooleanField() #Can the user change the strength?
 	pathogenic_question = models.BooleanField()
+	category = models.CharField(max_length=1, choices= CATEGORY_CHOICES)
 
 	def __str__ (self):
 		return self.acmg_code
@@ -281,8 +355,11 @@ class ClassificationAnswer(models.Model):
 
 	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
 	classification_question = models.ForeignKey(ClassificationQuestion, on_delete=models.CASCADE)
-	selected = models.BooleanField()
-	strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	selected_first = models.BooleanField()
+	strength_first = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	selected_second = models.BooleanField()
+	strength_second = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	comment = models.TextField()
 
 class UserComment(models.Model):
 

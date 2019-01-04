@@ -3,18 +3,7 @@
 {% block content %}
 	{% load crispy_forms_tags %}
 	<br>
-	<div class="alert alert-success">
-		You are analysing variant: <strong>{{variant.chromosome}}:{{variant.position}}{{variant.ref}}>{{variant.alt}}.  </strong>
-		{% if n_previous_classifications > 0 %}
-			This variant has been classified <strong> {{n_previous_classifications}} times </strong> before.
-		{% endif %}
 
-	 <div> HGVSc:  <strong>{{classification.selected_transcript_variant.hgvs_c}} </strong> </div>
-	<div>HGVSp:  <strong>{{classification.selected_transcript_variant.hgvs_p}}</strong> </div>
-	<div> Gene:  <strong>{{classification.selected_transcript_variant.transcript.gene.name}}</strong> </div>
-
-
-	</div>
 	<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
 			<a class="nav-item nav-link active" id="variant_info" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Information</a>
@@ -25,7 +14,103 @@
 	<div class="tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 			<br>
-			{% crispy sample_form %}
+
+
+<table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
+    <thead>
+    </thead>
+    <tbody>
+      <tr>
+        <td> Classification ID </td>
+        <td> {{classification.pk}} </td>
+      </tr>
+      <tr>
+        <td> Variant </td>
+        <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+      </tr>
+      <tr>
+        <td> Classification </td>
+        <td> <strong> {{classification.final_class}} </strong> </td>
+      </tr>
+      <tr>
+        <td> Gene </td>
+        <td> {{classification.variant.get_genes}} </td>
+      </tr>
+      <tr>
+        <td> Transcript </td>
+        <td> {{classification.selected_transcript_variant.transcript.name }} </td>
+      </tr>
+      <tr>
+        <td> HGVSc </td>
+        <td> {{classification.selected_transcript_variant.hgvs_c }} </td>
+      </tr>
+      <tr>
+        <td> HGVSp </td>
+        <td> {{classification.selected_transcript_variant.hgvs_p }} </td>
+      </tr>
+      <tr>
+        <td> Exon </td>
+        <td> {{classification.selected_transcript_variant.exon }} </td>
+      </tr>
+      <tr>
+        <td> Created Date </td>
+        <td> {{classification.creation_date }} </td>
+      </tr>
+      <tr>
+        <td> Creation User</td>
+        <td> {{classification.user_creator }} </td>
+      </tr>
+      <tr>
+        <td> Second Check Date</td>
+        <td> {{classification.second_check_date }} </td>
+      </tr>
+      <tr>
+        <td> Second Check User</td>
+        <td> {{classification.user_second_checker }} </td>
+      </tr>
+      <tr>
+        <td> Status </td>
+        <td> {{classification.display_status }} </td>
+      </tr>
+      <tr>
+        <td> Sample Lab Number </td>
+        <td> {{classification.sample.name }} </td>
+      </tr>
+       <tr>
+        <td> Worklist </td>
+        <td> {{classification.sample.worklist.name }} </td>
+      </tr>
+      <tr>
+        <td> Analysis Performed </td>
+        <td> {{classification.sample.analysis_performed|linebreaksbr }} </td>
+      </tr>
+      <tr>
+        <td> Other Changes </td>
+        <td> {{classification.sample.other_changes|linebreaksbr }} </td>
+      </tr>
+      <tr>
+        <td> Affected With </td>
+        <td> {{classification.sample.affected_with|linebreaksbr }} </td>
+      </tr>
+
+
+    </tbody>
+  </table>
+
+<hr>
+
+  {% crispy sample_form %}
+
+
+
+
+
+
+
+
+
+
+
 		</div>
 		<br>
 		<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -44,22 +129,27 @@
 					<thead>
 						<tr>
 							<th style="display:none;" class='answer_pk'> Answer PK </th>
+							<th style="display:none;" class='cat'> Category </th>
 							<th class='question'> Evidence Category  </th>
+							<th class='description'> Description </th>
 							<th class='strength'> Strength </th>
 							<th class='selected'> Decision </th>
+							<th class='comment'> Comment </th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for answer in answers %}
-							{% if answer.classification_question.pathogenic_question == True and answer.selected == True %}
+							{% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
 								<tr class='answer table-danger'>
-							{% elif answer.classification_question.pathogenic_question == False and  answer.selected == True%}
+							{% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True%}
 								<tr class='answer table-success'>
 							{% else %}
 								<tr class='answer'>
 							{% endif %}
 							<td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
-							<td class='question'> <a href="#" data-toggle="tooltip" title="" data-original-title="{{answer.classification_question.text}}"> {{ answer.classification_question.acmg_code  }}</a> </td>
+							<td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
+							<td class='question'> {{ answer.classification_question.acmg_code  }}</td>
+							<td class='description'> {{ answer.classification_question.text  }}</td>
 							<td class='strength'>
 								{% if answer.classification_question.allowed_strength_change == False %}
 									{{answer.classification_question.default_strength}}
@@ -67,7 +157,7 @@
 									<select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
 										{% for strength in answer.classification_question.strength_options %}
 
-											{% if strength == answer.strength %}
+											{% if strength == answer.strength_first %}
 												<option value="{{strength}}" selected> {{strength}} </option>
 											{% else %}
 												<option value="{{strength}}"> {{strength}} </option>
@@ -80,14 +170,17 @@
 							</td>
 							<td class='selected'>
 								<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
-									<option value="{{answer.selected}}" selected> {{answer.selected}} </option>
-									{% if answer.selected == False %}
+									<option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
+									{% if answer.selected_first == False %}
 										<option value=True> True </option>
-										{% elif answer.selected == True %}
+										{% elif answer.selected_first == True %}
 										<option value=False> False </option>
 									{% endif %}
 								</select>
 							</td>
+
+							<td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+
 							</tr>
 						
 						{% endfor %}
@@ -165,7 +258,10 @@ $(document).ready(function(){
 		"paging":   false,
 		"ordering": false,
 		"info":     false,
-		"searching": false
+		"searching": false,
+		"rowGroup": {
+        dataSrc: 1
+    }
 		});
 
 	//Colour row when clicked
@@ -198,7 +294,12 @@ $(document).ready(function(){
 
 		// Loop though each row
 		for (var i =0; i<rows.length; i++){
+
+				// skip group rows in table
+				if ($(rows[i]).hasClass('group') == false){
+
 				var pk = $(rows[i]).children('td.answer_pk').text();
+				// allow either select drop downs or plain text
 				var type = $(rows[i]).children('td.strength').children().is("select")
 				if (type == true){
 
@@ -209,11 +310,12 @@ $(document).ready(function(){
 					var strength = $.trim($(rows[i]).children('td.strength').text());
 				}
 
-				var question  = $(rows[i]).children('td.question').children().text().trim();
+				var question  = $(rows[i]).children('td.question').text().trim();
 				var selected = $(rows[i]).children('td.selected').children().val();
-				console.log(pk, question, strength, selected)
-				classification_dict[pk] = [question, strength, selected];
-			}
+				var comment = $(rows[i]).children('td.comment').children().val();
+				console.log(pk, question, strength, selected, comment)
+				classification_dict[pk] = [question, strength, selected, comment];
+			}}
 
 		var formData = new FormData();
 		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
@@ -221,7 +323,7 @@ $(document).ready(function(){
 		formData.append('classification_pk', "{{classification.pk}}" );
 
 		$.ajax({
-			url: '/ajax/acmg_classification/',
+			url: '/ajax/acmg_classification_first/',
 			type: 'POST',
 			data: formData,
 			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)

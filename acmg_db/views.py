@@ -25,11 +25,11 @@ def home(request):
 	form = SearchForm()
 
 	# If the user has searched for something
-	if request.GET.get('search') != '' and request.GET.get('search') != None:
+	if request.GET.get('variant') != '' and request.GET.get('variant') != None:
 
 
 		# Get the user input from the form.
-		search_query = request.GET.get('search')
+		search_query = request.GET.get('variant')
 		search_query = search_query.strip()
 		gene_query = request.GET.get('gene').strip()
 		transcript_query = request.GET.get('transcript').strip()
@@ -37,76 +37,90 @@ def home(request):
 		hgvs_p_query = request.GET.get('hgvs_p').strip()
 		exon_query = request.GET.get('exon').strip()
 
+		sample_name_query = request.GET.get('sample_name').strip()
+		affected_with_query = request.GET.get('affected_with').strip()
+		analysis_performed_query = request.GET.get('analysis_performed').strip()
+		other_changes_query = request.GET.get('other_changes').strip()
+		worklist_query = request.GET.get('worklist').strip()
 
 		# Validate the variant using Mutalyzer - i.e. is the variant real?
 		# We only check if the chr-pos-ref-alt is real not if gene etc is correct.
-		variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
+		#variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
 
 
-		# If the variant has failed validation return to search screen and display error.
-		if variant_info[0] == False:
+		# Add variant to DB if not already present
+		# Get varaint information e.g. chr, pos, ref, alt from the input
 
-			return render(request, 'acmg_db/home.html', {'form': form,
-										 'error': variant_info[1][0]})
-		else:
+		variant_data = process_variant_input(search_query)
 
-			# Add variant to DB if not already present
-			# Get varaint information e.g. chr, pos, ref, alt from the input
-
-			variant_data = process_variant_input(search_query)
-
-			variant_hash = variant_data[0]
-			chromosome = variant_data[1]
-			position = variant_data[2]
-			ref = variant_data[3]
-			alt = variant_data[4]
-			key = variant_data[5]
+		variant_hash = variant_data[0]
+		chromosome = variant_data[1]
+		position = variant_data[2]
+		ref = variant_data[3]
+		alt = variant_data[4]
+		key = variant_data[5]
 
 
-			# Create the objects
+		# Create the objects
 
-			variant, created = Variant.objects.get_or_create(
-    				key = key,
-    				variant_hash = variant_hash,
-    				chromosome = chromosome,
-    				position = position,
-    				ref = ref,
-    				alt = alt
-					)
+		worklist, created = Worklist.objects.get_or_create(
+			name = worklist_query
+			)
 
 
-			gene, created = Gene.objects.get_or_create(
-				name = gene_query
+		sample, created = Sample.objects.get_or_create(
+			name = sample_name_query,
+			worklist = worklist,
+			affected_with = affected_with_query,
+			analysis_performed = analysis_performed_query,
+			analysis_complete = False,
+			other_changes = other_changes_query
+			)
+
+		variant, created = Variant.objects.get_or_create(
+				key = key,
+				variant_hash = variant_hash,
+				chromosome = chromosome,
+				position = position,
+				ref = ref,
+				alt = alt
 				)
 
-			transcript, created = Transcript.objects.get_or_create(
-				name = transcript_query,
-				gene = gene
-				)
 
-			transcript_variant, created = TranscriptVariant.objects.get_or_create(
-				variant = variant,
-				transcript = transcript,
-				hgvs_c = hgvs_c_query,
-				hgvs_p = hgvs_p_query,
-				exon = exon_query
+		gene, created = Gene.objects.get_or_create(
+			name = gene_query
+			)
 
-				)
+		transcript, created = Transcript.objects.get_or_create(
+			name = transcript_query,
+			gene = gene
+			)
 
-			new_classification_obj = Classification.objects.create(
-				variant= variant,
-				creation_date = timezone.now(),
-				user_creator = request.user,
-				status = '0',
-				selected_transcript_variant = transcript_variant
-				)
+		transcript_variant, created = TranscriptVariant.objects.get_or_create(
+			variant = variant,
+			transcript = transcript,
+			hgvs_c = hgvs_c_query,
+			hgvs_p = hgvs_p_query,
+			exon = exon_query
 
-			new_classification_obj.save()
+			)
 
-			new_classification_obj.initiate_classification()
+		new_classification_obj = Classification.objects.create(
+			variant= variant,
+			sample = sample,
+			creation_date = timezone.now(),
+			user_creator = request.user,
+			status = '0',
+			is_trio_de_novo = False,
+			selected_transcript_variant = transcript_variant
+			)
 
-			# Go to the new_classification page.
-			return redirect(new_classification, new_classification_obj.pk)
+		new_classification_obj.save()
+
+		new_classification_obj.initiate_classification()
+
+		# Go to the new_classification page.
+		return redirect(new_classification, new_classification_obj.pk)
 
 	return render(request, 'acmg_db/home.html', {'form': form, 'error': None})
 
@@ -137,17 +151,14 @@ def new_classification(request, pk):
 		# If the user has submitted the SampleInformationForm
 		if request.method == 'POST':
 
-			sample_form = SampleInformationForm(request.POST, classification_pk = classification.pk)
+			sample_form = ClassificationInformationForm(request.POST, classification_pk = classification.pk)
 
 			if sample_form.is_valid():
 
 				# Update models
 				cleaned_data = sample_form.cleaned_data
-				classification.sample_lab_number = cleaned_data['sample_lab_number']
-				classification.analysis_performed = cleaned_data['analysis_performed']
-				classification.other_changes = cleaned_data['other_changes']
-				classification.affected_with = cleaned_data['affected_with']
-				classification.trio_de_novo = cleaned_data['trio_de_novo']
+				
+				classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
 				classification.inheritance_pattern = cleaned_data['inheritance_pattern']
 				classification.final_class = cleaned_data['final_classification']
 				classification.conditions = cleaned_data['conditions']
@@ -162,27 +173,30 @@ def new_classification(request, pk):
 			# How many times have we seen the variant before.
 			n_previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).count()
 
-			answers = ClassificationAnswer.objects.filter(classification=classification)
+			answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 
 			comments = UserComment.objects.filter(classification=classification)
 
-			sample_form = SampleInformationForm(classification_pk = classification.pk)
+			sample_form = ClassificationInformationForm(classification_pk = classification.pk)
 
-			result = classification.calculate_acmg_score()
+			result = classification.calculate_acmg_score_first()
 
 			return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
 										 'classification': classification,
 										 'variant': variant,
 										 'comments': comments,
-										 'sample_form': sample_form,
 										 'result': result,
-										 'n_previous_classifications': n_previous_classifications })
+										 'sample_form': sample_form
+										 })
 
 @login_required
-def ajax_acmg_classification(request):
+def ajax_acmg_classification_first(request):
 	"""
 	Gets the ajax results from the new_classifcations.html page \
 	and stores them in the database - also returns the calculated result.
+
+
+	For the first analysis
 	"""
 
 	if request.is_ajax():
@@ -203,18 +217,61 @@ def ajax_acmg_classification(request):
 
 			print (classification_answers[classification_answer])
 
-			classification_answer_obj.strength = classification_answers[classification_answer][1].strip()
+			classification_answer_obj.strength_first = classification_answers[classification_answer][1].strip()
 
-			classification_answer_obj.selected = classification_answers[classification_answer][2].strip()
+			classification_answer_obj.selected_first = classification_answers[classification_answer][2].strip()
+
+			classification_answer_obj.comment = classification_answers[classification_answer][3].strip()
 
 			classification_answer_obj.save()
 
-		result = classification.calculate_acmg_score()
+		result = classification.calculate_acmg_score_first()
 
 		html = render_to_string('acmg_db/acmg_results.html', {'result': result})
 
 	return HttpResponse(html)
 
+
+@login_required
+def ajax_acmg_classification_second(request):
+	"""
+	Gets the ajax results from the new_classifcations.html page \
+	and stores them in the database - also returns the calculated result.
+
+	For the second analysis
+	"""
+
+	if request.is_ajax():
+
+		classification_answers = request.POST.get('classifications')
+
+		classification_answers = json.loads(classification_answers)
+
+		classification_pk = request.POST.get('classification_pk').strip()
+
+		classification = get_object_or_404(Classification, pk =classification_pk)
+
+		for classification_answer in classification_answers:
+
+			pk = classification_answer.strip()
+
+			classification_answer_obj = get_object_or_404(ClassificationAnswer, pk=pk)
+
+			print (classification_answers[classification_answer])
+
+			classification_answer_obj.strength_second= classification_answers[classification_answer][1].strip()
+
+			classification_answer_obj.selected_second = classification_answers[classification_answer][2].strip()
+
+			classification_answer_obj.comment = classification_answers[classification_answer][3].strip()
+
+			classification_answer_obj.save()
+
+		result = classification.calculate_acmg_score_second()
+
+		html = render_to_string('acmg_db/acmg_results.html', {'result': result})
+
+	return HttpResponse(html)
 
 @login_required
 def ajax_comments(request):
@@ -311,12 +368,11 @@ def view_classification(request, pk):
 	classification = get_object_or_404(Classification, pk=pk)
 
 	classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
-		.order_by('classification_question__order')
-		.filter(selected=True))
+		.order_by('classification_question__order'))
 
 	comments = UserComment.objects.filter(classification=classification)
 
-	acmg_result = classification.calculate_acmg_score()
+	acmg_result = classification.calculate_acmg_score_second()
 
 	return render(request, 'acmg_db/view_classification.html', {'classification': classification,
 									 'classification_answers': classification_answers,
@@ -340,46 +396,43 @@ def second_check(request, pk):
 
 	if request.method == 'POST':
 
-		form = SecondCheckForm(request.POST, classification_pk=pk )
+		sample_form = ClassificationInformationSecondCheckForm(request.POST, classification_pk = classification.pk)
 
-		if form.is_valid():
+		if sample_form.is_valid():
 
-			data = form.cleaned_data
+			# Update models
+			cleaned_data = sample_form.cleaned_data
+			
+			classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+			classification.inheritance_pattern = cleaned_data['inheritance_pattern']
+			classification.final_class = cleaned_data['final_classification']
+			classification.conditions = cleaned_data['conditions']
+			classification.status = '2'
+			classification.second_check_date = timezone.now()
+			classification.user_second_checker = request.user
 
-			accept_or_reject = data['accept']
-
-			# if we have accepted the classification
-			if accept_or_reject == '1':
-
-				# Update classification with new data e.g. change status to complete.
-				classification.status = '2'
-				classification.second_check_date = timezone.now()
-				classification.user_second_checker = request.user
-				classification.save()
-
-			else:
-				# Set status to Initial Analysis.
-				classification.status = '0'
-				classification.save()
+			classification.save()
 
 			return redirect(home)
 
+
 	else:
 
-		classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
-		.order_by('classification_question__order')
-		.filter(selected=True))
+		classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
+
+		#answers = ClassificationAnswer.objects.filter(classification=classification)
 
 		comments = UserComment.objects.filter(classification=classification)
 
-		second_check_form = SecondCheckForm(classification_pk=classification.pk)
+		sample_form = ClassificationInformationSecondCheckForm(classification_pk=classification.pk)
 
-		acmg_result = classification.calculate_acmg_score()
+		acmg_result = classification.calculate_acmg_score_second()
 
 		return render(request, 'acmg_db/second_check.html', {'classification': classification,
 									 'classification_answers': classification_answers,
 									 'comments': comments,
-									 'second_check_form': second_check_form,
+									 'answers': classification_answers,
+									 'sample_form': sample_form,
 									 'acmg_result': acmg_result})
 
 def signup(request):
