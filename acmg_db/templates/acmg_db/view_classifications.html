@@ -31,7 +31,7 @@
 					<td> {{ classification.selected_transcript_variant.hgvs_p}}</td>
 					<td> {{ classification.sample.name}}</td>
 					<td> {{ classification.sample.worklist.name}}</td>
-					<td> {{ classification.creation_date}}</td>
+					<td> {{ classification.creation_date|date:"Y/m/d"}}</td>
 					<td> {{ classification.display_status}} </td>
 					<td> {{ classification.user_creator}} </td>
 					<td> {{ classification.display_classification}} </td>

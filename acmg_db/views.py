@@ -158,7 +158,6 @@ def new_classification(request, pk):
 
 				# Update models
 				cleaned_data = sample_form.cleaned_data
-				
 				classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
 				classification.inheritance_pattern = cleaned_data['inheritance_pattern']
 				classification.final_class = cleaned_data['final_classification']
@@ -171,15 +170,17 @@ def new_classification(request, pk):
 
 		else:
 
-			# How many times have we seen the variant before.
+			# Get all the previous classifications of this variant
 			previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
 
+			# Get the answers to the ACMG criteria for this classification
 			answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 
 			comments = UserComment.objects.filter(classification=classification)
 
 			sample_form = ClassificationInformationForm(classification_pk = classification.pk)
 
+			# Get the automated acmg score
 			result = classification.calculate_acmg_score_first()
 
 			return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
@@ -201,16 +202,18 @@ def ajax_acmg_classification_first(request):
 	For the first analysis
 	"""
 
+
 	if request.is_ajax():
 
+		# Get the submitted answers and convert to python object
 		classification_answers = request.POST.get('classifications')
-
 		classification_answers = json.loads(classification_answers)
 
+		# Get the classification pk and load the classification
 		classification_pk = request.POST.get('classification_pk').strip()
-
 		classification = get_object_or_404(Classification, pk =classification_pk)
 
+		# Update the classification answers
 		for classification_answer in classification_answers:
 
 			pk = classification_answer.strip()
@@ -227,6 +230,7 @@ def ajax_acmg_classification_first(request):
 
 			classification_answer_obj.save()
 
+		# Calculate the score
 		result = classification.calculate_acmg_score_first()
 
 		html = render_to_string('acmg_db/acmg_results_first.html', {'result': result})
@@ -245,14 +249,15 @@ def ajax_acmg_classification_second(request):
 
 	if request.is_ajax():
 
+		# Get the submitted answers and convert to python object
 		classification_answers = request.POST.get('classifications')
-
 		classification_answers = json.loads(classification_answers)
 
+		# Get the classification pk and load the classification
 		classification_pk = request.POST.get('classification_pk').strip()
-
 		classification = get_object_or_404(Classification, pk =classification_pk)
 
+		# Update the classification answers
 		for classification_answer in classification_answers:
 
 			pk = classification_answer.strip()
@@ -303,6 +308,7 @@ def ajax_comments(request):
 								classification=classification)
 
 			new_comment.save()
+
 			#Deal with files selected using the file selector html widget 
 			if request.FILES.get("file", False) != False:
 
@@ -333,6 +339,7 @@ def ajax_comments(request):
 				new_evidence = Evidence()
 
 				new_evidence.comment= new_comment
+
 				#save image
 				img_file_string = "{}_{}_clip_image.png".format(classification.pk,new_comment.pk)
 				new_evidence.file.save(img_file_string, ContentFile(ImageData)) 
@@ -357,7 +364,7 @@ def view_previous_classifications(request):
 
 	"""
 
-	classifications = Classification.objects.all().order_by('-creation_date').exclude(status ='3')
+	classifications = Classification.objects.all().order_by('-creation_date')
 
 	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 
@@ -371,30 +378,51 @@ def view_classification(request, pk):
 
 	classification = get_object_or_404(Classification, pk=pk)
 
-	classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
-		.order_by('classification_question__order'))
+	# Allow users to achieve the classification
+	if request.method == 'POST':
 
-	comments = UserComment.objects.filter(classification=classification)
+		form = ArchiveClassificationForm(request.POST, classification_pk = classification.pk)
 
-	acmg_result = classification.calculate_acmg_score_second()
+		if form.is_valid():
 
-	return render(request, 'acmg_db/view_classification.html', {'classification': classification,
+			# Update status to archived
+			cleaned_data = form.cleaned_data
+			classification.status = '3'
+			classification.save()
+			return redirect(home)
+
+	else:
+
+		# Otherwise just get the information for display
+		classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
+			.order_by('classification_question__order'))
+
+		comments = UserComment.objects.filter(classification=classification)
+
+		acmg_result = classification.calculate_acmg_score_second()
+
+		form = ArchiveClassificationForm(classification_pk = classification.pk)
+
+		return render(request, 'acmg_db/view_classification.html', {'classification': classification,
 									 'classification_answers': classification_answers,
 									 'comments': comments,
-									 'acmg_result': acmg_result})
+									 'acmg_result': acmg_result,
+									 'form': form})
 
 @login_required
 def second_check(request, pk):
 	"""
 	Page for user to perform second check.
 
-	User selects Accept or Reject
+	The user performs a seperate analysis deciding whether to agree or \
+	disagree with the first analysis.
 
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
 	variant = classification.variant
 
+	# Forbidden if status is not correct
 	if classification.status != '1':
 
 		return HttpResponseForbidden()
@@ -423,9 +451,10 @@ def second_check(request, pk):
 
 	else:
 
-		# How many times have we seen the variant before.
+		# Get all the previous classifications of this variant
 		previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
 
+		# Get the answers to the ACMG criteria for this classification
 		classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 
 		comments = UserComment.objects.filter(classification=classification)

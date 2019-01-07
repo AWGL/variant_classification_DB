@@ -128,7 +128,7 @@ class Classification(models.Model):
 	# Some choices for the CharFields
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
-	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
+	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'Archived'))
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
 		('6', 'Artefact'), ('7', 'NA'))
@@ -157,7 +157,7 @@ class Classification(models.Model):
 		which corresponds to that e.g Awaiting Analysis
 
 		"""
-		STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'OLD'))
+		STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'Archived'))
 
 		return STATUS_CHOICES[int(self.status)][1]
 
@@ -183,7 +183,7 @@ class Classification(models.Model):
 
 		"""
 
-		if self.status == '2':
+		if self.status == '2' or self.status == '3':
 
 			return self.display_final_classification()
 

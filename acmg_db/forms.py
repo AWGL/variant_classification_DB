@@ -39,13 +39,13 @@ class SearchForm(forms.Form):
 	A search form.
 	'''
 	variant = forms.CharField(required=False, max_length=255)
-	gene = forms.CharField(max_length=100)
-	transcript = forms.CharField(max_length=100)
+	gene = forms.CharField(max_length=25)
+	transcript = forms.CharField(max_length=25)
 	hgvs_c = forms.CharField(max_length=100)
 	hgvs_p = forms.CharField(max_length=100)
 	exon = forms.CharField(max_length=10)
-	sample_name = forms.CharField(max_length=500)
-	worklist = forms.CharField(max_length=100)
+	sample_name = forms.CharField(max_length=50)
+	worklist = forms.CharField(max_length=50)
 	affected_with = forms.CharField(max_length=500)
 	analysis_performed = forms.CharField(max_length=500)
 	other_changes = forms.CharField(max_length=500)
@@ -145,7 +145,7 @@ class ClassificationInformationSecondCheckForm(forms.Form):
 		('6', 'Artefact'), ('7', 'NA'))
 
 	
-	inheritance_pattern = forms.CharField(max_length=30)
+	inheritance_pattern = forms.CharField(max_length=15)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
 	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
@@ -182,9 +182,18 @@ class ClassificationInformationSecondCheckForm(forms.Form):
 
 
 		
+class ArchiveClassificationForm(forms.Form):
 
+	def __init__(self, *args, **kwargs):
 
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
 
+		super(ArchiveClassificationForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Archive Classification', css_class='btn-danger'))
 
 
 
