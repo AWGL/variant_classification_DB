@@ -318,13 +318,23 @@ class ClassificationQuestion(models.Model):
 
 	"""
 
-	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
-	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
-	 ('BA', 'BENIGN_STAND_ALONE'), ('BS', 'BENIGN_STRONG'), ('BP', 'BENIGN_SUPPORTING'))
+	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),
+						('PS', 'PATH_STRONG'),
+	 					('PM', 'PATH_MODERATE'),
+						('PP', 'PATH_SUPPORTING', ),
+	 					('BA', 'BENIGN_STAND_ALONE'),
+						('BS', 'BENIGN_STRONG'),
+						('BP', 'BENIGN_SUPPORTING'))
 
 
-	CATEGORY_CHOICES = (('A', 'A'), ('B', 'B'), ('C', 'C'),
-		('D', 'D'), ('E', 'E'), ('F', 'F'), ('G', 'G'), ('H', 'H'))
+	CATEGORY_CHOICES = (('Variant type and gene-variant profile', 'A'), 
+						('Frequency data', 'B'),
+						('Review of literature and databases', 'C'),
+						('Functional studies', 'D'),
+						('Computer predictions', 'E'),
+						('De novo variants', 'F'),
+						('Phenotype and family history information', 'G'),
+						('Multiple variants identified in a patient', 'H'))
 		
 
 	acmg_code = models.CharField(max_length=5)
@@ -333,7 +343,7 @@ class ClassificationQuestion(models.Model):
 	default_strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
 	allowed_strength_change = models.BooleanField() #Can the user change the strength?
 	pathogenic_question = models.BooleanField()
-	category = models.CharField(max_length=1, choices= CATEGORY_CHOICES)
+	category = models.TextField(choices= CATEGORY_CHOICES)
 
 	def __str__ (self):
 		return self.acmg_code
