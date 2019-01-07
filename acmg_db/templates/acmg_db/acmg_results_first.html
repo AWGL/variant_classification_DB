@@ -1,6 +1,11 @@
-
-<div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+<div class="card bg-muted mb-3" style="max-width: 24rem;">
   <div class="card-header">ACMG Classification Result</div>
   <div class="card-body">
-    <p class="card-text">{{result}}</p>
+    {% if 'Pathogenic' in result %}
+    <button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
+    {% elif 'Benign' in result %}
+    <button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
+    {% else %}
+    <button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
+    {% endif %}
   </div>
