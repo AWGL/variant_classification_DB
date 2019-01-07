@@ -393,6 +393,7 @@ def second_check(request, pk):
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
+	variant = classification.variant
 
 	if classification.status != '1':
 
@@ -422,6 +423,9 @@ def second_check(request, pk):
 
 	else:
 
+		# How many times have we seen the variant before.
+		previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
+
 		classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 
 		comments = UserComment.objects.filter(classification=classification)
@@ -438,7 +442,8 @@ def second_check(request, pk):
 									 'answers': classification_answers,
 									 'sample_form': sample_form,
 									 'acmg_result_first': acmg_result_first,
-									 'acmg_result_second': acmg_result_second})
+									 'acmg_result_second': acmg_result_second,
+									 'previous_classifications': previous_classifications})
 
 def signup(request):
 	"""
