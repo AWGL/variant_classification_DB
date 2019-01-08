@@ -3,6 +3,7 @@ from .forms import *
 from django.conf import settings
 from .models import *
 from .utils.variant_utils import *
+from .utils.acmg_worksheet_parser import *
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseForbidden
@@ -12,11 +13,53 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from io import TextIOWrapper
+import csv #######
 
 @login_required
 def home(request):
 	"""
 	The view for the home page.
+
+	Allows users to upload a file of variants to classify.
+	"""
+	if request.POST:
+		form = VariantFileUploadForm(request.POST, request.FILES)
+		if form.is_valid():
+			test = request.FILES['variant_file']
+			text_in = TextIOWrapper(test, encoding='utf-8')
+			
+			df, meta_dict = load_worksheet(text_in)
+			variants_json, variants_dict = process_data(df, meta_dict)
+			print(variants_json)
+
+			if variants_dict["errors"]:
+				print(variants_dict["errors"])
+			error = variants_dict["errors"]
+			warn = variants_dict["warnings"]
+			if variants_dict["test"]:
+				print('yes')
+
+			context = {
+				'form': form, 
+				'error': error,
+				'warn': warn
+				}
+	else:
+		form = VariantFileUploadForm()
+		context = {
+			'form': form, 
+			'error': None,
+			'warn': None
+		}
+
+	return render(request, 'acmg_db/home.html', context)
+
+
+@login_required
+def manual_input(request):
+	"""
+	The view for the manual input page.
 
 	Allows users to create a new classification for a variant.
 
@@ -123,7 +166,7 @@ def home(request):
 		# Go to the new_classification page.
 		return redirect(new_classification, new_classification_obj.pk)
 
-	return render(request, 'acmg_db/home.html', {'form': form, 'error': None})
+	return render(request, 'acmg_db/manual_input.html', {'form': form, 'error': None})
 
 
 @login_required
@@ -166,7 +209,7 @@ def new_classification(request, pk):
 
 				classification.save()
 
-				return redirect(home)
+				return redirect(manual_input)
 
 		else:
 

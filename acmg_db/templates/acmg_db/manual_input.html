@@ -1,0 +1,27 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br><br>
+<center>
+  <div>
+	<h4> Input variant details </h4>
+	<br>
+	
+	{% crispy form %}
+
+	<p class="text-muted">Example: 17:41197732G>A</p>
+
+	{% if error %}
+	  <div class="alert alert-danger col-lg-2-8">
+		Error: {{ error}}
+	  </div>
+	{% endif %}
+  </div>
+
+  <br>
+  <h5><a href="/">Back to file upload.</a></h5>
+</center>
+	
+{% endblock %}
