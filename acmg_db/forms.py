@@ -7,6 +7,32 @@ from crispy_forms.layout import Submit, Layout, Div
 from django.contrib.auth.models import User
 
 
+class VariantFileUploadForm(forms.Form):
+	"""
+	Form for inputting a tsv file of variants from the variant database, and adding them to the database
+	"""
+
+	variant_file = forms.FileField()
+	option1 = forms.CharField(max_length=100)
+	option2 = forms.CharField(max_length=100)
+
+	def __init__(self, *args, **kwargs):
+		super(VariantFileUploadForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'file-upload-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('home')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('variant_file', placeholder='Select a file to upload', title=False),
+			Field('option1', placeholder='Enter option1', title=False),
+			Field('option2', placeholder='Enter option2', title=False),
+		)
+
+
 class SecondCheckForm(forms.Form):
 	"""
 	Form for user to accept or reject classification of variant.
