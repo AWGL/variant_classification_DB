@@ -13,8 +13,10 @@ class VariantFileUploadForm(forms.Form):
 	"""
 
 	variant_file = forms.FileField()
-	option1 = forms.CharField(max_length=100)
-	option2 = forms.CharField(max_length=100)
+	analysis_performed = forms.CharField(max_length=100)
+	affected_with = forms.CharField(max_length=100)
+	inheritence_pattern = forms.CharField(max_length=100)
+	conditions = forms.CharField(max_length=100)
 
 	def __init__(self, *args, **kwargs):
 		super(VariantFileUploadForm, self).__init__(*args, **kwargs)
@@ -28,8 +30,10 @@ class VariantFileUploadForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('variant_file', placeholder='Select a file to upload', title=False),
-			Field('option1', placeholder='Enter option1', title=False),
-			Field('option2', placeholder='Enter option2', title=False),
+			Field('analysis_performed', placeholder='Enter analysis performed', title=False),
+			Field('affected_with', placeholder='Enter affected with', title=False),
+			Field('inheritence_pattern', placeholder='Enter inheritence pattern', title=False),
+			Field('conditions', placeholder='Enter conditions', title=False),
 		)
 
 
