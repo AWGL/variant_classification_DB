@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from io import TextIOWrapper
-import csv #######
+
 
 @login_required
 def home(request):
@@ -24,33 +24,55 @@ def home(request):
 	Allows users to upload a file of variants to classify.
 	"""
 	if request.POST:
+
 		form = VariantFileUploadForm(request.POST, request.FILES)
 		if form.is_valid():
-			test = request.FILES['variant_file']
-			text_in = TextIOWrapper(test, encoding='utf-8')
+
+			# get other options - change when I've figured out what they are
+			op1 = form.cleaned_data['option1']
+			op2 = form.cleaned_data['option2']
+			print(op1, op2)
+
+			# process tsv file
+			raw_file = request.FILES['variant_file']
+			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
 			
-			df, meta_dict = load_worksheet(text_in)
+			df, meta_dict = load_worksheet(utf_file)
 			variants_json, variants_dict = process_data(df, meta_dict)
 			print(variants_json)
 
-			if variants_dict["errors"]:
-				print(variants_dict["errors"])
 			error = variants_dict["errors"]
 			warn = variants_dict["warnings"]
-			if variants_dict["test"]:
-				print('yes')
 
-			context = {
-				'form': form, 
-				'error': error,
-				'warn': warn
-				}
+			if len(error) > 0:
+				error += ["ERROR: Didn't upload any files, check your input file and try again"]
+				context = {
+					'form': form, 
+					'error': error,
+					'warn': warn,
+					'success': None
+					}
+				return render(request, 'acmg_db/home.html', context)
+			
+			else:
+				#### do upload here!!!!!
+
+				success = ['Upload completed!']
+				context = {
+					'form': form, 
+					'error': error,
+					'warn': warn,
+					'success': success
+					}
+				return render(request, 'acmg_db/home.html', context)
+
 	else:
 		form = VariantFileUploadForm()
 		context = {
 			'form': form, 
 			'error': None,
-			'warn': None
+			'warn': None,
+			'success': None
 		}
 
 	return render(request, 'acmg_db/home.html', context)

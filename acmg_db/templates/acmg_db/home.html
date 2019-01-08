@@ -7,24 +7,33 @@
 <center>
   <div>
 	<h4> Load variants from file </h4>
-	<p>Import file must be the .tsv file outputted by the Variant database</p>
 	<br>
 	
 	{% crispy form %}
 
+	<p class="text-muted">Import file must be the .tsv file outputted by the Variant Database. If there are any errors, the data will not be uploaded.</p>
+
 	{% if error %}
 	  {% for e in error %}
 	    <div class="alert alert-danger col-lg-2-8">
-		  {{ e }}
-		</div>
+		    {{ e }}
+		  </div>
 	  {% endfor %}
 	{% endif %}
+
+	{% if success %}
+	  {% for s in success %}
+		  <div class="alert alert-success col-lg-2-8">
+		    {{ s }} <a href={% url 'view_previous_classifications' %}>View here.</a>
+	    </div>
+	  {% endfor %}
+  {% endif %}
 
 	{% if warn %}
 	  {% for w in warn %}
 	    <div class="alert alert-warning col-lg-2-8">
-		  {{ w }}
-		</div>
+		    {{ w }}
+		  </div>
 	  {% endfor %}
 	{% endif %}
   </div>
