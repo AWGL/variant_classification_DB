@@ -29,9 +29,9 @@ def home(request):
 		if form.is_valid():
 
 			# get other options - change when I've figured out what they are
-			op1 = form.cleaned_data['option1']
-			op2 = form.cleaned_data['option2']
-			print(op1, op2)
+			analysis_performed = form.cleaned_data['analysis_performed']
+			affected_with = form.cleaned_data['affected_with']
+			print(analysis_performed, affected_with)
 
 			# process tsv file
 			raw_file = request.FILES['variant_file']
@@ -39,11 +39,12 @@ def home(request):
 			
 			df, meta_dict = load_worksheet(utf_file)
 			variants_json, variants_dict = process_data(df, meta_dict)
-			print(variants_json)
+			print(variants_json) # change - dont need json and python dict
 
 			error = variants_dict["errors"]
 			warn = variants_dict["warnings"]
 
+			# if theres any errors, throw error and stop
 			if len(error) > 0:
 				error += ["ERROR: Didn't upload any files, check your input file and try again"]
 				context = {
@@ -52,8 +53,9 @@ def home(request):
 					'warn': warn,
 					'success': None
 					}
-				return render(request, 'acmg_db/home.html', context)
+				#return render(request, 'acmg_db/home.html', context)
 			
+			# else do the upload (warnings are thrown but upload continues)
 			else:
 				#### do upload here!!!!!
 
@@ -64,7 +66,7 @@ def home(request):
 					'warn': warn,
 					'success': success
 					}
-				return render(request, 'acmg_db/home.html', context)
+				#return render(request, 'acmg_db/home.html', context)
 
 	else:
 		form = VariantFileUploadForm()
