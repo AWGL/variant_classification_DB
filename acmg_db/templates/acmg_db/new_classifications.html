@@ -1,35 +1,41 @@
 {% extends 'acmg_db/base.html' %}
 {% load static %}
 {% block content %}
-	{% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
-	<br>
+<br>
 
-	 {% if previous_classifications|length  > 0 %}
-
-	<div class="alert alert-warning" role="alert">
-
-  	This variant has been classified {{ previous_classifications|length }} times before. Most recently on {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}. Click  <a href="{% url 'view_classification' pk=previous_classifications.0.pk %}"> here </a> to see that classification.
-	</div>
-
-	{% endif %}
-
-	<nav>
-		<div class="nav nav-tabs" id="nav-tab" role="tablist">
-			<a class="nav-item nav-link active" id="variant_info" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Information</a>
-			<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">ACMG</a>
-			<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Evidence</a>
-		</div>
-	</nav>
-	<div class="tab-content" id="nav-tabContent">
-		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-			<br>
+<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
+{% if previous_classifications|length  > 0 %}
+  <div class="alert alert-warning" role="alert">
+    This variant has been classified {{ previous_classifications|length }} times before. Most recently on {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}. Click  <a href="{% url 'view_classification' pk=previous_classifications.0.pk %}"> here </a> to see that classification.
+  </div>
+{% endif %}
 
 
-<table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
-    <thead>
-    </thead>
-    <tbody>
+<!-- TABS FOR CLASSIFICATION SECTIONS -->
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+	<a class="nav-item nav-link active" id="variant_info" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Information</a>
+	<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">ACMG</a>
+	<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Evidence</a>
+  </div>
+</nav>
+
+<!-- START OF CLASSIFICATION SECTIONS -->
+<div class="tab-content" id="nav-tabContent">
+
+  <!-- INFORMATION SECTION -->
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+  <br>
+
+  <!-- Summary table for classification-->
+  <table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
+	
+	<thead>
+	</thead>
+	
+	<tbody>
       <tr>
         <td> Classification ID </td>
         <td> {{classification.pk}} </td>
@@ -97,158 +103,169 @@
       <tr>
         <td> Affected With </td>
         <td> {{classification.sample.affected_with|linebreaksbr }} </td>
-      </tr>
-
-
-    </tbody>
+	  </tr>  
+	</tbody>
+	
   </table>
+  <hr>
 
-<hr>
-
+  <!-- Form for extra info -->
   {% crispy sample_form %}
 
+  </div>
+  <br>
+  <br>
+
+
+  <!-- ACMG RULES SECTION -->
+  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+	<!-- Button to recalculate the classification -->
+	<button type="button" class="btn btn-muted acmg_submit" id='submit_acmg' >Classify</button>
+	<hr>
+
+	<!-- Box to display the calculated classification -->
+	<div id ='class_box'>
+	  <div class="card bg-muted mb-3" style="max-width: 24rem;">
+		<div class="card-header">ACMG Classification Result</div>
+		<div class="card-body">
+		  {% if 'Pathogenic' in result %}
+			<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
+		  {% elif 'Benign' in result %}
+			<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
+		  {% else %}
+			<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
+		  {% endif %}
 		</div>
-		<br>
-		<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-			<button type="button" class="btn btn-muted acmg_submit" id='submit_acmg' >Classify</button>
-			<hr>
-			<div id ='class_box'>
-				<div class="card bg-muted mb-3" style="max-width: 24rem;">
-					<div class="card-header">ACMG Classification Result</div>
-					<div class="card-body">
-						{% if 'Pathogenic' in result %}
-						<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
-						{% elif 'Benign' in result %}
-						<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
-						{% else %}
-						<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
-						{% endif %}
-					</div>
-				</div>
-			</div>
-		</div>
-				<hr>
-				<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
-					<thead>
-						<tr>
-							<th style="display:none;" class='answer_pk'> Answer PK </th>
-							<th style="display:none;" class='cat'> Category </th>
-							<th class='question'> Evidence Category  </th>
-							<th class='description'> Description </th>
-							<th class='strength'> Strength </th>
-							<th class='selected'> Decision </th>
-							<th class='comment'> Comment </th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for answer in answers %}
-							{% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
-								<tr class='answer table-danger'>
-							{% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True%}
-								<tr class='answer table-success'>
-							{% else %}
-								<tr class='answer'>
-							{% endif %}
-							<td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
-							<td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
-							<td class='question'> {{ answer.classification_question.acmg_code  }}</td>
-							<td class='description'> {{ answer.classification_question.text  }}</td>
-							<td class='strength'>
-								{% if answer.classification_question.allowed_strength_change == False %}
-									{{answer.classification_question.default_strength}}
-								{% else %}
-									<select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
-										{% for strength in answer.classification_question.strength_options %}
-
-											{% if strength == answer.strength_first %}
-												<option value="{{strength}}" selected> {{strength}} </option>
-											{% else %}
-												<option value="{{strength}}"> {{strength}} </option>
-											{% endif %}
-
-										{% endfor %}
-										
-									</select>
-								{% endif %}
-							</td>
-							<td class='selected'>
-								<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
-									<option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
-									{% if answer.selected_first == False %}
-										<option value=True> True </option>
-										{% elif answer.selected_first == True %}
-										<option value=False> False </option>
-									{% endif %}
-								</select>
-							</td>
-
-							<td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
-
-							</tr>
-						
-						{% endfor %}
-				</tbody>
-			</table>
-			<br>
-			<br>
-					</div>
-					<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-						
-						<h4>Evidence</h4>
-						<div id='comment_box'>
-							<!-- Comment box folds the comments and files for the variant - updated via ajax -->
-							{% for comment in comments %}
-								<div class="card">
-									<h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
-									<div class="card-body">
-										{{comment.text|linebreaks}}
-										{% if comment.get_evidence == None %}
-										{% else %}
-											<hr>
-											{% for evidence in comment.get_evidence %}
-												<p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
-											{% endfor %}
-										{% endif %}
-									</div>
-								</div>
-								<hr>
-							{% endfor %}
-						</div>
-						
-						<hr>
-						<form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
-							<div class="form-group">
-								<label for="comment">Comment:</label>
-								<textarea class="form-control" rows="5" id="comment_text" style="resize:none;"></textarea>
-							</div>
-							<button type="button" class="btn btn-success btn-sm" id='comment_button'>
-							<span ></span> Add Comment/File
-							</button>
-							<div class="btn btn-default btn-sm">
-								Attach File <input type="file"  id='file_upload' name='file'>
-							</div>
-							<hr>
-							<div class="alert alert-info" id='file_name' style="display: none;">
-								
-							</div>
-							<input type="hidden" id='hidden_image_field'>
-						</form>
-						<canvas style="border:1px solid grey;" id="my_canvas" width="300" height="300"></canvas>
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-							<label class="form-check-label" for="defaultCheck1">
-								Allow Image Pasting
-							</label>
-						</div>
-						
-					</div>
-				</div>
-			</div>
-		</div>
+	  </div>
 	</div>
+	<hr>
+
+	<!-- Table listing all ACMG codes and option to apply them -->
+	<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+
+	  <thead>
+		<tr>
+		  <th style="display:none;" class='answer_pk'> Answer PK </th>
+		  <th style="display:none;" class='cat'> Category </th>
+		  <th class='question'> Evidence Category  </th>
+		  <th class='description'> Description </th>
+		  <th class='strength'> Strength </th>
+		  <th class='selected'> Decision </th>
+		  <th class='comment'> Comment </th>
+		</tr>
+	  </thead>
+
+	  <tbody>
+		<!-- Set colour of row depending on evidence applied -->
+		{% for answer in answers %}
+		  {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
+			<tr class='answer table-danger'>
+		  {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True%}
+			<tr class='answer table-info'>
+		  {% else %}
+			<tr class='answer'>
+		  {% endif %}
+		  	  <!-- Hidden columns for rendering table sections properly -->
+			  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+			  <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
+		      <td class='question'> {{ answer.classification_question.acmg_code  }}</td>
+			  <td class='description'> {{ answer.classification_question.text  }}</td>
+			  <!-- Change criteria strength -->
+			  <td class='strength'>
+				{% if answer.classification_question.allowed_strength_change == False %}
+				  {{answer.classification_question.default_strength}}
+				{% else %}
+				  <select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
+					{% for strength in answer.classification_question.strength_options %}
+					  {% if strength == answer.strength_first %}
+						<option value="{{strength}}" selected> {{strength}} </option>
+					  {% else %}
+						<option value="{{strength}}"> {{strength}} </option>
+					  {% endif %}
+					{% endfor %}	
+				  </select>
+				{% endif %}
+			  </td>
+			  <!-- Select whether or not to apply the criteria -->
+			  <td class='selected'>
+				<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
+				  <option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
+				  {% if answer.selected_first == False %}
+					<option value=True> True </option>
+				  {% elif answer.selected_first == True %}
+					<option value=False> False </option>
+				  {% endif %}
+				</select>
+			  </td>
+			  <!-- Comments box -->
+			  <td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+			</tr>	
+		{% endfor %}
+	  </tbody>
+
+	</table>
+
+	</div>
+	<br>
+	<br>
+
+
+  <!-- COMMENTS AND ATTACHMENTS SECTION -->
+  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+	  
+	<!-- Comment box holds the comments and files for the variant - updated via ajax -->
+	<div id='comment_box'>
+	  {% for comment in comments %}
+		<div class="card">
+		  <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+		  <div class="card-body">
+			{{comment.text|linebreaks}}
+			{% if comment.get_evidence == None %}
+			{% else %}
+			  <hr>
+			  {% for evidence in comment.get_evidence %}
+				<p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+			  {% endfor %}
+			{% endif %}
+		  </div>
+		</div>
+		<hr>
+	  {% endfor %}
+	</div>
+	<hr>
+
+	<!-- Form to add comments/ attach files or screenshots -->
+	<form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
+	  <div class="form-group">
+		<label for="comment">Comment:</label>
+		<textarea class="form-control" rows="5" id="comment_text" style="resize:none;"></textarea>
+	  </div>
+	  <button type="button" class="btn btn-success btn-sm" id='comment_button'>Add Comment/File</button>
+	  <div class="btn btn-default btn-sm">
+		Attach File <input type="file"  id='file_upload' name='file'>
+	  </div>
+	  <hr>
+	  <div class="alert alert-info" id='file_name' style="display: none;"></div>
+	  <input type="hidden" id='hidden_image_field'>
+	</form>
+	<canvas style="border:1px solid grey;" id="my_canvas" width="300" height="300"></canvas>
+	<div class="form-check">
+	  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+	  <label class="form-check-label" for="defaultCheck1">
+		Allow Image Pasting
+	  </label>
+	</div>
+		
+  </div>
+  <br>
+  <br>
+
+<!-- END OF CLASSIFICATION SECTIONS -->
 </div>
 
 
+<!-- JAVASCRIPT -->
 <script>
 $(document).ready(function(){
 
@@ -278,13 +295,13 @@ $(document).ready(function(){
 			if (path == 'P'){
 				$(this).parent().parent().addClass("table-danger")
 			} else {
-				$(this).parent().parent().addClass("table-success")
+				$(this).parent().parent().addClass("table-info")
 			}
 			
 		} else {
 			// remove classes when moving to false
 			$(this).parent().parent().removeClass("table-danger");
-			$(this).parent().parent().removeClass("table-success");
+			$(this).parent().parent().removeClass("table-info");
 		}
 	});
 	
@@ -447,5 +464,6 @@ function CLIPBOARD_CLASS(canvas_id, autoresize) {
 });
 
 </script>
+
 {% csrf_token %}
 {% endblock %}
