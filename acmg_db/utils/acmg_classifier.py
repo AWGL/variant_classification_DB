@@ -261,7 +261,13 @@ def adjust_strength(user_classifications):
 
 		acmg_code = classification[0]
 		strength = classification[1]
+		
+		
+		possible_adjusted_classifications = ['PS', 'PM',  'PP', 'BS', 'BP']
 
+		if (strength not in possible_adjusted_classifications):
+			strength=acmg_code[:2]
+		 
 		# if the furst two letters do not match the strength.
 		if strength != acmg_code[:2]:
 
