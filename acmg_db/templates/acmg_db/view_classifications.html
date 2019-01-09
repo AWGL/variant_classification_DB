@@ -7,61 +7,76 @@
 	<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
 		<thead>
 			<tr>
-				<th> Classification ID </th>
-				<th> Variant </th>
+				<th style="display:none;">PK</th>
+				<th> Action </th>
+				<th> Worksheet </th>
+				<th> Sample </th>
 				<th> Gene </th>
+				<th> Variant </th>
 				<th> HGVSc </th>
 				<th> HGVSp </th>
-				<th> Sample </th>
-				<th> Worklist </th>
-				<th> Date </th>
+				<th> Classification </th>
 				<th> Status </th>
 				<th> User </th>
-				<th> Classification </th>
-				<th> Action </th>
+				<th> Date </th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for classification in classifications %}
 				<tr>
-					<td> <a href="{% url 'view_classification' pk=classification.pk %}" >{{classification.pk}} </a></td>
-					<td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
-					<td> {{ classification.variant.get_genes}}</td>
-					<td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
-					<td> {{ classification.selected_transcript_variant.hgvs_p}}</td>
-					<td> {{ classification.sample.name}}</td>
-					<td> {{ classification.sample.worklist.name}}</td>
-					<td> {{ classification.creation_date|date:"Y/m/d"}}</td>
-					<td> {{ classification.display_status}} </td>
-					<td> {{ classification.user_creator}} </td>
-					<td> {{ classification.display_classification}} </td>
+					<td style="display:none;"> {{ classification.pk}}</td>
 					<td>
-						 {% if classification.status == '0' %}
-						<a href="{% url 'new_classification' pk=classification.pk %}" > Initial Analysis </a>
+						{% if classification.status == '0' %}
+						<a href="{% url 'new_classification' pk=classification.pk %}" > First Check </a>
 						{% elif classification.status == '1' %}
 						<a href="{% url 'second_check' pk=classification.pk %}" > Second Check </a>
 						{% else %}
 						None
 						{% endif %}
 					</td>
+					<td> {{ classification.sample.worklist.name}}</td>
+					<td> {{ classification.sample.name}}</td>
+					<td> {{ classification.variant.get_genes}}</td>
+					<td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
+					<td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
+					<td> {{ classification.selected_transcript_variant.hgvs_p}}</td>
+					<td> 
+						{% if 'Benign' in classification.display_classification %}
+							<a class="btn btn-info" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+						{% elif 'Pathogenic' in classification.display_classification %}
+							<a class="btn btn-danger" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+						{% elif 'VUS' in classification.display_classification %}
+							<a class="btn btn-warning" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+						{% elif 'Artefact' in classification.display_classification %}
+							<a class="btn btn-secondary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+						{% else %}
+							<a class="btn btn-light" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+						{% endif %}
+							{{ classification.display_classification}} 
+						</a>
+					</td>
+					<td> {{ classification.display_status}} </td>
+					<td> {{ classification.user_creator}} </td>
+					<td> {{ classification.creation_date|date:"d/m/Y"}}</td>
+					
 				</tr>
 			{% endfor %}
 	</tbody>
 
       <tfoot>
             <tr>
-				<th> Classification ID </th>
-				<th> Variant </th>
-				<th> Gene </th>
-				<th> HGVSc </th>
-				<th> HGVSp </th>
-				<th> Sample </th>
-				<th> Worklist </th>
-				<th> Date </th>
-				<th> Status </th>
-				<th> User </th>
-				<th> Classification </th>
-				<th> Action </th>
+				<th style="display:none;"></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
             </tr>
         </tfoot>
 
