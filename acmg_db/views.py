@@ -233,7 +233,7 @@ def new_classification(request, pk):
 
 				classification.save()
 
-				return redirect(manual_input)
+				return redirect(home)
 
 		else:
 
