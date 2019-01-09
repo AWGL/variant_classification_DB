@@ -31,7 +31,6 @@ def home(request):
 			# get other options - change when I've figured out what they are
 			analysis_performed = form.cleaned_data['analysis_performed']
 			affected_with = form.cleaned_data['affected_with']
-			print(analysis_performed, affected_with)
 
 			# process tsv file
 			raw_file = request.FILES['variant_file']
@@ -58,8 +57,87 @@ def home(request):
 			# else do the upload (warnings are thrown but upload continues)
 			else:
 				#### do upload here!!!!!
+				sample_id = variants_dict['sample_id']
+				worksheet_id = variants_dict['worksheet_id']
 
-				success = ['Upload completed!']
+				# add worksheet
+				worksheet, created = Worklist.objects.get_or_create(
+					name = worksheet_id
+					)
+
+				# add sample
+				sample, created = Sample.objects.get_or_create(
+					name = sample_id,
+					worklist = worksheet,
+					affected_with = affected_with,
+					analysis_performed = analysis_performed,
+					analysis_complete = False,
+					other_changes = ''
+					)
+
+				# TODO - make validation if worklist and sample have already been seen?
+
+				# add variants
+				for item in variants_dict['variants']:
+					print(item)
+					var = item['Variant']
+					variant_data = process_variant_input(var)
+
+					key = variant_data[5]
+					variant_hash = variant_data[0]
+					chromosome = variant_data[1]
+					position = variant_data[2]
+					ref = variant_data[3]
+					alt = variant_data[4]
+					
+					variant, created = Variant.objects.get_or_create(
+						key = key,
+						variant_hash = variant_hash,
+						chromosome = chromosome,
+						position = position,
+						ref = ref,
+						alt = alt
+						)
+
+					gene_query = item['Gene']
+					gene, created = Gene.objects.get_or_create(
+						name = gene_query
+						)
+
+					transcript_query = item['Transcript']
+					transcript, created = Transcript.objects.get_or_create(
+						name = transcript_query,
+						gene = gene
+						)
+
+					hgvs_c_query = item['HGVSc']
+					hgvs_p_query = item['HGVSp']
+					exon_query = 12   # TODO - Pull exon from report - location column  ################################################################
+					transcript_variant, created = TranscriptVariant.objects.get_or_create(
+						variant = variant,
+						transcript = transcript,
+						hgvs_c = hgvs_c_query,
+						hgvs_p = hgvs_p_query,
+						exon = exon_query
+
+						)
+
+					new_classification_obj = Classification.objects.create(
+						variant= variant,
+						sample = sample,
+						creation_date = timezone.now(),
+						user_creator = request.user,
+						status = '0',
+						is_trio_de_novo = False,
+						final_class = '7',
+						selected_transcript_variant = transcript_variant
+						)
+
+					new_classification_obj.save()
+					new_classification_obj.initiate_classification()
+
+
+				success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
 				context = {
 					'form': form, 
 					'error': error,
@@ -80,6 +158,10 @@ def home(request):
 	return render(request, 'acmg_db/home.html', context)
 
 
+
+
+
+#--------------------------------------------------------------------------------------------------
 @login_required
 def manual_input(request):
 	"""
