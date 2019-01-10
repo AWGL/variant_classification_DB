@@ -24,7 +24,7 @@
 	{% if success %}
 	  {% for s in success %}
 		  <div class="alert alert-success col-lg-2-8">
-		    {{ s }} <a href={% url 'view_previous_classifications' %}>View here.</a>
+		    {{ s }} <a href={% url 'view_previous_classifications' %}{{ params }}>View here.</a>
 	    </div>
 	  {% endfor %}
   {% endif %}

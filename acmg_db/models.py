@@ -189,7 +189,7 @@ class Classification(models.Model):
 
 		else:
 
-			return 'Not Displayed'
+			return 'Pending'
 
 
 

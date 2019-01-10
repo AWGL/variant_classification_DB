@@ -23,6 +23,16 @@ def home(request):
 
 	Allows users to upload a file of variants to classify.
 	"""
+	# make empty dict for context
+	form = VariantFileUploadForm()
+	context = {
+		'form': form, 
+		'error': None,
+		'warn': None,
+		'success': None,
+		'params': None
+	}
+
 	if request.POST:
 
 		form = VariantFileUploadForm(request.POST, request.FILES)
@@ -46,13 +56,9 @@ def home(request):
 			# if theres any errors, throw error and stop
 			if len(error) > 0:
 				error += ["ERROR: Didn't upload any files, check your input file and try again"]
-				context = {
-					'form': form, 
-					'error': error,
-					'warn': warn,
-					'success': None
-					}
-				#return render(request, 'acmg_db/home.html', context)
+				context['error'] = error
+				context['warn'] = warn
+
 			
 			# else do the upload (warnings are thrown but upload continues)
 			else:
@@ -138,22 +144,16 @@ def home(request):
 
 
 				success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
+				params = '?worksheet={}&sample={}'.format(worksheet_id, sample_id)
+				
 				context = {
 					'form': form, 
 					'error': error,
 					'warn': warn,
-					'success': success
+					'success': success,
+					'params': params
 					}
-				#return render(request, 'acmg_db/home.html', context)
 
-	else:
-		form = VariantFileUploadForm()
-		context = {
-			'form': form, 
-			'error': None,
-			'warn': None,
-			'success': None
-		}
 
 	return render(request, 'acmg_db/home.html', context)
 

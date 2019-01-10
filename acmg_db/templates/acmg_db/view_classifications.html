@@ -90,11 +90,50 @@
 <script>
 $(document).ready(function(){
 
- $('#classifications tfoot th').each( function () {
+	// set up search bars at the bottom of each column
+ 	$('#classifications tfoot th').each( function () {
         var title = $(this).text();
         $(this).html( '<input type="text" class="form-control" placeholder="Search '+title+'" />' );
     } );
 
+	// make empty dict for all search options
+	var main_search_params = ""
+	var col_search_params = {
+		pk: null,
+		action: null,
+		worksheet: null,
+		sample: null,
+		gene: null,
+		variant: null,
+		hgvs_c: null,
+		hgvs_p: null,
+		classification: null,
+		status: null,
+		user: null,
+		date: null,
+	};
+
+	// get params from url
+	var query = window.location.search.substring(1).split("&");
+	for (var i=0, max=query.length; i < max; i++) { 
+		
+		// check for empty string
+		var param = query[i].split("=");
+		if (param[0] === 'search')
+			main_search_params = decodeURIComponent(param[1] || "");
+		if (param[0] in col_search_params)
+			col_search_params[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+	}
+	
+	// make list for column search
+	var col_search = []
+	for (var i in col_search_params) {
+		if (col_search_params[i] === null) {
+			col_search.push(col_search_params[i]);
+		} else {
+			col_search.push( {"sSearch": col_search_params[i]});
+		}
+	}
 
 
 	// Inititialise DataTable
@@ -103,12 +142,13 @@ $(document).ready(function(){
 		"ordering": true,
 		"info":     false,
 		"searching": true,
-		"aaSorting": []
+		"aaSorting": [],
+		"oSearch": {"sSearch": main_search_params},    //<-    preset the search - pass in ws and sample id - aoSearchCols too - length 12, 1st col is hidden
+		"aoSearchCols": col_search,
 	});
 
-
-
- table.columns().every( function () {
+	// makes search function at the bottom of each column work
+ 	table.columns().every( function () {
         var that = this;
  
         $( 'input', this.footer() ).on( 'keyup change', function () {
@@ -120,10 +160,8 @@ $(document).ready(function(){
         } );
     } );
 
-
-
-
-
 });
+
+
 </script>
 {% endblock %}
