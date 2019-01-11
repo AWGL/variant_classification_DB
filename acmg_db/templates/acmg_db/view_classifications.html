@@ -2,113 +2,179 @@
 {% load static %}
 {% block content %}
 
+<br>
+<h4>View previous classifications</h4>
+<br>
 
-	<br>
-	<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
-		<thead>
-			<tr>
-				<th style="display:none;">PK</th>
-				<th> Action </th>
-				<th> Worksheet </th>
-				<th> Sample </th>
-				<th> Gene </th>
-				<th> Variant </th>
-				<th> HGVSc </th>
-				<th> HGVSp </th>
-				<th> Classification </th>
-				<th> Status </th>
-				<th> User </th>
-				<th> Date </th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for classification in classifications %}
-				<tr>
-					<td style="display:none;"> {{ classification.pk}}</td>
-					<td>
-						{% if classification.status == '0' %}
-						<a href="{% url 'new_classification' pk=classification.pk %}" > First Check </a>
-						{% elif classification.status == '1' %}
-						<a href="{% url 'second_check' pk=classification.pk %}" > Second Check </a>
-						{% else %}
-						None
-						{% endif %}
-					</td>
-					<td> {{ classification.sample.worklist.name}}</td>
-					<td> {{ classification.sample.name}}</td>
-					<td> {{ classification.variant.get_genes}}</td>
-					<td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
-					<td> {{ classification.selected_transcript_variant.hgvs_c}}</td>
-					<td> {{ classification.selected_transcript_variant.hgvs_p}}</td>
-					<td> 
-						{% if 'Benign' in classification.display_classification %}
-							<a class="btn btn-info" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
-						{% elif 'Pathogenic' in classification.display_classification %}
-							<a class="btn btn-danger" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
-						{% elif 'VUS' in classification.display_classification %}
-							<a class="btn btn-warning" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
-						{% elif 'Artefact' in classification.display_classification %}
-							<a class="btn btn-secondary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
-						{% else %}
-							<a class="btn btn-light" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
-						{% endif %}
-							{{ classification.display_classification}} 
-						</a>
-					</td>
-					<td> {{ classification.display_status}} </td>
-					<td> {{ classification.user_creator}} </td>
-					<td> {{ classification.creation_date|date:"d/m/Y"}}</td>
-					
-				</tr>
-			{% endfor %}
-	</tbody>
+<!-- Header showing total number of classifications and number after filtering -->
+<div>
+  <p id="num_showing"></p>
+</div>
+<br>
 
-      <tfoot>
-            <tr>
-				<th style="display:none;"></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-            </tr>
-        </tfoot>
+<!-- Expandable box containing preset filters -->
+<!-- Button to expand/hide the filter table -->
+<button class="btn btn-success" type="button" data-toggle="collapse" href="#results_filters" role="button" aria-expanded="false" aria-controls="results_filters">
+  View filters
+</button>
+<br>
+
+<!-- Table with filter options -->
+<div class="collapse" id="results_filters">
+  <div class="card card-body bg-light">
+	<table class="table table-responsive">
+	  <tbody>
+		<tr>
+		  <td>Status</td>
+		  <td>
+			<a class="btn btn-info" href="?status=first check" type="button">First check</a>
+			<a class="btn btn-info" href="?status=second check" type="button">Second check</a>
+			<a class="btn btn-info" href="?status=completed" type="button">Completed</a>
+			<a class="btn btn-info" href="?status=archived" type="button">Archived</a>
+		  </td>
+		</tr>
+		<tr>
+		  <td>Assigned to me</td>
+		  <td>
+			<a class="btn btn-info" href="#" type="button">First check</a>
+			<a class="btn btn-info" href="#" type="button">Second check</a>
+			<a class="btn btn-info" href="#" type="button">Both</a>
+		  </td>
+		</tr>
+		<tr>
+		  <td>Variant type</td>
+		  <td>
+			<a class="btn btn-info" href="?classification=artefact" type="button">Artefact</a>
+			<a class="btn btn-info" href="?classification=benign" type="button">Benign</a>
+			<a class="btn btn-info" href="?classification=likely benign" type="button">Likely Benign</a>
+			<a class="btn btn-info" href="?classification=vus" type="button">VUS</a>
+			<a class="btn btn-info" href="?classification=likely pathogenic" type="button">Likely Pathogenic</a>
+			<a class="btn btn-info" href="?classification=pathogenic" type="button">Pathogenic</a>
+		  </td>
+		</tr>
+		<tr>
+		  <td>
+			<a class="btn btn-info" href={% url 'view_previous_classifications' %} type="button">Remove all filters</a>
+		  </td>
+		  <td></td>
+		</tr>
+	  </tbody>
+	</table>
+  </div>
+</div>
 
 
+<!-- Main table of classifications -->
+<br>
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th style="display:none;">PK</th>
+	  <th>Status</th>
+	  <th>Worksheet</th>
+	  <th>Sample</th>
+	  <th>Gene</th>
+	  <th>Variant</th>
+	  <th>Transcript</th>
+	  <th>HGVSc</th>
+	  <th>HGVSp</th>
+	  <th>Classification</th>
+	  <th>User</th>
+	  <th>Date</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for classification in classifications %}
+	<tr>
+	  <td style="display:none;">{{ classification.pk }}</td>
+	  <td>
+		{% if classification.status == '0' %}
+		<a href="{% url 'new_classification' pk=classification.pk %}">First Check</a>
+		{% elif classification.status == '1' %}
+		<a href="{% url 'second_check' pk=classification.pk %}">Second Check</a>
+		{% elif classification.status == '2' %}
+		Completed
+		{% elif classification.status == '3' %}
+		Archived
+		{% else %}
+		Unknown
+		{% endif %}
+	  </td>
+	  <td>{{ classification.sample.worklist.name }}</td>
+	  <td>{{ classification.sample.name }}</td>
+	  <td>{{ classification.variant.get_genes }}</td>
+	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref }}>{{ classification.variant.alt }}</td>
+	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
+	  <td>{{ classification.selected_transcript_variant.hgvs_c }}</td>
+	  <td>{{ classification.selected_transcript_variant.hgvs_p }}</td>
+	  <td>
+		{% if 'Benign' in classification.display_classification %}
+		<a class="btn btn-info" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Pathogenic' in classification.display_classification %}
+		<a class="btn btn-danger" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'VUS' in classification.display_classification %}
+		<a class="btn btn-warning" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Artefact' in classification.display_classification %}
+		<a class="btn btn-secondary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-light" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% endif %}
+		  {{ classification.display_classification}} 
+		</a>
+	  </td>
+	  <td>{{ classification.user_creator}}</td>
+	  <td>{{ classification.creation_date|date:"d/m/Y"}}</td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+  <tfoot>
+	<tr>
+	  <th style="display:none;"></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	</tr>
+  </tfoot>
 
 </table>
+<br>
+<br>
+<!------------------------------------- END OF HTML ------------------------------------->
 
-
-
-
+<!-- JAVASCRIPT -->
 <script>
 $(document).ready(function(){
 
 	// set up search bars at the bottom of each column
  	$('#classifications tfoot th').each( function () {
         var title = $(this).text();
-        $(this).html( '<input type="text" class="form-control" placeholder="Search '+title+'" />' );
+        $(this).html( '<input type="text" class="form-control" placeholder="Search" />' );
     } );
 
-	// make empty dict for all search options
+	// make empty variables for all search options
 	var main_search_params = ""
 	var col_search_params = {
 		pk: null,
-		action: null,
+		status: null,
 		worksheet: null,
 		sample: null,
 		gene: null,
 		variant: null,
+		transcript: null,
 		hgvs_c: null,
 		hgvs_p: null,
 		classification: null,
-		status: null,
 		user: null,
 		date: null,
 	};
@@ -117,7 +183,7 @@ $(document).ready(function(){
 	var query = window.location.search.substring(1).split("&");
 	for (var i=0, max=query.length; i < max; i++) { 
 		
-		// check for empty string
+		// if param is in the list above, replace the value in the dict/variable, otherwise ignore it
 		var param = query[i].split("=");
 		if (param[0] === 'search')
 			main_search_params = decodeURIComponent(param[1] || "");
@@ -125,7 +191,7 @@ $(document).ready(function(){
 			col_search_params[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
 	}
 	
-	// make list for column search
+	// make list from the column dict for column search
 	var col_search = []
 	for (var i in col_search_params) {
 		if (col_search_params[i] === null) {
@@ -143,25 +209,31 @@ $(document).ready(function(){
 		"info":     false,
 		"searching": true,
 		"aaSorting": [],
-		"oSearch": {"sSearch": main_search_params},    //<-    preset the search - pass in ws and sample id - aoSearchCols too - length 12, 1st col is hidden
-		"aoSearchCols": col_search,
+		"oSearch": {"sSearch": main_search_params}, // pre-populate main search bar
+		"aoSearchCols": col_search,                 // pre-populate search bars at bottom of the columns (must be list of equal length to num of columns)
 	});
 
 	// makes search function at the bottom of each column work
  	table.columns().every( function () {
         var that = this;
- 
         $( 'input', this.footer() ).on( 'keyup change', function () {
             if ( that.search() !== this.value ) {
                 that
                     .search( this.value )
                     .draw();
             }
-        } );
-    } );
+        });
+    });
+
+	// make header showing total number of classification and number shown in the table
+	var info = table.page.info();
+	var num_showing = info['recordsDisplay'];
+	var num_total = info['recordsTotal'];
+	console.log(info)
+	document.getElementById("num_showing").innerHTML = 'Showing ' + num_showing + ' of ' + num_total + ' classifications'
+
 
 });
-
-
 </script>
+
 {% endblock %}
