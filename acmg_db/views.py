@@ -115,6 +115,7 @@ def home(request):
 						name = transcript_query,
 						gene = gene
 						)
+					# TODO: if the transcript is new, query refseq transcripts
 
 					hgvs_c_query = item['HGVSc']
 					hgvs_p_query = item['HGVSp']
@@ -145,7 +146,7 @@ def home(request):
 
 				success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
 				params = '?worksheet={}&sample={}'.format(worksheet_id, sample_id)
-				
+
 				context = {
 					'form': form, 
 					'error': error,
@@ -275,6 +276,7 @@ def manual_input(request):
 	return render(request, 'acmg_db/manual_input.html', {'form': form, 'error': None})
 
 
+#--------------------------------------------------------------------------------------------------
 @login_required
 def new_classification(request, pk):
 	"""
@@ -341,6 +343,7 @@ def new_classification(request, pk):
 										 'previous_classifications': previous_classifications
 										 })
 
+#--------------------------------------------------------------------------------------------------
 @login_required
 def ajax_acmg_classification_first(request):
 	"""
@@ -386,7 +389,7 @@ def ajax_acmg_classification_first(request):
 
 	return HttpResponse(html)
 
-
+#--------------------------------------------------------------------------------------------------
 @login_required
 def ajax_acmg_classification_second(request):
 	"""
@@ -431,6 +434,8 @@ def ajax_acmg_classification_second(request):
 
 	return HttpResponse(html)
 
+
+#--------------------------------------------------------------------------------------------------
 @login_required
 def ajax_comments(request):
 	"""
@@ -506,6 +511,9 @@ def ajax_comments(request):
 
 		raise Http404
 
+
+
+#--------------------------------------------------------------------------------------------------
 @login_required
 def view_previous_classifications(request):
 	"""
