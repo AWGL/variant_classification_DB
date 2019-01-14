@@ -49,8 +49,12 @@
         <td> {{classification.variant.get_genes}} </td>
       </tr>
       <tr>
-        <td> Transcript </td>
-        <td> {{classification.selected_transcript_variant.transcript.name }} </td>
+				<td> Transcript </td>
+				{% if classification.selected_transcript_variant.transcript.refseq_selected %}
+				<td> {{classification.selected_transcript_variant.transcript.refseq_selected }} <a class="badge badge-primary" href="#">Change</a></td>
+				{% else %}
+				<td><a class="badge badge-primary" href="#">Select transcript</a></td>
+				{% endif %}
       </tr>
       <tr>
         <td> HGVSc </td>

@@ -95,6 +95,8 @@ class Transcript(models.Model):
 
 	name = models.CharField(max_length=25, primary_key=True)
 	gene = models.ForeignKey(Gene, on_delete=models.CASCADE, null=True,blank=True)
+	refseq_options = models.CharField(max_length=200, null=True, blank=True)
+	refseq_selected = models.CharField(max_length=50, null=True, blank=True)
 
 
 class TranscriptVariant(models.Model):

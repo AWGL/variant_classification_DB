@@ -111,14 +111,38 @@ def home(request):
 						)
 
 					transcript_query = item['Transcript']
-					transcript, created = Transcript.objects.get_or_create(
-						name = transcript_query,
-						gene = gene
-						)
-					# TODO: if the transcript is new, query refseq transcripts
-
 					hgvs_c_query = item['HGVSc']
 					hgvs_p_query = item['HGVSp']
+
+					try:
+						transcript = Transcript.objects.get(name=transcript_query)
+						print('old')
+					except Transcript.DoesNotExist:
+						refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
+						warn += ensembl_warn
+
+						if len(refseq_transcripts) == 1:
+							refseq_selected = refseq_transcripts[0]
+						else:
+							refseq_selected = None
+
+						transcript = Transcript.objects.create(
+							name = transcript_query,
+							gene = gene,
+							refseq_options = json.dumps(refseq_transcripts),
+							refseq_selected = refseq_selected
+						)
+						print('new')
+					# TODO: if the transcript is new, query refseq transcripts
+					'''
+					if created:
+						refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
+						warn += ensembl_warn
+						if len(refseq_transcripts) == 1:
+							print('add transcript')
+						else:
+							print('select transcript')'''
+
 					exon_query = 12   # TODO - Pull exon from report - location column  ################################################################
 					transcript_variant, created = TranscriptVariant.objects.get_or_create(
 						variant = variant,

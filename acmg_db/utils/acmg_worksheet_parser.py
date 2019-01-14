@@ -2,6 +2,7 @@ import os
 import csv
 import json
 import pandas as pd
+import requests
 
 
 def load_worksheet(input_file):
@@ -99,6 +100,35 @@ def process_data(df, meta_dict):
     return_json = json.dumps(meta_dict, indent=2, separators=(',', ':'))
 
     return return_json, meta_dict
+
+
+def get_refseq_transcripts(transcript, hgvs_c):
+    warn = []
+    
+    if hgvs_c == "":
+        warn += ["HGVSc is empty"]
+    
+    query = "http://rest.ensembl.org/variant_recoder/human/{}:{}?".format(transcript, hgvs_c)
+    
+    r = requests.get(query, headers={ "Content-Type" : "application/json"})
+ 
+    if not r.ok:
+        warn += ['Could not connect to Ensembl database, add RefSeq transcript manually.']
+        
+    else:
+        decoded = r.json()
+
+        nm_list = []
+        for c in (decoded[0]['hgvsc']):
+            if c.startswith('NM'):
+                split = c.split(':')
+                if split[1] == hgvs_c:
+                    nm_list += [split[0]]
+                elif split[1] == hgvs_c[:-1]:
+                    nm_list += [split[0]]
+        print(transcript, nm_list)
+        
+    return nm_list, warn
 
 
 # - MAIN --------------------------------------------------------------
