@@ -4,6 +4,7 @@ from auditlog.registry import auditlog
 from auditlog.models import LogEntry
 from auditlog.models import AuditlogHistoryField
 from django.contrib.contenttypes.models import ContentType
+import json
 
 """
 Some models for the Database
@@ -97,6 +98,14 @@ class Transcript(models.Model):
 	gene = models.ForeignKey(Gene, on_delete=models.CASCADE, null=True,blank=True)
 	refseq_options = models.CharField(max_length=200, null=True, blank=True)
 	refseq_selected = models.CharField(max_length=50, null=True, blank=True)
+
+	def change_refseq_selected(self):
+		refseq_options = json.loads(self.refseq_options)
+		refseq_choices = []
+		for n, item in enumerate(refseq_options):
+			refseq_choices.append((str(n+1), item))
+		refseq_choices.append((str(n+2), 'Other'))
+		return refseq_choices
 
 
 class TranscriptVariant(models.Model):

@@ -8,9 +8,21 @@
 <!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
 {% if previous_classifications|length  > 0 %}
   <div class="alert alert-warning" role="alert">
-    This variant has been classified {{ previous_classifications|length }} times before. Most recently on {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}. Click  <a href="{% url 'view_classification' pk=previous_classifications.0.pk %}"> here </a> to see that classification.
+		This variant has been classified {{ previous_classifications|length }} times before. 
+		Most recently on {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}. 
+		Click  <a href="{% url 'view_classification' pk=previous_classifications.0.pk %}"> here </a> to see that classification.
   </div>
 {% endif %}
+
+{% if warn %}
+  {% for w in warn %}
+    <div class="alert alert-danger" role="alert">
+	    {{ w }}
+	  </div>
+  {% endfor %}
+{% endif %}
+
+
 
 
 <!-- TABS FOR CLASSIFICATION SECTIONS -->
@@ -30,85 +42,85 @@
   <br>
 
   <!-- Summary table for classification-->
-  <table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
+  <table id="classification_info" class="table table-hover table-bordered table-sm col-10">
 	
 	<thead>
 	</thead>
 	
-	<tbody>
+	  <tbody>
       <tr>
-        <td> Classification ID </td>
-        <td> {{classification.pk}} </td>
+        <td class="col-2">Classification ID</td>
+        <td class="col-8">{{ classification.pk }}</td>
       </tr>
       <tr>
-        <td> Variant </td>
-        <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+        <td>Variant</td>
+        <td>{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
       </tr>
       <tr>
-        <td> Gene </td>
-        <td> {{classification.variant.get_genes}} </td>
+        <td>Gene</td>
+        <td>{{classification.variant.get_genes}}</td>
       </tr>
       <tr>
-				<td> Transcript </td>
+				<td>Transcript</td>
 				{% if classification.selected_transcript_variant.transcript.refseq_selected %}
-				<td> {{classification.selected_transcript_variant.transcript.refseq_selected }} <a class="badge badge-primary" href="#">Change</a></td>
+				<td>{{classification.selected_transcript_variant.transcript.refseq_selected }} <button type="button" class="badge badge-success" data-toggle="modal" data-target="#select-transcript-modal">Change</button></td>
 				{% else %}
-				<td><a class="badge badge-primary" href="#">Select transcript</a></td>
+				<td><button type="button" class="badge badge-success" data-toggle="modal" data-target="#select-transcript-modal">Select transcript</button></td>
 				{% endif %}
       </tr>
       <tr>
-        <td> HGVSc </td>
-        <td> {{classification.selected_transcript_variant.hgvs_c }} </td>
+        <td>HGVSc</td>
+        <td>{{ classification.selected_transcript_variant.hgvs_c }}</td>
       </tr>
       <tr>
-        <td> HGVSp </td>
-        <td> {{classification.selected_transcript_variant.hgvs_p }} </td>
+        <td>HGVSp</td>
+        <td>{{ classification.selected_transcript_variant.hgvs_p }}</td>
       </tr>
       <tr>
-        <td> Exon </td>
-        <td> {{classification.selected_transcript_variant.exon }} </td>
+        <td>Exon</td>
+        <td>{{ classification.selected_transcript_variant.exon }}</td>
       </tr>
       <tr>
-        <td> Created Date </td>
-        <td> {{classification.creation_date }} </td>
+        <td>Created Date </td>
+        <td>{{ classification.creation_date }}</td>
       </tr>
       <tr>
-        <td> Creation User</td>
-        <td> {{classification.user_creator }} </td>
+        <td>Creation User</td>
+        <td>{{ classification.user_creator }}</td>
       </tr>
       <tr>
-        <td> Second Check Date</td>
-        <td> {{classification.second_check_date }} </td>
+        <td>Second Check Date</td>
+        <td>{{ classification.second_check_date }}</td>
       </tr>
       <tr>
-        <td> Second Check User</td>
-        <td> {{classification.user_second_checker }} </td>
+        <td>Second Check User</td>
+        <td>{{ classification.user_second_checker }}</td>
       </tr>
       <tr>
-        <td> Status </td>
-        <td> {{classification.display_status }} </td>
+        <td>Status</td>
+        <td>{{ classification.display_status }}</td>
       </tr>
       <tr>
-        <td> Sample Lab Number </td>
-        <td> {{classification.sample.name }} </td>
-      </tr>
-       <tr>
-        <td> Worklist </td>
-        <td> {{classification.sample.worklist.name }} </td>
+        <td>Sample Lab Number </td>
+        <td>{{ classification.sample.name }}</td>
       </tr>
       <tr>
-        <td> Analysis Performed </td>
-        <td> {{classification.sample.analysis_performed|linebreaksbr }} </td>
+        <td>Worklist</td>
+        <td>{{ classification.sample.worklist.name }}</td>
       </tr>
       <tr>
-        <td> Other Changes </td>
-        <td> {{classification.sample.other_changes|linebreaksbr }} </td>
+        <td>Analysis Performed</td>
+        <td>{{ classification.sample.analysis_performed|linebreaksbr }}</td>
       </tr>
       <tr>
-        <td> Affected With </td>
-        <td> {{classification.sample.affected_with|linebreaksbr }} </td>
-	  </tr>  
-	</tbody>
+        <td>Other Changes</td>
+        <td>{{ classification.sample.other_changes|linebreaksbr }}</td>
+      </tr>
+      <tr>
+        <td>Affected With</td>
+        <td>{{ classification.sample.affected_with|linebreaksbr }}</td>
+	    </tr>  
+	  </tbody>
 	
   </table>
   <hr>
@@ -268,6 +280,43 @@
 <!-- END OF CLASSIFICATION SECTIONS -->
 
 </div>
+
+<!-- SELECT TRANSCRIPT MODAL -->
+<div id="select-transcript-modal" class="modal fade bd-example-modal-lg" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+
+			<!-- modal header -->
+			<div class="modal-header">
+				<h5>Change transcript information</h5>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<!-- Modal body -->
+			<div class="modal-body">
+				<p><b>Current transcripts:</b></p>
+				<table class="table table-hover table-bordered table-sm col-10">
+					<tbody>
+						<tr>
+							<td class="col-2">Ensembl ID</td>
+							<td class="col-8">{{ classification.selected_transcript_variant.transcript.name }}</td>
+						</tr>
+						<tr>
+							<td class="col-2">RefSeq ID</td>
+							<td class="col-8">{{ classification.selected_transcript_variant.transcript.refseq_selected }}</td>
+						</tr>
+					</tbody>
+				</table>
+				<hr>
+
+				<p><b>Change RefSeq transcript:</b></p>
+				{% crispy refseq_form %}
+			</div>
+
+		</div>
+	</div>
+</div>
+
 <!------------------------------------- END OF HTML ------------------------------------->
 
 <!-- JAVASCRIPT -->

@@ -315,57 +315,95 @@ def new_classification(request, pk):
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
-	variant = classification.variant
 
 	#reject if wrong status or user
 	if classification.status != '0' or request.user != classification.user_creator:
-
 		return HttpResponseForbidden()
 
 	else:
+		# Get data to render form
+		variant = classification.variant
+		previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
+		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
+		comments = UserComment.objects.filter(classification=classification)
 
-		# If the user has submitted the SampleInformationForm
+		# make the sample info form
+		sample_form = ClassificationInformationForm(classification_pk = classification.pk)
+
+		# Get the automated acmg score
+		result = classification.calculate_acmg_score_first()
+
+		# select refseq transcript
+		transcript = classification.selected_transcript_variant.transcript
+		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()
+		refseq_form = SelectRefSeqTranscript(classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
+
+		# dict of data to pass to view
+		context = {
+			'answers': answers,
+			'classification': classification,
+			'variant': variant,
+			'comments': comments,
+			'result': result,
+			'sample_form': sample_form,
+			'previous_classifications': previous_classifications,
+			'refseq_form': refseq_form,
+			'warn': []
+		}
+		
+		# form submission
 		if request.method == 'POST':
+			# If the user has submitted the SampleInformationForm
+			if 'final_classification' in request.POST:
+				sample_form = ClassificationInformationForm(request.POST, classification_pk = classification.pk)
 
-			sample_form = ClassificationInformationForm(request.POST, classification_pk = classification.pk)
+				if sample_form.is_valid():
 
-			if sample_form.is_valid():
+					# Update models
+					cleaned_data = sample_form.cleaned_data
+					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+					classification.inheritance_pattern = cleaned_data['inheritance_pattern']
+					classification.final_class = cleaned_data['final_classification']
+					classification.conditions = cleaned_data['conditions']
+					classification.status = '1'
 
-				# Update models
-				cleaned_data = sample_form.cleaned_data
-				classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
-				classification.inheritance_pattern = cleaned_data['inheritance_pattern']
-				classification.final_class = cleaned_data['final_classification']
-				classification.conditions = cleaned_data['conditions']
-				classification.status = '1'
+					classification.save()
 
-				classification.save()
+					return redirect(home)
 
-				return redirect(home)
+			# If the user has submitted the refseq form
+			if 'refseq_choices' in request.POST:
+				refseq_form = SelectRefSeqTranscript(request.POST, classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
+				
+				if refseq_form.is_valid():
+
+					# update models
+					cleaned_data = refseq_form.cleaned_data
+					transcript_pk = Transcript.objects.filter(name=transcript.name)
+
+					for item in refseq_options:
+						if item[0] == cleaned_data['refseq_choices']:
+							if item[1] == 'Other':
+								refseq_new = cleaned_data['refseq_other']
+								# validate input
+								if refseq_new == '':
+									context['warn'] += ['Transcript not set - transcript ID cannot be empty.']
+								elif not refseq_new.startswith('NM_'):
+									context['warn'] += ['Transcript not set - transcript ID is not a RefSeq ID.']
+								# if validation passed, update refseq id
+								else:
+									transcript_pk.update(refseq_selected = refseq_new)
+							# if item is from the list, update refseq id
+							else:
+								refseq_new = item[1]
+								transcript_pk.update(refseq_selected = refseq_new)
+						# refresh classification info
+						context['classification'] = get_object_or_404(Classification, pk=pk)
+
+					return render(request, 'acmg_db/new_classifications.html', context)
 
 		else:
-
-			# Get all the previous classifications of this variant
-			previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
-
-			# Get the answers to the ACMG criteria for this classification
-			answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
-
-			comments = UserComment.objects.filter(classification=classification)
-
-			sample_form = ClassificationInformationForm(classification_pk = classification.pk)
-
-			# Get the automated acmg score
-			result = classification.calculate_acmg_score_first()
-
-			return render(request, 'acmg_db/new_classifications.html', {'answers': answers,
-										 'classification': classification,
-										 'variant': variant,
-										 'comments': comments,
-										 'result': result,
-										 'sample_form': sample_form,
-										 'previous_classifications': previous_classifications
-										 })
+			return render(request, 'acmg_db/new_classifications.html', context)
 
 #--------------------------------------------------------------------------------------------------
 @login_required

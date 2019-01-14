@@ -7,6 +7,35 @@ from crispy_forms.layout import Submit, Layout, Div
 from django.contrib.auth.models import User
 
 
+class SelectRefSeqTranscript(forms.Form):
+	"""
+	
+	"""
+	select_transcript = forms.ChoiceField()
+	other = forms.CharField(max_length=100, required=False)
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.transcript_pk = kwargs.pop('transcript_pk')
+		self.options = kwargs.pop('options')
+
+		super(SelectRefSeqTranscript, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.fields['select_transcript'].choices = self.options
+		self.helper.form_id = 'refseq-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('new_classification', kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('select_transcript'),
+			Field('other', placeholder='If other, please specify', title=False)
+		)
+
+
 class VariantFileUploadForm(forms.Form):
 	"""
 	Form for inputting a tsv file of variants from the variant database, and adding them to the database
