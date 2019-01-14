@@ -65,7 +65,7 @@
 				{% if classification.selected_transcript_variant.transcript.refseq_selected %}
 				<td>{{classification.selected_transcript_variant.transcript.refseq_selected }} <button type="button" class="badge badge-success" data-toggle="modal" data-target="#select-transcript-modal">Change</button></td>
 				{% else %}
-				<td><button type="button" class="badge badge-success" data-toggle="modal" data-target="#select-transcript-modal">Select transcript</button></td>
+				<td><button type="button" class="badge badge-danger" data-toggle="modal" data-target="#select-transcript-modal">Select transcript</button></td>
 				{% endif %}
       </tr>
       <tr>

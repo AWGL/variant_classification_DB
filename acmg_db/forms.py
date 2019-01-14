@@ -40,14 +40,16 @@ class VariantFileUploadForm(forms.Form):
 	"""
 	Form for inputting a tsv file of variants from the variant database, and adding them to the database
 	"""
-
 	variant_file = forms.FileField()
-	analysis_performed = forms.CharField(max_length=100)
+	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(max_length=100)
 
 	def __init__(self, *args, **kwargs):
+		self.panel_options = kwargs.pop('options')
+
 		super(VariantFileUploadForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
+		self.fields['panel_applied'].choices = self.panel_options
 		self.helper.form_id = 'file-upload-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -57,7 +59,7 @@ class VariantFileUploadForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('variant_file', placeholder='Select a file to upload', title=False),
-			Field('analysis_performed', placeholder='Enter analysis performed', title=False),
+			Field('panel_applied', placeholder='Enter analysis performed', title=False),
 			Field('affected_with', placeholder='Enter affected with', title=False),
 		)
 

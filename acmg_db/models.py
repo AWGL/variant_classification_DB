@@ -430,6 +430,7 @@ class UserComment(models.Model):
 
 		return evidence
 
+
 class Evidence(models.Model):
 	"""
 	Model to hold files that relate to evidence e.g. pdfs, screenshots.
@@ -438,10 +439,19 @@ class Evidence(models.Model):
 	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
 
+
+class Panel(models.Model):
+	"""
+	class to hold panel information
+	"""
+	panel = models.CharField(max_length=100, primary_key=True)
+	added_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+
+
+# register audit logs
 auditlog.register(Variant)
 auditlog.register(Classification)
 auditlog.register(ClassificationQuestion)
 auditlog.register(ClassificationAnswer)
 auditlog.register(UserComment)
-
-

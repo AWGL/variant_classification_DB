@@ -23,8 +23,15 @@ def home(request):
 
 	Allows users to upload a file of variants to classify.
 	"""
+	# make a list of all panels and pass to the form to populate the dropdown
+	all_panels = Panel.objects.all()
+	panel_options = []
+	for n, item in enumerate(all_panels):
+		panel_options.append((str(n+1), item.panel))
+
+	form = VariantFileUploadForm(options=panel_options)
+
 	# make empty dict for context
-	form = VariantFileUploadForm()
 	context = {
 		'form': form, 
 		'error': None,
@@ -35,11 +42,18 @@ def home(request):
 
 	if request.POST:
 
-		form = VariantFileUploadForm(request.POST, request.FILES)
+		form = VariantFileUploadForm(request.POST, request.FILES, options=panel_options)
 		if form.is_valid():
 
-			# get other options - change when I've figured out what they are
-			analysis_performed = form.cleaned_data['analysis_performed']
+			# get panel
+			analysis_performed_index = form.cleaned_data['panel_applied']
+			analysis_performed = ""
+			for panel in panel_options:
+				print(panel[0])
+				if panel[0] == analysis_performed_index:
+					analysis_performed = panel[1]
+
+			# get affected with
 			affected_with = form.cleaned_data['affected_with']
 
 			# process tsv file
