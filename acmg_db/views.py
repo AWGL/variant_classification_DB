@@ -351,6 +351,9 @@ def new_classification(request, pk):
 		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()
 		refseq_form = SelectRefSeqTranscript(classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
 
+		genuine_form = GenuineArtefactForm()
+		choice_form = ClassifyChoiceForm()
+
 		# dict of data to pass to view
 		context = {
 			'answers': answers,
@@ -358,6 +361,8 @@ def new_classification(request, pk):
 			'variant': variant,
 			'comments': comments,
 			'result': result,
+			'genuine_form': genuine_form,
+			'choice_form': choice_form,
 			'sample_form': sample_form,
 			'previous_classifications': previous_classifications,
 			'refseq_form': refseq_form,

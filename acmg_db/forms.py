@@ -148,11 +148,11 @@ class ClassificationInformationForm(forms.Form):
 		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
 		('6', 'Artefact'), ('7', 'NA'))
 
-	
+	genuine = forms.ChoiceField(choices=((1, 'Genuine'), (2, 'Artefact'), (3, 'Not analysed')))
 	inheritance_pattern = forms.CharField(max_length=30)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
-	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
+	#final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
 
 
 	def __init__(self, *args, **kwargs):
@@ -166,7 +166,7 @@ class ClassificationInformationForm(forms.Form):
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
 		self.fields['inheritance_pattern'].initial = self.classification.inheritance_pattern
 		self.fields['conditions'].initial = self.classification.conditions
-		self.fields['final_classification'].initial = self.classification.final_class
+		#self.fields['final_classification'].initial = self.classification.final_class
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -175,13 +175,12 @@ class ClassificationInformationForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success acmg_submit'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-						
-						Div('inheritance_pattern'),
-						Div('conditions'),
-						Div('is_trio_de_novo'),
-						Div('final_classification'),
-						
-						 )
+			Div('genuine'),	
+			Div('inheritance_pattern'),
+			Div('conditions'),
+			Div('is_trio_de_novo'),
+			#Div('final_classification'),				
+		)
 
 
 
@@ -252,6 +251,62 @@ class ArchiveClassificationForm(forms.Form):
 
 
 
+class GenuineArtefactForm(forms.Form):
+	"""
+
+	"""
+	CHOICES = ((1, 'Genuine'), (2, 'Artefact'))
+	genuine = forms.ChoiceField(choices=CHOICES)
+
+	def __init__(self, *args, **kwargs):
+
+		#self.classification_pk = kwargs.pop('classification_pk')
+		#self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(GenuineArtefactForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		#self.fields['final_classification'].initial = self.classification.final_class
+		self.helper.form_id = 'genuine-artefact-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success acmg_submit'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Div('genuine'),			
+		)
 
 
+class ClassifyChoiceForm(forms.Form):
+	"""
+
+	"""
+	CHOICES = (
+		(1, 'New classification'), 
+		(2, 'Use previous classification'),
+		(3, 'Not analysed')
+	)
+	classify = forms.ChoiceField(choices=CHOICES)
+
+	def __init__(self, *args, **kwargs):
+
+		#self.classification_pk = kwargs.pop('classification_pk')
+		#self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(ClassifyChoiceForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		#self.fields['final_classification'].initial = self.classification.final_class
+		self.helper.form_id = 'classify-choice-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success acmg_submit'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Div('classify'),			
+		)
 
