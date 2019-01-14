@@ -194,111 +194,123 @@ def manual_input(request):
 	The view for the manual input page.
 
 	Allows users to create a new classification for a variant.
-
 	"""
 
 	form = SearchForm()
+	context = {
+		'form': form,
+		'error': [], 
+	}
 
 	# If the user has searched for something
-	if request.GET.get('variant') != '' and request.GET.get('variant') != None:
+	#if request.GET.get('variant') != '' and request.GET.get('variant') != None:
+	if request.POST:
+		form = SearchForm(request.POST)
+		if form.is_valid():
+			cleaned_data = form.cleaned_data
+			
+			# Get the user input from the form.
+			search_query = cleaned_data['variant'].strip()
+			gene_query = cleaned_data['gene'].strip()
+			transcript_query = cleaned_data['transcript'].strip()
+			hgvs_c_query = cleaned_data['hgvs_c'].strip()
+			hgvs_p_query = cleaned_data['hgvs_p'].strip()
+			exon_query = cleaned_data['exon'].strip()
 
+			sample_name_query = cleaned_data['sample_name'].strip()
+			affected_with_query = cleaned_data['affected_with'].strip()
+			analysis_performed_query = cleaned_data['analysis_performed'].strip()
+			other_changes_query = cleaned_data['other_changes'].strip()
+			worklist_query = cleaned_data['worklist'].strip()
+		
+			# Validate the variant using Mutalyzer - i.e. is the variant real?
+			# We only check if the chr-pos-ref-alt is real not if gene etc is correct.
+			#variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
 
-		# Get the user input from the form.
-		search_query = request.GET.get('variant')
-		search_query = search_query.strip()
-		gene_query = request.GET.get('gene').strip()
-		transcript_query = request.GET.get('transcript').strip()
-		hgvs_c_query = request.GET.get('hgvs_c').strip()
-		hgvs_p_query = request.GET.get('hgvs_p').strip()
-		exon_query = request.GET.get('exon').strip()
+			# Add variant to DB if not already present
+			# Get varaint information e.g. chr, pos, ref, alt from the input
 
-		sample_name_query = request.GET.get('sample_name').strip()
-		affected_with_query = request.GET.get('affected_with').strip()
-		analysis_performed_query = request.GET.get('analysis_performed').strip()
-		other_changes_query = request.GET.get('other_changes').strip()
-		worklist_query = request.GET.get('worklist').strip()
+			variant_data = process_variant_input(search_query)
 
-		# Validate the variant using Mutalyzer - i.e. is the variant real?
-		# We only check if the chr-pos-ref-alt is real not if gene etc is correct.
-		#variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
+			variant_hash = variant_data[0]
+			chromosome = variant_data[1]
+			position = variant_data[2]
+			ref = variant_data[3]
+			alt = variant_data[4]
+			key = variant_data[5]
 
-
-		# Add variant to DB if not already present
-		# Get varaint information e.g. chr, pos, ref, alt from the input
-
-		variant_data = process_variant_input(search_query)
-
-		variant_hash = variant_data[0]
-		chromosome = variant_data[1]
-		position = variant_data[2]
-		ref = variant_data[3]
-		alt = variant_data[4]
-		key = variant_data[5]
-
-
-		# Create the objects
-
-		worklist, created = Worklist.objects.get_or_create(
-			name = worklist_query
+		
+			# Create the objects
+			worklist, created = Worklist.objects.get_or_create(
+				name = worklist_query
 			)
 
-
-		sample, created = Sample.objects.get_or_create(
-			name = sample_name_query,
-			worklist = worklist,
-			affected_with = affected_with_query,
-			analysis_performed = analysis_performed_query,
-			analysis_complete = False,
-			other_changes = other_changes_query
+			sample, created = Sample.objects.get_or_create(
+				name = sample_name_query,
+				worklist = worklist,
+				affected_with = affected_with_query,
+				analysis_performed = analysis_performed_query,
+				analysis_complete = False,
+				other_changes = other_changes_query
 			)
 
-		variant, created = Variant.objects.get_or_create(
+			variant, created = Variant.objects.get_or_create(
 				key = key,
 				variant_hash = variant_hash,
 				chromosome = chromosome,
 				position = position,
 				ref = ref,
 				alt = alt
+			)
+
+			gene, created = Gene.objects.get_or_create(
+				name = gene_query
+			)
+
+			try:
+				transcript = Transcript.objects.get(name=transcript_query)
+			except Transcript.DoesNotExist:
+				refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
+				#warn += ensembl_warn
+
+				if len(refseq_transcripts) == 1:
+					refseq_selected = refseq_transcripts[0]
+				else:
+					refseq_selected = None
+
+				transcript = Transcript.objects.create(
+					name = transcript_query,
+					gene = gene,
+					refseq_options = json.dumps(refseq_transcripts),
+					refseq_selected = refseq_selected
 				)
 
-
-		gene, created = Gene.objects.get_or_create(
-			name = gene_query
+			transcript_variant, created = TranscriptVariant.objects.get_or_create(
+				variant = variant,
+				transcript = transcript,
+				hgvs_c = hgvs_c_query,
+				hgvs_p = hgvs_p_query,
+				exon = exon_query
 			)
 
-		transcript, created = Transcript.objects.get_or_create(
-			name = transcript_query,
-			gene = gene
+			new_classification_obj = Classification.objects.create(
+				variant= variant,
+				sample = sample,
+				creation_date = timezone.now(),
+				user_creator = request.user,
+				status = '0',
+				is_trio_de_novo = False,
+				final_class = '7',
+				selected_transcript_variant = transcript_variant
 			)
 
-		transcript_variant, created = TranscriptVariant.objects.get_or_create(
-			variant = variant,
-			transcript = transcript,
-			hgvs_c = hgvs_c_query,
-			hgvs_p = hgvs_p_query,
-			exon = exon_query
+			new_classification_obj.save()
+			new_classification_obj.initiate_classification()
+			
+			# Go to the new_classification page.
+			return redirect(new_classification, new_classification_obj.pk)
 
-			)
-
-		new_classification_obj = Classification.objects.create(
-			variant= variant,
-			sample = sample,
-			creation_date = timezone.now(),
-			user_creator = request.user,
-			status = '0',
-			is_trio_de_novo = False,
-			final_class = '7',
-			selected_transcript_variant = transcript_variant
-			)
-
-		new_classification_obj.save()
-
-		new_classification_obj.initiate_classification()
-
-		# Go to the new_classification page.
-		return redirect(new_classification, new_classification_obj.pk)
-
-	return render(request, 'acmg_db/manual_input.html', {'form': form, 'error': None})
+	return render(request, 'acmg_db/manual_input.html', context)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -373,7 +385,7 @@ def new_classification(request, pk):
 					return redirect(home)
 
 			# If the user has submitted the refseq form
-			if 'refseq_choices' in request.POST:
+			if 'select_transcript' in request.POST:
 				refseq_form = SelectRefSeqTranscript(request.POST, classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
 				
 				if refseq_form.is_valid():
@@ -383,9 +395,9 @@ def new_classification(request, pk):
 					transcript_pk = Transcript.objects.filter(name=transcript.name)
 
 					for item in refseq_options:
-						if item[0] == cleaned_data['refseq_choices']:
+						if item[0] == cleaned_data['select_transcript']:
 							if item[1] == 'Other':
-								refseq_new = cleaned_data['refseq_other']
+								refseq_new = cleaned_data['other']
 								# validate input
 								if refseq_new == '':
 									context['warn'] += ['Transcript not set - transcript ID cannot be empty.']
@@ -401,10 +413,10 @@ def new_classification(request, pk):
 						# refresh classification info
 						context['classification'] = get_object_or_404(Classification, pk=pk)
 
-					return render(request, 'acmg_db/new_classifications.html', context)
+					#return render(request, 'acmg_db/new_classifications.html', context)
 
-		else:
-			return render(request, 'acmg_db/new_classifications.html', context)
+		#else:
+		return render(request, 'acmg_db/new_classifications.html', context)
 
 #--------------------------------------------------------------------------------------------------
 @login_required

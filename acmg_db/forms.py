@@ -115,25 +115,23 @@ class SearchForm(forms.Form):
 		self.helper.form_id = 'search-data-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'get'
-		self.helper.form_action = reverse('home')
+		self.helper.form_method = 'post'
+		#self.helper.form_action = reverse('home')
 		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-
-					Field('variant', placeholder='Enter a variant to classify', title=False),
-					Field('gene', placeholder='Enter a gene name', title=False),
-					Field('transcript', placeholder='Enter a transcript name', title=False),
-					Field('hgvs_c', placeholder='Enter the HGVSc for the variant', title=False),
-					Field('hgvs_p', placeholder='Enter the HGVSp for the variant', title=False),
-					Field('exon', placeholder='Enter the exon number for the variant', title=False),
-					Field('sample_name', placeholder='Enter the sample name', title=False),
-					Field('worklist', placeholder='Enter the worklist name', title=False),
-					Field('affected_with', placeholder='Enter What the sample is affected with', title=False),
-					Field('analysis_performed', placeholder='Enter the analysis performed', title=False),
-					Field('other_changes', placeholder='Enter any other changes', title=False),
-
-					)
+			Field('variant', placeholder='Enter a variant to classify', title=False),
+			Field('gene', placeholder='Enter a gene name', title=False),
+			Field('transcript', placeholder='Enter a transcript name', title=False),
+			Field('hgvs_c', placeholder='Enter the HGVSc for the variant', title=False),
+			Field('hgvs_p', placeholder='Enter the HGVSp for the variant', title=False),
+			Field('exon', placeholder='Enter the exon number for the variant', title=False),
+			Field('sample_name', placeholder='Enter the sample name', title=False),
+			Field('worklist', placeholder='Enter the worklist name', title=False),
+			Field('affected_with', placeholder='Enter What the sample is affected with', title=False),
+			Field('analysis_performed', placeholder='Enter the analysis performed', title=False),
+			Field('other_changes', placeholder='Enter any other changes', title=False)
+		)
 
 
 class ClassificationInformationForm(forms.Form):
