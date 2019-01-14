@@ -50,7 +50,7 @@ def process_data(df, meta_dict):
     error_list = []
     warning_list = []
     sorted_df = pd.DataFrame()
-    fields = ['Variant', 'Genotype', 'Gene', 'Transcript', 'dbSNP', 'HGVSc', 'HGVSp', 'PreferredTranscript', 'CanonicalTranscript']
+    fields = ['Variant', 'Genotype', 'Gene', 'Transcript', 'HGVSc', 'HGVSp', 'PreferredTranscript', 'CanonicalTranscript', 'Location']
 
     # make list of unique variants and loop through each one
     unique_variants = df['Variant'].unique()
@@ -91,15 +91,14 @@ def process_data(df, meta_dict):
     final_df_json = final_df.to_json(orient='records')
 
     # add the data to the meta dictionary, convert to json
-    meta_dict['num_of_variants'] = final_df.shape[0]
     meta_dict['variants'] = json.loads(final_df_json)
     meta_dict['warnings'] = warning_list
     meta_dict['errors'] = error_list
     meta_dict['test'] = []
 
-    return_json = json.dumps(meta_dict, indent=2, separators=(',', ':'))
+    #return_json = json.dumps(meta_dict, indent=2, separators=(',', ':'))
 
-    return return_json, meta_dict
+    return meta_dict
 
 
 def get_refseq_transcripts(transcript, hgvs_c):

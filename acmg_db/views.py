@@ -47,8 +47,7 @@ def home(request):
 			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
 			
 			df, meta_dict = load_worksheet(utf_file)
-			variants_json, variants_dict = process_data(df, meta_dict)
-			print(variants_json) # change - dont need json and python dict
+			variants_dict = process_data(df, meta_dict)
 
 			error = variants_dict["errors"]
 			warn = variants_dict["warnings"]
@@ -62,7 +61,6 @@ def home(request):
 			
 			# else do the upload (warnings are thrown but upload continues)
 			else:
-				#### do upload here!!!!!
 				sample_id = variants_dict['sample_id']
 				worksheet_id = variants_dict['worksheet_id']
 
@@ -116,7 +114,6 @@ def home(request):
 
 					try:
 						transcript = Transcript.objects.get(name=transcript_query)
-						print('old')
 					except Transcript.DoesNotExist:
 						refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
 						warn += ensembl_warn
@@ -132,18 +129,8 @@ def home(request):
 							refseq_options = json.dumps(refseq_transcripts),
 							refseq_selected = refseq_selected
 						)
-						print('new')
-					# TODO: if the transcript is new, query refseq transcripts
-					'''
-					if created:
-						refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
-						warn += ensembl_warn
-						if len(refseq_transcripts) == 1:
-							print('add transcript')
-						else:
-							print('select transcript')'''
 
-					exon_query = 12   # TODO - Pull exon from report - location column  ################################################################
+					exon_query = item['Location']
 					transcript_variant, created = TranscriptVariant.objects.get_or_create(
 						variant = variant,
 						transcript = transcript,
