@@ -201,7 +201,7 @@
 		</table>
 	
   <!-- Form for extra info -->
-	{% crispy sample_form %}
+	{% crispy variant_form %}
 	<br>
 	<hr>
 
@@ -211,7 +211,7 @@
 	<p>TODO: Section to select whether variant is genuine/artefact/use previous classification etc...</p>
 	
 	{% crispy genuine_form %}
-	{% crispy choice_form %}
+	<!--{% crispy choice_form %}-->
 	<br>
 
 
@@ -461,6 +461,13 @@ $(document).ready(function(){
 		$('[data-toggle="tooltip"]').tooltip()
 	})
 	
+	// hide classify dropdiwn based on whether variant is genuine or not
+	var genuine = document.getElementById("genuine_field").value
+	console.log(genuine)
+	if (genuine != 1){
+		document.getElementById("classify_field").style.display="none"
+	}
+
 	// Inititialise DataTable
 	var table = $('#acmg_question_table').DataTable({
 		"paging":   false,
