@@ -404,7 +404,7 @@ def new_classification(request, pk):
 						inheritance_pattern = cleaned_data['inheritance_pattern'],
 						conditions = cleaned_data['conditions']
 					)
-					#classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+					#classification.is_trio_de_novo = cleaned_data['is_trio_de_novo'] TODO finish this!
 					
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk)
@@ -444,26 +444,31 @@ def new_classification(request, pk):
 
 				if genuine_form.is_valid():
 					cleaned_data = genuine_form.cleaned_data
-					print(cleaned_data)
 
-					classification_obj = Classification.objects.filter(pk=pk)
+					#classification_obj = Classification.objects.filter(pk=pk)
 
 					if cleaned_data['genuine'] == '1':
-						classification_obj.update(genuine = '1')
+						print('genuine')
+						#classification_obj.update(genuine = '1')
 						# final classification is pending
 
-						if cleaned_data['classify']:
+						if cleaned_data['classify'] == '1':
+							print('new')
 							# set final classification or make acmg classification object
-							print(cleaned_data['classify'])
+						elif cleaned_data['classify'] == '2':
+							print('previous')
+						elif cleaned_data['classify'] == '3':
+							print('not analysed')
 
 					if cleaned_data['genuine'] == '2':
-						classification_obj.update(genuine = '2')
+						print('artefact')
+						#classification_obj.update(genuine = '2')
 						#classification.final_class = 6
 						#genuine_form = GenuineArtefactForm(request.POST, show_classify=True)
 
 				# refresh classification info
 				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['variant_form'] = GenuineArtefactForm(classification_pk=classification.pk)
+				context['genuine_form'] = GenuineArtefactForm(classification_pk=classification.pk)
 
 			# If the user has submitted the VariantInfoForm
 			if 'final_classification' in request.POST:

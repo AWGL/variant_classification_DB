@@ -281,9 +281,10 @@ class GenuineArtefactForm(forms.Form):
 	"""
 	GENUINE_ARTEFACT_CHOICES = (('0', 'Pending'), ('1', 'Genuine'), ('2', 'Artefact'))
 	CLASSIFY_CHOICES = (
-		(1, 'New classification'), 
-		(2, 'Use previous classification'),
-		(3, 'Not analysed')
+		('0', 'Unknown'),
+		('1', 'New classification'), 
+		('2', 'Use previous classification'),
+		('3', 'Not analysed')
 	)
 
 	genuine = forms.ChoiceField(choices=GENUINE_ARTEFACT_CHOICES)
