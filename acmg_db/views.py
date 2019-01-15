@@ -341,7 +341,8 @@ def new_classification(request, pk):
 		comments = UserComment.objects.filter(classification=classification)
 
 		# make the sample info form
-		sample_form = ClassificationInformationForm(classification_pk = classification.pk)
+		sample_form = VariantInfoForm(classification_pk=classification.pk)
+		patient_form = PatientInfoForm(classification_pk=classification.pk)
 
 		# Get the automated acmg score
 		result = classification.calculate_acmg_score_first()
@@ -353,6 +354,7 @@ def new_classification(request, pk):
 
 		genuine_form = GenuineArtefactForm()
 		choice_form = ClassifyChoiceForm()
+		finalise_form = FinaliseClassificationForm()
 
 		# dict of data to pass to view
 		context = {
@@ -361,8 +363,10 @@ def new_classification(request, pk):
 			'variant': variant,
 			'comments': comments,
 			'result': result,
+			'patient_form': patient_form,
 			'genuine_form': genuine_form,
 			'choice_form': choice_form,
+			'finalise_form': finalise_form,
 			'sample_form': sample_form,
 			'previous_classifications': previous_classifications,
 			'refseq_form': refseq_form,
@@ -373,7 +377,7 @@ def new_classification(request, pk):
 		if request.method == 'POST':
 			# If the user has submitted the SampleInformationForm
 			if 'final_classification' in request.POST:
-				sample_form = ClassificationInformationForm(request.POST, classification_pk = classification.pk)
+				sample_form = VariantInfoForm(request.POST, classification_pk = classification.pk)
 
 				if sample_form.is_valid():
 

@@ -134,7 +134,7 @@ class SearchForm(forms.Form):
 		)
 
 
-class ClassificationInformationForm(forms.Form):
+class VariantInfoForm(forms.Form):
 	"""
 	Form for storing Sample Information.
 
@@ -144,11 +144,10 @@ class ClassificationInformationForm(forms.Form):
 	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
-	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+	'''FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-		('6', 'Artefact'), ('7', 'NA'))
+		('6', 'Artefact'), ('7', 'NA'))'''
 
-	genuine = forms.ChoiceField(choices=((1, 'Genuine'), (2, 'Artefact'), (3, 'Not analysed')))
 	inheritance_pattern = forms.CharField(max_length=30)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
@@ -160,28 +159,66 @@ class ClassificationInformationForm(forms.Form):
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 
-		super(ClassificationInformationForm, self).__init__(*args, **kwargs)
+		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
 		self.fields['inheritance_pattern'].initial = self.classification.inheritance_pattern
 		self.fields['conditions'].initial = self.classification.conditions
+		self.fields['conditions'].widget.attrs['rows'] = 2
 		#self.fields['final_classification'].initial = self.classification.final_class
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success acmg_submit'))
+		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success acmg_submit'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			Div('genuine'),	
 			Div('inheritance_pattern'),
 			Div('conditions'),
 			Div('is_trio_de_novo'),
 			#Div('final_classification'),				
 		)
 
+
+
+class PatientInfoForm(forms.Form):
+	"""
+
+	"""
+
+	#panel_applied = forms.ChoiceField()
+	affected_with = forms.CharField(widget=forms.Textarea)
+	other_changes = forms.CharField(widget=forms.Textarea, required=False)
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		#self.panel_options = kwargs.pop('options')
+
+		super(PatientInfoForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		#self.fields['panel_applied'].choices = self.panel_options
+		#self.fields['panel_applied'].initial = self.classification. # TODO move this into classifications - currently in patient
+		#self.fields['affected_with'].initial = self.classification.
+		self.fields['affected_with'].widget.attrs['rows'] = 2
+		#self.fields['other_changes'].initial = self.classification.
+		self.fields['other_changes'].widget.attrs['rows'] = 2
+		self.helper.form_id = 'patient-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success acmg_submit'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			#Field('panel_applied'),
+			Field('affected_with'),
+			Field('other_changes'),		
+		)
 
 
 class ClassificationInformationSecondCheckForm(forms.Form):
@@ -272,7 +309,7 @@ class GenuineArtefactForm(forms.Form):
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success acmg_submit'))
+		#self.helper.add_input(Submit('submit', 'Save', css_class='btn-success acmg_submit'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Div('genuine'),			
@@ -310,3 +347,34 @@ class ClassifyChoiceForm(forms.Form):
 			Div('classify'),			
 		)
 
+
+class FinaliseClassificationForm(forms.Form):
+	"""
+
+	"""
+	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+	('6', 'Artefact'), ('7', 'NA')) # add option to use from acmg tab
+
+	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
+	confirm = forms.BooleanField(required=True)
+
+	def __init__(self, *args, **kwargs):
+
+		super(FinaliseClassificationForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['final_classification'].label = 'Final classification'
+		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
+		self.fields['confirm'].label = 'Confirm that the classification is complete'
+		self.helper.form_id = 'finalise-classification-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Submit for second check', css_class='btn-danger acmg_submit'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('final_classification'),
+			Field('confirm'),
+		)

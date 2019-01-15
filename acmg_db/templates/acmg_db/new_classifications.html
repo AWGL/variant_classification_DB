@@ -5,15 +5,6 @@
 
 <br>
 
-<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
-{% if previous_classifications|length  > 0 %}
-  <div class="alert alert-warning" role="alert">
-		This variant has been classified {{ previous_classifications|length }} times before. 
-		Most recently on {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}. 
-		Click  <a href="{% url 'view_classification' pk=previous_classifications.0.pk %}"> here </a> to see that classification.
-  </div>
-{% endif %}
-
 <!-- BOX TO SHOW ERRORS -->
 {% if warn %}
   {% for w in warn %}
@@ -71,7 +62,8 @@
 <!-- TABS FOR CLASSIFICATION SECTIONS -->
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-	<a class="nav-item nav-link active" id="nav-information-tab" data-toggle="tab" href="#nav-information" role="tab" aria-controls="nav-information" aria-selected="true">Information</a>
+	<a class="nav-item nav-link active" id="nav-patient-tab" data-toggle="tab" href="#nav-patient" role="tab" aria-controls="nav-patient" aria-selected="true">Patient Information</a>
+	<a class="nav-item nav-link" id="nav-variant-tab" data-toggle="tab" href="#nav-variant" role="tab" aria-controls="nav-variant" aria-selected="true">Variant Information</a>
 	<a class="nav-item nav-link" id="nav-acmg-tab" data-toggle="tab" href="#nav-acmg" role="tab" aria-controls="nav-acmg" aria-selected="false">ACMG</a>
 	<a class="nav-item nav-link" id="nav-evidence-tab" data-toggle="tab" href="#nav-evidence" role="tab" aria-controls="nav-evidence" aria-selected="false">Evidence</a>
 	<a class="nav-item nav-link" id="nav-audit-tab" data-toggle="tab" href="#nav-audit" role="tab" aria-controls="nav-audit" aria-selected="false">Audit</a>	
@@ -81,8 +73,8 @@
 <!-- START OF CLASSIFICATION SECTIONS -->
 <div class="tab-content" id="nav-tabContent">
 
-  <!-- INFORMATION SECTION -->
-  <div class="tab-pane fade show active" id="nav-information" role="tabpanel" aria-labelledby="nav-information-tab">
+  <!-- PATIENT INFORMATION SECTION -->
+  <div class="tab-pane fade show active" id="nav-patient" role="tabpanel" aria-labelledby="nav-patient-tab">
   <br>
 
 	<!-- Summary table for classification-->
@@ -101,37 +93,74 @@
         <td>Worksheet</td>
         <td>{{ classification.sample.worklist.name }}</td>
 			</tr>
-			<tr>
-				<td>Affected With</td>
-				<td>{{ classification.sample.affected_with|linebreaksbr }}</td>
-			</tr> 
       <tr>
         <td>Panel Applied</td>
         <td>{{ classification.sample.analysis_performed|linebreaksbr }}</td>
-      </tr>
+			</tr>
+			<!--<tr>
+					<td>Affected With</td>
+					<td>{{ classification.sample.affected_with|linebreaksbr }}</td>
+				</tr> 
       <tr>
         <td>Other Changes</td>
         <td>{{ classification.sample.other_changes|linebreaksbr }}</td>
-      </tr>
+      </tr>-->
  
 	  </tbody>
 	
 	</table>
+	{% crispy patient_form %}
 	<br>
 
-	<!-- Variant information -->
-	<hr>
-	<h5>Genuine/ artefact?</h5>
+	<h5>Previous patients</h5>
+	<div class="alert alert-warning col-10" role="alert">
+	{% if previous_classifications|length  > 0 %}
+		This variant has been seen in x previous patients.
+	{% else %}
+		This variant hasn't been seen before
+	{% endif %}
+	</div>
+	<p>TODO: make table showing details of previous patients</p>
 
-	<p>TODO: Section to select whether variant is genuine/artefact/use previous classificationetc...</p>
-	
-	{% crispy genuine_form %}
+	</div>
 
-	{% crispy choice_form %}
+	<!-- VARIANT INFORMATION SECTION -->
+	<div class="tab-pane fade" id="nav-variant" role="tabpanel" aria-labelledby="nav-variant-tab">
+	<br>
+
+	<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
+	<div class="alert alert-warning col-10" role="alert">
+		<h5>Previous classifications</h5>
+
+		{% if previous_classifications|length  > 0 %}
+		<p>This variant has been classified <b>{{ previous_classifications|length }} times</b> before.</p>
+		<table class="col-7">
+			<tr>
+				<td class="col-2"><b>Last seen:</b></td>
+				<td class="col-2"><button type="button" class="btn btn-warning btn-sm">Classification</button></td>
+				<td class="col-2">Date: {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}</td>
+				<td class="col-1"><a href="{% url 'view_classification' pk=previous_classifications.0.pk %}">View</a></td>
+			</tr>
+			<tr>
+				<td class="col-2"><b>Last full classification:</b></td>
+				<td class="col-2"><button type="button" class="btn btn-warning btn-sm">Classification</button></td>
+				<td class="col-2">Date{{ previous_classifications.0.second_check_date|date:"Y/m/d"}}</td>
+				<td class="col-1"><a href="{% url 'view_classification' pk=previous_classifications.0.pk %}">View</a></td>
+			</tr>
+	</table>
+	<br>
+	<button type="button" class="btn btn-success btn-sm">View all previous classifications</button>
+
+	{% else %}
+	<p>This variant has not been seen before.</p>
+
+	{% endif %}
+	</div>
 	
 	<br>
 
-	<hr>
+
+	<!-- Variant information table -->
 	<h5>Variant information</h5>
 	<table class="table table-hover table-bordered table-sm col-10">
 	
@@ -172,13 +201,26 @@
 		</table>
 	
   <!-- Form for extra info -->
-  {% crispy sample_form %}
+	{% crispy sample_form %}
 	<br>
+	<hr>
+
+
+	<!-- Genuine/ artefact sections section-->
+	<h5>Genuine/ artefact?</h5>
+	<p>TODO: Section to select whether variant is genuine/artefact/use previous classification etc...</p>
+	
+	{% crispy genuine_form %}
+	{% crispy choice_form %}
+	<br>
+
+
 
 	<!-- Finalise classification -->
 	<hr>
 		<h5>Finalise Classification</h5>
-
+		<p>TODO: Button to make sure classification is up to date, maybe move somewhere else?</p>
+		{% crispy finalise_form %}
 
   </div>
   <br>
