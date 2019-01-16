@@ -43,13 +43,19 @@
 				<td>Set transcript</td>
 				{% endif %}
 				<td>
+					<div id="class_box">
 					{% if 'Pathogenic' in result %}
 					<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
 					{% elif 'Benign' in result %}
 					<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
-					{% else %}
+					{% elif 'VUS' in result %}
 					<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
+					{% elif 'Artefact' in result %}
+					<button type="button" class="btn btn-secondary" style="width: 20rem;">{{result}}</button>
+					{% else %}
+					<button type="button" class="btn btn-muted" style="width: 20rem;">{{result}}</button>
 					{% endif %}
+				</div>
 				</td>
 				<td>{{ classification.display_status }}</td>
 			</tr>
@@ -128,14 +134,12 @@
 	{% if previous_classifications|length  > 0 %}
 		This variant has been seen in x previous patients.
 	{% else %}
-		This variant hasn't been seen before
+		This variant has not been seen before
 	{% endif %}
 	</div>
 	<p>TODO: make table showing details of previous patients</p>
 
 	</div>
-	<br>
-	<br>
 
 
 	<!-- VARIANT INFORMATION SECTION -->
@@ -148,22 +152,51 @@
 
 		{% if previous_classifications|length  > 0 %}
 		<p>This variant has been classified <b>{{ previous_classifications|length }} times</b> before.</p>
-		<table class="col-7">
+		<table class="col-8">
 			<tr>
 				<td class="col-2"><b>Last seen:</b></td>
-				<td class="col-2"><button type="button" class="btn btn-warning btn-sm">Classification</button></td>
-				<td class="col-2">Date: {{ previous_classifications.0.second_check_date|date:"Y/m/d"}}</td>
-				<td class="col-1"><a href="{% url 'view_classification' pk=previous_classifications.0.pk %}">View</a></td>
+				<td class="col-1">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td class="col-3">
+					{% if 'Pathogenic' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-danger btn-sm">
+					{% elif 'Benign' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-info btn-sm">
+					{% elif 'VUS' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-warning btn-sm">
+					{% elif 'Artefact' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-secondary btn-sm">
+					{% else %}
+					<button type="button" class="btn btn-muted btn-sm">
+					{% endif %}
+						{{ previous_classifications.0.display_final_classification }}
+					</button></td>
+				
+				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
 			</tr>
 			<tr>
 				<td class="col-2"><b>Last full classification:</b></td>
-				<td class="col-2"><button type="button" class="btn btn-warning btn-sm">Classification</button></td>
-				<td class="col-2">Date{{ previous_classifications.0.second_check_date|date:"Y/m/d"}}</td>
-				<td class="col-1"><a href="{% url 'view_classification' pk=previous_classifications.0.pk %}">View</a></td>
+				<td class="col-1">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td class="col-3">
+					{% if 'Pathogenic' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-danger btn-sm">
+					{% elif 'Benign' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-info btn-sm">
+					{% elif 'VUS' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-warning btn-sm">
+					{% elif 'Artefact' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-secondary btn-sm">
+					{% else %}
+					<button type="button" class="btn btn-muted btn-sm">
+					{% endif %}
+						{{ previous_full_classifications.0.display_final_classification }}
+					</button>
+				</td>
+				
+				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 			</tr>
 	</table>
 	<br>
-	<button type="button" class="btn btn-success btn-sm">View all previous classifications</button>
+	<!--<button type="button" class="btn btn-success btn-sm">View all previous classifications</button>-->
 
 	{% else %}
 	<p>This variant has not been seen before.</p>
@@ -187,24 +220,12 @@
 					<td class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
 				</tr>
 				<tr>
-					<td>Gene</td>
-					<td>{{classification.variant.get_genes}}</td>
+					<td>Ensembl transcript</td>
+					<td>{{classification.selected_transcript_variant.transcript.name }}</td>
 				</tr>
 				<tr>
-					<td>Gene inheritence pattern</td>
-					<td>{{ classification.selected_transcript_variant.transcript.gene.inheritance_pattern }}</td>
-				</tr> 
-				<tr>
-					<td>Conditions associated with gene</td>
-					<td>{{ classification.selected_transcript_variant.transcript.gene.conditions }}</td>
-				</tr> 
-				<tr>
-					<td>Transcript</td>
-					<!--{% if classification.selected_transcript_variant.transcript.refseq_selected %}-->
+					<td>RefSeq transcript</td>
 					<td>{{classification.selected_transcript_variant.transcript.refseq_selected }}</td>
-					<!--{% else %}
-					<td><button type="button" class="badge badge-danger" data-toggle="modal" data-target="#select-transcript-modal">Select transcript</button></td>
-					{% endif %}-->
 				</tr>
 				<tr>
 					<td>HGVSc</td>
@@ -217,6 +238,22 @@
 				<tr>
 					<td>De novo?</td>
 					<td>{{ classification.is_trio_de_novo }}</td>
+				</tr> 
+				<tr>
+					<td>Gene</td>
+					<td>{{classification.variant.get_genes}}</td>
+				</tr>
+				<tr>
+					<td>Exon</td>
+					<td>{{ classification.selected_transcript_variant.exon }}</td>
+				</tr> 
+				<tr>
+					<td>Gene inheritence pattern</td>
+					<td>{{ classification.selected_transcript_variant.transcript.gene.inheritance_pattern }}</td>
+				</tr> 
+				<tr>
+					<td>Conditions associated with gene</td>
+					<td>{{ classification.selected_transcript_variant.transcript.gene.conditions }}</td>
 				</tr> 
 			</tbody>
 		
@@ -242,24 +279,20 @@
 
 	<!-- Genuine/ artefact sections section-->
 	<h5>Is this a genuine variant?</h5>
-	
 	{% crispy genuine_form %}
-	
 	<br>
 
   </div>
-  <br>
-  <br>
 
 
   <!-- ACMG RULES SECTION -->
   <div class="tab-pane fade" id="nav-acmg" role="tabpanel" aria-labelledby="nav-acmg-tab">
+	<br>
 
 	<!-- Button to recalculate the classification -->
 	<button type="button" class="btn btn-muted acmg_submit" id='submit_acmg' >Classify</button>
-	<hr>
 
-	<!-- Box to display the calculated classification -->
+	<!-- Box to display the calculated classification 
 	<div id ='class_box'>
 	  <div class="card bg-muted mb-3" style="max-width: 24rem;">
 		<div class="card-header">ACMG Classification Result</div>
@@ -274,7 +307,7 @@
 		</div>
 	  </div>
 	</div>
-	<hr>
+	<hr>-->
 
 	<!-- Table listing all ACMG codes and option to apply them -->
 	<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
@@ -342,12 +375,11 @@
 	</table>
 
 	</div>
-	<br>
-	<br>
 
 
   <!-- COMMENTS AND ATTACHMENTS SECTION -->
   <div class="tab-pane fade" id="nav-evidence" role="tabpanel" aria-labelledby="nav-evidence-tab">
+	<br>
 	  
 	<!-- Comment box holds the comments and files for the variant - updated via ajax -->
 	<div id='comment_box'>
@@ -368,7 +400,7 @@
 		<hr>
 	  {% endfor %}
 	</div>
-	<hr>
+
 
 	<!-- Form to add comments/ attach files or screenshots -->
 	<form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
@@ -393,11 +425,10 @@
 	</div>
 		
   </div>
-  <br>
-	<br>
 	
 	<!-- AUDIT SECTION -->
   <div class="tab-pane fade" id="nav-audit" role="tabpanel" aria-labelledby="nav-audit-tab">
+	<br>
 
 		<!-- Finalise classification -->
 	
@@ -453,48 +484,11 @@
 		</table>
 
 	</div>
-	<br>
-	<br>
 
 <!-- END OF CLASSIFICATION SECTIONS -->
-
 </div>
 
-<!-- SELECT TRANSCRIPT MODAL 
-<div id="select-transcript-modal" class="modal fade bd-example-modal-lg" role="dialog">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
 
-
-			<div class="modal-header">
-				<h5>Change transcript information</h5>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-			</div>
-
-
-			<div class="modal-body">
-				<p><b>Current transcripts:</b></p>
-				<table class="table table-hover table-bordered table-sm col-10">
-					<tbody>
-						<tr>
-							<td class="col-2">Ensembl ID</td>
-							<td class="col-8">{{ classification.selected_transcript_variant.transcript.name }}</td>
-						</tr>
-						<tr>
-							<td class="col-2">RefSeq ID</td>
-							<td class="col-8">{{ classification.selected_transcript_variant.transcript.refseq_selected }}</td>
-						</tr>
-					</tbody>
-				</table>
-				<hr>
-
-				<p><b>Change RefSeq transcript:</b></p>
-				{% crispy refseq_form %}
-			</div>
-
-		</div>
-	</div>
-</div> -->
 
 <!------------------------------------- END OF HTML ------------------------------------->
 
@@ -504,17 +498,6 @@ $(document).ready(function(){
 
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip()
-	})
-	
-	// hide classify dropdiwn based on whether variant is genuine or not
-	$( "#genuine_field" ).change(function(){
-		value = $(this).val()
-		if (value != 1){
-			document.getElementById("classify_field").style.display="none";
-			document.getElementById("classify_field").val = '0';
-		} else {
-			document.getElementById("classify_field").style.display="block";
-		}
 	})
 
 	// Inititialise DataTable

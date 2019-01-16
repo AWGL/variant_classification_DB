@@ -88,12 +88,12 @@ def home(request):
 					name = sample_id,
 					worklist = worksheet,
 					affected_with = affected_with,
-					analysis_performed = analysis_performed,  # TODO move this into classifications - currently in sample
+					analysis_performed = analysis_performed,  # TODO move this into classifications - currently in sample - multiple panels might be run on the same sample so there might be multiple analyses
 					analysis_complete = False,
 					other_changes = ''
 					)
 
-				# TODO - make validation if worklist and sample have already been seen?
+				# TODO - make validation if worklist and sample have already been seen? - either add a warning or stop the upload
 
 				# add variants
 				for item in variants_dict['variants']:
@@ -182,9 +182,6 @@ def home(request):
 
 
 	return render(request, 'acmg_db/home.html', context)
-
-
-
 
 
 #--------------------------------------------------------------------------------------------------
@@ -336,52 +333,49 @@ def new_classification(request, pk):
 	else:
 		# Get data to render form
 		variant = classification.variant
-		previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
+
+		previous_classifications = Classification.objects.filter(variant=variant, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
+		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
+
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 		comments = UserComment.objects.filter(classification=classification)
 
-		# make the sample info form
+		result = classification.display_final_classification  # current class to display
+
 		transcript = classification.selected_transcript_variant.transcript
-		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()
-		variant_form = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
+		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()  # list of refseq ids linked to the ensembl id
+
+		# make empty instances of forms
 		patient_form = PatientInfoForm(classification_pk=classification.pk)
-
-		# Get the automated acmg score
-		result = classification.calculate_acmg_score_first()
-
-		# select refseq transcript
-		#transcript = classification.selected_transcript_variant.transcript
-		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()
-		refseq_form = SelectRefSeqTranscript(classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
-
+		variant_form = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
-		#choice_form = ClassifyChoiceForm()
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
 		context = {
-			'answers': answers,
 			'classification': classification,
 			'variant': variant,
+			'previous_classifications': previous_classifications,
+			'previous_full_classifications': previous_full_classifications,
+			'answers': answers,
 			'comments': comments,
 			'result': result,
 			'patient_form': patient_form,
-			'genuine_form': genuine_form,
-			#'choice_form': choice_form,
-			'finalise_form': finalise_form,
 			'variant_form': variant_form,
-			'previous_classifications': previous_classifications,
-			'refseq_form': refseq_form,
+			'genuine_form': genuine_form,
+			'finalise_form': finalise_form,
 			'warn': []
 		}
 		
-		# form submission
+		#-----------------------------------------------
+		# if a form is submitted
 		if request.method == 'POST':
 
-			# If the user has submitted the PatientInfoForm
+			# PatientInfoForm
 			if 'affected_with' in request.POST:
 				patient_form = PatientInfoForm(request.POST, classification_pk=classification.pk)
 
+				# load in data
 				if patient_form.is_valid():
 					cleaned_data = patient_form.cleaned_data
 					sample = Sample.objects.filter(name=classification.sample.name)
@@ -390,21 +384,20 @@ def new_classification(request, pk):
 						other_changes = cleaned_data['other_changes']
 					)
 				
+				# reload dict variables for rendering
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['patient_form'] = PatientInfoForm(classification_pk=classification.pk)
 
-			# If the user has submitted the VariantInfoForm
+
+			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
 				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=refseq_options)
 
 				if variant_form.is_valid():
-
-					# Update models
 					cleaned_data = variant_form.cleaned_data
-					print(cleaned_data)
-					transcript_obj = Transcript.objects.filter(name=transcript.name)
 
-					# transcript
+					# transcript section
+					transcript_obj = Transcript.objects.filter(name=transcript.name)
 					for item in refseq_options:
 						if item[0] == cleaned_data['select_transcript']:
 							if item[1] == 'Other':
@@ -419,100 +412,84 @@ def new_classification(request, pk):
 									transcript_obj.update(refseq_selected = refseq_new)
 							# if item is from the list, update refseq id
 							else:
-								refseq_new = item[1]
-								transcript_obj.update(refseq_selected = refseq_new)
+								transcript_obj.update(refseq_selected = item[1])
 
-					# genes
+					# genes section
 					gene = Gene.objects.filter(name=classification.selected_transcript_variant.transcript.gene.name)
 					gene.update(
 						inheritance_pattern = cleaned_data['inheritance_pattern'],
 						conditions = cleaned_data['conditions']
 					)
 
-					# trio de novo
-					#classification.is_trio_de_novo = cleaned_data['is_trio_de_novo'] TODO finish this! and add exon option
+					# trio de novo section
+					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+					classification.save()
 					
+				# reload dict variables for rendering
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
 
-			'''
-			# If the user has submitted the refseq form
-			if 'select_transcript' in request.POST:
-				refseq_form = SelectRefSeqTranscript(request.POST, classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
-				
-				if refseq_form.is_valid():
 
-					# update models
-					cleaned_data = refseq_form.cleaned_data
-					transcript_pk = Transcript.objects.filter(name=transcript.name)
-
-					for item in refseq_options:
-						if item[0] == cleaned_data['select_transcript']:
-							if item[1] == 'Other':
-								refseq_new = cleaned_data['other']
-								# validate input
-								if refseq_new == '':
-									context['warn'] += ['Transcript not set - transcript ID cannot be empty.']
-								elif not refseq_new.startswith('NM_'):
-									context['warn'] += ['Transcript not set - transcript ID is not a RefSeq ID.']
-								# if validation passed, update refseq id
-								else:
-									transcript_pk.update(refseq_selected = refseq_new)
-							# if item is from the list, update refseq id
-							else:
-								refseq_new = item[1]
-								transcript_pk.update(refseq_selected = refseq_new)
-						# refresh classification info
-						context['classification'] = get_object_or_404(Classification, pk=pk)
-						'''
-
-			# If the user has submitted the GenuineArtefactForm  TODO Finish this!
+			# GenuineArtefactForm
 			if 'genuine' in request.POST:
 				genuine_form = GenuineArtefactForm(request.POST, classification_pk=classification.pk)
 
 				if genuine_form.is_valid():
 					cleaned_data = genuine_form.cleaned_data
 
+					# genuine - new classification
 					if cleaned_data['genuine'] == '1':
-						# if not already initiated:
-						answers = ClassificationAnswer.objects.filter(classification=classification)
+						classification.genuine = '1'
+
+						# if not already initiated, make new classification answers
 						if len(answers) == 0:
 							classification.initiate_classification()
-						classification.genuine = '1'
-						# leave class as it is - will be updated when acmg_submit is run
 
+						# save final_class as output of calculate_acmg_score_first
+						classification.final_class = classification.calculate_acmg_score_first()[1]
+
+					# genuine - use previous classification - update final class to whatever it was previously
 					elif cleaned_data['genuine'] == '2':
-						# update final class to whatever it was previously - TODO make query
-						# set genuine to 2
 						classification.genuine = '2'
+						classification.final_class = previous_full_classifications[0].final_class
 
+					# genuine - not analysed - update final_class to 'not analysed'
 					elif cleaned_data['genuine'] == '3':
-						classification.final_class = '7'
-						# update final class to not analysed
-						# set genuine to 3
 						classification.genuine = '3'
+						classification.final_class = '7'
 
+					# artefact - set final_class to artefact
 					elif cleaned_data['genuine'] == '4':
-						classification.final_class = '6'
-						# update final class to artefact
-						# set genuine to 4
 						classification.genuine = '4'
+						classification.final_class = '6'
+						
 					classification.save()
 
-				# refresh classification info
+				# reload dict variables for rendering
+				result = classification.display_final_classification
+				context['result'] = result
+				context['answers'] = ClassificationAnswer.objects.filter(classification=classification)
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['genuine_form'] = GenuineArtefactForm(classification_pk=classification.pk)
 
-			# If the user has submitted the VariantInfoForm
+
+			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
-				print(request.POST)
 				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
 
 				if finalise_form.is_valid():
+					# TODO add validation e.g. make sure all fields are completed, make sure genuine/artefact is set
 					cleaned_data = finalise_form.cleaned_data
+					
+					# if new classification, pull score from the acmg section and save to final class
+					if classification.genuine == '1':
+						classification.final_class = classification.calculate_acmg_score_first()[1]
+
 					# if anything other than 'dont override' selected, then change the classification
 					if cleaned_data['final_classification'] != '8':
 						classification.final_class = cleaned_data['final_classification']
+
+					# update status and save
 					classification.status = '1'
 					classification.first_check_date = timezone.now()
 					classification.user_first_checker = request.user
@@ -520,10 +497,10 @@ def new_classification(request, pk):
 
 					return redirect(home)
 
-			return render(request, 'acmg_db/new_classifications.html', context)
 
-		#else:
+			return render(request, 'acmg_db/new_classifications.html', context)
 		return render(request, 'acmg_db/new_classifications.html', context)
+
 
 #--------------------------------------------------------------------------------------------------
 @login_required
@@ -565,11 +542,16 @@ def ajax_acmg_classification_first(request):
 			classification_answer_obj.save()
 
 		# Calculate the score
-		result = classification.calculate_acmg_score_first()
+		result = classification.calculate_acmg_score_first()[0]
+
+		# update the score in the database
+		classification.final_class = classification.calculate_acmg_score_first()[1]
+		classification.save()
 
 		html = render_to_string('acmg_db/acmg_results_first.html', {'result': result})
 
 	return HttpResponse(html)
+
 
 #--------------------------------------------------------------------------------------------------
 @login_required
@@ -608,7 +590,7 @@ def ajax_acmg_classification_second(request):
 
 			classification_answer_obj.save()
 
-		acmg_result_first = classification.calculate_acmg_score_first()
+		acmg_result_first = classification.calculate_acmg_score_first()[0]
 
 		acmg_result_second = classification.calculate_acmg_score_second()
 
@@ -800,7 +782,7 @@ def second_check(request, pk):
 
 		sample_form = ClassificationInformationSecondCheckForm(classification_pk=classification.pk)
 
-		acmg_result_first = classification.calculate_acmg_score_first()
+		acmg_result_first = classification.calculate_acmg_score_first()[0]
 
 		acmg_result_second = classification.calculate_acmg_score_second()
 

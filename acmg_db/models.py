@@ -174,7 +174,7 @@ class Classification(models.Model):
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
 	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
-	final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)
+	final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)   # might need to make a seperate first_check_class field if this gets confusing for the second check
 
 	is_trio_de_novo = models.BooleanField()
 	#inheritance_pattern = models.CharField(max_length=15, null=True, blank=True)
@@ -201,7 +201,7 @@ class Classification(models.Model):
 
 		FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-		('6', 'Artefact'), ('7', 'NA'))
+		('6', 'Artefact'), ('7', 'Not Analysed'))
 
 		return FINAL_CLASS_CHOICES[int(self.final_class)][1]		
 
@@ -294,9 +294,24 @@ class Classification(models.Model):
 
 			updated_acmg_codes = acmg_classifier.adjust_strength(results)
 
-			return acmg_classifier.classify(updated_acmg_codes)
+			final_class = acmg_classifier.classify(updated_acmg_codes)
+			
+			# convert to code for saving to Classification.final_class
+			if final_class.startswith('Pathogenic'):
+				code = '5'
+			elif final_class.startswith('Likely Pathogenic'):
+				code = '4'
+			elif final_class == 'VUS - contradictory evidence provided':
+				code = '3'
+			elif final_class == 'VUS - criteria not met':
+				code = '2'
+			elif final_class.startswith('Likely Benign'):
+				code = '1'
+			elif final_class.startswith('Benign'):
+				code = '0'
+			return final_class, code
 
-		return False
+		return 'VUS - criteria not met', '2'
 
 	def calculate_acmg_score_second(self):
 		"""

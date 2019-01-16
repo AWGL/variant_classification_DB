@@ -7,6 +7,7 @@ from crispy_forms.layout import Submit, Layout, Div, HTML
 from django.contrib.auth.models import User
 
 
+# File upload forms ---------------------------------------------------
 class VariantFileUploadForm(forms.Form):
 	"""
 	Form for inputting a tsv file of variants from the variant database, and adding them to the database
@@ -35,36 +36,9 @@ class VariantFileUploadForm(forms.Form):
 		)
 
 
-class SecondCheckForm(forms.Form):
-	"""
-	Form for user to accept or reject classification of variant.
-
-	"""
-
-	accept = forms.ChoiceField()
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-
-		super(SecondCheckForm, self).__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.fields['accept'].choices = [('1', 'Accept'), ('2', 'Reject')]
-		self.helper.form_id = 'accept-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('second_check', kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-
-					Field('accept'))
-
-
 class SearchForm(forms.Form):
 	'''
-	A search form.
+	A search form. Used for inputting individual variants TODO - check that this form has the relevent fields to match the file upload
 	'''
 	variant = forms.CharField(required=False, max_length=255)
 	gene = forms.CharField(max_length=25)
@@ -105,9 +79,44 @@ class SearchForm(forms.Form):
 		)
 
 
+# New classification - first check forms ---------------------------------------------------------------
+class PatientInfoForm(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient
+	"""
+	# TODO Add dropdown to change panel?
+	affected_with = forms.CharField(widget=forms.Textarea)
+	other_changes = forms.CharField(widget=forms.Textarea, required=False)
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.sample = self.classification.sample
+
+		super(PatientInfoForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['affected_with'].initial = self.sample.affected_with
+		self.fields['affected_with'].widget.attrs['rows'] = 2
+		self.fields['other_changes'].initial = self.sample.other_changes
+		self.fields['other_changes'].widget.attrs['rows'] = 2
+		self.helper.form_id = 'patient-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('affected_with'),
+			Field('other_changes'),
+		)
+
+
 class VariantInfoForm(forms.Form):
 	"""
-	Form for storing Sample Information.
+	Form for storing variant Information.
 
 	Note that this form originally had data from multiple models in hence the \
 	unneeded complexity - could just be a model form really.
@@ -115,7 +124,7 @@ class VariantInfoForm(forms.Form):
 	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
-	select_transcript = forms.ChoiceField(required=False)
+	select_transcript = forms.ChoiceField(required=False)  #TODO - add exon
 	other = forms.CharField(max_length=100, required=False)
 	inheritance_pattern = forms.CharField(max_length=30, required=False)
 	conditions = forms.CharField(widget=forms.Textarea, required=False)
@@ -155,138 +164,9 @@ class VariantInfoForm(forms.Form):
 		)
 
 
-class SelectRefSeqTranscript(forms.Form):
-	"""
-	
-	"""
-	select_transcript = forms.ChoiceField()
-	other = forms.CharField(max_length=100, required=False)
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-		self.transcript_pk = kwargs.pop('transcript_pk')
-		self.options = kwargs.pop('options')
-
-		super(SelectRefSeqTranscript, self).__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.fields['select_transcript'].choices = self.options
-		self.helper.form_id = 'refseq-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('new_classification', kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-			Field('select_transcript'),
-			Field('other', placeholder='If other, please specify', title=False)
-		)
-
-
-class PatientInfoForm(forms.Form):
-	"""
-
-	"""
-	affected_with = forms.CharField(widget=forms.Textarea)
-	other_changes = forms.CharField(widget=forms.Textarea, required=False)
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-		self.classification = Classification.objects.get(pk = self.classification_pk)
-		self.sample = self.classification.sample
-
-		super(PatientInfoForm, self).__init__(*args, **kwargs)
-
-		self.helper = FormHelper()
-		self.fields['affected_with'].initial = self.sample.affected_with
-		self.fields['affected_with'].widget.attrs['rows'] = 2
-		self.fields['other_changes'].initial = self.sample.other_changes
-		self.fields['other_changes'].widget.attrs['rows'] = 2
-		self.helper.form_id = 'patient-information-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-			Field('affected_with'),
-			Field('other_changes'),
-		)
-
-
-class ClassificationInformationSecondCheckForm(forms.Form):
-	"""
-	Form for storing Sample Information.
-
-	Note that this form originally had data from multiple models in hence the \
-	unneeded complexity - could just be a model form really.
-
-	Keep it this way in case we add automatic transcript-gene annotation back in.
-
-	"""
-	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
-		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-		('6', 'Artefact'), ('7', 'NA'))
-
-	
-	inheritance_pattern = forms.CharField(max_length=15)
-	conditions = forms.CharField(widget=forms.Textarea)
-	is_trio_de_novo = forms.BooleanField(required=False)
-	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
-
-
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-		self.classification = Classification.objects.get(pk = self.classification_pk)
-
-		super(ClassificationInformationSecondCheckForm, self).__init__(*args, **kwargs)
-
-		self.helper = FormHelper()
-		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
-		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
-		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
-		self.fields['final_classification'].initial = self.classification.final_class
-		self.helper.form_id = 'sample-information-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success acmg_submit'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-						
-						Div('inheritance_pattern'),
-						Div('conditions'),
-						Div('is_trio_de_novo'),
-						Div('final_classification'),
-						
-						 )
-
-
-		
-class ArchiveClassificationForm(forms.Form):
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-		self.classification = Classification.objects.get(pk = self.classification_pk)
-
-		super(ArchiveClassificationForm, self).__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Archive Classification', css_class='btn-danger'))
-
-
-
 class GenuineArtefactForm(forms.Form):
 	"""
-
+	Form to select whether a variant is genuine or an artefact, and whether to start a new classification or use a previous one
 	"""
 	GENUINE_ARTEFACT_CHOICES = (
 		('0', 'Pending'), 
@@ -353,3 +233,97 @@ class FinaliseClassificationForm(forms.Form):
 			Field('final_classification'),
 			Field('confirm'),
 		)
+
+
+
+# Second check forms -------------------------------------------------------------------------
+class ClassificationInformationSecondCheckForm(forms.Form):
+	"""
+	Form for storing Sample Information.
+
+	Note that this form originally had data from multiple models in hence the \
+	unneeded complexity - could just be a model form really.
+
+	Keep it this way in case we add automatic transcript-gene annotation back in.
+
+	"""
+	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+		('6', 'Artefact'), ('7', 'NA'))
+
+	
+	inheritance_pattern = forms.CharField(max_length=15)
+	conditions = forms.CharField(widget=forms.Textarea)
+	is_trio_de_novo = forms.BooleanField(required=False)
+	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
+
+
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(ClassificationInformationSecondCheckForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
+		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
+		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
+		self.fields['final_classification'].initial = self.classification.final_class
+		self.helper.form_id = 'sample-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success acmg_submit'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+						
+						Div('inheritance_pattern'),
+						Div('conditions'),
+						Div('is_trio_de_novo'),
+						Div('final_classification'),
+						
+						 )
+
+
+class SecondCheckForm(forms.Form):
+	"""
+	Form for user to accept or reject classification of variant.
+
+	"""
+
+	accept = forms.ChoiceField()
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+
+		super(SecondCheckForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.fields['accept'].choices = [('1', 'Accept'), ('2', 'Reject')]
+		self.helper.form_id = 'accept-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check', kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('accept')
+		)
+
+
+class ArchiveClassificationForm(forms.Form):
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(ArchiveClassificationForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Archive Classification', css_class='btn-danger'))
