@@ -105,28 +105,37 @@ def get_refseq_transcripts(transcript, hgvs_c):
     warn = []
     
     if hgvs_c == "":
-        warn += ["HGVSc is empty"]
+        warn += ["HGVSc for {} is empty, cannot find the RefSeq transcript without it, add RefSeq transcript manually.".format(transcript)]
     
     query = "http://rest.ensembl.org/variant_recoder/human/{}:{}?".format(transcript, hgvs_c)
     
     r = requests.get(query, headers={ "Content-Type" : "application/json"})
  
     if not r.ok:
-        warn += ['Could not connect to Ensembl database, add RefSeq transcript manually.']
+        warn += ['Could not connect to Ensembl database, add RefSeq transcript for {} manually.'.format(transcript)]
         
     else:
         decoded = r.json()
 
         nm_list = []
         for c in (decoded[0]['hgvsc']):
+
+            # check that id is a refseq id
             if c.startswith('NM'):
+
+                # check if the HGVSc matches
                 split = c.split(':')
                 if split[1] == hgvs_c:
                     nm_list += [split[0]]
+                # sometimes there are differences between databases if there is a dup/del where the last base is dropped drop the name
+                # e.g. c.*333dupA could also be called c.*333dup
                 elif split[1] == hgvs_c[:-1]:
                     nm_list += [split[0]]
-        print(transcript, nm_list)
-        # TODO add hgvsc check and hgvsp
+
+        if len(nm_list) == 0:
+            warn += ['Could not find any RefSeq transcripts for {}, add transcripts manually.'.format(transcript)]
+
+        # TODO hgvsp check??
         
     return nm_list, warn
 
