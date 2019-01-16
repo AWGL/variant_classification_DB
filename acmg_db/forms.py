@@ -80,7 +80,7 @@ class SearchForm(forms.Form):
 
 
 # New classification - first check forms ---------------------------------------------------------------
-class PatientInfoForm(forms.Form):
+class SampleInfoForm(forms.Form):
 	"""
 	A form to collect data specific to a sample/patient
 	"""
@@ -94,14 +94,14 @@ class PatientInfoForm(forms.Form):
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 		self.sample = self.classification.sample
 
-		super(PatientInfoForm, self).__init__(*args, **kwargs)
+		super(SampleInfoForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
 		self.fields['affected_with'].initial = self.sample.affected_with
 		self.fields['affected_with'].widget.attrs['rows'] = 2
 		self.fields['other_changes'].initial = self.sample.other_changes
 		self.fields['other_changes'].widget.attrs['rows'] = 2
-		self.helper.form_id = 'patient-information-form'
+		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'

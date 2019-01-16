@@ -346,7 +346,7 @@ def new_classification(request, pk):
 		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()  # list of refseq ids linked to the ensembl id
 
 		# make empty instances of forms
-		patient_form = PatientInfoForm(classification_pk=classification.pk)
+		sample_form = SampleInfoForm(classification_pk=classification.pk)
 		variant_form = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
@@ -360,7 +360,7 @@ def new_classification(request, pk):
 			'answers': answers,
 			'comments': comments,
 			'result': result,
-			'patient_form': patient_form,
+			'sample_form': sample_form,
 			'variant_form': variant_form,
 			'genuine_form': genuine_form,
 			'finalise_form': finalise_form,
@@ -371,13 +371,13 @@ def new_classification(request, pk):
 		# if a form is submitted
 		if request.method == 'POST':
 
-			# PatientInfoForm
+			# SampleInfoForm
 			if 'affected_with' in request.POST:
-				patient_form = PatientInfoForm(request.POST, classification_pk=classification.pk)
+				sample = SampleInfoForm(request.POST, classification_pk=classification.pk)
 
 				# load in data
-				if patient_form.is_valid():
-					cleaned_data = patient_form.cleaned_data
+				if sample_form.is_valid():
+					cleaned_data = sample_form.cleaned_data
 					sample = Sample.objects.filter(name=classification.sample.name)
 					sample.update(
 						affected_with = cleaned_data['affected_with'],
@@ -386,7 +386,7 @@ def new_classification(request, pk):
 				
 				# reload dict variables for rendering
 				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['patient_form'] = PatientInfoForm(classification_pk=classification.pk)
+				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk)
 
 
 			# VariantInfoForm
@@ -448,10 +448,15 @@ def new_classification(request, pk):
 						# save final_class as output of calculate_acmg_score_first
 						classification.final_class = classification.calculate_acmg_score_first()[1]
 
-					# genuine - use previous classification - update final class to whatever it was previously
+					# genuine - use previous classification
 					elif cleaned_data['genuine'] == '2':
-						classification.genuine = '2'
-						classification.final_class = previous_full_classifications[0].final_class
+						# if there isnt a previous classification, throw a warning and stop
+						if len(previous_classifications) == 0:
+							context['warn'] += ['There are no previous classifications to use.']
+						# if there is, update final class to whatever it was previously
+						else:
+							classification.genuine = '2'
+							classification.final_class = previous_full_classifications[0].final_class
 
 					# genuine - not analysed - update final_class to 'not analysed'
 					elif cleaned_data['genuine'] == '3':
@@ -478,24 +483,38 @@ def new_classification(request, pk):
 				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
 
 				if finalise_form.is_valid():
-					# TODO add validation e.g. make sure all fields are completed, make sure genuine/artefact is set
-					cleaned_data = finalise_form.cleaned_data
-					
-					# if new classification, pull score from the acmg section and save to final class
-					if classification.genuine == '1':
-						classification.final_class = classification.calculate_acmg_score_first()[1]
+					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
+					# TODO any more validation?
+					if classification.genuine == '0':
+						context['warn'] += ['Select whether the variant is genuine or artefact']
+					if transcript.refseq_selected == None:
+						context['warn'] += ['RefSeq transcript has not been set']
+					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None:
+						context['warn'] += ['Inheritence pattern has not been set']
+					if classification.selected_transcript_variant.transcript.gene.conditions == None:
+						context['warn'] += ['Gene associated conditions have not been set']
+					if classification.selected_transcript_variant.exon == None:
+						context['warn'] += ['Exon has not been set']
 
-					# if anything other than 'dont override' selected, then change the classification
-					if cleaned_data['final_classification'] != '8':
-						classification.final_class = cleaned_data['final_classification']
+					# if validation has been passed, finalise first check
+					if len(context['warn']) == 0:
+						cleaned_data = finalise_form.cleaned_data
+						
+						# if new classification, pull score from the acmg section and save to final class
+						if classification.genuine == '1':
+							classification.final_class = classification.calculate_acmg_score_first()[1]
 
-					# update status and save
-					classification.status = '1'
-					classification.first_check_date = timezone.now()
-					classification.user_first_checker = request.user
-					classification.save()
+						# if anything other than 'dont override' selected, then change the classification
+						if cleaned_data['final_classification'] != '8':
+							classification.final_class = cleaned_data['final_classification']
 
-					return redirect(home)
+						# update status and save
+						classification.status = '1'
+						classification.first_check_date = timezone.now()
+						classification.user_first_checker = request.user
+						classification.save()
+
+						return redirect(home)
 
 
 			return render(request, 'acmg_db/new_classifications.html', context)

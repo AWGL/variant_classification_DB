@@ -9,7 +9,7 @@
 {% if warn %}
   {% for w in warn %}
     <div class="alert alert-danger" role="alert">
-	    {{ w }}
+	    Error: {{ w }}
 	  </div>
   {% endfor %}
 {% endif %}
@@ -32,30 +32,34 @@
 			<tr>
 				<td>{{ classification.sample.worklist.name }}</td>
 				<td>{{ classification.sample.name }}</td>
-				{% if classification.selected_transcript_variant.transcript.refseq_selected %}
 				<td>
+				{% if classification.selected_transcript_variant.transcript.refseq_selected %}
 					{{ classification.selected_transcript_variant.transcript.refseq_selected }}
+				{% else %}
+					<span class="badge badge-danger">RefSeq transcript not set - edit below</span>
+				{% endif %}
 					({{ classification.variant.get_genes }}):
 					{{ classification.selected_transcript_variant.hgvs_c }}
+				{% if classification.selected_transcript_variant.hgvs_p %}
 					({{ classification.selected_transcript_variant.hgvs_p }})
-				</td>
 				{% else %}
-				<td>Set transcript</td>
+					(p.?)
 				{% endif %}
+				</td>
 				<td>
 					<div id="class_box">
 					{% if 'Pathogenic' in result %}
-					<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
 					{% elif 'Benign' in result %}
-					<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
 					{% elif 'VUS' in result %}
-					<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
 					{% elif 'Artefact' in result %}
-					<button type="button" class="btn btn-secondary" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-secondary" style="width: 20rem;">{{result}}</button>
 					{% else %}
-					<button type="button" class="btn btn-muted" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-muted" style="width: 20rem;">{{result}}</button>
 					{% endif %}
-				</div>
+					</div>
 				</td>
 				<td>{{ classification.display_status }}</td>
 			</tr>
@@ -68,10 +72,10 @@
 <!-- TABS FOR CLASSIFICATION SECTIONS -->
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-	<a class="nav-item nav-link active" id="nav-patient-tab" data-toggle="tab" href="#nav-patient" role="tab" aria-controls="nav-patient" aria-selected="true">Patient Information</a>
+	<a class="nav-item nav-link active" id="nav-sample-tab" data-toggle="tab" href="#nav-sample" role="tab" aria-controls="nav-sample" aria-selected="true">Sample Information</a>
 	<a class="nav-item nav-link" id="nav-variant-tab" data-toggle="tab" href="#nav-variant" role="tab" aria-controls="nav-variant" aria-selected="true">Variant Information</a>
 	<a class="nav-item nav-link" id="nav-acmg-tab" data-toggle="tab" href="#nav-acmg" role="tab" aria-controls="nav-acmg" aria-selected="false">ACMG Criteria</a>
-	<a class="nav-item nav-link" id="nav-evidence-tab" data-toggle="tab" href="#nav-evidence" role="tab" aria-controls="nav-evidence" aria-selected="false">Evidence/ Comments</a>
+	<a class="nav-item nav-link" id="nav-evidence-tab" data-toggle="tab" href="#nav-evidence" role="tab" aria-controls="nav-evidence" aria-selected="false">Evidence/Comments</a>
 	<a class="nav-item nav-link" id="nav-audit-tab" data-toggle="tab" href="#nav-audit" role="tab" aria-controls="nav-audit" aria-selected="false">Finalise</a>	
 </div>
 </nav>
@@ -79,12 +83,12 @@
 <!-- START OF CLASSIFICATION SECTIONS -->
 <div class="tab-content" id="nav-tabContent">
 
-  <!-- PATIENT INFORMATION SECTION -->
-  <div class="tab-pane fade show active" id="nav-patient" role="tabpanel" aria-labelledby="nav-patient-tab">
+  <!-- SAMPLE INFORMATION SECTION -->
+  <div class="tab-pane fade show active" id="nav-sample" role="tabpanel" aria-labelledby="nav-sample-tab">
   <br>
 
 	<!-- Summary table for classification-->
-	<h5>Patient information</h5>
+	<h5>Sample information</h5>
   <table id="classification_info" class="table table-hover table-bordered table-sm col-10">
 	
 		<thead>
@@ -118,33 +122,158 @@
 
 	<!-- Expandable box containing preset filters -->
 	<!-- Button to expand/hide the filter table -->
-	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-patient-info" role="button" aria-expanded="false" aria-controls="edit-patient-info">
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-sample-info" role="button" aria-expanded="false" aria-controls="edit-sample-info">
 		Edit
 	</button>
 	<br>
-	<div class="collapse" id="edit-patient-info">
+	<div class="collapse" id="edit-sample-info">
 		<div class="card card-body bg-light col-10">
-			{% crispy patient_form %}
+			{% crispy sample_form %}
 		</div>
 	</div>
 	<br>
+	<hr>
 
-	<h5>Previous patients</h5>
+	
 	<div class="alert alert-warning col-10" role="alert">
-	{% if previous_classifications|length  > 0 %}
-		This variant has been seen in x previous patients.
+	<h5>Previous samples</h5>
+	{% if previous_classifications|length  > 0 %} <!-- TODO change filter so show unique patients-->
+		This variant has been seen in <b>x previous samples.</b>
 	{% else %}
 		This variant has not been seen before
 	{% endif %}
 	</div>
-	<p>TODO: make table showing details of previous patients</p>
+	<br>
 
+	<!-- TODO only show if there are previous classifications -->
+	<table class="table table-hover table-bordered table-sm col-10">
+
+		<thead>
+			<tr>
+				<td><b>Sample</b></td>
+				<td><b>Panel(s) applied</b></td>
+				<td><b>Affected with</td>
+				<td><b>De novo?</b></td>
+				<td><b>Other changes</b></td>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+				<td>test</td>
+				<td>test</td>
+				<td>test</td>
+				<td>test</td>
+				<td>test</td>
+			</tr>
+		</tbody>
+	
+	</table>
+	<br><br>
 	</div>
 
 
 	<!-- VARIANT INFORMATION SECTION -->
 	<div class="tab-pane fade" id="nav-variant" role="tabpanel" aria-labelledby="nav-variant-tab">
 	<br>
+
+
+	<!-- Variant information table -->
+	<h5>Variant information</h5>
+	<table class="table table-hover table-bordered table-sm col-10">
+	
+			<thead>
+			</thead>
+		
+			<tbody>
+				<tr>
+					<td class="col-2">Variant</td>
+					<td class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
+				</tr>
+				<tr>
+					<td>Ensembl transcript</td>
+					<td>{{ classification.selected_transcript_variant.transcript.name }}</td>
+				</tr>
+				<tr>
+					<td>RefSeq transcript</td>
+					<td>
+					{% if classification.selected_transcript_variant.transcript.refseq_selected %}
+						{{ classification.selected_transcript_variant.transcript.refseq_selected }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr>
+				<tr>
+					<td>HGVSc</td>
+					<td>{{ classification.selected_transcript_variant.hgvs_c }}</td>
+				</tr>
+				<tr>
+					<td>HGVSp</td>
+					<td>{{ classification.selected_transcript_variant.hgvs_p }}</td>
+				</tr>
+				<tr>
+					<td>De novo?</td>
+					<td>
+						{% if classification.is_trio_de_novo %}
+							Yes
+						{% else %}
+							No
+						{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Gene</td>
+					<td>{{classification.variant.get_genes}}</td>
+				</tr>
+				<tr>
+					<td>Exon</td>
+					<td>
+					{% if classification.selected_transcript_variant.exon %}
+						{{ classification.selected_transcript_variant.exon }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Gene inheritence pattern</td>
+					<td>
+					{% if classification.selected_transcript_variant.transcript.gene.inheritance_pattern %}
+						{{ classification.selected_transcript_variant.transcript.gene.inheritance_pattern }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Conditions associated with gene</td>
+					<td>
+					{% if classification.selected_transcript_variant.transcript.gene.conditions %}
+						{{ classification.selected_transcript_variant.transcript.gene.conditions }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr> 
+			</tbody>
+		
+		</table>
+	
+	<!-- Form for extra info -->
+	<!-- Expandable box containing preset filters -->
+	<!-- Button to expand/hide the filter table -->
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-variant-info" role="button" aria-expanded="false" aria-controls="edit-variant-info">
+		Edit
+	</button>
+	<br>
+	<div class="collapse" id="edit-variant-info">
+		<div class="card card-body bg-light col-10">
+			{% crispy variant_form %}
+		</div>
+	</div>
+	<br>
+	<hr>
 
 	<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
 	<div class="alert alert-warning col-10" role="alert">
@@ -203,78 +332,7 @@
 
 	{% endif %}
 	</div>
-	
 	<br>
-
-
-	<!-- Variant information table -->
-	<h5>Variant information</h5>
-	<table class="table table-hover table-bordered table-sm col-10">
-	
-			<thead>
-			</thead>
-		
-			<tbody>
-				<tr>
-					<td class="col-2">Variant</td>
-					<td class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
-				</tr>
-				<tr>
-					<td>Ensembl transcript</td>
-					<td>{{classification.selected_transcript_variant.transcript.name }}</td>
-				</tr>
-				<tr>
-					<td>RefSeq transcript</td>
-					<td>{{classification.selected_transcript_variant.transcript.refseq_selected }}</td>
-				</tr>
-				<tr>
-					<td>HGVSc</td>
-					<td>{{ classification.selected_transcript_variant.hgvs_c }}</td>
-				</tr>
-				<tr>
-					<td>HGVSp</td>
-					<td>{{ classification.selected_transcript_variant.hgvs_p }}</td>
-				</tr>
-				<tr>
-					<td>De novo?</td>
-					<td>{{ classification.is_trio_de_novo }}</td>
-				</tr> 
-				<tr>
-					<td>Gene</td>
-					<td>{{classification.variant.get_genes}}</td>
-				</tr>
-				<tr>
-					<td>Exon</td>
-					<td>{{ classification.selected_transcript_variant.exon }}</td>
-				</tr> 
-				<tr>
-					<td>Gene inheritence pattern</td>
-					<td>{{ classification.selected_transcript_variant.transcript.gene.inheritance_pattern }}</td>
-				</tr> 
-				<tr>
-					<td>Conditions associated with gene</td>
-					<td>{{ classification.selected_transcript_variant.transcript.gene.conditions }}</td>
-				</tr> 
-			</tbody>
-		
-		</table>
-	
-	<!-- Form for extra info -->
-	<!-- Expandable box containing preset filters -->
-	<!-- Button to expand/hide the filter table -->
-	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-variant-info" role="button" aria-expanded="false" aria-controls="edit-variant-info">
-			Edit
-		</button>
-		<br>
-		<div class="collapse" id="edit-variant-info">
-			<div class="card card-body bg-light col-10">
-				{% crispy variant_form %}
-			</div>
-		</div>
-		<br>
-	
-	<br>
-	<hr>
 
 
 	<!-- Genuine/ artefact sections section-->
@@ -291,24 +349,7 @@
 	
 	{% if classification.genuine == '1' %}
 	<!-- Button to recalculate the classification -->
-	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Classify</button>
-
-	<!-- Box to display the calculated classification 
-	<div id ='class_box'>
-	  <div class="card bg-muted mb-3" style="max-width: 24rem;">
-		<div class="card-header">ACMG Classification Result</div>
-		<div class="card-body">
-		  {% if 'Pathogenic' in result %}
-			<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
-		  {% elif 'Benign' in result %}
-			<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
-		  {% else %}
-			<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
-		  {% endif %}
-		</div>
-	  </div>
-	</div>
-	<hr>-->
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
 
 	<!-- Table listing all ACMG codes and option to apply them -->
 	<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
@@ -374,7 +415,7 @@
 	  </tbody>
 
 	</table>
-	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Classify</button>
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
 
 	{% else %}
 	<div class="alert alert-warning" role="alert">
@@ -435,6 +476,7 @@
 		Allow Image Pasting
 	  </label>
 	</div>
+	<br><br>
 		
   </div>
 	
