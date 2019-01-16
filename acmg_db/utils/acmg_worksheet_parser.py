@@ -126,6 +126,7 @@ def get_refseq_transcripts(transcript, hgvs_c):
                 elif split[1] == hgvs_c[:-1]:
                     nm_list += [split[0]]
         print(transcript, nm_list)
+        # TODO add hgvsc check and hgvsp
         
     return nm_list, warn
 

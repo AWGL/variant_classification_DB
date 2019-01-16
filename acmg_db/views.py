@@ -166,7 +166,7 @@ def home(request):
 						)
 
 					new_classification_obj.save()
-					new_classification_obj.initiate_classification()
+					#new_classification_obj.initiate_classification()
 
 
 				success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
@@ -305,7 +305,7 @@ def manual_input(request):
 			)
 
 			new_classification_obj.save()
-			new_classification_obj.initiate_classification()
+			#new_classification_obj.initiate_classification()
 			
 			# Go to the new_classification page.
 			return redirect(new_classification, new_classification_obj.pk)
@@ -341,19 +341,21 @@ def new_classification(request, pk):
 		comments = UserComment.objects.filter(classification=classification)
 
 		# make the sample info form
-		variant_form = VariantInfoForm(classification_pk=classification.pk)
+		transcript = classification.selected_transcript_variant.transcript
+		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()
+		variant_form = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
 		patient_form = PatientInfoForm(classification_pk=classification.pk)
 
 		# Get the automated acmg score
 		result = classification.calculate_acmg_score_first()
 
 		# select refseq transcript
-		transcript = classification.selected_transcript_variant.transcript
+		#transcript = classification.selected_transcript_variant.transcript
 		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()
 		refseq_form = SelectRefSeqTranscript(classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
 
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
-		choice_form = ClassifyChoiceForm()
+		#choice_form = ClassifyChoiceForm()
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
@@ -365,7 +367,7 @@ def new_classification(request, pk):
 			'result': result,
 			'patient_form': patient_form,
 			'genuine_form': genuine_form,
-			'choice_form': choice_form,
+			#'choice_form': choice_form,
 			'finalise_form': finalise_form,
 			'variant_form': variant_form,
 			'previous_classifications': previous_classifications,
@@ -393,22 +395,47 @@ def new_classification(request, pk):
 
 			# If the user has submitted the VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
-				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk)
+				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=refseq_options)
 
 				if variant_form.is_valid():
 
 					# Update models
 					cleaned_data = variant_form.cleaned_data
+					print(cleaned_data)
+					transcript_obj = Transcript.objects.filter(name=transcript.name)
+
+					# transcript
+					for item in refseq_options:
+						if item[0] == cleaned_data['select_transcript']:
+							if item[1] == 'Other':
+								refseq_new = cleaned_data['other']
+								# validate input
+								if refseq_new == '':
+									context['warn'] += ['Transcript not set - transcript ID cannot be empty.']
+								elif not refseq_new.startswith('NM_'):
+									context['warn'] += ['Transcript not set - transcript ID is not a RefSeq ID.']
+								# if validation passed, update refseq id
+								else:
+									transcript_obj.update(refseq_selected = refseq_new)
+							# if item is from the list, update refseq id
+							else:
+								refseq_new = item[1]
+								transcript_obj.update(refseq_selected = refseq_new)
+
+					# genes
 					gene = Gene.objects.filter(name=classification.selected_transcript_variant.transcript.gene.name)
 					gene.update(
 						inheritance_pattern = cleaned_data['inheritance_pattern'],
 						conditions = cleaned_data['conditions']
 					)
-					#classification.is_trio_de_novo = cleaned_data['is_trio_de_novo'] TODO finish this!
+
+					# trio de novo
+					#classification.is_trio_de_novo = cleaned_data['is_trio_de_novo'] TODO finish this! and add exon option
 					
 				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk)
+				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
 
+			'''
 			# If the user has submitted the refseq form
 			if 'select_transcript' in request.POST:
 				refseq_form = SelectRefSeqTranscript(request.POST, classification_pk = classification.pk, transcript_pk=transcript.name, options=refseq_options)
@@ -437,6 +464,7 @@ def new_classification(request, pk):
 								transcript_pk.update(refseq_selected = refseq_new)
 						# refresh classification info
 						context['classification'] = get_object_or_404(Classification, pk=pk)
+						'''
 
 			# If the user has submitted the GenuineArtefactForm  TODO Finish this!
 			if 'genuine' in request.POST:
@@ -445,26 +473,31 @@ def new_classification(request, pk):
 				if genuine_form.is_valid():
 					cleaned_data = genuine_form.cleaned_data
 
-					#classification_obj = Classification.objects.filter(pk=pk)
-
 					if cleaned_data['genuine'] == '1':
-						print('genuine')
-						#classification_obj.update(genuine = '1')
-						# final classification is pending
+						# if not already initiated:
+						answers = ClassificationAnswer.objects.filter(classification=classification)
+						if len(answers) == 0:
+							classification.initiate_classification()
+						classification.genuine = '1'
+						# leave class as it is - will be updated when acmg_submit is run
 
-						if cleaned_data['classify'] == '1':
-							print('new')
-							# set final classification or make acmg classification object
-						elif cleaned_data['classify'] == '2':
-							print('previous')
-						elif cleaned_data['classify'] == '3':
-							print('not analysed')
+					elif cleaned_data['genuine'] == '2':
+						# update final class to whatever it was previously - TODO make query
+						# set genuine to 2
+						classification.genuine = '2'
 
-					if cleaned_data['genuine'] == '2':
-						print('artefact')
-						#classification_obj.update(genuine = '2')
-						#classification.final_class = 6
-						#genuine_form = GenuineArtefactForm(request.POST, show_classify=True)
+					elif cleaned_data['genuine'] == '3':
+						classification.final_class = '7'
+						# update final class to not analysed
+						# set genuine to 3
+						classification.genuine = '3'
+
+					elif cleaned_data['genuine'] == '4':
+						classification.final_class = '6'
+						# update final class to artefact
+						# set genuine to 4
+						classification.genuine = '4'
+					classification.save()
 
 				# refresh classification info
 				context['classification'] = get_object_or_404(Classification, pk=pk)
@@ -477,8 +510,9 @@ def new_classification(request, pk):
 
 				if finalise_form.is_valid():
 					cleaned_data = finalise_form.cleaned_data
-
-					classification.final_class = cleaned_data['final_classification']
+					# if anything other than 'dont override' selected, then change the classification
+					if cleaned_data['final_classification'] != '8':
+						classification.final_class = cleaned_data['final_classification']
 					classification.status = '1'
 					classification.first_check_date = timezone.now()
 					classification.user_first_checker = request.user

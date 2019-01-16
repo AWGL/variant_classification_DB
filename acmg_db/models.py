@@ -142,10 +142,23 @@ class Classification(models.Model):
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'Archived'))
-	GENUINE_CHOICES = (('0', 'Pending'), ('1', 'Genuine'), ('2', 'Artefact'))
-	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
-		('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-		('6', 'Artefact'), ('7', 'NA'))
+	GENUINE_ARTEFACT_CHOICES = (
+		('0', 'Pending'), 
+		('1', 'Genuine - New Classification'), 
+		('2', 'Genuine - Use Previous Classification'),
+		('3', 'Genuine - Not Analysed'),
+		('4', 'Artefact')
+	)
+	FINAL_CLASS_CHOICES = (
+		('0', 'Benign'), 
+		('1', 'Likely Benign'), 
+		('2', 'VUS - Criteria Not Met'),
+		('3', 'VUS - Contradictory Evidence Provided'), 
+		('4', 'Likely Pathogenic'), 
+		('5', 'Pathogenic'),
+		('6', 'Artefact'), 
+		('7', 'NA')
+	)
 
 	history = AuditlogHistoryField()
 
@@ -160,7 +173,7 @@ class Classification(models.Model):
 	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_first_checker')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
-	genuine = models.CharField(max_length=1, choices=GENUINE_CHOICES, default='2') # TODO add choices
+	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
 	final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)
 
 	is_trio_de_novo = models.BooleanField()

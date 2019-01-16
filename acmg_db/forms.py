@@ -3,37 +3,8 @@ from .models import  *
 from django.urls import reverse
 from crispy_forms.bootstrap import Field
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Div, Hidden
+from crispy_forms.layout import Submit, Layout, Div, HTML
 from django.contrib.auth.models import User
-
-
-class SelectRefSeqTranscript(forms.Form):
-	"""
-	
-	"""
-	select_transcript = forms.ChoiceField()
-	other = forms.CharField(max_length=100, required=False)
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-		self.transcript_pk = kwargs.pop('transcript_pk')
-		self.options = kwargs.pop('options')
-
-		super(SelectRefSeqTranscript, self).__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.fields['select_transcript'].choices = self.options
-		self.helper.form_id = 'refseq-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('new_classification', kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-			Field('select_transcript'),
-			Field('other', placeholder='If other, please specify', title=False)
-		)
 
 
 class VariantFileUploadForm(forms.Form):
@@ -144,22 +115,27 @@ class VariantInfoForm(forms.Form):
 	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
-	inheritance_pattern = forms.CharField(max_length=30)
-	conditions = forms.CharField(widget=forms.Textarea)
+	select_transcript = forms.ChoiceField(required=False)
+	other = forms.CharField(max_length=100, required=False)
+	inheritance_pattern = forms.CharField(max_length=30, required=False)
+	conditions = forms.CharField(widget=forms.Textarea, required=False)
 	is_trio_de_novo = forms.BooleanField(required=False)
 
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.options = kwargs.pop('options')
 
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
+		self.fields['select_transcript'].choices = self.options
+		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.transcript.refseq_selected
 		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
+		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -168,11 +144,44 @@ class VariantInfoForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success')) # css_class='btn-success acmg_submit' TODO add this somewhere
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			Div('inheritance_pattern'),
-			Div('conditions'),
-			Div('is_trio_de_novo'),			
+			HTML('<h5>Edit transcript</h5>'),
+			Field('select_transcript'),
+			Field('other', placeholder='If other, please specify', title=False),
+			HTML('<hr><h5>Edit gene info</h5>'),
+			Field('inheritance_pattern'),
+			Field('conditions'),
+			HTML('<hr><h5>Is the variant de novo?</h5>'),
+			Field('is_trio_de_novo'),
 		)
 
+
+class SelectRefSeqTranscript(forms.Form):
+	"""
+	
+	"""
+	select_transcript = forms.ChoiceField()
+	other = forms.CharField(max_length=100, required=False)
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.transcript_pk = kwargs.pop('transcript_pk')
+		self.options = kwargs.pop('options')
+
+		super(SelectRefSeqTranscript, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.fields['select_transcript'].choices = self.options
+		self.helper.form_id = 'refseq-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('new_classification', kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('select_transcript'),
+			Field('other', placeholder='If other, please specify', title=False)
+		)
 
 
 class PatientInfoForm(forms.Form):
@@ -279,24 +288,20 @@ class GenuineArtefactForm(forms.Form):
 	"""
 
 	"""
-	GENUINE_ARTEFACT_CHOICES = (('0', 'Pending'), ('1', 'Genuine'), ('2', 'Artefact'))
-	CLASSIFY_CHOICES = (
-		('0', 'Unknown'),
-		('1', 'New classification'), 
-		('2', 'Use previous classification'),
-		('3', 'Not analysed')
+	GENUINE_ARTEFACT_CHOICES = (
+		('0', 'Pending'), 
+		('1', 'Genuine - New Classification'), 
+		('2', 'Genuine - Use Previous Classification'),
+		('3', 'Genuine - Not Analysed'),
+		('4', 'Artefact')
 	)
 
 	genuine = forms.ChoiceField(choices=GENUINE_ARTEFACT_CHOICES)
-	classify = forms.ChoiceField(choices=CLASSIFY_CHOICES, required=False)
 
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
-
-		#self.show_classify_field = kwargs.pop('show_classify')
-		#self.classification = Classification.objects.get(pk = self.classification_pk)
 
 		super(GenuineArtefactForm, self).__init__(*args, **kwargs)
 
@@ -306,45 +311,11 @@ class GenuineArtefactForm(forms.Form):
 		self.helper.field_class = 'col-lg-8'
 		self.fields['genuine'].initial = self.classification.genuine
 		self.helper.form_method = 'post'
-		#self.fields['classify'].widget = forms.HiddenInput()
-		self.helper.render_hidden_fields = True
 		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('genuine', id='genuine_field'),
-			Field('classify', id='classify_field'),
-		)
-
-
-class ClassifyChoiceForm(forms.Form):
-	"""
-
-	"""
-	CHOICES = (
-		(1, 'New classification'), 
-		(2, 'Use previous classification'),
-		(3, 'Not analysed')
-	)
-	classify = forms.ChoiceField(choices=CHOICES)
-
-	def __init__(self, *args, **kwargs):
-
-		#self.classification_pk = kwargs.pop('classification_pk')
-		#self.classification = Classification.objects.get(pk = self.classification_pk)
-
-		super(ClassifyChoiceForm, self).__init__(*args, **kwargs)
-
-		self.helper = FormHelper()
-		self.helper.form_id = 'classify-choice-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Save', css_class='btn-success'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-			Div('classify'),			
 		)
 
 
@@ -354,7 +325,7 @@ class FinaliseClassificationForm(forms.Form):
 	"""
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-	('6', 'Artefact'), ('7', 'NA')) # add option to use from acmg tab
+	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)')) # add option to use from acmg tab
 
 	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
 	confirm = forms.BooleanField(required=True)
@@ -367,7 +338,7 @@ class FinaliseClassificationForm(forms.Form):
 		super(FinaliseClassificationForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['final_classification'].initial = self.classification.final_class
+		self.fields['final_classification'].initial = '8'
 		self.fields['final_classification'].label = 'Final classification'
 		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
 		self.fields['confirm'].label = 'Confirm that the classification is complete'
