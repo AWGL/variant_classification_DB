@@ -288,9 +288,10 @@
   <!-- ACMG RULES SECTION -->
   <div class="tab-pane fade" id="nav-acmg" role="tabpanel" aria-labelledby="nav-acmg-tab">
 	<br>
-
+	
+	{% if classification.genuine == '1' %}
 	<!-- Button to recalculate the classification -->
-	<button type="button" class="btn btn-muted acmg_submit" id='submit_acmg' >Classify</button>
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Classify</button>
 
 	<!-- Box to display the calculated classification 
 	<div id ='class_box'>
@@ -373,6 +374,17 @@
 	  </tbody>
 
 	</table>
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Classify</button>
+
+	{% else %}
+	<div class="alert alert-warning" role="alert">
+		<p>This variant is not set for a new ACMG classification to be carried out.</p>
+		<p>To carry out a new classification, change the settings in the 'Is this a genuine variant?' section under the 'Variant information' tab.</p>
+	</div>
+
+	{% endif %}
+	<br>
+	<br>
 
 	</div>
 
@@ -430,14 +442,27 @@
   <div class="tab-pane fade" id="nav-audit" role="tabpanel" aria-labelledby="nav-audit-tab">
 	<br>
 
-		<!-- Finalise classification -->
-	
+		<!-- Finalise classification form -->
 		<h5>Finalise Classification</h5>
-		<p>TODO: Button to make sure classification is up to date, maybe move somewhere else?</p>
+		
+		<!-- display a 'reclassify' button to make sure the user hasnt made any changes that alter the class-->
+		{% if classification.genuine == '1' %}
+		<div class="row">
+			<div class="col-2">Reclassify</div>
+			<div class="col-8">
+				<button type="button" class="btn btn-danger acmg_submit" id='submit_acmg'>Calculate classification</button>
+				<p>Make sure that the classification currently displayed is up-to-date before submitting</p>
+			</div>
+		</div>
+		<br>
+		{% endif %}
+
+		<!-- display the finalise form -->
 		{% crispy finalise_form %}
 		<br>
 		<br>
 
+		<!-- diplay the audit trail for the variant -->
 		<hr>
 		<h5>Classification history</h5>
 		<table class="table table-hover table-bordered table-sm col-10">

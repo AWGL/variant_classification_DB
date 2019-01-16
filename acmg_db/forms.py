@@ -150,7 +150,7 @@ class VariantInfoForm(forms.Form):
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success')) # css_class='btn-success acmg_submit' TODO add this somewhere
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			HTML('<h5>Edit transcript</h5>'),
@@ -227,7 +227,7 @@ class FinaliseClassificationForm(forms.Form):
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Submit for second check', css_class='btn-danger')) #TODO css_class='btn-danger acmg_submit')
+		self.helper.add_input(Submit('submit', 'Submit for second check', css_class='btn-danger'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('final_classification'),
