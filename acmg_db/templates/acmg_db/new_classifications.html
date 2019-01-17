@@ -127,7 +127,9 @@
 	</button>
 	<br>
 	<div class="collapse" id="edit-sample-info">
+		<br>
 		<div class="card card-body bg-light col-10">
+
 			{% crispy sample_form %}
 		</div>
 	</div>
@@ -140,7 +142,7 @@
 	{% if previous_classifications|length  > 0 %} <!-- TODO change filter so show unique patients-->
 		This variant has been seen in <b>x previous samples.</b>
 	{% else %}
-		This variant has not been seen before
+		This variant has not been seen before.
 	{% endif %}
 	</div>
 	<br>
@@ -266,6 +268,7 @@
 	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-variant-info" role="button" aria-expanded="false" aria-controls="edit-variant-info">
 		Edit
 	</button>
+	<br>
 	<br>
 	<div class="collapse" id="edit-variant-info">
 		<div class="card card-body bg-light col-10">

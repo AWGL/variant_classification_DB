@@ -3,3 +3,4 @@ db.sqlite3
 *.pyc
 acmg_db/migrations
 mysite/media/
+test_data

@@ -166,7 +166,6 @@ def home(request):
 						)
 
 					new_classification_obj.save()
-					#new_classification_obj.initiate_classification()
 
 
 				success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
@@ -373,11 +372,14 @@ def new_classification(request, pk):
 
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
-				sample = SampleInfoForm(request.POST, classification_pk=classification.pk)
+
+				print (request.POST)
+				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk)
 
 				# load in data
 				if sample_form.is_valid():
 					cleaned_data = sample_form.cleaned_data
+					print (cleaned_data)
 					sample = Sample.objects.filter(name=classification.sample.name)
 					sample.update(
 						affected_with = cleaned_data['affected_with'],

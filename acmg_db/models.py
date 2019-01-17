@@ -177,9 +177,6 @@ class Classification(models.Model):
 	final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)   # might need to make a seperate first_check_class field if this gets confusing for the second check
 
 	is_trio_de_novo = models.BooleanField()
-	#inheritance_pattern = models.CharField(max_length=15, null=True, blank=True)
-	#conditions = models.TextField(null=True, blank=True)
-
 
 	def display_status(self):
 		"""
@@ -405,15 +402,21 @@ class ClassificationQuestion(models.Model):
 
 			return default_strength
 
+		elif self.pathogenic_question == True and self.acmg_code != 'PVS1':
+
+			return ['PS', 'PM', 'PP']
+
+		elif self.pathogenic_question == True and self.acmg_code == 'PVS1':
+
+			return ['PV','PS', 'PM', 'PP']
+
+		elif self.pathogenic_question == False and self.acmg_code != 'BA1':
+
+			return ['BS', 'BP']
+
 		else:
 
-			if self.pathogenic_question == True:
-
-				return ['PV','PS', 'PM', 'PP']
-
-			else:
-
-				return ['BA', 'BS', 'BP']
+			return ['BA', 'BS', 'BP']
 
 
 
