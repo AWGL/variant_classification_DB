@@ -25,7 +25,7 @@ SECRET_KEY = '-#^pc5%n_!*d0s_t1xq83vzx%706#u+0y$itz*ltbc(((yzu*1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '10.59.210.245', '10.59.210.247']
+ALLOWED_HOSTS = ['127.0.0.1', '10.59.210.245', '10.59.210.247', '10.59.210.197']
 
 
 # Application definition
@@ -126,17 +126,30 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 
-MUTALYZER_BUILD = 'hg19' 
 
 ENV_PATH = os.path.abspath(os.path.dirname(__file__))
 MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
 MEDIA_URL = '/media/'
 
-
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = '/login/'
+
+
+# Enternal resources 
+
+MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
+
+MUTALYZER_BUILD = 'hg19' 
+
+REFERENCE_GENOME = '/media/sf_Documents/genomics_resources/refs/human_g1k_v37.fasta'
+VEP_CACHE = '/media/sf_Documents/genomics_resources/vep/'
+VEP_TEMP_DIR = 'temp/'
+
+
+
+
+
 
 
 

@@ -4,6 +4,7 @@ from django.conf import settings
 from .models import *
 from .utils.variant_utils import *
 from .utils.acmg_worksheet_parser import *
+from .utils.get_vep_annotations import *
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseForbidden
@@ -49,7 +50,7 @@ def home(request):
 			analysis_performed_index = form.cleaned_data['panel_applied']
 			analysis_performed = ""
 			for panel in panel_options:
-				print(panel[0])
+
 				if panel[0] == analysis_performed_index:
 					analysis_performed = panel[1]
 
@@ -61,54 +62,50 @@ def home(request):
 			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
 			
 			df, meta_dict = load_worksheet(utf_file)
-			variants_dict = process_data(df, meta_dict)
 
-			error = variants_dict["errors"]
-			warn = variants_dict["warnings"]
 
-			# if theres any errors, throw error and stop
-			if len(error) > 0:
-				error += ["ERROR: Didn't upload any files, check your input file and try again"]
-				context['error'] = error
-				context['warn'] = warn
 
-			
-			# else do the upload (warnings are thrown but upload continues)
-			else:
-				sample_id = variants_dict['sample_id']
-				worksheet_id = variants_dict['worksheet_id']
+			unique_variants =  (df['Variant'].unique())
+			worksheet_id = df['WorklistId'].unique()[0]
+			sample_id = df['#SampleId'].unique()[0]
 
-				# add worksheet
-				worksheet, created = Worklist.objects.get_or_create(
+			# add worksheet
+			worksheet_obj, created = Worklist.objects.get_or_create(
 					name = worksheet_id
 					)
 
-				# add sample
-				sample, created = Sample.objects.get_or_create(
+			# add sample
+			sample_obj, created = Sample.objects.get_or_create(
 					name = sample_id,
-					worklist = worksheet,
+					worklist = worksheet_obj,
 					affected_with = affected_with,
-					analysis_performed = analysis_performed,  # TODO move this into classifications - currently in sample - multiple panels might be run on the same sample so there might be multiple analyses
+					analysis_performed = analysis_performed,
 					analysis_complete = False,
 					other_changes = ''
 					)
 
-				# TODO - make validation if worklist and sample have already been seen? - either add a warning or stop the upload
 
-				# add variants
-				for item in variants_dict['variants']:
-					print(item)
-					var = item['Variant']
-					variant_data = process_variant_input(var)
+			vep_info_dict = {
+				'reference_genome' : settings.REFERENCE_GENOME,
+				'vep_cache': settings.VEP_CACHE,
+				'temp_dir': settings.VEP_TEMP_DIR
+			}
 
-					key = variant_data[5]
-					variant_hash = variant_data[0]
-					chromosome = variant_data[1]
-					position = variant_data[2]
-					ref = variant_data[3]
-					alt = variant_data[4]
+			variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
+
+			for variant in variant_annotations:
+
+				var = variant[1]
+				variant_data = process_variant_input(var)
+
+				key = variant_data[5]
+				variant_hash = variant_data[0]
+				chromosome = variant_data[1]
+				position = variant_data[2]
+				ref = variant_data[3]
+				alt = variant_data[4]
 					
-					variant, created = Variant.objects.get_or_create(
+				variant_obj, created = Variant.objects.get_or_create(
 						key = key,
 						variant_hash = variant_hash,
 						chromosome = chromosome,
@@ -117,64 +114,72 @@ def home(request):
 						alt = alt
 						)
 
-					gene_query = item['Gene']
-					gene, created = Gene.objects.get_or_create(
-						name = gene_query,
+				consequences = variant[0]['transcript_consequences']
+
+				selected = None
+
+				for consequence in consequences:
+
+					if 'transcript_id' in consequence:
+
+						transcript_id = consequence['transcript_id']
+
+					else:
+
+						transcript_id = 'None'
+
+					transcript_hgvsc = consequence.get('hgvsc')
+					transcript_hgvsp = consequence.get('hgvsp')
+					gene_symbol = consequence.get('gene_symbol', 'None')
+					exon = consequence.get('exon', 'NA')
+					impact = consequence.get('consequence_terms')
+					impact = '|'.join(impact)
+
+
+					gene_obj, created = Gene.objects.get_or_create(
+						name = gene_symbol
 						)
 
-					transcript_query = item['Transcript']
-					hgvs_c_query = item['HGVSc']
-					hgvs_p_query = item['HGVSp']
 
-					try:
-						transcript = Transcript.objects.get(name=transcript_query)
-					except Transcript.DoesNotExist:
-						refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
-						warn += ensembl_warn
-
-						if len(refseq_transcripts) == 1:
-							refseq_selected = refseq_transcripts[0]
-						else:
-							refseq_selected = None
-
-						transcript = Transcript.objects.create(
-							name = transcript_query,
-							gene = gene,
-							refseq_options = json.dumps(refseq_transcripts),
-							refseq_selected = refseq_selected
+					transcript_obj, created = Transcript.objects.get_or_create(
+							name = transcript_id,
+							gene = gene_obj
 						)
 
-					exon_query = item['Location']
-					transcript_variant, created = TranscriptVariant.objects.get_or_create(
-						variant = variant,
-						transcript = transcript,
-						hgvs_c = hgvs_c_query,
-						hgvs_p = hgvs_p_query,
-						exon = exon_query
+					transcript_variant_obj, created = TranscriptVariant.objects.get_or_create(
+						variant = variant_obj,
+						transcript = transcript_obj,
+						hgvs_c = transcript_hgvsc,
+						hgvs_p = transcript_hgvsp,
+						exon = exon,
+						consequence = impact
 
 						)
 
-					new_classification_obj = Classification.objects.create(
-						variant= variant,
-						sample = sample,
-						creation_date = timezone.now(),
-						user_creator = request.user,
-						status = '0',
-						is_trio_de_novo = False,
-						final_class = '7',
-						selected_transcript_variant = transcript_variant
-						)
+					if 'pick' in consequence:
 
-					new_classification_obj.save()
+						selected = transcript_variant_obj
 
+					print (var, transcript_hgvsc, transcript_hgvsp,gene_symbol, exon, impact )
 
-				success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
-				params = '?worksheet={}&sample={}'.format(worksheet_id, sample_id)
+				new_classification_obj = Classification.objects.create(
+					variant= variant_obj,
+					sample = sample_obj,
+					creation_date = timezone.now(),
+					user_creator = request.user,
+					status = '0',
+					is_trio_de_novo = False,
+					final_class = '7',
+					selected_transcript_variant = selected
+					)
 
-				context = {
+				new_classification_obj.save()
+
+			success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
+			params = '?worksheet={}&sample={}'.format(worksheet_id, sample_id)
+
+			context = {
 					'form': form, 
-					'error': error,
-					'warn': warn,
 					'success': success,
 					'params': params
 					}
@@ -263,23 +268,10 @@ def manual_input(request):
 				name = gene_query
 			)
 
-			try:
-				transcript = Transcript.objects.get(name=transcript_query)
-			except Transcript.DoesNotExist:
-				refseq_transcripts, ensembl_warn = get_refseq_transcripts(transcript_query, hgvs_c_query)
-				#warn += ensembl_warn
-
-				if len(refseq_transcripts) == 1:
-					refseq_selected = refseq_transcripts[0]
-				else:
-					refseq_selected = None
-
-				transcript = Transcript.objects.create(
-					name = transcript_query,
-					gene = gene,
-					refseq_options = json.dumps(refseq_transcripts),
-					refseq_selected = refseq_selected
-				)
+			transcript, created = Transcript.objects.get_or_create(
+				name = transcript_query,
+				gene = gene
+			)			
 
 			transcript_variant, created = TranscriptVariant.objects.get_or_create(
 				variant = variant,
@@ -301,7 +293,6 @@ def manual_input(request):
 			)
 
 			new_classification_obj.save()
-			#new_classification_obj.initiate_classification()
 			
 			# Go to the new_classification page.
 			return redirect(new_classification, new_classification_obj.pk)
@@ -342,11 +333,16 @@ def new_classification(request, pk):
 		result = classification.display_final_classification  # current class to display
 
 		transcript = classification.selected_transcript_variant.transcript
-		refseq_options = Transcript.objects.get(name=transcript.name).change_refseq_selected()  # list of refseq ids linked to the ensembl id
+		refseq_options = TranscriptVariant.objects.filter(variant=variant)
+		fixed_refseq_options = []
+
+		for transcript_var in refseq_options:
+
+			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name))
 
 		# make empty instances of forms
 		sample_form = SampleInfoForm(classification_pk=classification.pk)
-		variant_form = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
+		variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
 
@@ -373,7 +369,6 @@ def new_classification(request, pk):
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 
-				print (request.POST)
 				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk)
 
 				# load in data
@@ -393,28 +388,16 @@ def new_classification(request, pk):
 
 			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
-				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=refseq_options)
+				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=fixed_refseq_options)
 
 				if variant_form.is_valid():
 					cleaned_data = variant_form.cleaned_data
 
 					# transcript section
-					transcript_obj = Transcript.objects.filter(name=transcript.name)
-					for item in refseq_options:
-						if item[0] == cleaned_data['select_transcript']:
-							if item[1] == 'Other':
-								refseq_new = cleaned_data['other']
-								# validate input
-								if refseq_new == '':
-									context['warn'] += ['Transcript not set - transcript ID cannot be empty.']
-								elif not refseq_new.startswith('NM_'):
-									context['warn'] += ['Transcript not set - transcript ID is not a RefSeq ID.']
-								# if validation passed, update refseq id
-								else:
-									transcript_obj.update(refseq_selected = refseq_new)
-							# if item is from the list, update refseq id
-							else:
-								transcript_obj.update(refseq_selected = item[1])
+
+					select_transcript = cleaned_data['select_transcript']
+
+					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
 
 					# genes section
 					gene = Gene.objects.filter(name=classification.selected_transcript_variant.transcript.gene.name)
@@ -425,11 +408,12 @@ def new_classification(request, pk):
 
 					# trio de novo section
 					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+					classification.selected_transcript_variant = selected_transcript_variant
 					classification.save()
 					
 				# reload dict variables for rendering
 				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=refseq_options)
+				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 
 
 			# GenuineArtefactForm
@@ -489,14 +473,10 @@ def new_classification(request, pk):
 					# TODO any more validation?
 					if classification.genuine == '0':
 						context['warn'] += ['Select whether the variant is genuine or artefact']
-					if transcript.refseq_selected == None:
-						context['warn'] += ['RefSeq transcript has not been set']
 					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None:
 						context['warn'] += ['Inheritence pattern has not been set']
 					if classification.selected_transcript_variant.transcript.gene.conditions == None:
 						context['warn'] += ['Gene associated conditions have not been set']
-					if classification.selected_transcript_variant.exon == None:
-						context['warn'] += ['Exon has not been set']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:

@@ -42,5 +42,14 @@
 	<h5><a href="/manual_input">Input variant details manually</a></h5>
 	<br><br>
 </center>
+
+
+<script>
+$(document).ready(function(){
+$("#file-upload-form").on("submit", function () {
+    $(this).find(":submit").prop("disabled", true);
+});
+});
+</script>
 	
 {% endblock %}

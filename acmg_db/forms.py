@@ -124,7 +124,11 @@ class VariantInfoForm(forms.Form):
 	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
-	select_transcript = forms.ChoiceField(required=False)  #TODO - add exon
+
+
+	select_transcript = forms.ChoiceField(required=False)
+
+
 	other = forms.CharField(max_length=100, required=False)
 	inheritance_pattern = forms.CharField(max_length=30, required=False)
 	conditions = forms.CharField(widget=forms.Textarea, required=False)
@@ -135,12 +139,13 @@ class VariantInfoForm(forms.Form):
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 		self.options = kwargs.pop('options')
+		print (self.options)
 
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
 		self.fields['select_transcript'].choices = self.options
-		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.transcript.refseq_selected
+		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
 		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2

@@ -20,11 +20,11 @@
 		
 		<thead>
 			<tr>
-				<td class="col-1">Worksheet</td>
-				<td class="col-1">Sample</td>
-				<td class="col-4">Variant</td>
-				<td class="col-2">Current Classification</td>
-				<td class="col-2">Status</td>
+				<td style="width: 15.00%" class="col-1">Worksheet</td>
+				<td style="width: 15.00%"class="col-1">Sample</td>
+				<td style="width: 30.00%"class="col-4">Variant</td>
+				<td style="width: 15.00%"class="col-2">Current Classification</td>
+				<td style="width: 15.00%"class="col-2">Status</td>
 			</tr>
 		</thead>
 		
@@ -33,12 +33,7 @@
 				<td>{{ classification.sample.worklist.name }}</td>
 				<td>{{ classification.sample.name }}</td>
 				<td>
-				{% if classification.selected_transcript_variant.transcript.refseq_selected %}
-					{{ classification.selected_transcript_variant.transcript.refseq_selected }}
-				{% else %}
-					<span class="badge badge-danger">RefSeq transcript not set - edit below</span>
-				{% endif %}
-					({{ classification.variant.get_genes }}):
+					({{ classification.selected_transcript_variant.transcript.gene.name }}):
 					{{ classification.selected_transcript_variant.hgvs_c }}
 				{% if classification.selected_transcript_variant.hgvs_p %}
 					({{ classification.selected_transcript_variant.hgvs_p }})
@@ -96,8 +91,8 @@
 	
 	  <tbody>
       <tr>
-        <td class="col-2">Sample Lab Number </td>
-        <td class="col-8">{{ classification.sample.name }}</td>
+        <td style="width: 25.00%" class="col-2">Sample Lab Number </td>
+        <td style="width: 75.00%" class="col-8">{{ classification.sample.name }}</td>
       </tr>
       <tr>
         <td>Worksheet</td>
@@ -134,44 +129,7 @@
 		</div>
 	</div>
 	<br>
-	<hr>
-
 	
-	<div class="alert alert-warning col-10" role="alert">
-	<h5>Previous samples</h5>
-	{% if previous_classifications|length  > 0 %} <!-- TODO change filter so show unique patients-->
-		This variant has been seen in <b>x previous samples.</b>
-	{% else %}
-		This variant has not been seen before.
-	{% endif %}
-	</div>
-	<br>
-
-	<!-- TODO only show if there are previous classifications -->
-	<table class="table table-hover table-bordered table-sm col-10">
-
-		<thead>
-			<tr>
-				<td><b>Sample</b></td>
-				<td><b>Panel(s) applied</b></td>
-				<td><b>Affected with</td>
-				<td><b>De novo?</b></td>
-				<td><b>Other changes</b></td>
-			</tr>
-		</thead>
-
-		<tbody>
-			<tr>
-				<td>test</td>
-				<td>test</td>
-				<td>test</td>
-				<td>test</td>
-				<td>test</td>
-			</tr>
-		</tbody>
-	
-	</table>
-	<br><br>
 	</div>
 
 
@@ -189,22 +147,12 @@
 		
 			<tbody>
 				<tr>
-					<td class="col-2">Variant</td>
-					<td class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
+					<td  style="width: 25.00%" class="col-2">Variant</td>
+					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
 				</tr>
 				<tr>
-					<td>Ensembl transcript</td>
+					<td> Transcript</td>
 					<td>{{ classification.selected_transcript_variant.transcript.name }}</td>
-				</tr>
-				<tr>
-					<td>RefSeq transcript</td>
-					<td>
-					{% if classification.selected_transcript_variant.transcript.refseq_selected %}
-						{{ classification.selected_transcript_variant.transcript.refseq_selected }}
-					{% else %}
-						<span class="badge badge-danger">Empty - edit below</span>
-					{% endif %}
-					</td>
 				</tr>
 				<tr>
 					<td>HGVSc</td>
@@ -284,7 +232,7 @@
 
 		{% if previous_classifications|length  > 0 %}
 		<p>This variant has been classified <b>{{ previous_classifications|length }} times</b> before.</p>
-		<table class="col-8">
+		<table class="table col-8">
 			<tr>
 				<td class="col-2"><b>Last seen:</b></td>
 				<td class="col-1">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
@@ -336,6 +284,7 @@
 	{% endif %}
 	</div>
 	<br>
+	<hr>
 
 
 	<!-- Genuine/ artefact sections section-->
@@ -517,8 +466,8 @@
 			
 			<tbody>
 				<tr>
-					<td class="col-2">Classification ID</td>
-					<td class="col-8">{{ classification.pk }}</td>
+					<td style="width: 25.00%" class="col-2">Classification ID</td>
+					<td style="width: 75.00%" class="col-8">{{ classification.pk }}</td>
 				</tr>
 				<tr>
 					<td>Status</td>

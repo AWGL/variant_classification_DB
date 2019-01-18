@@ -98,16 +98,6 @@ class Transcript(models.Model):
 
 	name = models.CharField(max_length=25, primary_key=True)
 	gene = models.ForeignKey(Gene, on_delete=models.CASCADE, null=True,blank=True)
-	refseq_options = models.CharField(max_length=200, null=True, blank=True)
-	refseq_selected = models.CharField(max_length=50, null=True, blank=True)
-
-	def change_refseq_selected(self):
-		refseq_options = json.loads(self.refseq_options)
-		refseq_choices = []
-		for n, item in enumerate(refseq_options):
-			refseq_choices.append((str(n+1), item))
-		refseq_choices.append((str(n+2), 'Other'))
-		return refseq_choices
 
 
 class TranscriptVariant(models.Model):
@@ -124,6 +114,39 @@ class TranscriptVariant(models.Model):
 	hgvs_c = models.TextField(null=True, blank=True)
 	hgvs_p = models.TextField(null=True, blank=True)
 	exon = models.CharField(max_length=10,null=True, blank=True)
+	consequence = models.CharField(max_length=100, null=True, blank=True)
+
+	def display_hgvsc(self):
+
+		if self.hgvs_c == None:
+
+			return None
+
+		else:
+
+			try:
+
+				return self.hgvs_c.split(':')[1]
+
+			except:
+
+				return self.hgvs_c 
+
+	def display_hgvsp(self):
+
+		if self.hgvs_p == None:
+
+			return None
+
+		else:
+
+			try:
+
+				return self.hgvs_p.split(':')[1]
+
+			except:
+
+				return self.hgvs_p
 
 class Classification(models.Model):
 
@@ -175,7 +198,6 @@ class Classification(models.Model):
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
 	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
 	final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)   # might need to make a seperate first_check_class field if this gets confusing for the second check
-
 	is_trio_de_novo = models.BooleanField()
 
 	def display_status(self):
