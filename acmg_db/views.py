@@ -63,8 +63,6 @@ def home(request):
 			
 			df, meta_dict = load_worksheet(utf_file)
 
-
-
 			unique_variants =  (df['Variant'].unique())
 			worksheet_id = df['WorklistId'].unique()[0]
 			sample_id = df['#SampleId'].unique()[0]
@@ -76,7 +74,8 @@ def home(request):
 
 			# add sample
 			sample_obj, created = Sample.objects.get_or_create(
-					name = sample_id,
+					name = worksheet_id +'-' + sample_id,
+					sample_name_only = sample_id,
 					worklist = worksheet_obj,
 					affected_with = affected_with,
 					analysis_performed = analysis_performed,
@@ -223,6 +222,7 @@ def manual_input(request):
 			analysis_performed_query = cleaned_data['analysis_performed'].strip()
 			other_changes_query = cleaned_data['other_changes'].strip()
 			worklist_query = cleaned_data['worklist'].strip()
+			consequence_query = cleaned_data['consequence'].strip()
 		
 			# Validate the variant using Mutalyzer - i.e. is the variant real?
 			# We only check if the chr-pos-ref-alt is real not if gene etc is correct.
@@ -247,7 +247,8 @@ def manual_input(request):
 			)
 
 			sample, created = Sample.objects.get_or_create(
-				name = sample_name_query,
+				name = worklist.name + '-' + sample_name_query,
+				sample_name_only = sample_name_query,
 				worklist = worklist,
 				affected_with = affected_with_query,
 				analysis_performed = analysis_performed_query,
@@ -278,7 +279,8 @@ def manual_input(request):
 				transcript = transcript,
 				hgvs_c = hgvs_c_query,
 				hgvs_p = hgvs_p_query,
-				exon = exon_query
+				exon = exon_query,
+				consequence = consequence_query
 			)
 
 			new_classification_obj = Classification.objects.create(
@@ -338,7 +340,7 @@ def new_classification(request, pk):
 
 		for transcript_var in refseq_options:
 
-			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name))
+			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.consequence))
 
 		# make empty instances of forms
 		sample_form = SampleInfoForm(classification_pk=classification.pk)
@@ -385,18 +387,17 @@ def new_classification(request, pk):
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk)
 
-
 			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
 				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=fixed_refseq_options)
 
 				if variant_form.is_valid():
+
 					cleaned_data = variant_form.cleaned_data
 
 					# transcript section
 
 					select_transcript = cleaned_data['select_transcript']
-
 					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
 
 					# genes section
@@ -731,70 +732,120 @@ def view_classification(request, pk):
 									 'acmg_result': acmg_result,
 									 'form': form})
 
+
 @login_required
 def second_check(request, pk):
 	"""
-	Page for user to perform second check.
-
-	The user performs a seperate analysis deciding whether to agree or \
-	disagree with the first analysis.
+	Page for entering doing a second check classifications.
 
 	"""
 
 	classification = get_object_or_404(Classification, pk=pk)
-	variant = classification.variant
 
-	# Forbidden if status is not correct
+	#reject if wrong status or user
 	if classification.status != '1':
-
 		return HttpResponseForbidden()
 
-	if request.method == 'POST':
-
-		sample_form = ClassificationInformationSecondCheckForm(request.POST, classification_pk = classification.pk)
-
-		if sample_form.is_valid():
-
-			# Update models
-			cleaned_data = sample_form.cleaned_data
-			
-			classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
-			classification.selected_transcript_variant.transcript.gene.inheritance_pattern = cleaned_data['inheritance_pattern']
-			classification.final_class = cleaned_data['final_classification']
-			classification.selected_transcript_variant.transcript.gene.conditions = cleaned_data['conditions']
-			classification.status = '2'
-			classification.second_check_date = timezone.now()
-			classification.user_second_checker = request.user
-
-			classification.save()
-
-			return redirect(home)
-
-
 	else:
+		# Get data to render form
+		variant = classification.variant
 
-		# Get all the previous classifications of this variant
-		previous_classifications = Classification.objects.filter(variant=variant).exclude(pk=classification.pk).order_by('-second_check_date')
+		previous_classifications = Classification.objects.filter(variant=variant, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
+		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
 
-		# Get the answers to the ACMG criteria for this classification
-		classification_answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
-
+		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 		comments = UserComment.objects.filter(classification=classification)
 
-		sample_form = ClassificationInformationSecondCheckForm(classification_pk=classification.pk)
+		result = classification.display_final_classification  # current class to display
 
-		acmg_result_first = classification.calculate_acmg_score_first()[0]
+		transcript = classification.selected_transcript_variant.transcript
 
-		acmg_result_second = classification.calculate_acmg_score_second()
+		# Get the transcript variants for this variant and put into a tuple for the form
+		refseq_options = TranscriptVariant.objects.filter(variant=variant)
+		fixed_refseq_options = []
 
-		return render(request, 'acmg_db/second_check.html', {'classification': classification,
-									 'classification_answers': classification_answers,
-									 'comments': comments,
-									 'answers': classification_answers,
-									 'sample_form': sample_form,
-									 'acmg_result_first': acmg_result_first,
-									 'acmg_result_second': acmg_result_second,
-									 'previous_classifications': previous_classifications})
+		for transcript_var in refseq_options:
+
+			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.consequence))
+
+		# make empty instances of forms
+		sample_form = SampleInfoForm(classification_pk=classification.pk)
+		variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
+		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
+
+		# dict of data to pass to view
+		context = {
+			'classification': classification,
+			'variant': variant,
+			'previous_classifications': previous_classifications,
+			'previous_full_classifications': previous_full_classifications,
+			'answers': answers,
+			'comments': comments,
+			'result': result,
+			'sample_form': sample_form,
+			'finalise_form': finalise_form,
+			'warn': []
+		}
+		
+		#-----------------------------------------------
+		# if a form is submitted
+		if request.method == 'POST':
+
+			# SampleInfoForm
+			if 'affected_with' in request.POST:
+
+				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk)
+
+				# load in data
+				if sample_form.is_valid():
+					cleaned_data = sample_form.cleaned_data
+					sample = Sample.objects.filter(name=classification.sample.name)
+					sample.update(
+						affected_with = cleaned_data['affected_with'],
+						other_changes = cleaned_data['other_changes']
+					)
+				
+				# reload dict variables for rendering
+				context['classification'] = get_object_or_404(Classification, pk=pk)
+				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk)
+
+			# FinaliseClassificationForm
+			if 'final_classification' in request.POST:
+				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
+
+				if finalise_form.is_valid():
+					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
+					# TODO any more validation?
+					if classification.genuine == '0':
+						context['warn'] += ['Select whether the variant is genuine or artefact']
+					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None:
+						context['warn'] += ['Inheritence pattern has not been set']
+					if classification.selected_transcript_variant.transcript.gene.conditions == None:
+						context['warn'] += ['Gene associated conditions have not been set']
+
+					# if validation has been passed, finalise first check
+					if len(context['warn']) == 0:
+						cleaned_data = finalise_form.cleaned_data
+						
+						# if new classification, pull score from the acmg section and save to final class
+						if classification.genuine == '1':
+							classification.final_class = classification.calculate_acmg_score_first()[1]
+
+						# if anything other than 'dont override' selected, then change the classification
+						if cleaned_data['final_classification'] != '8':
+							classification.final_class = cleaned_data['final_classification']
+
+						# update status and save
+						classification.status = '1'
+						classification.first_check_date = timezone.now()
+						classification.user_first_checker = request.user
+						classification.save()
+
+						return redirect(home)
+
+
+			return render(request, 'acmg_db/second_check_new.html', context)
+		return render(request, 'acmg_db/second_check_new.html', context)
 
 def signup(request):
 	"""

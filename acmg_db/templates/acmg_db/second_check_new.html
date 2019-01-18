@@ -214,21 +214,6 @@
 		
 		</table>
 	
-	<!-- Form for extra info -->
-	<!-- Expandable box containing preset filters -->
-	<!-- Button to expand/hide the filter table -->
-	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-variant-info" role="button" aria-expanded="false" aria-controls="edit-variant-info">
-		Edit
-	</button>
-	<br>
-	<br>
-	<div class="collapse" id="edit-variant-info">
-		<div class="card card-body bg-light col-10">
-			{% crispy variant_form %}
-		</div>
-	</div>
-	<br>
-	<hr>
 
 	<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
 	<div class="alert alert-warning col-10" role="alert">
@@ -287,13 +272,6 @@
 
 	{% endif %}
 	</div>
-	<br>
-	<hr>
-
-
-	<!-- Genuine/ artefact sections section-->
-	<h5>Is this a genuine variant?</h5>
-	{% crispy genuine_form %}
 	<br>
 
   </div>

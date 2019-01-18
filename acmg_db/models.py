@@ -37,14 +37,13 @@ class Sample(models.Model):
 
 	"""
 
-	name = models.CharField(max_length=50)
+	name = models.CharField(max_length=50, primary_key=True)
+	sample_name_only = models.CharField(max_length=50)
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
 	analysis_performed = models.TextField()
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
-
-
 
 
 class Variant(models.Model):
