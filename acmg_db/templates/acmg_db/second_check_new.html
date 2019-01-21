@@ -23,7 +23,7 @@
 				<td style="width: 15.00%" class="col-1">Worksheet</td>
 				<td style="width: 15.00%"class="col-1">Sample</td>
 				<td style="width: 30.00%"class="col-4">Variant</td>
-				<td style="width: 15.00%"class="col-2">Current Classification</td>
+				<td style="width: 30.00%"class="col-2">Current Classification</td>
 				<td style="width: 15.00%"class="col-2">Status</td>
 			</tr>
 		</thead>
@@ -31,28 +31,44 @@
 		<tbody>
 			<tr>
 				<td>{{ classification.sample.worklist.name }}</td>
-				<td>{{ classification.sample.name }}</td>
+				<td>{{ classification.sample.sample_name_only }}</td>
 				<td>
 					({{ classification.selected_transcript_variant.transcript.gene.name }}):
-					{{ classification.selected_transcript_variant.hgvs_c }}
+					{{ classification.selected_transcript_variant.display_hgvsc }}
 				{% if classification.selected_transcript_variant.hgvs_p %}
-					({{ classification.selected_transcript_variant.hgvs_p }})
+					({{ classification.selected_transcript_variant.display_hgvsp }})
 				{% else %}
 					(p.?)
 				{% endif %}
 				</td>
 				<td>
 					<div id="class_box">
-					{% if 'Pathogenic' in result %}
-						<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
-					{% elif 'Benign' in result %}
-						<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
-					{% elif 'VUS' in result %}
-						<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
-					{% elif 'Artefact' in result %}
-						<button type="button" class="btn btn-secondary" style="width: 20rem;">{{result}}</button>
+
+
+					<div id="class_box">
+					{% if 'Pathogenic' in result_first %}
+						<button type="button" class="btn btn-danger" style="width: 40rem;">First Analysis: {{result_first}}</button>
+					{% elif 'Benign' in result_first %}
+						<button type="button" class="btn btn-info" style="width: 40rem;">First Analysis: {{result_first}}</button>
+					{% elif 'VUS' in result_first %}
+						<button type="button" class="btn btn-warning" style="width: 40rem;">First Analysis: {{result_first}}</button>
+					{% elif 'Artefact' in result_first %}
+						<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis: {{result_first}}</button>
 					{% else %}
-						<button type="button" class="btn btn-muted" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis: {{result_first}}</button>
+					{% endif %}
+						<hr>
+
+					{% if 'Pathogenic' in result_second %}
+						<button type="button" class="btn btn-danger" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+					{% elif 'Benign' in result_second %}
+						<button type="button" class="btn btn-info" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+					{% elif 'VUS' in result_second %}
+						<button type="button" class="btn btn-warning" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+					{% elif 'Artefact' in result_second %}
+						<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+					{% else %}
+						<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 					{% endif %}
 					</div>
 				</td>
@@ -92,7 +108,7 @@
 	  <tbody>
       <tr>
         <td style="width: 25.00%" class="col-2">Sample Lab Number </td>
-        <td style="width: 75.00%" class="col-8">{{ classification.sample.name }}</td>
+        <td style="width: 75.00%" class="col-8">{{ classification.sample.sample_name_only }}</td>
       </tr>
       <tr>
         <td>Worksheet</td>
@@ -100,7 +116,7 @@
 			</tr>
       <tr>
         <td>Panel Applied</td>
-        <td>{{ classification.sample.analysis_performed|linebreaksbr }}</td>
+        <td>{{ classification.sample.analysis_performed.panel|linebreaksbr }}</td>
 			</tr>
 			<tr>
 				<td>Affected With</td>
@@ -156,11 +172,11 @@
 				</tr>
 				<tr>
 					<td>HGVSc</td>
-					<td>{{ classification.selected_transcript_variant.hgvs_c }}</td>
+					<td>{{ classification.selected_transcript_variant.display_hgvsc }}</td>
 				</tr>
 				<tr>
 					<td>HGVSp</td>
-					<td>{{ classification.selected_transcript_variant.hgvs_p }}</td>
+					<td>{{ classification.selected_transcript_variant.display_hgvsp }}</td>
 				</tr>
 				<tr>
 					<td>Consequence</td>
@@ -178,7 +194,7 @@
 				</tr> 
 				<tr>
 					<td>Gene</td>
-					<td>{{classification.variant.get_genes}}</td>
+					<td>{{classification.selected_transcript_variant.transcript.gene.name}}</td>
 				</tr>
 				<tr>
 					<td>Exon</td>
@@ -208,6 +224,14 @@
 					{% else %}
 						<span class="badge badge-danger">Empty - edit below</span>
 					{% endif %}
+					</td>
+				</tr> 
+
+				<tr>
+					<td>Genuine Variant?</td>
+					<td>
+						{{ classification.display_genuine }}
+	
 					</td>
 				</tr> 
 			</tbody>
@@ -286,69 +310,96 @@
 	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
 
 	<!-- Table listing all ACMG codes and option to apply them -->
-	<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+  <table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <th style="display:none;" class='answer_pk'> Answer PK </th>
+              <th style="display:none;" class='cat'> Category </th>
+              <th class='question'> Evidence Category  </th>
+              <th class='description'> Description </th>
+              <th class='strength_first'> First Strength </th>
+              <th class='selected_first'> First Decision </th>
+              <th class='strength'> Second Strength </th>
+              <th class='selected'> Second Decision </th>
+              <th class='comment'> Comment </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for answer in answers %}
+                <tr class='answer'>
+              <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+              <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
+              <td class='question'> {{ answer.classification_question.acmg_code  }}</td>
+              <td class='description'> {{ answer.classification_question.text  }}</td>
+              <td class='strength_first'>{{answer.strength_first}}</td>
 
-	  <thead>
-		<tr>
-		  <th style="display:none;" class='answer_pk'> Answer PK </th>
-		  <th style="display:none;" class='cat'> Category </th>
-		  <th class='question'> Evidence Category  </th>
-		  <th class='description'> Description </th>
-		  <th class='strength'> Strength </th>
-		  <th class='selected'> Decision </th>
-		  <th class='comment'> Comment </th>
-		</tr>
-	  </thead>
+              {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
 
-	  <tbody>
-		<!-- Set colour of row depending on evidence applied -->
-		{% for answer in answers %}
-		  {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
-			<tr class='answer table-danger'>
-		  {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True%}
-			<tr class='answer table-info'>
-		  {% else %}
-			<tr class='answer'>
-		  {% endif %}
-		  	  <!-- Hidden columns for rendering table sections properly -->
-			  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
-			  <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
-		      <td class='question'> {{ answer.classification_question.acmg_code  }}</td>
-			  <td class='description'> {{ answer.classification_question.text  }}</td>
-			  <!-- Change criteria strength -->
-			  <td class='strength'>
-				{% if answer.classification_question.allowed_strength_change == False %}
-				  {{answer.classification_question.default_strength}}
-				{% else %}
-				  <select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
-					{% for strength in answer.classification_question.strength_options %}
-					  {% if strength == answer.strength_first %}
-						<option value="{{strength}}" selected> {{strength}} </option>
-					  {% else %}
-						<option value="{{strength}}"> {{strength}} </option>
-					  {% endif %}
-					{% endfor %}	
-				  </select>
-				{% endif %}
-			  </td>
-			  <!-- Select whether or not to apply the criteria -->
-			  <td class='selected'>
-				<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
-				  <option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
-				  {% if answer.selected_first == False %}
-					<option value=True> True </option>
-				  {% elif answer.selected_first == True %}
-					<option value=False> False </option>
-				  {% endif %}
-				</select>
-			  </td>
-			  <!-- Comments box -->
-			  <td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
-			</tr>	
-		{% endfor %}
-	  </tbody>
+                  <td class='selected_first table-danger'>{{answer.selected_first}}</td>
 
-	</table>
+              {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True %}
+
+                  <td class='selected_first table-info'>{{answer.selected_first}}</td>
+
+              {% else %}
+
+                   <td class='selected_first'>{{answer.selected_first}}</td>
+
+              {% endif %}
+
+              <td class='strength'>
+                {% if answer.classification_question.allowed_strength_change == False %}
+                  {{answer.classification_question.default_strength}}
+                {% else %}
+                  <select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
+                    {% for strength in answer.classification_question.strength_options %}
+
+                      {% if strength == answer.strength_second %}
+                        <option value="{{strength}}" selected> {{strength}} </option>
+                      {% else %}
+                        <option value="{{strength}}"> {{strength}} </option>
+                      {% endif %}
+
+                    {% endfor %}
+                    
+                  </select>
+                {% endif %}
+              </td>
+
+              {% if answer.classification_question.pathogenic_question == True and answer.selected_second == True %}
+
+                  <td class='selected table-danger'>
+
+              {% elif answer.classification_question.pathogenic_question == False and  answer.selected_second == True%}
+
+                  <td class='selected table-info'>
+
+              {% else %}
+
+                   <td class='selected'>
+
+              {% endif %}
+
+
+
+
+                <select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
+                  <option value="{{answer.selected_second}}" selected> {{answer.selected_second}} </option>
+                  {% if answer.selected_second == False %}
+                    <option value=True> True </option>
+                    {% elif answer.selected_second == True %}
+                    <option value=False> False </option>
+                  {% endif %}
+                </select>
+              </td>
+
+              <td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+
+              </tr>
+            
+            {% endfor %}
+        </tbody>
+      </table>
 	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
 
 	{% else %}
@@ -494,144 +545,145 @@
 <!------------------------------------- END OF HTML ------------------------------------->
 
 <!-- JAVASCRIPT -->
-<script>
+
+<script type="text/javascript">
 $(document).ready(function(){
 
-	$(function () {
-		$('[data-toggle="tooltip"]').tooltip()
-	})
-
-	// Inititialise DataTable
-	var table = $('#acmg_question_table').DataTable({
-		"paging":   false,
-		"ordering": false,
-		"info":     false,
-		"searching": false,
-		"rowGroup": {
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+  
+  // Inititialise DataTable
+  var table = $('#acmg_question_table').DataTable({
+    "paging":   false,
+    "ordering": false,
+    "info":     false,
+    "searching": false,
+    "rowGroup": {
         dataSrc: 1
     }
-		});
+    });
 
-	//Colour row when clicked
-	$(".answer-selected").change(function(){
-		// what is the value of the drop down
-		value = $(this).val()
-		// if true set the value to red or green depending on whether it is a P or B question
-		if (value == 'True'){
-			question = $(this).parent().siblings('td.question').text();
-			path = question.trim().substring(0, 1);
-			if (path == 'P'){
-				$(this).parent().parent().addClass("table-danger")
-			} else {
-				$(this).parent().parent().addClass("table-info")
-			}
-			
-		} else {
-			// remove classes when moving to false
-			$(this).parent().parent().removeClass("table-danger");
-			$(this).parent().parent().removeClass("table-info");
-		}
-	});
-	
-	// When we click the submit ACMG
-	$(".acmg_submit").click(function(){
+  //Colour row when clicked
+  $(".answer-selected").change(function(){
+    // what is the value of the drop down
+    value = $(this).val()
+    // if true set the value to red or green depending on whether it is a P or B question
+    if (value == 'True'){
+      question = $(this).parent().siblings('td.question').text();
+      path = question.trim().substring(0, 1);
+      if (path == 'P'){
+        $(this).parent().addClass("table-danger")
+      } else {
+        $(this).parent().addClass("table-info")
+      }
+      
+    } else {
+      // remove classes when moving to false
+      $(this).parent().removeClass("table-danger");
+      $(this).parent().removeClass("table-info");
+    }
+  });
+  
+  // When we click the submit ACMG
+  $(".acmg_submit").click(function(){
 
-		// construct a dictionary of objects to submit to server
-		var rows = $("#acmg_question_table").children('tbody').children();
-		var classification_dict = {}
+    // construct a dictionary of objects to submit to server
+    var rows = $("#acmg_question_table").children('tbody').children();
+    var classification_dict = {}
 
-		// Loop though each row
-		for (var i =0; i<rows.length; i++){
+    // Loop though each row
+    for (var i =0; i<rows.length; i++){
 
-				// skip group rows in table
-				if ($(rows[i]).hasClass('group') == false){
+        // skip group rows in table
+        if ($(rows[i]).hasClass('group') == false){
 
-				var pk = $(rows[i]).children('td.answer_pk').text();
-				// allow either select drop downs or plain text
-				var type = $(rows[i]).children('td.strength').children().is("select")
-				if (type == true){
+        var pk = $(rows[i]).children('td.answer_pk').text();
+        // allow either select drop downs or plain text
+        var type = $(rows[i]).children('td.strength').children().is("select")
+        if (type == true){
 
-					var strength = $(rows[i]).children('td.strength').children().val()
+          var strength = $(rows[i]).children('td.strength').children().val()
 
-				} else {
+        } else {
 
-					var strength = $.trim($(rows[i]).children('td.strength').text());
-				}
+          var strength = $.trim($(rows[i]).children('td.strength').text());
+        }
 
-				var question  = $(rows[i]).children('td.question').text().trim();
-				var selected = $(rows[i]).children('td.selected').children().val();
-				var comment = $(rows[i]).children('td.comment').children().val();
-				console.log(pk, question, strength, selected, comment)
-				classification_dict[pk] = [question, strength, selected, comment];
-			}}
+        var question  = $(rows[i]).children('td.question').text().trim();
+        var selected = $(rows[i]).children('td.selected').children().val();
+        var comment = $(rows[i]).children('td.comment').children().val();
+        console.log(pk, question, strength, selected, comment)
+        classification_dict[pk] = [question, strength, selected, comment];
+      }}
 
-		var formData = new FormData();
-		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
-		formData.append('classifications', JSON.stringify(classification_dict));
-		formData.append('classification_pk', "{{classification.pk}}" );
+    var formData = new FormData();
+    formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
+    formData.append('classifications', JSON.stringify(classification_dict));
+    formData.append('classification_pk', "{{classification.pk}}" );
 
-		$.ajax({
-			url: '/ajax/acmg_classification_first/',
-			type: 'POST',
-			data: formData,
-			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-			processData: false, // NEEDED, DON'T OMIT THIS
-			success: function(data) {
-			$("#class_box").html(data);
-			},
-			failure: function(data) {
-			alert('Got an error');
-			}
-			});
-	});
-
-
-	$('#file_upload').on('change', function() { //runs when a file is selected
-		var file = this.files[0];
-		$('#file_name').text(file.name + " has been selected. Click Add Comment/File to upload.");
-		$('#file_name').show();
-	});
+    $.ajax({
+      url: '/ajax/acmg_classification_second/',
+      type: 'POST',
+      data: formData,
+      contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+      processData: false, // NEEDED, DON'T OMIT THIS
+      success: function(data) {
+      $("#class_box").html(data);
+      },
+      failure: function(data) {
+      alert('Got an error');
+      }
+      });
+  });
 
 
-	$("#comment_button").click(function(){
+  $('#file_upload').on('change', function() { //runs when a file is selected
+    var file = this.files[0];
+    $('#file_name').text(file.name + " has been selected. Click Add Comment/File to upload.");
+    $('#file_name').show();
+  });
 
-		var comment_text = $("#comment_text").val();
-		var formData = new FormData(); //create empty form data
-		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
-		formData.append('classification_pk', "{{classification.pk}}"); //add sample primary key
-		formData.append('comment_text', comment_text); //add comment text
-		var file = $('#file_upload')[0].files[0];
-		var canvas = document.getElementById('my_canvas');
-		var dataURL = canvas.toDataURL("image/png");
-		document.getElementById('hidden_image_field').value = dataURL;
-		formData.append('file', file); //add file
 
-		if (canvas_entered ==true){
-			formData.append('image_data', $("#hidden_image_field").val()); //add image file
-		}
+  $("#comment_button").click(function(){
 
-		$.ajax({
-			url: '/ajax/comments/',
-			type: 'POST',
-			data: formData,
-			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-			processData: false, // NEEDED, DON'T OMIT THIS
-			success: function(data) {
-				$("#comment_box").html(data);
-				$("#comment_text").val('');
-				$('#file_name').hide();
-				$('#file_upload').val('');
-					var c = document.getElementById("my_canvas");
-					var ctx = c.getContext("2d");
-					ctx.clearRect(0,0,300,300);
-			},
+    var comment_text = $("#comment_text").val();
+    var formData = new FormData(); //create empty form data
+    formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
+    formData.append('classification_pk', "{{classification.pk}}"); //add sample primary key
+    formData.append('comment_text', comment_text); //add comment text
+    var file = $('#file_upload')[0].files[0];
+    var canvas = document.getElementById('my_canvas');
+    var dataURL = canvas.toDataURL("image/png");
+    document.getElementById('hidden_image_field').value = dataURL;
+    formData.append('file', file); //add file
 
-			failure: function(data) {
-				alert('Got an error');
-			}
-		});
-	
-	});
+    if (canvas_entered ==true){
+      formData.append('image_data', $("#hidden_image_field").val()); //add image file
+    }
+
+    $.ajax({
+      url: '/ajax/comments/',
+      type: 'POST',
+      data: formData,
+      contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+      processData: false, // NEEDED, DON'T OMIT THIS
+      success: function(data) {
+        $("#comment_box").html(data);
+        $("#comment_text").val('');
+        $('#file_name').hide();
+        $('#file_upload').val('');
+          var c = document.getElementById("my_canvas");
+          var ctx = c.getContext("2d");
+          ctx.clearRect(0,0,300,300);
+      },
+
+      failure: function(data) {
+        alert('Got an error');
+      }
+    });
+  
+  });
 
 
 //copy and paste from clipboard
@@ -639,55 +691,55 @@ $(document).ready(function(){
 var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", false);
 var canvas_entered =false;
 function CLIPBOARD_CLASS(canvas_id, autoresize) {
-	var _self = this;
-	var canvas = document.getElementById(canvas_id);
-	var ctx = document.getElementById(canvas_id).getContext("2d");
-	//handlers
-			
-	document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
-	//on paste
-	this.paste_auto = function (e) {
-		// if the user has selected the checkbox
-		if ($("#defaultCheck1:checkbox:checked").length ==1){
+  var _self = this;
+  var canvas = document.getElementById(canvas_id);
+  var ctx = document.getElementById(canvas_id).getContext("2d");
+  //handlers
+      
+  document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
+  //on paste
+  this.paste_auto = function (e) {
+    // if the user has selected the checkbox
+    if ($("#defaultCheck1:checkbox:checked").length ==1){
 
-			if (e.clipboardData) {
-				var items = e.clipboardData.items;
-				if (!items) return;
-				//access data directly
-				for (var i = 0; i < items.length; i++) {
-					if (items[i].type.indexOf("image") !== -1) {
-					//image
-					var blob = items[i].getAsFile();
-					var URLObj = window.URL || window.webkitURL;
-					var source = URLObj.createObjectURL(blob);
-					this.paste_createImage(source);
-				}
-			}
+      if (e.clipboardData) {
+        var items = e.clipboardData.items;
+        if (!items) return;
+        //access data directly
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf("image") !== -1) {
+          //image
+          var blob = items[i].getAsFile();
+          var URLObj = window.URL || window.webkitURL;
+          var source = URLObj.createObjectURL(blob);
+          this.paste_createImage(source);
+        }
+      }
 
-			e.preventDefault();
+      e.preventDefault();
 
-			}
-			};
+      }
+      };
 
-			//draw pasted image to canvas
-			this.paste_createImage = function (source) {
-				var pastedImage = new Image();
-				canvas_entered =true;
-				pastedImage.onload = function () {
-				if(autoresize == true){
-				//resize
-					canvas.width = pastedImage.width;
-					canvas.height = pastedImage.height;
-				}
-				else{
-					//clear canvas
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
-				}
-				ctx.drawImage(pastedImage, 0, 0);
-				};
-				pastedImage.src = source;
-			};
-	}
+      //draw pasted image to canvas
+      this.paste_createImage = function (source) {
+        var pastedImage = new Image();
+        canvas_entered =true;
+        pastedImage.onload = function () {
+        if(autoresize == true){
+        //resize
+          canvas.width = pastedImage.width;
+          canvas.height = pastedImage.height;
+        }
+        else{
+          //clear canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(pastedImage, 0, 0);
+        };
+        pastedImage.src = source;
+      };
+  }
 }
 });
 

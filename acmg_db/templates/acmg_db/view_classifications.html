@@ -105,7 +105,7 @@
 	  </td>
 	  <td>{{ classification.sample.worklist.name }}</td>
 	  <td>{{ classification.sample.sample_name_only }}</td>
-	  <td>{{ classification.variant.get_genes }}</td>
+	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
 	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref }}>{{ classification.variant.alt }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
 	  <td>{{ classification.selected_transcript_variant.display_hgvsc }}</td>
@@ -126,7 +126,7 @@
 		</a>
 	  </td>
 	  <td>{{ classification.user_creator}}</td>
-	  <td>{{ classification.creation_date|date:"d/m/Y"}}</td>
+	  <td>{{ classification.creation_date|date:"Y/m/d"}}</td>
 	</tr>
 	{% endfor %}
   </tbody>

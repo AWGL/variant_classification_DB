@@ -31,11 +31,23 @@
             </tr>
             <tr>
               <td> Classification </td>
-              <td> <strong> {{classification.display_classification}} </strong> </td>
+              <td>
+                {% if 'Pathogenic' in classification.display_classification %}
+                  <button type="button" class="btn btn-danger" style="width: 40rem;">{{classification.display_classification}}</button>
+                {% elif 'Benign' in classification.display_classification %}
+                  <button type="button" class="btn btn-info" style="width: 40rem;">{{classification.display_classification}}</button>
+                {% elif 'VUS' in classification.display_classification %}
+                  <button type="button" class="btn btn-warning" style="width: 40rem;">{{classification.display_classification}}</button>
+                {% elif 'Artefact' in classification.display_classification %}
+                  <button type="button" class="btn btn-secondary" style="width: 40rem;">{{classification.display_classification}}</button>
+                {% else %}
+                  <button type="button" class="btn btn-secondary" style="width: 40rem;">{{classification.display_classification}}</button>
+                {% endif %}
+              </td>
             </tr>
             <tr>
               <td> Gene </td>
-              <td> {{classification.variant.get_genes}} </td>
+              <td> {{classification.selected_transcript_variant.transcript.gene.name}} </td>
             </tr>
             <tr>
               <td> Transcript </td>
@@ -43,11 +55,11 @@
             </tr>
             <tr>
               <td> HGVSc </td>
-              <td> {{classification.selected_transcript_variant.hgvs_c }} </td>
+              <td> {{classification.selected_transcript_variant.display_hgvsc }} </td>
             </tr>
             <tr>
               <td> HGVSp </td>
-              <td> {{classification.selected_transcript_variant.hgvs_p }} </td>
+              <td> {{classification.selected_transcript_variant.display_hgvsp }} </td>
             </tr>
             <tr>
               <td> Exon </td>
@@ -55,7 +67,7 @@
             </tr>
             <tr>
               <td> Created Date </td>
-              <td> {{classification.creation_date }} </td>
+              <td> {{ classification.creation_date|date:"d/m/Y"}} </td>
             </tr>
             <tr>
               <td> Creation User</td>
@@ -63,7 +75,7 @@
             </tr>
             <tr>
               <td> Second Check Date</td>
-              <td> {{classification.second_check_date }} </td>
+              <td> {{ classification.second_check_date|date:"d/m/Y"}} </td>
             </tr>
             <tr>
               <td> Second Check User</td>
@@ -74,8 +86,12 @@
               <td> {{classification.display_status }} </td>
             </tr>
             <tr>
+              <td> Genuine Variant? </td>
+              <td> {{classification.display_genuine }} </td>
+            </tr>
+            <tr>
               <td> Sample Lab Number </td>
-              <td> {{classification.sample.name }} </td>
+              <td> {{classification.sample.sample_name_only }} </td>
             </tr>
              <tr>
               <td> Worklist </td>
@@ -83,7 +99,7 @@
             </tr>
             <tr>
               <td> Analysis Performed </td>
-              <td> {{classification.sample.analysis_performed|linebreaksbr }} </td>
+              <td> {{classification.sample.analysis_performed.panel|linebreaksbr }} </td>
             </tr>
             <tr>
               <td> Other Changes </td>
@@ -109,7 +125,13 @@
 
           </tbody>
         </table>
+        <hr>
+
+{% if classification.genuine == '1' %}
+
   <hr>
+
+
   <h3> ACMG Details </h3>
   <hr>
   <table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
@@ -133,7 +155,7 @@
               {% if answer.classification_question.pathogenic_question == True and answer.selected_second == True %}
                 <tr class='answer table-danger'>
               {% elif answer.classification_question.pathogenic_question == False and  answer.selected_second == True %}
-                <tr class='answer table-success'>
+                <tr class='answer table-info'>
               {% else %}
                 <tr class='answer'>
               {% endif %}
@@ -153,7 +175,16 @@
       </tbody>
     </table>
 
-  </tr>
+{% else %}
+<h3> ACMG Details </h3>
+
+<hr>
+
+<div class="alert alert-warning" role="alert">
+    <p>This variant was not set for a new ACMG classification to be carried out.</p>
+  </div>
+
+{% endif %}
 
 
 

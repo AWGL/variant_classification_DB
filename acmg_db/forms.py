@@ -49,20 +49,24 @@ class SearchForm(forms.Form):
 	sample_name = forms.CharField(max_length=50)
 	worklist = forms.CharField(max_length=50)
 	affected_with = forms.CharField(max_length=500)
-	analysis_performed = forms.CharField(max_length=500)
+	analysis_performed = forms.ChoiceField()
 	other_changes = forms.CharField(max_length=500)
 	consequence = forms.CharField(max_length=100)
 
 
 	def __init__(self, *args, **kwargs):
 
+		self.panel_options = kwargs.pop('options')
+
 		super(SearchForm, self).__init__(*args, **kwargs)
+
 		self.helper = FormHelper()
 		self.helper.form_id = 'search-data-form'
+		self.fields['analysis_performed'].choices = self.panel_options
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
-		#self.helper.form_action = reverse('home')
+		self.helper.form_action = reverse('manual_input')
 		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
@@ -86,15 +90,18 @@ class SampleInfoForm(forms.Form):
 	"""
 	A form to collect data specific to a sample/patient
 	"""
-	# TODO Add dropdown to change panel?
+
 	affected_with = forms.CharField(widget=forms.Textarea)
 	other_changes = forms.CharField(widget=forms.Textarea, required=False)
+	analysis_performed = forms.ChoiceField(required=True)
+
 
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 		self.sample = self.classification.sample
+		self.options = kwargs.pop('options')
 
 		super(SampleInfoForm, self).__init__(*args, **kwargs)
 
@@ -103,6 +110,8 @@ class SampleInfoForm(forms.Form):
 		self.fields['affected_with'].widget.attrs['rows'] = 2
 		self.fields['other_changes'].initial = self.sample.other_changes
 		self.fields['other_changes'].widget.attrs['rows'] = 2
+		self.fields['analysis_performed'].choices = self.options
+		self.fields['analysis_performed'].initial = self.sample.analysis_performed.pk
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -111,10 +120,50 @@ class SampleInfoForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
+			Field('analysis_performed'),
 			Field('affected_with'),
 			Field('other_changes'),
 		)
 
+# New classification - first check forms ---------------------------------------------------------------
+class SampleInfoFormSecondCheck(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient
+	"""
+
+	affected_with = forms.CharField(widget=forms.Textarea)
+	other_changes = forms.CharField(widget=forms.Textarea, required=False)
+	analysis_performed = forms.ChoiceField(required=True)
+
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.sample = self.classification.sample
+		self.options = kwargs.pop('options')
+
+		super(SampleInfoFormSecondCheck, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['affected_with'].initial = self.sample.affected_with
+		self.fields['affected_with'].widget.attrs['rows'] = 2
+		self.fields['other_changes'].initial = self.sample.other_changes
+		self.fields['other_changes'].widget.attrs['rows'] = 2
+		self.fields['analysis_performed'].choices = self.options
+		self.fields['analysis_performed'].initial = self.sample.analysis_performed.pk
+		self.helper.form_id = 'sample-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('analysis_performed'),
+			Field('affected_with'),
+			Field('other_changes'),
+		)
 
 class VariantInfoForm(forms.Form):
 	"""
@@ -138,7 +187,6 @@ class VariantInfoForm(forms.Form):
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 		self.options = kwargs.pop('options')
-		print (self.options)
 
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
@@ -194,7 +242,7 @@ class GenuineArtefactForm(forms.Form):
 		self.helper.field_class = 'col-lg-8'
 		self.fields['genuine'].initial = self.classification.genuine
 		self.helper.form_method = 'post'
-		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
@@ -208,7 +256,7 @@ class FinaliseClassificationForm(forms.Form):
 	"""
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)')) # add option to use from acmg tab
+	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)'))
 
 	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
 	confirm = forms.BooleanField(required=True)
@@ -229,7 +277,7 @@ class FinaliseClassificationForm(forms.Form):
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
-		#self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
+		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
 		self.helper.add_input(Submit('submit', 'Submit for second check', css_class='btn-danger'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
@@ -237,39 +285,39 @@ class FinaliseClassificationForm(forms.Form):
 			Field('confirm'),
 		)
 
+class FinaliseClassificationSecondCheckForm(forms.Form):
+	"""
+	Form for submitting the second check page
+	"""
+	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
+	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)')) 
 
-# Seconf Check Sample Information Form  ---------------------------------------------------------------
-class SampleInfoForm(forms.Form):
-	"""
-	A form to collect data specific to a sample/patient
-	"""
-	# TODO Add dropdown to change panel?
-	affected_with = forms.CharField(widget=forms.Textarea)
-	other_changes = forms.CharField(widget=forms.Textarea, required=False)
+	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
+	confirm = forms.BooleanField(required=True)
 
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
-		self.sample = self.classification.sample
 
-		super(SampleInfoForm, self).__init__(*args, **kwargs)
+		super(FinaliseClassificationSecondCheckForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['affected_with'].initial = self.sample.affected_with
-		self.fields['affected_with'].widget.attrs['rows'] = 2
-		self.fields['other_changes'].initial = self.sample.other_changes
-		self.fields['other_changes'].widget.attrs['rows'] = 2
-		self.helper.form_id = 'sample-information-form'
+		self.fields['final_classification'].initial = '8'
+		self.fields['final_classification'].label = 'Final classification'
+		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
+		self.fields['confirm'].label = 'Confirm that the classification is complete'
+		self.helper.form_id = 'finalise-classification-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('new_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Finalise', css_class='btn-danger'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			Field('affected_with'),
-			Field('other_changes'),
+			Field('final_classification'),
+			Field('confirm'),
 		)
 
 

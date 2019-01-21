@@ -1,7 +1,24 @@
+{% if 'Pathogenic' in result_first %}
+	<button type="button" class="btn btn-danger" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+{% elif 'Benign' in result_first %}
+	<button type="button" class="btn btn-info" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+{% elif 'VUS' in result_first %}
+	<button type="button" class="btn btn-warning" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+{% elif 'Artefact' in result_first %}
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+{% else %}
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+{% endif %}
+	<hr>
 
-<div class="card text-white bg-success mb-3" style="max-width: 25rem;">
-  <div class="card-header">ACMG Classification Result</div>
-  <div class="card-body">
-    <p class="card-text"> First Analysis: {{result_first}}</p>
-    <p class="card-text"> Second Analysis: {{result_second}}</p>
-  </div>
+{% if 'Pathogenic' in result_second %}
+	<button type="button" class="btn btn-danger" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+{% elif 'Benign' in result_second %}
+	<button type="button" class="btn btn-info" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+{% elif 'VUS' in result_second %}
+	<button type="button" class="btn btn-warning" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+{% elif 'Artefact' in result_second %}
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+{% else %}
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+{% endif %}

@@ -16,7 +16,6 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from io import TextIOWrapper
 
-
 @login_required
 def home(request):
 	"""
@@ -27,8 +26,8 @@ def home(request):
 	# make a list of all panels and pass to the form to populate the dropdown
 	all_panels = Panel.objects.all()
 	panel_options = []
-	for n, item in enumerate(all_panels):
-		panel_options.append((str(n+1), item.panel))
+	for panel in all_panels:
+		panel_options.append((str(panel.pk), panel.panel))
 
 	form = VariantFileUploadForm(options=panel_options)
 
@@ -47,12 +46,9 @@ def home(request):
 		if form.is_valid():
 
 			# get panel
-			analysis_performed_index = form.cleaned_data['panel_applied']
-			analysis_performed = ""
-			for panel in panel_options:
+			analysis_performed_pk = form.cleaned_data['panel_applied']
 
-				if panel[0] == analysis_performed_index:
-					analysis_performed = panel[1]
+			panel_obj = get_object_or_404(Panel, panel = analysis_performed_pk)
 
 			# get affected with
 			affected_with = form.cleaned_data['affected_with']
@@ -73,15 +69,21 @@ def home(request):
 					)
 
 			# add sample
-			sample_obj, created = Sample.objects.get_or_create(
-					name = worksheet_id +'-' + sample_id,
-					sample_name_only = sample_id,
-					worklist = worksheet_obj,
-					affected_with = affected_with,
-					analysis_performed = analysis_performed,
-					analysis_complete = False,
-					other_changes = ''
-					)
+
+			try:
+				sample_obj = Sample.objects.get(name=worksheet_id + '-' + sample_id)
+			except Sample.DoesNotExist:
+				sample_obj = Sample.objects.create(
+						name = worksheet_id + '-' + sample_id,
+						sample_name_only = sample_id,
+						worklist = worksheet_obj,
+						affected_with = affected_with,
+						analysis_performed = panel_obj,
+						analysis_complete = False,
+						other_changes = ''
+						)
+
+				sample_obj.save()
 
 
 			vep_info_dict = {
@@ -159,8 +161,6 @@ def home(request):
 
 						selected = transcript_variant_obj
 
-					print (var, transcript_hgvsc, transcript_hgvsp,gene_symbol, exon, impact )
-
 				new_classification_obj = Classification.objects.create(
 					variant= variant_obj,
 					sample = sample_obj,
@@ -168,7 +168,8 @@ def home(request):
 					user_creator = request.user,
 					status = '0',
 					is_trio_de_novo = False,
-					final_class = '7',
+					first_final_class = '7',
+					second_final_class = '7',
 					selected_transcript_variant = selected
 					)
 
@@ -196,16 +197,24 @@ def manual_input(request):
 	Allows users to create a new classification for a variant.
 	"""
 
-	form = SearchForm()
+	all_panels = Panel.objects.all()
+	panel_options = []
+
+	for panel in all_panels:
+
+		panel_options.append((str(panel.pk), panel.panel))
+
+	form = SearchForm(options =panel_options )
 	context = {
 		'form': form,
 		'error': [], 
 	}
 
 	# If the user has searched for something
-	#if request.GET.get('variant') != '' and request.GET.get('variant') != None:
 	if request.POST:
-		form = SearchForm(request.POST)
+
+		form = SearchForm(request.POST, options =panel_options)
+
 		if form.is_valid():
 			cleaned_data = form.cleaned_data
 			
@@ -240,21 +249,32 @@ def manual_input(request):
 			alt = variant_data[4]
 			key = variant_data[5]
 
-		
 			# Create the objects
 			worklist, created = Worklist.objects.get_or_create(
 				name = worklist_query
+
 			)
 
-			sample, created = Sample.objects.get_or_create(
-				name = worklist.name + '-' + sample_name_query,
-				sample_name_only = sample_name_query,
-				worklist = worklist,
-				affected_with = affected_with_query,
-				analysis_performed = analysis_performed_query,
-				analysis_complete = False,
-				other_changes = other_changes_query
-			)
+
+			panel = get_object_or_404(Panel, panel=analysis_performed_query)
+
+			try:
+
+				sample_obj = Sample.objects.get(name=worklist_query + '-' + sample_name_query)
+
+			except Sample.DoesNotExist:
+
+				sample_obj = Sample.objects.create(
+					name = worklist_query + '-' + sample_name_query,
+					sample_name_only = sample_name_query,
+					worklist = worklist,
+					affected_with = affected_with_query,
+					analysis_performed = panel,
+					analysis_complete = False,
+					other_changes = other_changes_query
+						)
+
+				sample_obj.save()
 
 			variant, created = Variant.objects.get_or_create(
 				key = key,
@@ -285,12 +305,13 @@ def manual_input(request):
 
 			new_classification_obj = Classification.objects.create(
 				variant= variant,
-				sample = sample,
+				sample = sample_obj,
 				creation_date = timezone.now(),
 				user_creator = request.user,
 				status = '0',
 				is_trio_de_novo = False,
-				final_class = '7',
+				first_final_class = '7',
+				second_final_class = '7',
 				selected_transcript_variant = transcript_variant
 			)
 
@@ -332,7 +353,7 @@ def new_classification(request, pk):
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 		comments = UserComment.objects.filter(classification=classification)
 
-		result = classification.display_final_classification  # current class to display
+		result = classification.display_first_classification()  # current class to display
 
 		transcript = classification.selected_transcript_variant.transcript
 		refseq_options = TranscriptVariant.objects.filter(variant=variant)
@@ -340,10 +361,17 @@ def new_classification(request, pk):
 
 		for transcript_var in refseq_options:
 
-			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.consequence))
+			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
+
+		all_panels = Panel.objects.all()
+		panel_options = []
+
+		for panel in all_panels:
+
+			panel_options.append((str(panel.pk), panel.panel))
 
 		# make empty instances of forms
-		sample_form = SampleInfoForm(classification_pk=classification.pk)
+		sample_form = SampleInfoForm(classification_pk=classification.pk, options=panel_options)
 		variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
@@ -371,21 +399,25 @@ def new_classification(request, pk):
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 
-				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk)
+				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk, options = panel_options)
 
 				# load in data
 				if sample_form.is_valid():
+
 					cleaned_data = sample_form.cleaned_data
-					print (cleaned_data)
-					sample = Sample.objects.filter(name=classification.sample.name)
-					sample.update(
-						affected_with = cleaned_data['affected_with'],
-						other_changes = cleaned_data['other_changes']
-					)
-				
+
+
+					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'])
+
+					sample = classification.sample
+					sample.analysis_performed = panel
+					sample.affected_with =  cleaned_data['affected_with']
+					sample.other_changes = cleaned_data['other_changes']
+					sample.save()
+					
 				# reload dict variables for rendering
 				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk)
+				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk, options=panel_options)
 
 			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
@@ -396,29 +428,25 @@ def new_classification(request, pk):
 					cleaned_data = variant_form.cleaned_data
 
 					# transcript section
-
 					select_transcript = cleaned_data['select_transcript']
 					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
+					classification.selected_transcript_variant = selected_transcript_variant
+					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+					classification.save()
 
 					# genes section
-					gene = Gene.objects.filter(name=classification.selected_transcript_variant.transcript.gene.name)
-					gene.update(
-						inheritance_pattern = cleaned_data['inheritance_pattern'],
-						conditions = cleaned_data['conditions']
-					)
+					gene = classification.selected_transcript_variant.transcript.gene
+					gene.inheritance_pattern = cleaned_data['inheritance_pattern']
+					gene.conditions = cleaned_data['conditions']
+					gene.save()
 
-					# trio de novo section
-					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
-					classification.selected_transcript_variant = selected_transcript_variant
-					classification.save()
-					
 				# reload dict variables for rendering
-				context['classification'] = get_object_or_404(Classification, pk=pk)
+				context['classification'] = classification
 				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
-
 
 			# GenuineArtefactForm
 			if 'genuine' in request.POST:
+
 				genuine_form = GenuineArtefactForm(request.POST, classification_pk=classification.pk)
 
 				if genuine_form.is_valid():
@@ -433,7 +461,7 @@ def new_classification(request, pk):
 							classification.initiate_classification()
 
 						# save final_class as output of calculate_acmg_score_first
-						classification.final_class = classification.calculate_acmg_score_first()[1]
+						classification.first_final_class = classification.calculate_acmg_score_first()[1]
 
 					# genuine - use previous classification
 					elif cleaned_data['genuine'] == '2':
@@ -443,22 +471,22 @@ def new_classification(request, pk):
 						# if there is, update final class to whatever it was previously
 						else:
 							classification.genuine = '2'
-							classification.final_class = previous_full_classifications[0].final_class
+							classification.first_final_class = previous_full_classifications[0].second_final_class
 
 					# genuine - not analysed - update final_class to 'not analysed'
 					elif cleaned_data['genuine'] == '3':
 						classification.genuine = '3'
-						classification.final_class = '7'
+						classification.first_final_class = '7'
 
 					# artefact - set final_class to artefact
 					elif cleaned_data['genuine'] == '4':
 						classification.genuine = '4'
-						classification.final_class = '6'
+						classification.first_final_class = '6'
 						
 					classification.save()
 
 				# reload dict variables for rendering
-				result = classification.display_final_classification
+				result = classification.display_first_classification()
 				context['result'] = result
 				context['answers'] = ClassificationAnswer.objects.filter(classification=classification)
 				context['classification'] = get_object_or_404(Classification, pk=pk)
@@ -478,6 +506,8 @@ def new_classification(request, pk):
 						context['warn'] += ['Inheritence pattern has not been set']
 					if classification.selected_transcript_variant.transcript.gene.conditions == None:
 						context['warn'] += ['Gene associated conditions have not been set']
+					if classification.selected_transcript_variant.transcript.gene.conditions == None:
+						context['warn'] += ['Gene associated conditions have not been set']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:
@@ -485,11 +515,12 @@ def new_classification(request, pk):
 						
 						# if new classification, pull score from the acmg section and save to final class
 						if classification.genuine == '1':
-							classification.final_class = classification.calculate_acmg_score_first()[1]
+
+							classification.first_final_class = classification.calculate_acmg_score_first()[1]
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
-							classification.final_class = cleaned_data['final_classification']
+							classification.first_final_class = cleaned_data['final_classification']
 
 						# update status and save
 						classification.status = '1'
@@ -547,10 +578,10 @@ def ajax_acmg_classification_first(request):
 		result = classification.calculate_acmg_score_first()[0]
 
 		# update the score in the database
-		classification.final_class = classification.calculate_acmg_score_first()[1]
+		classification.first_final_class = classification.calculate_acmg_score_first()[1]
 		classification.save()
 
-		html = render_to_string('acmg_db/acmg_results_first.html', {'result': result})
+		html = render_to_string('acmg_db/acmg_results_first.html', {'result': classification.display_first_classification()})
 
 	return HttpResponse(html)
 
@@ -592,9 +623,9 @@ def ajax_acmg_classification_second(request):
 
 			classification_answer_obj.save()
 
-		acmg_result_first = classification.calculate_acmg_score_first()[0]
+		acmg_result_first = classification.display_first_classification()
 
-		acmg_result_second = classification.calculate_acmg_score_second()
+		acmg_result_second = classification.calculate_acmg_score_second()[0].split('(')[0]
 
 		html = render_to_string('acmg_db/acmg_results_second.html', {'result_first': acmg_result_first, 'result_second': acmg_result_second})
 
@@ -756,22 +787,23 @@ def second_check(request, pk):
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 		comments = UserComment.objects.filter(classification=classification)
 
-		result = classification.display_final_classification  # current class to display
+		result_first = classification.display_first_classification()
+		result_second = classification.calculate_acmg_score_second()[0].split('(')[0]  # current class to display
 
 		transcript = classification.selected_transcript_variant.transcript
 
-		# Get the transcript variants for this variant and put into a tuple for the form
-		refseq_options = TranscriptVariant.objects.filter(variant=variant)
-		fixed_refseq_options = []
 
-		for transcript_var in refseq_options:
+		all_panels = Panel.objects.all()
+		panel_options = []
 
-			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.consequence))
+		for panel in all_panels:
+
+			panel_options.append((str(panel.pk), panel.panel))
+
 
 		# make empty instances of forms
-		sample_form = SampleInfoForm(classification_pk=classification.pk)
-		variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
-		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
+		sample_form = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=panel_options)
+		finalise_form = FinaliseClassificationSecondCheckForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
 		context = {
@@ -781,7 +813,8 @@ def second_check(request, pk):
 			'previous_full_classifications': previous_full_classifications,
 			'answers': answers,
 			'comments': comments,
-			'result': result,
+			'result_first': result_first,
+			'result_second': result_second,
 			'sample_form': sample_form,
 			'finalise_form': finalise_form,
 			'warn': []
@@ -794,55 +827,70 @@ def second_check(request, pk):
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 
-				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk)
+				sample_form = SampleInfoFormSecondCheck(request.POST, classification_pk=classification.pk, options=panel_options)
 
 				# load in data
 				if sample_form.is_valid():
+
 					cleaned_data = sample_form.cleaned_data
-					sample = Sample.objects.filter(name=classification.sample.name)
-					sample.update(
-						affected_with = cleaned_data['affected_with'],
-						other_changes = cleaned_data['other_changes']
-					)
+
+					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'])
+
+					sample = classification.sample
+					sample.analysis_performed = panel
+					sample.affected_with =  cleaned_data['affected_with']
+					sample.other_changes = cleaned_data['other_changes']
+					sample.save()
+					
 				
 				# reload dict variables for rendering
-				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk)
+				context['classification'] = classification
+				context['sample_form'] = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=panel_options)
 
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
-				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
+				finalise_form = FinaliseClassificationSecondCheckForm(request.POST, classification_pk=classification.pk)
 
 				if finalise_form.is_valid():
+
+					cleaned_data = finalise_form.cleaned_data
+
 					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
-					# TODO any more validation?
+
 					if classification.genuine == '0':
+
 						context['warn'] += ['Select whether the variant is genuine or artefact']
+
 					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None:
+
 						context['warn'] += ['Inheritence pattern has not been set']
+
 					if classification.selected_transcript_variant.transcript.gene.conditions == None:
+
 						context['warn'] += ['Gene associated conditions have not been set']
+
+					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
+
+						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:
-						cleaned_data = finalise_form.cleaned_data
-						
+
 						# if new classification, pull score from the acmg section and save to final class
 						if classification.genuine == '1':
-							classification.final_class = classification.calculate_acmg_score_first()[1]
+							classification.second_final_class = classification.calculate_acmg_score_second()[1]
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
-							classification.final_class = cleaned_data['final_classification']
+							classification.second_final_class = cleaned_data['final_classification']
 
 						# update status and save
-						classification.status = '1'
-						classification.first_check_date = timezone.now()
-						classification.user_first_checker = request.user
+						classification.status = '2'
+						classification.second_check_date = timezone.now()
+						classification.user_second_checker = request.user
 						classification.save()
 
 						return redirect(home)
-
 
 			return render(request, 'acmg_db/second_check_new.html', context)
 		return render(request, 'acmg_db/second_check_new.html', context)

@@ -1,7 +1,8 @@
 name: acmg_db
 dependencies:
-- python=3.6
-- sqlite==3.25.3
+- python = 3.6
+- sqlite = 3.25.3
+- ensembl-vep = 94
 - pip:
   - suds-py3==1.3.3.0
   - django-crispy-forms==1.7.2 

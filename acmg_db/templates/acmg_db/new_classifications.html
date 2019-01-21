@@ -23,7 +23,7 @@
 				<td style="width: 15.00%" class="col-1">Worksheet</td>
 				<td style="width: 15.00%"class="col-1">Sample</td>
 				<td style="width: 30.00%"class="col-4">Variant</td>
-				<td style="width: 15.00%"class="col-2">Current Classification</td>
+				<td style="width: 30.00%"class="col-2">Current Classification</td>
 				<td style="width: 15.00%"class="col-2">Status</td>
 			</tr>
 		</thead>
@@ -31,12 +31,12 @@
 		<tbody>
 			<tr>
 				<td>{{ classification.sample.worklist.name }}</td>
-				<td>{{ classification.sample.name }}</td>
+				<td>{{ classification.sample.sample_name_only }}</td>
 				<td>
 					({{ classification.selected_transcript_variant.transcript.gene.name }}):
-					{{ classification.selected_transcript_variant.hgvs_c }}
+					{{ classification.selected_transcript_variant.display_hgvsc }}
 				{% if classification.selected_transcript_variant.hgvs_p %}
-					({{ classification.selected_transcript_variant.hgvs_p }})
+					({{ classification.selected_transcript_variant.display_hgvsp }})
 				{% else %}
 					(p.?)
 				{% endif %}
@@ -44,15 +44,15 @@
 				<td>
 					<div id="class_box">
 					{% if 'Pathogenic' in result %}
-						<button type="button" class="btn btn-danger" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-danger" style="width: 40rem;">{{result}}</button>
 					{% elif 'Benign' in result %}
-						<button type="button" class="btn btn-info" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-info" style="width: 40rem;">{{result}}</button>
 					{% elif 'VUS' in result %}
-						<button type="button" class="btn btn-warning" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-warning" style="width: 40rem;">{{result}}</button>
 					{% elif 'Artefact' in result %}
-						<button type="button" class="btn btn-secondary" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-secondary" style="width: 40rem;">{{result}}</button>
 					{% else %}
-						<button type="button" class="btn btn-muted" style="width: 20rem;">{{result}}</button>
+						<button type="button" class="btn btn-secondary" style="width: 40rem;">{{result}}</button>
 					{% endif %}
 					</div>
 				</td>
@@ -92,7 +92,7 @@
 	  <tbody>
       <tr>
         <td style="width: 25.00%" class="col-2">Sample Lab Number </td>
-        <td style="width: 75.00%" class="col-8">{{ classification.sample.name }}</td>
+        <td style="width: 75.00%" class="col-8">{{ classification.sample.sample_name_only }}</td>
       </tr>
       <tr>
         <td>Worksheet</td>
@@ -100,7 +100,7 @@
 			</tr>
       <tr>
         <td>Panel Applied</td>
-        <td>{{ classification.sample.analysis_performed|linebreaksbr }}</td>
+        <td>{{ classification.sample.analysis_performed.panel|linebreaksbr }}</td>
 			</tr>
 			<tr>
 				<td>Affected With</td>
@@ -156,11 +156,11 @@
 				</tr>
 				<tr>
 					<td>HGVSc</td>
-					<td>{{ classification.selected_transcript_variant.hgvs_c }}</td>
+					<td>{{ classification.selected_transcript_variant.display_hgvsc }}</td>
 				</tr>
 				<tr>
 					<td>HGVSp</td>
-					<td>{{ classification.selected_transcript_variant.hgvs_p }}</td>
+					<td>{{ classification.selected_transcript_variant.display_hgvsp }}</td>
 				</tr>
 				<tr>
 					<td>Consequence</td>
@@ -178,7 +178,7 @@
 				</tr> 
 				<tr>
 					<td>Gene</td>
-					<td>{{classification.variant.get_genes}}</td>
+					<td>{{classification.selected_transcript_variant.transcript.gene.name}}</td>
 				</tr>
 				<tr>
 					<td>Exon</td>
@@ -208,6 +208,13 @@
 					{% else %}
 						<span class="badge badge-danger">Empty - edit below</span>
 					{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Genuine Variant?</td>
+					<td>
+						{{ classification.display_genuine }}
+	
 					</td>
 				</tr> 
 			</tbody>
