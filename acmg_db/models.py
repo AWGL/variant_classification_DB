@@ -6,14 +6,17 @@ from auditlog.models import AuditlogHistoryField
 
 class Worklist(models.Model):
 	"""
-	Stores which worklist the sample was on.
+	Model to store which worklist the sample was on.
+	For example 18-1234.
 
 	"""
 	name = models.CharField(max_length=50, primary_key=True)
 
 class Panel(models.Model):
 	"""
-	class to hold panel information
+	Which panel is applied to the sample.
+
+	This corresponds to the analysis_performed field in the Sample model.
 	"""
 
 	panel = models.CharField(max_length=100, primary_key=True)
@@ -22,7 +25,7 @@ class Panel(models.Model):
 
 class Sample(models.Model):
 	"""
-	Holds information specific to a sample.
+	Model to hold information specific to a sample.
 
 	"""
 
@@ -39,7 +42,7 @@ class Sample(models.Model):
 
 class Variant(models.Model):
 	"""
-	Model to hold unique variants within the DB.
+	Model to hold unique variants within the database.
 
 	"""
 
@@ -53,7 +56,9 @@ class Variant(models.Model):
 
 class Gene(models.Model):
 	"""
-	Class to hold a gene model.
+	Model to hold information specific to a gene.
+
+	Also stores additional data regarding the inheritance pattern for that gene and any conditions associated with a gene.
 
 	"""
 
@@ -64,7 +69,8 @@ class Gene(models.Model):
 
 class Transcript(models.Model):
 	"""
-	Class to hold a transcript e.g NM_007298.3
+	Model to hold a transcript e.g NM_007298.3
+	Each transcript appears in a gene.
 
 	"""
 
@@ -74,11 +80,11 @@ class Transcript(models.Model):
 
 class TranscriptVariant(models.Model):
 	"""
-	Class to link a variant with a transcript.
+	Model to link a variant with a transcript.
 
 	A variant can potentially fall within many transcripts.
 
-	Holds data on HGVS as well as exon data and consequence
+	Holds data on HGVS as well as exon data and consequence.
 
 	"""
 
@@ -111,7 +117,7 @@ class TranscriptVariant(models.Model):
 
 	def display_hgvsp(self):
 		"""
-		Function to display the HGVS
+		Function to display the HGVSp
 
 		"""
 
@@ -179,7 +185,7 @@ class Classification(models.Model):
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
 	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
 	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)
-	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)  # The actual one we want to display!
+	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)  # The actual one we want to display.
 	is_trio_de_novo = models.BooleanField()
 
 	def display_status(self):
@@ -312,7 +318,13 @@ class Classification(models.Model):
 		"""
 		Use the acmg_classifer util to generate the ACMG classification.
 
-		Calculates based on the first user's input
+		Calculates based on the first user's input.
+
+		Output:
+
+		tuple - text_classification, integer
+
+		Where the integer refers to what to store in the database model.
 
 		"""
 
@@ -379,6 +391,13 @@ class Classification(models.Model):
 		Use the acmg_classifer util to generate the ACMG classification.
 
 		Calculates based on the second user's input.
+
+		Output:
+
+		tuple - text_classification, integer
+
+		Where the integer refers to what to store in the database model.
+
 
 		"""
 
@@ -509,7 +528,7 @@ class ClassificationQuestion(models.Model):
 
 class ClassificationAnswer(models.Model):
 	"""
-	Stores the user selected answer (True, False) and the selected strength for each \
+	Model to store the user's selected answer (True, False) and the selected strength for each \
 	ClassificationQuestion in a Classification.
 
 	"""
@@ -531,7 +550,7 @@ class ClassificationAnswer(models.Model):
 
 class UserComment(models.Model):
 	"""
-	A class to hold a comment by a user against a Classification object.
+	Model to hold a comment by a user against a Classification object.
 
 	"""
 
@@ -562,8 +581,6 @@ class Evidence(models.Model):
 
 	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
-
-
 
 
 # register audit logs

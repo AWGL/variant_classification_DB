@@ -138,12 +138,15 @@ LOGIN_URL = '/login/'
 
 # Enternal resources 
 
+# Url to the Mutalyzer wsdl api
 MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
-
+# Which Mutalyzer build to use
 MUTALYZER_BUILD = 'hg19' 
-
+# Which Reference genome for VEP to use
 REFERENCE_GENOME = '/media/sf_Documents/genomics_resources/refs/human_g1k_v37.fasta'
+# Which VEP Cache to use
 VEP_CACHE = '/media/sf_Documents/genomics_resources/vep/'
+# Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
 
 

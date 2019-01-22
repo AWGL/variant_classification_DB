@@ -3,7 +3,7 @@ from .models import  *
 from django.urls import reverse
 from crispy_forms.bootstrap import Field
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Div, HTML
+from crispy_forms.layout import Submit, Layout, HTML
 from django.contrib.auth.models import User
 
 
@@ -17,6 +17,7 @@ class VariantFileUploadForm(forms.Form):
 	affected_with = forms.CharField(max_length=100)
 
 	def __init__(self, *args, **kwargs):
+		
 		self.panel_options = kwargs.pop('options')
 
 		super(VariantFileUploadForm, self).__init__(*args, **kwargs)
@@ -36,10 +37,11 @@ class VariantFileUploadForm(forms.Form):
 		)
 
 
-class SearchForm(forms.Form):
-	'''
-	A search form. Used for inputting individual variants TODO - check that this form has the relevent fields to match the file upload
-	'''
+class ManualUploadForm(forms.Form):
+	"""
+	Used for inputting individual variants into the database
+	"""
+
 	variant = forms.CharField(required=False, max_length=255)
 	gene = forms.CharField(max_length=25)
 	transcript = forms.CharField(max_length=25)
@@ -58,8 +60,7 @@ class SearchForm(forms.Form):
 
 		self.panel_options = kwargs.pop('options')
 
-		super(SearchForm, self).__init__(*args, **kwargs)
-
+		super(ManualUploadForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'search-data-form'
 		self.fields['analysis_performed'].choices = self.panel_options
@@ -88,7 +89,7 @@ class SearchForm(forms.Form):
 # New classification - first check forms ---------------------------------------------------------------
 class SampleInfoForm(forms.Form):
 	"""
-	A form to collect data specific to a sample/patient
+	A form to collect data specific to a sample/patient for the first check
 	"""
 
 	affected_with = forms.CharField(widget=forms.Textarea)
@@ -125,10 +126,11 @@ class SampleInfoForm(forms.Form):
 			Field('other_changes'),
 		)
 
+
 # New classification - first check forms ---------------------------------------------------------------
 class SampleInfoFormSecondCheck(forms.Form):
 	"""
-	A form to collect data specific to a sample/patient
+	A form to collect data specific to a sample/patient for the second check
 	"""
 
 	affected_with = forms.CharField(widget=forms.Textarea)
@@ -165,14 +167,10 @@ class SampleInfoFormSecondCheck(forms.Form):
 			Field('other_changes'),
 		)
 
+
 class VariantInfoForm(forms.Form):
 	"""
 	Form for storing variant Information.
-
-	Note that this form originally had data from multiple models in hence the \
-	unneeded complexity - could just be a model form really.
-
-	Keep it this way in case we add automatic transcript-gene annotation back in.
 
 	"""
 
@@ -217,7 +215,7 @@ class VariantInfoForm(forms.Form):
 
 class GenuineArtefactForm(forms.Form):
 	"""
-	Form to select whether a variant is genuine or an artefact, and whether to start a new classification or use a previous one
+	Form to select whether a variant is genuine or an artefact, and whether to start a new classification or use a previous one.
 	"""
 	GENUINE_ARTEFACT_CHOICES = (
 		('0', 'Pending'), 
@@ -252,7 +250,7 @@ class GenuineArtefactForm(forms.Form):
 
 class FinaliseClassificationForm(forms.Form):
 	"""
-	Form for submitting the first check page
+	Form for submitting the first check page.
 	"""
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
@@ -287,7 +285,7 @@ class FinaliseClassificationForm(forms.Form):
 
 class FinaliseClassificationSecondCheckForm(forms.Form):
 	"""
-	Form for submitting the second check page
+	Form for submitting the second check page.
 	"""
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
 	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
@@ -321,7 +319,6 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 		)
 
 
-
 class ArchiveClassificationForm(forms.Form):
 	"""
 	Form to archive a classification.
@@ -338,7 +335,6 @@ class ArchiveClassificationForm(forms.Form):
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
 		self.helper.add_input(Submit('submit-archive', 'Archive Classification', css_class='btn-danger'))
-
 
 
 class ResetClassificationForm(forms.Form):

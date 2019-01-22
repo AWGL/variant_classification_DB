@@ -264,8 +264,10 @@
 				
 				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
 			</tr>
+			{% if previous_full_classifications|length  > 0 %}
 			<tr>
 				<td class="col-2"><b>Last full classification:</b></td>
+
 				<td class="col-1">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
 				<td class="col-3">
 					{% if 'Pathogenic' in previous_full_classifications.0.display_final_classification %}
@@ -284,7 +286,10 @@
 				</td>
 				
 				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
+				
 			</tr>
+
+			{% endif %}
 	</table>
 	<br>
 	<!--<button type="button" class="btn btn-success btn-sm">View all previous classifications</button>-->

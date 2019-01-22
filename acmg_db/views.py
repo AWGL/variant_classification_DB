@@ -3,8 +3,6 @@ from .forms import *
 from django.conf import settings
 from .models import *
 from .utils.variant_utils import *
-from .utils.acmg_worksheet_parser import *
-from .utils.get_vep_annotations import *
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
@@ -24,12 +22,11 @@ def home(request):
 
 	Allows users to upload a file of variants to classify.
 	"""
-	# make a list of all panels and pass to the form to populate the dropdown
-	all_panels = Panel.objects.all()
-	panel_options = []
-	for panel in all_panels:
-		panel_options.append((str(panel.pk), panel.panel))
 
+	# make a list of all panels and pass to the form to populate the dropdown
+	panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
+
+	# Inititate the upload form
 	form = VariantFileUploadForm(options=panel_options)
 
 	# make empty dict for context
@@ -44,11 +41,11 @@ def home(request):
 	if request.POST:
 
 		form = VariantFileUploadForm(request.POST, request.FILES, options=panel_options)
+
 		if form.is_valid():
 
 			# get panel
 			analysis_performed_pk = form.cleaned_data['panel_applied']
-
 			panel_obj = get_object_or_404(Panel, panel = analysis_performed_pk)
 
 			# get affected with
@@ -57,10 +54,11 @@ def home(request):
 			# process tsv file
 			raw_file = request.FILES['variant_file']
 			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
-			
 			df, meta_dict = load_worksheet(utf_file)
 
-			unique_variants =  (df['Variant'].unique())
+			# Get key information from the dataframe
+			# We have checked that there is only one sample/worksheet in the df 
+			unique_variants =  df['Variant'].unique()
 			worksheet_id = df['WorklistId'].unique()[0]
 			sample_id = df['#SampleId'].unique()[0]
 
@@ -70,7 +68,6 @@ def home(request):
 					)
 
 			# add sample
-
 			try:
 				sample_obj = Sample.objects.get(name=worksheet_id + '-' + sample_id)
 			except Sample.DoesNotExist:
@@ -83,10 +80,9 @@ def home(request):
 						analysis_complete = False,
 						other_changes = ''
 						)
-
 				sample_obj.save()
 
-
+			# Get VEP annotations
 			vep_info_dict = {
 				'reference_genome' : settings.REFERENCE_GENOME,
 				'vep_cache': settings.VEP_CACHE,
@@ -95,6 +91,7 @@ def home(request):
 
 			variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
 
+			# Loop through each variant and add to the database
 			for variant in variant_annotations:
 
 				var = variant[1]
@@ -117,9 +114,9 @@ def home(request):
 						)
 
 				consequences = variant[0]['transcript_consequences']
-
 				selected = None
 
+				# Loop through each consequence/transcript
 				for consequence in consequences:
 
 					if 'transcript_id' in consequence:
@@ -142,7 +139,6 @@ def home(request):
 						name = gene_symbol
 						)
 
-
 					transcript_obj, created = Transcript.objects.get_or_create(
 							name = transcript_id,
 							gene = gene_obj
@@ -157,7 +153,7 @@ def home(request):
 						consequence = impact
 
 						)
-
+					# Find the transcript that VEP has picked
 					if 'pick' in consequence:
 
 						selected = transcript_variant_obj
@@ -198,25 +194,23 @@ def manual_input(request):
 	Allows users to create a new classification for a variant.
 	"""
 
-	all_panels = Panel.objects.all()
-	panel_options = []
 
-	for panel in all_panels:
+	# make a list of all panels and pass to the form to populate the dropdown
+	panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
 
-		panel_options.append((str(panel.pk), panel.panel))
-
-	form = SearchForm(options =panel_options )
+	form = ManualUploadForm(options =panel_options )
 	context = {
 		'form': form,
 		'error': [], 
 	}
 
-	# If the user has searched for something
+	# If the user has clicked submit
 	if request.POST:
 
-		form = SearchForm(request.POST, options =panel_options)
+		form = ManualUploadForm(request.POST, options =panel_options)
 
 		if form.is_valid():
+
 			cleaned_data = form.cleaned_data
 			
 			# Get the user input from the form.
@@ -241,7 +235,7 @@ def manual_input(request):
 			if variant_info[0] == True:
 
 				# Add variant to DB if not already present
-				# Get varaint information e.g. chr, pos, ref, alt from the input
+				# Get variant information e.g. chr, pos, ref, alt from the input
 
 				variant_data = process_variant_input(search_query)
 
@@ -257,7 +251,6 @@ def manual_input(request):
 					name = worklist_query
 
 				)
-
 
 				panel = get_object_or_404(Panel, panel=analysis_performed_query)
 
@@ -341,9 +334,11 @@ def new_classification(request, pk):
 
 	Has the following featues:
 
-	1) Form for entering classification data e.g. sample_lab_number
-	2) ACMG classifier.
-	3) Comments and Evidence.
+	1) Forms for entering variant and sample information
+	2) Form for selecting whether the variant is genuine
+	3) ACMG classifier.
+	4) Comments and Evidence.
+	5) Final submit form
 
 	"""
 
@@ -357,34 +352,30 @@ def new_classification(request, pk):
 
 	#reject if wrong status or user
 	if classification.status != '0' or request.user != classification.user_first_checker:
+
 		raise PermissionDenied('You do not have permission to start this classification.')
 
 	else:
+
 		# Get data to render form
 		variant = classification.variant
-
 		previous_classifications = Classification.objects.filter(variant=variant, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
 		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
-
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 		comments = UserComment.objects.filter(classification=classification)
-
 		result = classification.display_first_classification()  # current class to display
-
 		transcript = classification.selected_transcript_variant.transcript
 		refseq_options = TranscriptVariant.objects.filter(variant=variant)
 		fixed_refseq_options = []
 
+		# Get relevant options for the variant transcripts
 		for transcript_var in refseq_options:
 
 			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
 
-		all_panels = Panel.objects.all()
-		panel_options = []
 
-		for panel in all_panels:
-
-			panel_options.append((str(panel.pk), panel.panel))
+		# make a list of all panels and pass to the form to populate the dropdown
+		panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
 
 		# make empty instances of forms
 		sample_form = SampleInfoForm(classification_pk=classification.pk, options=panel_options)
@@ -470,6 +461,7 @@ def new_classification(request, pk):
 
 					# genuine - new classification
 					if cleaned_data['genuine'] == '1':
+
 						classification.genuine = '1'
 
 						# if not already initiated, make new classification answers
@@ -481,21 +473,27 @@ def new_classification(request, pk):
 
 					# genuine - use previous classification
 					elif cleaned_data['genuine'] == '2':
+
 						# if there isnt a previous classification, throw a warning and stop
 						if len(previous_classifications) == 0:
+
 							context['warn'] += ['There are no previous classifications to use.']
+
 						# if there is, update final class to whatever it was previously
 						else:
+
 							classification.genuine = '2'
 							classification.first_final_class = previous_full_classifications[0].second_final_class
 
 					# genuine - not analysed - update final_class to 'not analysed'
 					elif cleaned_data['genuine'] == '3':
+
 						classification.genuine = '3'
 						classification.first_final_class = '7'
 
 					# artefact - set final_class to artefact
 					elif cleaned_data['genuine'] == '4':
+
 						classification.genuine = '4'
 						classification.first_final_class = '6'
 						
@@ -525,18 +523,31 @@ def new_classification(request, pk):
 
 					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
 					if classification.genuine == '0':
+
 						context['warn'] += ['Select whether the variant is genuine or artefact']
+
 					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None:
+
 						context['warn'] += ['Inheritence pattern has not been set']
+
 					if classification.selected_transcript_variant.transcript.gene.conditions == None:
+
 						context['warn'] += ['Gene associated conditions have not been set']
+
 					if classification.selected_transcript_variant.transcript.gene.conditions == None:
+
 						context['warn'] += ['Gene associated conditions have not been set']
+
 					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
+
 						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
+
 					if classification.genuine  == '3' and (cleaned_data['final_classification'] != '7' ):
+
 						context['warn'] += ['This classification was selected as Not Analysed - therefore the only valid option is NA']
+
 					if classification.genuine  == '4' and (cleaned_data['final_classification'] != '6' ):
+
 						context['warn'] += ['This classification was selected as Artefect - therefore the only valid option is Artefect']
 
 					# if validation has been passed, finalise first check
@@ -550,6 +561,7 @@ def new_classification(request, pk):
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
+
 							classification.first_final_class = cleaned_data['final_classification']
 
 						# update status and save
@@ -560,7 +572,6 @@ def new_classification(request, pk):
 
 						return redirect(home)
 
-
 			return render(request, 'acmg_db/new_classifications.html', context)
 		return render(request, 'acmg_db/new_classifications.html', context)
 
@@ -569,17 +580,14 @@ def new_classification(request, pk):
 @login_required
 def ajax_acmg_classification_first(request):
 	"""
-	Gets the ajax results from the new_classifcations.html page \
+	Gets the ajax results from the new_classifications.html page \
 	and stores them in the database - also returns the calculated result.
 
+	This view is for the first check.
 
-	For the first analysis
 	"""
 
-
 	if request.is_ajax():
-
-
 
 		# Get the submitted answers and convert to python object
 		classification_answers = request.POST.get('classifications')
@@ -600,8 +608,6 @@ def ajax_acmg_classification_first(request):
 			pk = classification_answer.strip()
 
 			classification_answer_obj = get_object_or_404(ClassificationAnswer, pk=pk)
-
-			print (classification_answers[classification_answer])
 
 			classification_answer_obj.strength_first = classification_answers[classification_answer][1].strip()
 
@@ -630,11 +636,10 @@ def ajax_acmg_classification_second(request):
 	Gets the ajax results from the new_classifcations.html page \
 	and stores them in the database - also returns the calculated result.
 
-	For the second analysis
+	This view is for the second check.
 	"""
 
 	if request.is_ajax():
-
 
 		# Get the submitted answers and convert to python object
 		classification_answers = request.POST.get('classifications')
@@ -656,8 +661,6 @@ def ajax_acmg_classification_second(request):
 			pk = classification_answer.strip()
 
 			classification_answer_obj = get_object_or_404(ClassificationAnswer, pk=pk)
-
-			print (classification_answers[classification_answer])
 
 			classification_answer_obj.strength_second= classification_answers[classification_answer][1].strip()
 
@@ -776,7 +779,7 @@ def view_classification(request, pk):
 
 	classification = get_object_or_404(Classification, pk=pk)
 
-	# Allow users to achieve the classification
+	# Allow users to archive the classification
 	if request.method == 'POST':
 
 		if 'submit-archive' in request.POST:
@@ -827,7 +830,6 @@ def view_classification(request, pk):
 			else:
 
 				raise PermissionDenied('You do not have permission to reset the classification.')
-
 
 		# Allow users to assign the second check to themselves
 		elif 'submit-assign' in request.POST:
@@ -890,8 +892,8 @@ def second_check(request, pk):
 		classification.save()
 
 	#reject if wrong status or user
-
 	if classification.status != '1' or request.user != classification.user_second_checker:
+
 		raise PermissionDenied(f'You do not have permission to perform the second check. It is assigned to {request.user}')
 
 	else:
@@ -1009,10 +1011,12 @@ def second_check(request, pk):
 
 						# if new classification, pull score from the acmg section and save to final class
 						if classification.genuine == '1':
+
 							classification.second_final_class = classification.calculate_acmg_score_second()[1]
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
+
 							classification.second_final_class = cleaned_data['final_classification']
 
 						# update status and save
@@ -1034,21 +1038,27 @@ def signup(request):
 	"""
 
 	if request.method == 'POST':
+
 		form = UserCreationForm(request.POST)
+
 		if form.is_valid():
+
 			form.save()
 			username = form.cleaned_data.get('username')
 			raw_password = form.cleaned_data.get('password1')
 			user = authenticate(username=username, password=raw_password)
 			user.is_active = False
 			user.save()
+
 			return redirect('home')
+
 		else:
 
 			form = UserCreationForm()
 			return render(request, 'acmg_db/signup.html', {'form': form, 'warning' : ['Could not create an account.']})
 
 	else:
+
 		form = UserCreationForm()
 		return render(request, 'acmg_db/signup.html', {'form': form, 'warning': []})
 
