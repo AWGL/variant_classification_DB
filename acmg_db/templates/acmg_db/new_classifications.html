@@ -297,11 +297,23 @@
 	<br>
 	<hr>
 
+	{% if classification.genuine == '0' %}
+
 
 	<!-- Genuine/ artefact sections section-->
 	<h5>Is this a genuine variant?</h5>
 	{% crispy genuine_form %}
 	<br>
+
+	{% else %}
+
+	<div class="alert alert-warning col-10" role="alert">
+
+		This Classification has been set as {{ classification.display_genuine }}. To change this you will need to reset the classification.
+
+	</div>
+
+	{% endif %}
 
   </div>
 

@@ -21,15 +21,7 @@
           <thead>
           </thead>
           <tbody>
-            <tr>
-              <td> Classification ID </td>
-              <td> {{classification.pk}} </td>
-            </tr>
-            <tr>
-              <td> Variant </td>
-              <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
-            </tr>
-            <tr>
+              <tr>
               <td> Classification </td>
               <td>
                 {% if 'Pathogenic' in classification.display_classification %}
@@ -45,6 +37,15 @@
                 {% endif %}
               </td>
             </tr>
+            <tr>
+              <td> Classification ID </td>
+              <td> {{classification.pk}} </td>
+            </tr>
+            <tr>
+              <td> Variant </td>
+              <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+            </tr>
+
             <tr>
               <td> Gene </td>
               <td> {{classification.selected_transcript_variant.transcript.gene.name}} </td>
@@ -72,6 +73,14 @@
             <tr>
               <td> Creation User</td>
               <td> {{classification.user_creator }} </td>
+            </tr>
+            <tr>
+              <td> First Check Date </td>
+              <td> {{ classification.first_check_date|date:"d/m/Y"}} </td>
+            </tr>
+            <tr>
+              <td> First Check User</td>
+              <td> {{classification.user_first_checker }} </td>
             </tr>
             <tr>
               <td> Second Check Date</td>
@@ -244,16 +253,38 @@
     </table>
 
 
-{% if classification.status != '3' %}
+{% if classification.status == '2' %}
 
 <hr>
 <h3> Archive Classification </h3>
 <hr>
 
 
-{% crispy form %}
+{% crispy archive_form %}
 
 {% endif %}
+
+
+{% if classification.status == '0' or classification.status == '1' %}
+
+<hr>
+
+{% crispy reset_form %}
+
+{% endif %}
+
+{% if classification.status == '1' and classification.user_second_checker != request.user %}
+
+<hr>
+
+{% crispy assign_form %}
+
+{% endif %}
+
+
+
+
+
 
 </div>
 

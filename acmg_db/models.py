@@ -28,11 +28,11 @@ class Sample(models.Model):
 
 	history = AuditlogHistoryField()
 
-	name = models.CharField(max_length=50, primary_key=True)
+	name = models.CharField(max_length=50, unique=True)
 	sample_name_only = models.CharField(max_length=50)
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
-	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.SET_NULL)
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
 

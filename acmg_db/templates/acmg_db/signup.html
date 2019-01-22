@@ -26,6 +26,15 @@
   </div>
 </div>
 
+{% if warning %}
+
+<div class="alert alert-danger" role="alert">
+  {{warning.0}}
+</div>
+
+  
+
+{% endif %}
 
 
 {% endblock %}

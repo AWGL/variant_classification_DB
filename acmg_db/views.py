@@ -7,7 +7,8 @@ from .utils.acmg_worksheet_parser import *
 from .utils.get_vep_annotations import *
 from django.utils import timezone
 from django.template.loader import render_to_string
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 import json
 import base64
 from django.core.files.base import ContentFile
@@ -235,90 +236,99 @@ def manual_input(request):
 		
 			# Validate the variant using Mutalyzer - i.e. is the variant real?
 			# We only check if the chr-pos-ref-alt is real not if gene etc is correct.
-			#variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
+			variant_info = get_variant_info_mutalzer(search_query, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
 
-			# Add variant to DB if not already present
-			# Get varaint information e.g. chr, pos, ref, alt from the input
+			if variant_info[0] == True:
 
-			variant_data = process_variant_input(search_query)
+				# Add variant to DB if not already present
+				# Get varaint information e.g. chr, pos, ref, alt from the input
 
-			variant_hash = variant_data[0]
-			chromosome = variant_data[1]
-			position = variant_data[2]
-			ref = variant_data[3]
-			alt = variant_data[4]
-			key = variant_data[5]
+				variant_data = process_variant_input(search_query)
 
-			# Create the objects
-			worklist, created = Worklist.objects.get_or_create(
-				name = worklist_query
+				variant_hash = variant_data[0]
+				chromosome = variant_data[1]
+				position = variant_data[2]
+				ref = variant_data[3]
+				alt = variant_data[4]
+				key = variant_data[5]
 
-			)
+				# Create the objects
+				worklist, created = Worklist.objects.get_or_create(
+					name = worklist_query
+
+				)
 
 
-			panel = get_object_or_404(Panel, panel=analysis_performed_query)
+				panel = get_object_or_404(Panel, panel=analysis_performed_query)
 
-			try:
+				try:
 
-				sample_obj = Sample.objects.get(name=worklist_query + '-' + sample_name_query)
+					sample_obj = Sample.objects.get(name=worklist_query + '-' + sample_name_query)
 
-			except Sample.DoesNotExist:
+				except Sample.DoesNotExist:
 
-				sample_obj = Sample.objects.create(
-					name = worklist_query + '-' + sample_name_query,
-					sample_name_only = sample_name_query,
-					worklist = worklist,
-					affected_with = affected_with_query,
-					analysis_performed = panel,
-					analysis_complete = False,
-					other_changes = other_changes_query
-						)
+					sample_obj = Sample.objects.create(
+						name = worklist_query + '-' + sample_name_query,
+						sample_name_only = sample_name_query,
+						worklist = worklist,
+						affected_with = affected_with_query,
+						analysis_performed = panel,
+						analysis_complete = False,
+						other_changes = other_changes_query
+							)
 
-				sample_obj.save()
+					sample_obj.save()
 
-			variant, created = Variant.objects.get_or_create(
-				key = key,
-				variant_hash = variant_hash,
-				chromosome = chromosome,
-				position = position,
-				ref = ref,
-				alt = alt
-			)
+				variant, created = Variant.objects.get_or_create(
+					key = key,
+					variant_hash = variant_hash,
+					chromosome = chromosome,
+					position = position,
+					ref = ref,
+					alt = alt
+				)
 
-			gene, created = Gene.objects.get_or_create(
-				name = gene_query
-			)
+				gene, created = Gene.objects.get_or_create(
+					name = gene_query
+				)
 
-			transcript, created = Transcript.objects.get_or_create(
-				name = transcript_query,
-				gene = gene
-			)			
+				transcript, created = Transcript.objects.get_or_create(
+					name = transcript_query,
+					gene = gene
+				)			
 
-			transcript_variant, created = TranscriptVariant.objects.get_or_create(
-				variant = variant,
-				transcript = transcript,
-				hgvs_c = hgvs_c_query,
-				hgvs_p = hgvs_p_query,
-				exon = exon_query,
-				consequence = consequence_query
-			)
+				transcript_variant, created = TranscriptVariant.objects.get_or_create(
+					variant = variant,
+					transcript = transcript,
+					hgvs_c = hgvs_c_query,
+					hgvs_p = hgvs_p_query,
+					exon = exon_query,
+					consequence = consequence_query
+				)
 
-			new_classification_obj = Classification.objects.create(
-				variant= variant,
-				sample = sample_obj,
-				creation_date = timezone.now(),
-				user_creator = request.user,
-				status = '0',
-				is_trio_de_novo = False,
-				first_final_class = '7',
-				second_final_class = '7',
-				selected_transcript_variant = transcript_variant
-			)
+				new_classification_obj = Classification.objects.create(
+					variant= variant,
+					sample = sample_obj,
+					creation_date = timezone.now(),
+					user_creator = request.user,
+					status = '0',
+					is_trio_de_novo = False,
+					first_final_class = '7',
+					second_final_class = '7',
+					selected_transcript_variant = transcript_variant
+				)
 
-			new_classification_obj.save()
-			
-			# Go to the new_classification page.
-			return redirect(new_classification, new_classification_obj.pk)
+				new_classification_obj.save()
+				
+				# Go to the new_classification page.
+				return redirect(new_classification, new_classification_obj.pk)
+
+			else:
+
+				context['error'] = variant_info[1][0]
+
+				return render(request, 'acmg_db/manual_input.html', context)
+
 
 	return render(request, 'acmg_db/manual_input.html', context)
 
@@ -339,9 +349,15 @@ def new_classification(request, pk):
 
 	classification = get_object_or_404(Classification, pk=pk)
 
+	# Assign first check to first person to click the link
+	if classification.user_first_checker == None:
+
+		classification.user_first_checker = request.user
+		classification.save()
+
 	#reject if wrong status or user
-	if classification.status != '0' or request.user != classification.user_creator:
-		return HttpResponseForbidden()
+	if classification.status != '0' or request.user != classification.user_first_checker:
+		raise PermissionDenied('You do not have permission to start this classification.')
 
 	else:
 		# Get data to render form
@@ -495,11 +511,19 @@ def new_classification(request, pk):
 
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
+
+				# Don't let anyone except the assigned first checker submit the form
+				if classification.status != '0' or request.user != classification.user_first_checker:
+
+					raise PermissionDenied('You do not have permission to finalise the classification.')
+
 				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
 
 				if finalise_form.is_valid():
+
+					cleaned_data = finalise_form.cleaned_data
+
 					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
-					# TODO any more validation?
 					if classification.genuine == '0':
 						context['warn'] += ['Select whether the variant is genuine or artefact']
 					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None:
@@ -508,10 +532,16 @@ def new_classification(request, pk):
 						context['warn'] += ['Gene associated conditions have not been set']
 					if classification.selected_transcript_variant.transcript.gene.conditions == None:
 						context['warn'] += ['Gene associated conditions have not been set']
+					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
+						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
+					if classification.genuine  == '3' and (cleaned_data['final_classification'] != '7' ):
+						context['warn'] += ['This classification was selected as Not Analysed - therefore the only valid option is NA']
+					if classification.genuine  == '4' and (cleaned_data['final_classification'] != '6' ):
+						context['warn'] += ['This classification was selected as Artefect - therefore the only valid option is Artefect']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:
-						cleaned_data = finalise_form.cleaned_data
+						
 						
 						# if new classification, pull score from the acmg section and save to final class
 						if classification.genuine == '1':
@@ -549,6 +579,8 @@ def ajax_acmg_classification_first(request):
 
 	if request.is_ajax():
 
+
+
 		# Get the submitted answers and convert to python object
 		classification_answers = request.POST.get('classifications')
 		classification_answers = json.loads(classification_answers)
@@ -556,6 +588,11 @@ def ajax_acmg_classification_first(request):
 		# Get the classification pk and load the classification
 		classification_pk = request.POST.get('classification_pk').strip()
 		classification = get_object_or_404(Classification, pk =classification_pk)
+
+		# Ensure correct user and status
+		if classification.status != '0' or request.user != classification.user_first_checker:
+			
+			raise PermissionDenied('You do not have permission to start this classification.')
 
 		# Update the classification answers
 		for classification_answer in classification_answers:
@@ -598,6 +635,7 @@ def ajax_acmg_classification_second(request):
 
 	if request.is_ajax():
 
+
 		# Get the submitted answers and convert to python object
 		classification_answers = request.POST.get('classifications')
 		classification_answers = json.loads(classification_answers)
@@ -605,6 +643,12 @@ def ajax_acmg_classification_second(request):
 		# Get the classification pk and load the classification
 		classification_pk = request.POST.get('classification_pk').strip()
 		classification = get_object_or_404(Classification, pk =classification_pk)
+
+		# Ensure correct user and status
+		if classification.status != '1' or request.user != classification.user_second_checker:
+
+			raise PermissionDenied('You do not have permission to start this classification.')
+
 
 		# Update the classification answers
 		for classification_answer in classification_answers:
@@ -735,15 +779,77 @@ def view_classification(request, pk):
 	# Allow users to achieve the classification
 	if request.method == 'POST':
 
-		form = ArchiveClassificationForm(request.POST, classification_pk = classification.pk)
+		if 'submit-archive' in request.POST:
 
-		if form.is_valid():
+			if classification.status == '2':
 
-			# Update status to archived
-			cleaned_data = form.cleaned_data
-			classification.status = '3'
-			classification.save()
-			return redirect(home)
+				form = ArchiveClassificationForm(request.POST, classification_pk = classification.pk)
+
+				if form.is_valid():
+
+					# Update status to archived
+					cleaned_data = form.cleaned_data
+					classification.status = '3'
+					classification.save()
+					return redirect(home)
+
+			else:
+
+				raise PermissionDenied('You do not have permission to archive the classification.')
+
+		# Allow users to reset a classification
+		elif 'submit-reset' in request.POST:
+
+			# Only allow user to reset if status is first or second analysis
+			if classification.status == '0' or classification.status == '1':
+
+				form = ResetClassificationForm(request.POST, classification_pk = classification.pk)
+
+				if form.is_valid():
+
+					classification = get_object_or_404(Classification, pk=form.classification_pk)
+
+					classification.first_check_date = None
+					classification.second_check_date = None
+					classification.user_first_checker = None
+					classification.user_second_checker = None
+					classification.status = '0'
+					classification.genuine = '0'
+					classification.first_final_class = '7'
+					classification.second_final_class = '7'
+					classification.save()
+
+					answers = ClassificationAnswer.objects.filter(classification=classification)
+					answers.delete()
+
+					return redirect(home)
+
+			else:
+
+				raise PermissionDenied('You do not have permission to reset the classification.')
+
+
+		# Allow users to assign the second check to themselves
+		elif 'submit-assign' in request.POST:
+
+			# Only allow user to reset if status is first or second analysis
+			if classification.status == '1' and classification.user_second_checker != request.user:
+
+				form = AssignSecondCheckToMeForm(request.POST, classification_pk = classification.pk)
+
+				if form.is_valid():
+
+					classification = get_object_or_404(Classification, pk=form.classification_pk)
+
+					classification.user_second_checker = request.user
+					classification.save()
+
+					return redirect(home)
+
+			else:
+
+				raise PermissionDenied('You do not have permission to assign the second check to yourself.')	
+
 
 	else:
 
@@ -755,13 +861,17 @@ def view_classification(request, pk):
 
 		acmg_result = classification.calculate_acmg_score_second()
 
-		form = ArchiveClassificationForm(classification_pk = classification.pk)
+		archive_form = ArchiveClassificationForm(classification_pk = classification.pk)
+		reset_form = ResetClassificationForm(classification_pk = classification.pk)
+		assign_form = AssignSecondCheckToMeForm(classification_pk = classification.pk)
 
 		return render(request, 'acmg_db/view_classification.html', {'classification': classification,
 									 'classification_answers': classification_answers,
 									 'comments': comments,
 									 'acmg_result': acmg_result,
-									 'form': form})
+									 'archive_form': archive_form,
+									 'reset_form': reset_form,
+									 'assign_form': assign_form})
 
 
 @login_required
@@ -773,9 +883,16 @@ def second_check(request, pk):
 
 	classification = get_object_or_404(Classification, pk=pk)
 
+	# Assign second check to first person to click the link
+	if classification.user_second_checker == None:
+
+		classification.user_second_checker = request.user
+		classification.save()
+
 	#reject if wrong status or user
-	if classification.status != '1':
-		return HttpResponseForbidden()
+
+	if classification.status != '1' or request.user != classification.user_second_checker:
+		raise PermissionDenied(f'You do not have permission to perform the second check. It is assigned to {request.user}')
 
 	else:
 		# Get data to render form
@@ -849,6 +966,12 @@ def second_check(request, pk):
 
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
+
+				# Don't let anyone except the assigned second checker submit the form
+				if classification.status != '1' or request.user != classification.user_second_checker:
+
+					raise PermissionDenied('You do not have permission to finalise the classification.')
+
 				finalise_form = FinaliseClassificationSecondCheckForm(request.POST, classification_pk=classification.pk)
 
 				if finalise_form.is_valid():
@@ -872,6 +995,14 @@ def second_check(request, pk):
 					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
 
 						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
+
+					if classification.genuine  == '3' and cleaned_data['final_classification'] != '7':
+
+						context['warn'] += ['This classification was selected as Not Analysed - therefore the only option is NA']
+
+					if classification.genuine  == '4' and cleaned_data['final_classification'] != '6' :
+
+						context['warn'] += ['This classification was selected as Artefect - therefore the only valid option is Artefect']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:
@@ -912,12 +1043,22 @@ def signup(request):
 			user.is_active = False
 			user.save()
 			return redirect('home')
+		else:
+
+			form = UserCreationForm()
+			return render(request, 'acmg_db/signup.html', {'form': form, 'warning' : ['Could not create an account.']})
+
 	else:
 		form = UserCreationForm()
-		return render(request, 'acmg_db/signup.html', {'form': form})
+		return render(request, 'acmg_db/signup.html', {'form': form, 'warning': []})
 
 
+def about(request):
+	"""
+	The about page. Displays information about the application.
+	"""
 
+	return render(request, 'acmg_db/about.html', {})
 
 
 

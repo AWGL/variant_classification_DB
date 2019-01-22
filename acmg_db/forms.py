@@ -323,6 +323,10 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 
 
 class ArchiveClassificationForm(forms.Form):
+	"""
+	Form to archive a classification.
+
+	"""
 
 	def __init__(self, *args, **kwargs):
 
@@ -333,4 +337,47 @@ class ArchiveClassificationForm(forms.Form):
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Archive Classification', css_class='btn-danger'))
+		self.helper.add_input(Submit('submit-archive', 'Archive Classification', css_class='btn-danger'))
+
+
+
+class ResetClassificationForm(forms.Form):
+	"""
+	Form to reset a classification
+
+	"""
+
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(ResetClassificationForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit-reset', 'Reset Classification', css_class='btn-danger'))
+
+
+class AssignSecondCheckToMeForm(forms.Form):
+
+	"""
+	Allow users to assign a second check to themselves in the History tab
+
+	"""
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(AssignSecondCheckToMeForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit-assign', 'Assign Second Check to Me', css_class='btn-danger'))
+
+
+
+

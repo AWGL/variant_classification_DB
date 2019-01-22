@@ -136,7 +136,7 @@ def get_variant_info_mutalzer(variant, mutalyzer_url, mutalyzer_build):
 
 	except:
 
-		return [False, ['Mutalyzer numberConversion Error: Not results']]
+		return [False, ['Mutalyzer numberConversion Error: No results']]
 
 
 	return [True,[True]]
