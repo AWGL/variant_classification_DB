@@ -543,6 +543,8 @@
 <script>
 $(document).ready(function(){
 
+	var canvas_entered =false;
+
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip()
 	})
@@ -654,6 +656,7 @@ $(document).ready(function(){
 
 		if (canvas_entered ==true){
 			formData.append('image_data', $("#hidden_image_field").val()); //add image file
+			canvas_entered =false;
 		}
 
 		$.ajax({
@@ -669,7 +672,10 @@ $(document).ready(function(){
 				$('#file_upload').val('');
 					var c = document.getElementById("my_canvas");
 					var ctx = c.getContext("2d");
-					ctx.clearRect(0,0,300,300);
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					c.width = 300;
+					c.height = 300;
+
 			},
 
 			failure: function(data) {
@@ -680,28 +686,41 @@ $(document).ready(function(){
 	});
 
 
+$("#defaultCheck1").click(function() {
+
+	if (this.checked) {
+        var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);
+		var canvas_entered =false;
+    } 
+});
+
 //copy and paste from clipboard
 //Taken from https://stackoverflow.com/questions/18377891/how-can-i-let-user-paste-image-data-from-the-clipboard-into-a-canvas-element-in
-var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", false);
-var canvas_entered =false;
+
+/**
+ * image pasting into canvas
+ * 
+ * @param {string} canvas_id - canvas id
+ * @param {boolean} autoresize - if canvas will be resized
+ */
 function CLIPBOARD_CLASS(canvas_id, autoresize) {
 	var _self = this;
 	var canvas = document.getElementById(canvas_id);
 	var ctx = document.getElementById(canvas_id).getContext("2d");
+
 	//handlers
-			
 	document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
+
 	//on paste
 	this.paste_auto = function (e) {
-		// if the user has selected the checkbox
-		if ($("#defaultCheck1:checkbox:checked").length ==1){
 
-			if (e.clipboardData) {
-				var items = e.clipboardData.items;
-				if (!items) return;
-				//access data directly
-				for (var i = 0; i < items.length; i++) {
-					if (items[i].type.indexOf("image") !== -1) {
+		if (e.clipboardData) {
+			var items = e.clipboardData.items;
+			if (!items) return;
+			
+			//access data directly
+			for (var i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf("image") !== -1) {
 					//image
 					var blob = items[i].getAsFile();
 					var URLObj = window.URL || window.webkitURL;
@@ -709,32 +728,31 @@ function CLIPBOARD_CLASS(canvas_id, autoresize) {
 					this.paste_createImage(source);
 				}
 			}
-
 			e.preventDefault();
-
-			}
-			};
-
-			//draw pasted image to canvas
-			this.paste_createImage = function (source) {
-				var pastedImage = new Image();
-				canvas_entered =true;
-				pastedImage.onload = function () {
-				if(autoresize == true){
+		}
+	};
+	//draw pasted image to canvas
+	this.paste_createImage = function (source) {
+		var pastedImage = new Image();
+		canvas_entered =true;
+		pastedImage.onload = function () {
+			if(autoresize == true){
 				//resize
-					canvas.width = pastedImage.width;
-					canvas.height = pastedImage.height;
-				}
-				else{
-					//clear canvas
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
-				}
-				ctx.drawImage(pastedImage, 0, 0);
-				};
-				pastedImage.src = source;
-			};
-	}
+				canvas.width = pastedImage.width;
+				canvas.height = pastedImage.height;
+			}
+			else{
+				//clear canvas
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+			}
+			ctx.drawImage(pastedImage, 0, 0);
+		};
+		pastedImage.src = source;
+	};
 }
+
+
+
 });
 
 </script>

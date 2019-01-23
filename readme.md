@@ -2,13 +2,16 @@
 
 ## Introduction
 
-A small database to hold information about variant classifications done within the laboratory.
+A  database to hold information about variant classifications done within the laboratory.
 
 The main purpose of this database is to store the results of classifying variants using the ACMG guidlines [1].
 
-The program is quite simple as it is not meant to act as a full Variant Database.
 
 ## Install and Setup
+
+### Software Setup
+
+Works on Centos 6/7
 
 The software is a Django application using Python 3. It is reccomended that the software be deployed in a conda virtual environment.
 
@@ -32,6 +35,11 @@ First install Conda/Miniconda from [2]. Then type the following commands in your
 
 `python manage.py loaddata acmg_questions.json`
 
+### Other Resources
+
+* Reference Genome
+* VEP Cache - ftp://ftp.ensembl.org/pub/release-94/variation/VEP/homo\_sapiens\_refseq\_vep\_94\_GRCh37.tar.gz
+
 ### Settings
 
 There are also some options in mysite/settings.py that may need to be changed:
@@ -43,6 +51,12 @@ ALLOWED_HOSTS = ['127.0.0.1']
 MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 
 MUTALYZER_BUILD = 'hg19' 
+
+REFERENCE\_GENOME = '/media/sf\_Documents/genomics\_resources/refs/human\_g1k\_v37.fasta'
+
+VEP\_CACHE = '/media/sf\_Documents/genomics\_resources/vep/'
+
+VEP\_TEMP\_DIR = 'temp/'
 
 Set these to your preferred settings or use the default. The secret key should be changed if running in production.
 
@@ -61,53 +75,8 @@ To run using the development server:
 
 ## User Guide
 
-### Setup an Account
+Coming Soon.
 
-Click the Register An Account link and sign up. Contact an administrator and ask them to activate your account.
-
-An account can be activated in the Admin page ({your-url}/admin) > Users > Set Active checkbox to True.
-
-### Analyse a Variant
-
-Enter variant details on home page form. The variant will be checked using Mutalzer to ensure you have entered a valid genomic coordinate.
-
-The variant should be entered in the following format: {chromosome}:{pos}{ref}>{alt} e.g. 17:41197732G>A
-
-If the variant is valid you will be redirected to the new_classifications page. This has three tabs
-
-1. Sample Information Tab - Enter Details about the sample/classification here. Do not click the Submit button until you have finished on the other tabs.
-
-2. ACMG Tab - Select ACMG classification codes that are relevant to the variant in question.
-
-3. Evidence and Comments Tab - Enter comments and evidence here.
-
-### View Previous Classifications.
-
-Select Previous Classifications from the navigation bar at the top of the page.
-
-There is a table showing all previous classifications - This can be filtered as needed.
-
-### Perform Second Check
-
-Navigate to the Previous Classifications page.
-
-If a classification needs a second check there will be a 'perform second check' action displayed in the action column.
-
-Click this to do a second check.
-
-### Change Classification Status
-
-Login the admin panel at {your-url}/admin with a superuser account.
-
-Find the classification on the Classification page and change the status e.g. archive it by setting status to 'Old'
-
-## To do and Limitations
-
-* Automatically get variant annotations using VEP
-
-* Add variant and sample pages
-
-* Improve filtering
 
 
 ## References
@@ -115,6 +84,6 @@ Find the classification on the Classification page and change the status e.g. ar
 [1] Standards and guidelines for the interpretation of sequence
 variants: a joint consensus recommendation of the American
 College of Medical Genetics and Genomics and the
-Association for Molecular Pathology https://www.acmg.net/docs/standards_guidelines_for_the_interpretation_of_sequence_variants.pdf
+Association for Molecular Pathology https://www.acmg.net/docs/standards\_guidelines\_for\_the\_interpretation\_of\_sequence\_variants.pdf
 
 [2] https://conda.io/miniconda.html

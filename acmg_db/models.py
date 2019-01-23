@@ -35,7 +35,7 @@ class Sample(models.Model):
 	sample_name_only = models.CharField(max_length=50)
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
-	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE) # set null?
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
 
@@ -52,6 +52,32 @@ class Variant(models.Model):
 	position  = models.IntegerField()
 	ref = models.TextField()
 	alt = models.TextField()
+
+	def most_recent_classification(self):
+		"""
+		Return the most recent classification that is either complete or archived
+
+		"""
+
+		classifications = Classification.objects.filter(variant=self, status__in=['2', '3']).order_by('-second_check_date')
+
+		if len(classifications) >0:
+
+			most_recent = classifications[0]
+
+			all_classes = [classification.display_classification() for classification in classifications]
+
+			all_classes = list(set(all_classes))
+
+			all_classes = '|'.join(all_classes)
+
+			count = len(classifications)
+
+			return most_recent, all_classes, count
+
+		return None, None, 0
+
+
 
 
 class Gene(models.Model):
