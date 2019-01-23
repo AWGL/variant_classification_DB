@@ -38,6 +38,10 @@ class TestVariantUtils(unittest.TestCase):
 		self.assertEqual(get_variant_info_mutalzer(input3, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)[0], True)
 		self.assertEqual(get_variant_info_mutalzer(input4, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)[0], True)
 
+	def test_vep(self):
+		
+		pass
+
 
 
 if __name__ == '__main__':

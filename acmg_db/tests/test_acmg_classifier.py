@@ -22,14 +22,12 @@ class TestACMGRatings(unittest.TestCase):
 		test_1b_5 = ['PVS1', 'PM4', 'BP1', 'PM2']
 		test_1b_6 = ['PM5', 'BP6', 'BA1' 'PM4', 'PM2', 'PM3', 'PVS1']
 		
-
 		test_1c_1 = ['PVS1', 'PM1', 'PP1']
 		test_1c_2 = ['PM1', 'PP2', 'PVS1']
 		test_1c_3 = ['PP5', 'PVS1', 'PM1']
 		test_1c_4 = ['PVS1', 'BS1', 'PP3', 'PM2']
 		test_1c_5 = ['PVS1', 'PP2', 'BA1', 'BS2', 'PM4']
 		test_1c_6 = ['PM2', 'PP2', 'PP3', 'PP4', 'PSV1']
-		
 		
 		test_1d_1 = ['PVS1', 'PP1', 'PP2', 'PP3']
 		test_1d_2 = ['PVS1', 'PP2', 'PP4']
@@ -46,7 +44,6 @@ class TestACMGRatings(unittest.TestCase):
 		test_2_5 = ['BS1', 'BS2', 'PS1', 'PS2', 'PS3', 'PS4']
 		test_2_6 = ['PS1', 'BS1', 'PS2', 'BS3', 'PS3', 'PS4']
 					
-
 		test_3a_1 = ['PS1', 'PM1', 'PM2', 'PM3', 'PM4']
 		test_3a_2 = ['PS1', 'PM1', 'PM2', 'PM3', 'PP1']
 		test_3a_3 = ['PP3', 'PM1', 'PM2', 'PM3', 'PS2']
@@ -59,7 +56,6 @@ class TestACMGRatings(unittest.TestCase):
 		test_3b_4 = ['PP4', 'PM1', 'PM3', 'PP2', 'PS3']
 		test_3b_5 = ['PS1', 'PM1', 'PM2', 'PP3', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5']
 		
-
 		test_3c_1 = ['PS2', 'PM1', 'PP2', 'PP3', 'PP4', 'PP1']
 		test_3c_2 = ['PS1', 'PM1', 'PP2', 'PP3', 'PP1', 'PP2', 'PP5']
 		test_3c_3 = ['PP2', 'PP1', 'PS2', 'PP3', 'PP4', 'PM1']
@@ -89,7 +85,6 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(get_pathogenicity_classification(test_1c_4), 'Pathogenic (Ic)')
 		self.assertEqual(get_pathogenicity_classification(test_1c_5), 'Pathogenic (Ic)')
 		
-
 		self.assertEqual(get_pathogenicity_classification(test_1d_1), 'Pathogenic (Id)')
 		self.assertEqual(get_pathogenicity_classification(test_1d_2), 'Pathogenic (Id)')
 		self.assertEqual(get_pathogenicity_classification(test_1d_3), 'Pathogenic (Id)')
@@ -122,8 +117,6 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(get_pathogenicity_classification(test_3c_3), 'Pathogenic (IIIc)')
 		self.assertEqual(get_pathogenicity_classification(test_3c_4), 'Pathogenic (IIIc)')
 		self.assertEqual(get_pathogenicity_classification(test_3c_5), 'Pathogenic (IIIc)')
-
-
 
 
 	def test_likely_pathogenic(self):
@@ -167,8 +160,6 @@ class TestACMGRatings(unittest.TestCase):
 		testlp_6_5 = ['PP1', 'PP3', 'PP5', 'PP2', 'PP4', 'PM6']
 		
 		
-
-
 		self.assertEqual(get_pathogenicity_classification(testlp_1_1), 'Likely Pathogenic (I)')
 		self.assertEqual(get_pathogenicity_classification(testlp_1_2), 'Likely Pathogenic (I)')
 		self.assertEqual(get_pathogenicity_classification(testlp_1_3), 'Likely Pathogenic (I)')
@@ -219,7 +210,6 @@ class TestACMGRatings(unittest.TestCase):
 		test_VUS7 = ['PM4', 'PP1', 'PP2', 'PP3']
 		test_VUS8 = ['PP1', 'PP2', 'PP3', 'PP4', 'PP5']
 
-
 		self.assertEqual(get_pathogenicity_classification(test_VUS1), 'VUS')
 		self.assertEqual(get_pathogenicity_classification(test_VUS2), 'VUS')
 		self.assertEqual(get_pathogenicity_classification(test_VUS3), 'VUS')
@@ -229,6 +219,7 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(get_pathogenicity_classification(test_VUS7), 'VUS')
 		self.assertEqual(get_pathogenicity_classification(test_VUS8), 'VUS')
 
+
 	def test_benign(self):
 
 		test_benign_1_1 = ['BA1']
@@ -237,8 +228,6 @@ class TestACMGRatings(unittest.TestCase):
 		test_benign_1_4 = ['BA1', 'BP1', 'BS1', 'PVS1']
 		test_benign_1_5 = ['PP1', 'PP2', 'BA1']
 		test_benign_1_5 = ['PP1', 'PP2', 'BA1']
-		
-
 		test_benign_2_1 =['BS1', 'BS2']
 		test_benign_2_2 =['BS1', 'BS2', 'BS3']
 		test_benign_2_3 =['BS1', 'BS2', 'BP1']
@@ -246,16 +235,11 @@ class TestACMGRatings(unittest.TestCase):
 		test_benign_2_5 =['BP2', 'BP3', 'BS3', 'BS4', 'BP1', 'PP1']
 		test_benign_2_6 =['BS1', 'BS2', 'PVS1']
 		
-		
-		
-
-
 		self.assertEqual(get_benign_classification(test_benign_1_1), 'Benign (I)')
 		self.assertEqual(get_benign_classification(test_benign_1_2), 'Benign (I)')
 		self.assertEqual(get_benign_classification(test_benign_1_3), 'Benign (I)')
 		self.assertEqual(get_benign_classification(test_benign_1_4), 'Benign (I)')
 		self.assertEqual(get_benign_classification(test_benign_1_5), 'Benign (I)')
-
 		self.assertEqual(get_benign_classification(test_benign_2_1), 'Benign (II)')
 		self.assertEqual(get_benign_classification(test_benign_2_2), 'Benign (II)')
 		self.assertEqual(get_benign_classification(test_benign_2_3), 'Benign (II)')
@@ -269,13 +253,12 @@ class TestACMGRatings(unittest.TestCase):
 		testlb_1_1 =['BS2', 'BP1']
 		testlb_1_2 =['BS4', 'BP7']
 		testlb_1_3 =['BS3', 'BP6']
-		
+
 		testlb_2_1 =['BP2', 'BP1']
 		testlb_2_2 =['BP2', 'BP1', 'BP3']
 		testlb_2_3 =['BP3', 'BP7']
 		testlb_2_4 =['BP6', 'BP2', 'BP5']
 		testlb_2_5 =['BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
-
 
 		self.assertEqual(get_benign_classification(testlb_1_1), 'Likely Benign (I)')
 		self.assertEqual(get_benign_classification(testlb_1_2), 'Likely Benign (I)')
@@ -286,6 +269,7 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(get_benign_classification(testlb_2_3), 'Likely Benign (II)')
 		self.assertEqual(get_benign_classification(testlb_2_4), 'Likely Benign (II)')
 		self.assertEqual(get_benign_classification(testlb_2_5), 'Likely Benign (II)')
+
 
 	def test_benign_VUS(self):
 
@@ -314,9 +298,7 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(get_benign_classification(test_benign_VUS11), 'VUS')
 
 
-
 	def test_final(self):
-
 
 		path1 = 'Pathogenic (Ia)'
 		benign1 = 'VUS'
@@ -336,18 +318,12 @@ class TestACMGRatings(unittest.TestCase):
 		path6 = 'Likely Pathogenic (I)'
 		benign6 = 'Benign (II)'
 		
-	
-
-
 		self.assertEqual(get_final_classification(path1, benign1), 'Pathogenic (Ia)')
 		self.assertEqual(get_final_classification(path2, benign2), 'Likely Pathogenic (III)')
-
 		self.assertEqual(get_final_classification(path3, benign3), 'Benign (I)')
 		self.assertEqual(get_final_classification(path4, benign4), 'Likely Benign (I)')
-
 		self.assertEqual(get_final_classification(path5, benign5), 'VUS - contradictory evidence provided')
 		self.assertEqual(get_final_classification(path6, benign6), 'VUS - contradictory evidence provided')
-
 		self.assertEqual(get_final_classification(path3, benign1), 'VUS - criteria not met')
 
 
@@ -357,61 +333,32 @@ class TestACMGRatings(unittest.TestCase):
 		input2 =['PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
 				'BA1', 'BS1', 'BS2', 'BS3', 'BS4', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
 
-
 		input3 =['PVS1', 'PS1', 'PS2', 'BS1', 'Cheese']
 		input4 =['PVS1', 'PS1', 'PS1', 'PS2']
-
 		input5 =[]
-
 		input6 = 32442
-
-		
 
 		self.assertTrue(valid_input(input1)) #valid input
 		self.assertTrue(valid_input(input2)) #valid input
-
-
 		self.assertFalse(valid_input(input3)) #invalid classification
 		self.assertFalse(valid_input(input4)) #duplicates in list
-
 		self.assertFalse(valid_input(input5)) #empty list
-
 		self.assertFalse(valid_input(input6)) #not a list
 	
-	
-
-
-
-
-
 	def test_adjust_strength(self):
 
-
 		input1 = [('PVS1', 'PM'), ('PM1', 'PM'), ('PS2', 'PM')]
-		input2 = [('PVS1', 'PP'), ('PM4', 'PS'), ('PS4', 'PV')]
 		input3 = [('BA1', 'BS'), ('BP1', 'BP'), ('BS1', 'BP')]
 		input4 = [('BP1', 'BS'), ('BS2', 'BP'), ('BP7', 'BP')]
-		input5 = [('PVS1', 'BA'), ('PM1', 'ZM'), ('PS2', 'DP')]
 		input6 = [('PP1', 'PS'), ('BS2', 'BP'), ('BM4', 'PP')]
 		input7 = [('PP1', 'PS'), ('BS2', 'BP'), ('BM4', 'PP'), ('PVS1', 'PM'), ('PM1', 'PP'), ('PS2', 'PM')]
-		input8 = [('PVS1', 'PD')]
-		input9 = [('BS1', 'BA'), ('PVS1', 'PP')]
-		input10 = [('BA1', 'PP'), ('PM3', 'BP'), ('PP2', 'JP'), ('PM2', 'BA')]
 		
-		
-
 		self.assertEqual(adjust_strength(input1), ['PMS1', 'PM1', 'PM2'])
-		self.assertEqual(adjust_strength(input2), ['PPS1', 'PS4', 'PS4'])
 		self.assertEqual(adjust_strength(input3), ['BS1', 'BP1', 'BP1'])
 		self.assertEqual(adjust_strength(input4), ['BS1', 'BP2', 'BP7'])
-		self.assertEqual(adjust_strength(input5), ['PVS1', 'PM1', 'PS2'])
 		self.assertEqual(adjust_strength(input6), ['PS1', 'BP2', 'PP4'])
 		self.assertEqual(adjust_strength(input7), ['PS1', 'BP2', 'PP4', 'PMS1', 'PP1', 'PM2'])
-		self.assertEqual(adjust_strength(input8), ['PVS1'])
-		self.assertEqual(adjust_strength(input9), ['BS1', 'PPS1'])
-		self.assertEqual(adjust_strength(input10), ['PP1', 'BP3', 'PP2', 'PM2'])
-	
-	
+
 
 	def test_classify(self):
 
@@ -428,8 +375,6 @@ class TestACMGRatings(unittest.TestCase):
 		input11= ['BS2', 'BP1']
 		input12=['PS1','PP1','PS3']
 		
-		
-
 		self.assertEqual(classify(input1), 'Pathogenic (Ia)')
 		self.assertEqual(classify(input2), 'Pathogenic (Ia)')
 		self.assertEqual(classify(input3), 'Benign (I)')
@@ -442,7 +387,6 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(classify(input10), 'Likely Pathogenic (IV)')
 		self.assertEqual(classify(input11), 'Likely Benign (I)')
 		self.assertEqual(classify(input12), 'Pathogenic (II)')
-
 
 
 if __name__ == '__main__':
