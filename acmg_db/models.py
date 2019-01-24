@@ -35,7 +35,7 @@ class Sample(models.Model):
 	sample_name_only = models.CharField(max_length=50)
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
-	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE) # set null?
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
 
