@@ -5,5 +5,4 @@ acmg_db/migrations
 mysite/media/
 test_data
 stdout_warnings.txt
-temp/
 .coverage
