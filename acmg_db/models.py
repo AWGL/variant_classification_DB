@@ -584,6 +584,7 @@ class UserComment(models.Model):
 	user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 	text = models.TextField()
 	time = models.DateTimeField()
+	visible = models.BooleanField(default=True)
 
 	def get_evidence(self):
 		"""

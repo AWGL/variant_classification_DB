@@ -19,5 +19,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='acmg_db/logout.html'), name='logout'),
     path('about/', views.about, name='about'),
     path('variants/', views.view_variants, name='view_variants'),
-    path('variant//<str:pk>/', views.view_variant, name='view_variant'),
+    path('variant/<str:pk>/', views.view_variant, name='view_variant'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

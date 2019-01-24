@@ -378,7 +378,7 @@ def new_classification(request, pk):
 		previous_classifications = Classification.objects.filter(variant=variant, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
 		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
-		comments = UserComment.objects.filter(classification=classification)
+		comments = UserComment.objects.filter(classification=classification, visible=True)
 		result = classification.display_first_classification()  # current class to display
 		transcript = classification.selected_transcript_variant.transcript
 		refseq_options = TranscriptVariant.objects.filter(variant=variant)
@@ -611,8 +611,14 @@ def ajax_acmg_classification_first(request):
 
 		# Ensure correct user and status
 		if classification.status != '0' or request.user != classification.user_first_checker:
-			
+
 			raise PermissionDenied('You do not have permission to start this classification.')
+
+		correct_number_of_questions = ClassificationQuestion.objects.all().count()
+
+		if len(classification_answers) != correct_number_of_questions:
+
+			raise Exception('Wrong number of questions')
 
 		# Update the classification answers
 		for classification_answer in classification_answers:
@@ -666,6 +672,13 @@ def ajax_acmg_classification_second(request):
 		if classification.status != '1' or request.user != classification.user_second_checker:
 
 			raise PermissionDenied('You do not have permission to start this classification.')
+
+		# Check we have every question
+		correct_number_of_questions = ClassificationQuestion.objects.all().count()
+
+		if len(classification_answers) != correct_number_of_questions:
+
+			raise Exception('Wrong number of questions')
 
 
 		# Update the classification answers
@@ -759,7 +772,7 @@ def ajax_comments(request):
 
 				new_evidence.save()
 
-		comments = UserComment.objects.filter(classification=classification)
+		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		html = render_to_string("acmg_db/ajax_comments.html",
 								{"comments": comments})
@@ -876,7 +889,7 @@ def view_classification(request, pk):
 		classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
 			.order_by('classification_question__order'))
 
-		comments = UserComment.objects.filter(classification=classification)
+		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		acmg_result = classification.calculate_acmg_score_second()
 
@@ -922,7 +935,7 @@ def second_check(request, pk):
 		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
 
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
-		comments = UserComment.objects.filter(classification=classification)
+		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		result_first = classification.display_first_classification()
 		result_second = classification.calculate_acmg_score_second()[0].split('(')[0]  # current class to display

@@ -617,7 +617,6 @@ $(document).ready(function(){
 		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
 		formData.append('classifications', JSON.stringify(classification_dict));
 		formData.append('classification_pk', "{{classification.pk}}" );
-
 		$.ajax({
 			url: '/ajax/acmg_classification_first/',
 			type: 'POST',
