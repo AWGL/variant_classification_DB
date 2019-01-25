@@ -700,6 +700,10 @@ def ajax_acmg_classification_second(request):
 
 		acmg_result_second = classification.calculate_acmg_score_second()[0].split('(')[0]
 
+		if acmg_result_second == 'VUS - contradictory evidence provided':
+
+			acmg_result_second = 'Contradictory evidence provided'
+
 		html = render_to_string('acmg_db/acmg_results_second.html', {'result_first': acmg_result_first, 'result_second': acmg_result_second})
 
 	return HttpResponse(html)
@@ -939,6 +943,10 @@ def second_check(request, pk):
 
 		result_first = classification.display_first_classification()
 		result_second = classification.calculate_acmg_score_second()[0].split('(')[0]  # current class to display
+
+		if result_second == 'VUS - contradictory evidence provided':
+
+			result_second = 'Contradictory evidence provided'
 
 		transcript = classification.selected_transcript_variant.transcript
 

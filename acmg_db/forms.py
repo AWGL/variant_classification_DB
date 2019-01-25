@@ -253,7 +253,7 @@ class FinaliseClassificationForm(forms.Form):
 	Form for submitting the first check page.
 	"""
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
-	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+	('3', 'Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
 	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)'))
 
 	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
@@ -288,7 +288,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 	Form for submitting the second check page.
 	"""
 	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
-	('3', 'VUS - Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
+	('3', 'Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
 	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)')) 
 
 	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
