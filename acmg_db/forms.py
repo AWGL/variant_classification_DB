@@ -50,7 +50,7 @@ class ManualUploadForm(forms.Form):
 	exon = forms.CharField(max_length=10)
 	sample_name = forms.CharField(max_length=50)
 	worklist = forms.CharField(max_length=50)
-	affected_with = forms.CharField(max_length=500)
+	affected_with = forms.CharField(max_length=100)
 	analysis_performed = forms.ChoiceField()
 	other_changes = forms.CharField(max_length=500)
 	consequence = forms.CharField(max_length=100)
