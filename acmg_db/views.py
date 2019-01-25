@@ -803,8 +803,8 @@ def view_previous_classifications(request):
 	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 
 
-@login_required
 @transaction.atomic
+@login_required
 def view_classification(request, pk):
 	"""
 	View a read only version of a classification of a variant
@@ -1062,6 +1062,8 @@ def second_check(request, pk):
 			return render(request, 'acmg_db/second_check_new.html', context)
 		return render(request, 'acmg_db/second_check_new.html', context)
 
+
+@transaction.atomic
 def signup(request):
 	"""
 	Allow users to sign up
