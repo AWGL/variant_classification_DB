@@ -668,6 +668,15 @@ $(document).ready(function(){
 			canvas_entered =false;
 		}
 
+		console.log(comment_text.length);
+
+		if (comment_text == ''){
+
+			alert('You need to enter a comment to submit.')
+		} else{
+
+
+
 		$.ajax({
 			url: '/ajax/comments/',
 			type: 'POST',
@@ -691,7 +700,7 @@ $(document).ready(function(){
 				alert('Got an error');
 			}
 		});
-	
+		}
 	});
 
 

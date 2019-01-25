@@ -739,9 +739,9 @@ def ajax_comments(request):
 			new_comment.save()
 
 			#Deal with files selected using the file selector html widget 
-			if request.FILES.get("file", False) != False:
+			if request.FILES.get('file', False) != False:
 
-				file = request.FILES.get("file")
+				file = request.FILES.get('file')
 
 				new_evidence = Evidence()
 
@@ -752,15 +752,15 @@ def ajax_comments(request):
 				new_evidence.save()
 
 			#Deal with images pasted in from the clipboard
-			if request.POST.get("image_data") != None: 
+			if request.POST.get('image_data') != None: 
 
-				image_data = request.POST.get("image_data")
+				image_data = request.POST.get('image_data')
 
 				#strip of any leading characters
 				image_data = image_data.strip() 
 
 				#add appropiate file header
-				dataUrlPattern = re.compile("data:image/(png|jpeg);base64,(.*)$") 
+				dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$') 
 
 				ImageData = dataUrlPattern.match(image_data).group(2)
 
@@ -771,15 +771,15 @@ def ajax_comments(request):
 				new_evidence.comment= new_comment
 
 				#save image
-				img_file_string = "{}_{}_clip_image.png".format(classification.pk,new_comment.pk)
+				img_file_string = '{}_{}_clip_image.png'.format(classification.pk,new_comment.pk)
 				new_evidence.file.save(img_file_string, ContentFile(ImageData)) 
 
 				new_evidence.save()
 
 		comments = UserComment.objects.filter(classification=classification, visible=True)
 
-		html = render_to_string("acmg_db/ajax_comments.html",
-								{"comments": comments})
+		html = render_to_string('acmg_db/ajax_comments.html',
+								{'comments': comments})
 
 		return HttpResponse(html)
 
