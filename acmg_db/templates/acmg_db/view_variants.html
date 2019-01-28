@@ -38,6 +38,8 @@
 		<a class="btn btn-warning" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% elif 'Artefact' in variant.1.0.display_classification %}
 		<a class="btn btn-secondary" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% elif 'Contradictory' in variant.1.0.display_classification %}
+         <a class="btn btn-primary" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% else %}
 		<a class="btn btn-light" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% endif %}

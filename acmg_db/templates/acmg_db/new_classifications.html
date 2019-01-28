@@ -51,6 +51,8 @@
 						<button type="button" class="btn btn-warning" style="width: 40rem;">{{result}}</button>
 					{% elif 'Artefact' in result %}
 						<button type="button" class="btn btn-secondary" style="width: 40rem;">{{result}}</button>
+					{% elif 'Contradictory' in result %}
+                        <button type="button" class="btn btn-primary" style="width: 40rem;">{{result}}</button>
 					{% else %}
 						<button type="button" class="btn btn-secondary" style="width: 40rem;">{{result}}</button>
 					{% endif %}
@@ -256,6 +258,8 @@
 					<button type="button" class="btn btn-warning btn-sm">
 					{% elif 'Artefact' in previous_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
+					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
+                    <button type="button" class="btn btn-primary btn-sm">
 					{% else %}
 					<button type="button" class="btn btn-muted btn-sm">
 					{% endif %}
@@ -278,6 +282,8 @@
 					<button type="button" class="btn btn-warning btn-sm">
 					{% elif 'Artefact' in previous_full_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
+					{% elif 'Contradictory' in previous_full_classifications.0.display_final_classification %}
+                    <button type="button" class="btn btn-primary btn-sm">
 					{% else %}
 					<button type="button" class="btn btn-muted btn-sm">
 					{% endif %}
@@ -469,11 +475,15 @@
 		
 		<!-- display a 'reclassify' button to make sure the user hasnt made any changes that alter the class-->
 		{% if classification.genuine == '1' %}
+
+
 		<div class="row">
 			<div class="col-2">Reclassify</div>
 			<div class="col-8">
 				<button type="button" class="btn btn-danger acmg_submit" id='submit_acmg'>Calculate classification</button>
-				<p>Make sure that the classification currently displayed is up-to-date before submitting</p>
+				<br>
+				<br>
+				<p><strong>Make sure that the classification currently displayed is up-to-date before submitting</strong></p>
 			</div>
 		</div>
 		<br>
@@ -658,6 +668,15 @@ $(document).ready(function(){
 			canvas_entered =false;
 		}
 
+		console.log(comment_text.length);
+
+		if (comment_text == ''){
+
+			alert('You need to enter a comment to submit.')
+		} else{
+
+
+
 		$.ajax({
 			url: '/ajax/comments/',
 			type: 'POST',
@@ -681,7 +700,7 @@ $(document).ready(function(){
 				alert('Got an error');
 			}
 		});
-	
+		}
 	});
 
 

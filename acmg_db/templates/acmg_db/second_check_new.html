@@ -54,6 +54,8 @@
 						<button type="button" class="btn btn-warning" style="width: 40rem;">First Analysis: {{result_first}}</button>
 					{% elif 'Artefact' in result_first %}
 						<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis: {{result_first}}</button>
+					{% elif 'Contradictory' in result_first %}
+                  		<button type="button" class="btn btn-primary" style="width: 40rem;">First Analysis: {{result_first}}</button>
 					{% else %}
 						<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis: {{result_first}}</button>
 					{% endif %}
@@ -67,6 +69,8 @@
 						<button type="button" class="btn btn-warning" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 					{% elif 'Artefact' in result_second %}
 						<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+					{% elif 'Contradictory' in result_second %}
+                  		<button type="button" class="btn btn-primary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 					{% else %}
 						<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 					{% endif %}
@@ -258,6 +262,8 @@
 					<button type="button" class="btn btn-warning btn-sm">
 					{% elif 'Artefact' in previous_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
+					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-secondary btn-sm">
 					{% else %}
 					<button type="button" class="btn btn-muted btn-sm">
 					{% endif %}
@@ -277,6 +283,8 @@
 					{% elif 'VUS' in previous_full_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-warning btn-sm">
 					{% elif 'Artefact' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-secondary btn-sm">
+					{% elif 'Contradictory' in previous_full_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
 					{% else %}
 					<button type="button" class="btn btn-muted btn-sm">
@@ -670,6 +678,11 @@ $(document).ready(function(){
       formData.append('image_data', $("#hidden_image_field").val()); //add image file
     }
 
+   	if (comment_text == ''){
+
+			alert('You need to enter a comment to submit.')
+		} else{
+
     $.ajax({
       url: '/ajax/comments/',
       type: 'POST',
@@ -692,6 +705,8 @@ $(document).ready(function(){
         alert('Got an error');
       }
     });
+
+	}
   
   });
 

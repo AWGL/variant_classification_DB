@@ -1,13 +1,15 @@
 {% if 'Pathogenic' in result_first %}
-	<button type="button" class="btn btn-danger" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+	<button type="button" class="btn btn-danger" style="width: 40rem;">First Analysis: {{result_first}}</button>
 {% elif 'Benign' in result_first %}
-	<button type="button" class="btn btn-info" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+	<button type="button" class="btn btn-info" style="width: 40rem;">First Analysis: {{result_first}}</button>
 {% elif 'VUS' in result_first %}
-	<button type="button" class="btn btn-warning" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+	<button type="button" class="btn btn-warning" style="width: 40rem;">First Analysis: {{result_first}}</button>
 {% elif 'Artefact' in result_first %}
-	<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis: {{result_first}}</button>
+{% elif 'Contradictory' in result_first %}
+    <button type="button" class="btn btn-primary" style="width: 40rem;">First Analysis: {{result_first}}</button>
 {% else %}
-	<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis:  {{result_first}}</button>
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">First Analysis: {{result_first}}</button>
 {% endif %}
 	<hr>
 
@@ -19,6 +21,8 @@
 	<button type="button" class="btn btn-warning" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 {% elif 'Artefact' in result_second %}
 	<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
+{% elif 'Contradictory' in result_second %}
+    <button type="button" class="btn btn-primary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 {% else %}
 	<button type="button" class="btn btn-secondary" style="width: 40rem;">Second Analysis: {{result_second}}</button>
 {% endif %}

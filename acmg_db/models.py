@@ -35,7 +35,7 @@ class Sample(models.Model):
 	sample_name_only = models.CharField(max_length=50)
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
-	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE) # set null?
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
 
@@ -190,7 +190,7 @@ class Classification(models.Model):
 		('0', 'Benign'), 
 		('1', 'Likely Benign'), 
 		('2', 'VUS - Criteria Not Met'),
-		('3', 'VUS - Contradictory Evidence Provided'), 
+		('3', 'Contradictory Evidence Provided'), 
 		('4', 'Likely Pathogenic'), 
 		('5', 'Pathogenic'),
 		('6', 'Artefact'), 
@@ -253,7 +253,7 @@ class Classification(models.Model):
 		('0', 'Benign'), 
 		('1', 'Likely Benign'), 
 		('2', 'VUS - Criteria Not Met'),
-		('3', 'VUS - Contradictory Evidence Provided'), 
+		('3', 'Contradictory Evidence Provided'), 
 		('4', 'Likely Pathogenic'), 
 		('5', 'Pathogenic'),
 		('6', 'Artefact'), 
@@ -276,7 +276,7 @@ class Classification(models.Model):
 		('0', 'Benign'), 
 		('1', 'Likely Benign'), 
 		('2', 'VUS - Criteria Not Met'),
-		('3', 'VUS - Contradictory Evidence Provided'), 
+		('3', 'Contradictory Evidence Provided'), 
 		('4', 'Likely Pathogenic'), 
 		('5', 'Pathogenic'),
 		('6', 'Artefact'), 
