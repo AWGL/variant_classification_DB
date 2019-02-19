@@ -101,7 +101,7 @@
 	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
 	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:15 }}>{{ classification.variant.alt|truncatechars:15 }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
-	  <td>{{ classification.selected_transcript_variant.display_hgvsc|truncatechars:15 }}</td>
+	  <td>{{ classification.selected_transcript_variant.display_hgvsc|truncatechars:30 }}</td>
 	  <td>{{ classification.selected_transcript_variant.display_hgvsp }}</td>
 	  <td>
 		{% if 'Benign' in classification.display_classification %}
