@@ -89,11 +89,22 @@ class Gene(models.Model):
 	"""
 
 	name = models.CharField(max_length=25, primary_key=True)
-	inheritance_pattern = models.CharField(max_length=15, null=True, blank=True)
+	inheritance_pattern = models.CharField(max_length=60, null=True, blank=True)
 	conditions = models.TextField(null=True, blank=True)
 
 	def all_inheritance_patterns(self):
-		return ', '.join(self.inheritance_pattern)
+		'''
+		Join all inheritance patterns together into a string for viewing in the app.
+		Making the initial list is over complicated because the list is represented as a string in the database,
+		so it needs to be converte back into a list before joining
+		'''
+		inheritance_list = []
+		for i in str(self.inheritance_pattern).split(', '):
+			i = i.replace('[', '').replace(']', '').replace("'", "")
+			inheritance_list.append(i)
+
+		inheritance_string = ', '.join(inheritance_list)
+		return inheritance_string
 
 
 
