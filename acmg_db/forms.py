@@ -175,10 +175,17 @@ class VariantInfoForm(forms.Form):
 	Form for storing variant Information.
 
 	"""
-
+	inheritance_choices = (
+		('AD', 'Autosomal dominant'), 
+		('AR', 'Autosomal recessive'),
+		('XLD', 'X linked dominant'),
+		('XLR', 'X linked recessive'),
+		('IC', 'Imprinting centre'),
+		('SMu', 'Somatic mutation'),
+	)
 
 	select_transcript = forms.ChoiceField(required=False)
-	inheritance_pattern = forms.CharField(max_length=30, required=False)
+	inheritance_pattern = forms.MultipleChoiceField(required=False, choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea, required=False)
 	is_trio_de_novo = forms.BooleanField(required=False)
 
@@ -194,6 +201,8 @@ class VariantInfoForm(forms.Form):
 		self.fields['select_transcript'].choices = self.options
 		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
 		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
+		self.fields['inheritance_pattern'].widget.attrs['size'] = 6
+		self.fields['inheritance_pattern'].help_text = 'Hold shift down to select multiple.'
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
