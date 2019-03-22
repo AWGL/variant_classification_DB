@@ -10,7 +10,7 @@
 <!-- Expandable box containing preset filters -->
 <!-- Button to expand/hide the filter table -->
 <button class="btn btn-success" type="button" data-toggle="collapse" href="#results_filters" role="button" aria-expanded="false" aria-controls="results_filters">
-  View filters
+  Search/ filter
 </button>
 <br>
 
@@ -23,18 +23,27 @@
 
 		<form>
 		<tr>
+			<td><b>Worksheet search</b></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>Patient ID</td>
 			<td><input type="text" name="sample"></td>
 		</tr>
 		<tr>
 			<td>Worksheet ID</td>
-			<td><input type="text" name="worksheet">&nbsp;&nbsp;<input class="btn btn-info" type="submit" value="Submit"></td>
+			<td><input type="text" name="worksheet"></td>
+		</tr>
+		<tr>
+			<td>Panel</td>
+			<td><input type="text" name="panel">&nbsp;&nbsp;<input class="btn btn-info" type="submit" value="Submit"></td>
 		</tr>
 		</form>
 		<tr>
+			<td><b>Quick filters</b></td>
 			<td></td>
 			<td></td>
-			<td>&nbsp;</td>
 		</tr>
 		<tr>
 		  <td>Status</td>
@@ -58,6 +67,13 @@
 		  </td>
 		</tr>
 		<tr>
+			<td>Assigned</td>
+			<td>
+				<a class="btn btn-info" href="?assigned={{request.user}}" role="button">Assigned to me</a>
+				<a class="btn btn-info" href="?assigned=None" role="button">Unassigned</a>
+			</td>
+		</tr>
+		<tr>
 		  <td>
 			<a class="btn btn-info" href={% url 'view_previous_classifications' %} role="button">Remove all filters</a>
 		  </td>
@@ -71,13 +87,14 @@
 
 <!-- Main table of classifications -->
 <br>
-<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+<table id="classifications" class = "table table-hover table-bordered table-responsive" style="width:100%">
 
   <thead>
 	<tr>
 	  <th style="display:none;">PK</th>
 	  <th>Status</th>
-	  <th>Worksheet</th>
+		<th>Worksheet</th>
+		<th>Panel</th>
 	  <th>Sample</th>
 	  <th>Gene</th>
 	  <th>Variant</th>
@@ -85,8 +102,8 @@
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
 	  <th>Classification</th>
-	  <th>User</th>
-	  <th>Date</th>
+	  <th>Assigned</th>
+	  <!--<th>Date</th>-->
 	</tr>
   </thead>
 
@@ -107,32 +124,41 @@
 		Unknown
 		{% endif %}
 	  </td>
-	  <td>{{ classification.sample.worklist.name }}</td>
+		<td>{{ classification.sample.worklist.name }}</td>
+		<td>{{ classification.sample.analysis_performed.panel }}</td>
 	  <td>{{ classification.sample.sample_name_only }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
-	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:15 }}>{{ classification.variant.alt|truncatechars:15 }}</td>
+	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
-	  <td>{{ classification.selected_transcript_variant.display_hgvsc|truncatechars:30 }}</td>
-	  <td>{{ classification.selected_transcript_variant.display_hgvsp }}</td>
+	  <td>{{ classification.selected_transcript_variant.display_hgvsc|truncatechars:25 }}</td>
+	  <td>{{ classification.selected_transcript_variant.display_hgvsp|truncatechars:25 }}</td>
 	  <td>
 		{% if 'Benign' in classification.display_classification %}
-		<a class="btn btn-info" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% elif 'Pathogenic' in classification.display_classification %}
-		<a class="btn btn-danger" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		<a class="btn btn-danger btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% elif 'VUS' in classification.display_classification %}
-		<a class="btn btn-warning" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		<a class="btn btn-warning btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% elif 'Artefact' in classification.display_classification %}
-		<a class="btn btn-secondary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% elif 'Contradictory' in classification.display_classification %}
-         <a class="btn btn-primary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+         <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% else %}
-		<a class="btn btn-light" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		<a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% endif %}
 		  {{ classification.display_classification}} 
 		</a>
 	  </td>
-	  <td>{{ classification.user_creator}}</td>
-	  <td>{{ classification.creation_date|date:"Y/m/d"}}</td>
+	  <td>
+			{% if classification.status == '0' %}
+				{{ classification.user_first_checker}}
+			{% elif classification.status == '1' %}
+				{{ classification.user_second_checker}}
+			{% else %}
+				None
+			{% endif %}
+		</td>
+	  <!--<td>{{ classification.creation_date|date:"Y/m/d"}}</td>-->
 	</tr>
 	{% endfor %}
   </tbody>
@@ -142,8 +168,8 @@
 	  <th style="display:none;"></th>
 	  <th></th>
 	  <th></th>
-	  <th></th>
-	  <th></th>
+		<th></th>
+		<th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>
@@ -175,6 +201,7 @@ $(document).ready(function(){
 		pk: null,
 		status: null,
 		worksheet: null,
+		panel: null,
 		sample: null,
 		gene: null,
 		variant: null,
@@ -182,8 +209,7 @@ $(document).ready(function(){
 		hgvs_c: null,
 		hgvs_p: null,
 		classification: null,
-		user: null,
-		date: null,
+		assigned: null,
 	};
 
 	// get params from url
