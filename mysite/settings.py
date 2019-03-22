@@ -143,9 +143,9 @@ MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 # Which Mutalyzer build to use
 MUTALYZER_BUILD = 'hg19' 
 # Which Reference genome for VEP to use
-REFERENCE_GENOME = '/media/sf_Documents/genomics_resources/refs/human_g1k_v37.fasta'
+REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
 # Which VEP Cache to use
-VEP_CACHE = '/media/sf_Documents/genomics_resources/vep/'
+VEP_CACHE = '/export/home/webapps/vep_94_cache/'
 # Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
 
