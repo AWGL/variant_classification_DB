@@ -196,7 +196,7 @@
 					<td>Gene inheritence pattern</td>
 					<td>
 					{% if classification.selected_transcript_variant.transcript.gene.inheritance_pattern %}
-						{{ classification.selected_transcript_variant.transcript.gene.inheritance_pattern }}
+						{{ classification.selected_transcript_variant.transcript.gene.all_inheritance_patterns}}
 					{% else %}
 						<span class="badge badge-danger">Empty - edit below</span>
 					{% endif %}

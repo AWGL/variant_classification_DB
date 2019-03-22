@@ -92,6 +92,10 @@ class Gene(models.Model):
 	inheritance_pattern = models.CharField(max_length=15, null=True, blank=True)
 	conditions = models.TextField(null=True, blank=True)
 
+	def all_inheritance_patterns(self):
+		return ', '.join(self.inheritance_pattern)
+
+
 
 class Transcript(models.Model):
 	"""
