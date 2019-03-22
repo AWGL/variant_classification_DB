@@ -23,6 +23,7 @@ class VariantFileUploadForm(forms.Form):
 		super(VariantFileUploadForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.fields['panel_applied'].choices = self.panel_options
+		self.fields['panel_applied'].help_text = 'Click on Panels in the top bar to add new panels'
 		self.helper.form_id = 'file-upload-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -33,7 +34,7 @@ class VariantFileUploadForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('variant_file', placeholder='Select a file to upload', title=False),
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
-			Field('affected_with', placeholder='Enter affected with', title=False),
+			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
 		)
 
 
@@ -64,6 +65,7 @@ class ManualUploadForm(forms.Form):
 		self.helper = FormHelper()
 		self.helper.form_id = 'search-data-form'
 		self.fields['analysis_performed'].choices = self.panel_options
+		self.fields['analysis_performed'].help_text = 'Click on Panels in the top bar to add new panels'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
