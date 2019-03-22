@@ -72,6 +72,12 @@ def home(request):
 			# add sample
 			try:
 				sample_obj = Sample.objects.get(name=worksheet_id + '-' + sample_id)
+
+				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
+				if sample_obj.analysis_performed.panel == analysis_performed_pk:
+					context['error'] = [f'ERROR: {sample_obj.name} has already been uploaded with the {analysis_performed_pk} panel.']
+					return render(request, 'acmg_db/home.html', context)
+
 			except Sample.DoesNotExist:
 				sample_obj = Sample.objects.create(
 						name = worksheet_id + '-' + sample_id,
