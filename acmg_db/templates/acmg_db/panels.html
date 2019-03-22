@@ -1,0 +1,56 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br>
+
+<h5>All panels</h5>
+<br>
+
+<table id="panels" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Panel</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for panel in panels %}
+	<tr>
+		<td>{{panel.panel}}</td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+</table>
+
+<h5>Add new panel</h5>
+<br>
+{% crispy form %}
+
+{% if warn %}
+{% for w in warn %}
+	<div class="alert alert-warning col-lg-2-8">
+		{{ w }}
+	</div>
+{% endfor %}
+{% endif %}
+
+<script>
+$(document).ready(function(){
+
+  // DataTable
+  // Inititialise DataTable
+	var table = $('#panels').DataTable({
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"aaSorting": [],
+	});
+
+});
+</script>
+
+{% endblock %}

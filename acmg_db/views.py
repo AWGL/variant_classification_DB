@@ -1145,4 +1145,25 @@ def view_variant(request, pk):
 
 	return render (request, 'acmg_db/view_variant.html', {'variant': variant, 'classifications': classifications})
 
+@transaction.atomic
+@login_required
+def panels(request):
+	panels = Panel.objects.all().order_by('panel')
+	form = NewPanelForm()
+	context = {'panels': panels, 'form': form}
 
+	if request.method == 'POST':
+
+		form = NewPanelForm(request.POST)
+		print(request.user)
+
+		if form.is_valid():
+			new_panel, created = Panel.objects.get_or_create(
+				panel = form.cleaned_data['panel_name'],
+				added_by = request.user
+			)
+		
+		if not created:
+			context['warn'] = ['Panel already exists']
+
+	return render(request, 'acmg_db/panels.html', context)

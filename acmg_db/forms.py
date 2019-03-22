@@ -375,5 +375,25 @@ class AssignSecondCheckToMeForm(forms.Form):
 		self.helper.add_input(Submit('submit-assign', 'Assign Second Check to Me', css_class='btn-danger'))
 
 
+class NewPanelForm(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient for the first check
+	"""
 
+	panel_name = forms.CharField()
+
+	def __init__(self, *args, **kwargs):
+		super(NewPanelForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.helper.form_id = 'new-panel-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('panels')
+		self.helper.add_input(Submit('submit', 'Add', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('panel_name'),
+		)
 
