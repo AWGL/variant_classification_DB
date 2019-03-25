@@ -3,17 +3,19 @@
 {% block content %}
 
 <br>
+<h4>All unique variants</h4>
+<br>
 
 <table id="classifications" class = "table table-hover table-bordered" style="width:100%">
 
   <thead>
 	<tr>
-	  <th>Variant</th>
+	  <th>Variant <br>(Click to view all)</th>
 	  <th>Gene</th>
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
-	  <th>Last Classification</th>
+	  <th>Last Classification (Click to view)</th>
 	  <th>Last Classification Date</th>
 	  <th>All Classifications</th>
 	  <th>Classification Count</th>
@@ -41,9 +43,9 @@
 		{% elif 'Contradictory' in variant.1.0.display_classification %}
          <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% else %}
-		<a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% endif %}
-		  {{ variant.1.0.display_classification}} 
+			<span class="fa fa-binoculars"></span>  {{ variant.1.0.display_classification}} 
 		</a>
 	</td>
 		<td> {{variant.1.0.second_check_date|date:"Y/m/d"}}</td>

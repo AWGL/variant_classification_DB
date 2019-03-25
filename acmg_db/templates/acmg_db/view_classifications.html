@@ -3,7 +3,7 @@
 {% block content %}
 
 <br>
-<h4>View previous classifications</h4>
+<h4>All classifications</h4>
 <br>
 
 
@@ -101,7 +101,7 @@
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
-	  <th>Classification</th>
+	  <th>Classification<br>(Click to view)</th>
 	  <th>Assigned</th>
 	  <!--<th>Date</th>-->
 	</tr>
@@ -144,9 +144,9 @@
 		{% elif 'Contradictory' in classification.display_classification %}
          <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% else %}
-		<a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
 		{% endif %}
-		  {{ classification.display_classification}} 
+			<span class="fa fa-binoculars"></span>  {{ classification.display_classification}}
 		</a>
 	  </td>
 	  <td>
