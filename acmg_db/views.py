@@ -587,7 +587,12 @@ def new_classification(request, pk):
 						classification.user_first_checker = request.user
 						classification.save()
 
-						return redirect(home)
+						#return redirect(home)
+						return redirect('/view_previous_classifications?sample={}&worksheet={}&panel={}'.format(
+							classification.sample.sample_name_only,
+							classification.sample.worklist.name,
+							classification.sample.analysis_performed.panel
+						))
 
 			return render(request, 'acmg_db/new_classifications.html', context)
 		return render(request, 'acmg_db/new_classifications.html', context)
@@ -1063,7 +1068,12 @@ def second_check(request, pk):
 						classification.user_second_checker = request.user
 						classification.save()
 
-						return redirect(home)
+						#return redirect(home)
+						return redirect('/view_previous_classifications?sample={}&worksheet={}&panel={}'.format(
+							classification.sample.sample_name_only,
+							classification.sample.worklist.name,
+							classification.sample.analysis_performed.panel
+						))
 
 			return render(request, 'acmg_db/second_check_new.html', context)
 		return render(request, 'acmg_db/second_check_new.html', context)
