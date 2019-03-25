@@ -5,7 +5,8 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', views.view_previous_classifications, name='home'),
+    path('auto_input/', views.auto_input, name='auto_input'),
     path('manual_input/', views.manual_input, name='manual_input'),
     path('classification/<int:pk>/', views.new_classification, name='new_classification'),
     path('view_classification/<int:pk>/', views.view_classification, name='view_classification'),

@@ -18,11 +18,10 @@ from django.db import transaction
 
 @transaction.atomic
 @login_required
-def home(request):
+def auto_input(request):
 	"""
-	The view for the home page.
-
 	Allows users to upload a file of variants to classify.
+
 	"""
 
 	# make a list of all panels and pass to the form to populate the dropdown
@@ -76,7 +75,7 @@ def home(request):
 				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
 				if sample_obj.analysis_performed.panel == analysis_performed_pk:
 					context['error'] = [f'ERROR: {sample_obj.name} has already been uploaded with the {analysis_performed_pk} panel.']
-					return render(request, 'acmg_db/home.html', context)
+					return render(request, 'acmg_db/auto_input.html', context)
 
 			except Sample.DoesNotExist:
 				sample_obj = Sample.objects.create(
@@ -201,7 +200,7 @@ def home(request):
 					}
 
 
-	return render(request, 'acmg_db/home.html', context)
+	return render(request, 'acmg_db/auto_input.html', context)
 
 
 #--------------------------------------------------------------------------------------------------
