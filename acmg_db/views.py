@@ -586,7 +586,7 @@ def new_classification(request, pk):
 						classification.user_first_checker = request.user
 						classification.save()
 
-						#return redirect(home)
+						#return redirect('home')
 						return redirect('/view_previous_classifications?sample={}&worksheet={}&panel={}'.format(
 							classification.sample.sample_name_only,
 							classification.sample.worklist.name,
@@ -838,7 +838,7 @@ def view_classification(request, pk):
 					cleaned_data = form.cleaned_data
 					classification.status = '3'
 					classification.save()
-					return redirect(home)
+					return redirect('home')
 
 			else:
 
@@ -869,7 +869,7 @@ def view_classification(request, pk):
 					answers = ClassificationAnswer.objects.filter(classification=classification)
 					answers.delete()
 
-					return redirect(home)
+					return redirect('home')
 
 			else:
 
@@ -890,7 +890,7 @@ def view_classification(request, pk):
 					classification.user_second_checker = request.user
 					classification.save()
 
-					return redirect(home)
+					return redirect('home')
 
 			else:
 
@@ -1067,7 +1067,7 @@ def second_check(request, pk):
 						classification.user_second_checker = request.user
 						classification.save()
 
-						#return redirect(home)
+						#return redirect('home')
 						return redirect('/view_previous_classifications?sample={}&worksheet={}&panel={}'.format(
 							classification.sample.sample_name_only,
 							classification.sample.worklist.name,
