@@ -129,64 +129,16 @@ class SampleInfoForm(forms.Form):
 		)
 
 
-# New classification - first check forms ---------------------------------------------------------------
-class SampleInfoFormSecondCheck(forms.Form):
-	"""
-	A form to collect data specific to a sample/patient for the second check
-	"""
-
-	affected_with = forms.CharField(widget=forms.Textarea)
-	other_changes = forms.CharField(widget=forms.Textarea, required=False)
-	analysis_performed = forms.ChoiceField(required=True)
-
-
-	def __init__(self, *args, **kwargs):
-
-		self.classification_pk = kwargs.pop('classification_pk')
-		self.classification = Classification.objects.get(pk = self.classification_pk)
-		self.sample = self.classification.sample
-		self.options = kwargs.pop('options')
-
-		super(SampleInfoFormSecondCheck, self).__init__(*args, **kwargs)
-
-		self.helper = FormHelper()
-		self.fields['affected_with'].initial = self.sample.affected_with
-		self.fields['affected_with'].widget.attrs['rows'] = 2
-		self.fields['other_changes'].initial = self.sample.other_changes
-		self.fields['other_changes'].widget.attrs['rows'] = 2
-		self.fields['analysis_performed'].choices = self.options
-		self.fields['analysis_performed'].initial = self.sample.analysis_performed.pk
-		self.helper.form_id = 'sample-information-form'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-8'
-		self.helper.form_method = 'post'
-		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
-		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
-		self.helper.form_class = 'form-horizontal'
-		self.helper.layout = Layout(
-			Field('analysis_performed'),
-			Field('affected_with'),
-			Field('other_changes'),
-		)
-
-
 class VariantInfoForm(forms.Form):
 	"""
 	Form for storing variant Information.
 
 	"""
-	inheritance_choices = (
-		('Autosomal dominant', 'Autosomal dominant'), 
-		('Autosomal recessive', 'Autosomal recessive'),
-		('X linked dominant', 'X linked dominant'),
-		('X linked recessive', 'X linked recessive'),
-		('Imprinting centre', 'Imprinting centre'),
-		('Somatic mutation', 'Somatic mutation'),
-	)
+	inheritance_choices = Gene.INHERITANCE_CHOICES
 
-	select_transcript = forms.ChoiceField(required=False)
-	inheritance_pattern = forms.MultipleChoiceField(required=False, choices=inheritance_choices)
-	conditions = forms.CharField(widget=forms.Textarea, required=False)
+	select_transcript = forms.ChoiceField()
+	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
+	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
 
 	def __init__(self, *args, **kwargs):
@@ -284,6 +236,96 @@ class FinaliseClassificationForm(forms.Form):
 			Field('confirm'),
 		)
 
+
+# Second check forms ---------------------------------------------------------------
+class SampleInfoFormSecondCheck(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient for the second check
+	Identical to first check form except from the form action
+	"""
+
+	affected_with = forms.CharField(widget=forms.Textarea)
+	other_changes = forms.CharField(widget=forms.Textarea, required=False)
+	analysis_performed = forms.ChoiceField(required=True)
+
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.sample = self.classification.sample
+		self.options = kwargs.pop('options')
+
+		super(SampleInfoFormSecondCheck, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['affected_with'].initial = self.sample.affected_with
+		self.fields['affected_with'].widget.attrs['rows'] = 2
+		self.fields['other_changes'].initial = self.sample.other_changes
+		self.fields['other_changes'].widget.attrs['rows'] = 2
+		self.fields['analysis_performed'].choices = self.options
+		self.fields['analysis_performed'].initial = self.sample.analysis_performed.pk
+		self.helper.form_id = 'sample-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('analysis_performed'),
+			Field('affected_with'),
+			Field('other_changes'),
+		)
+
+
+class VariantInfoFormSecondCheck(forms.Form):
+	"""
+	Form for storing variant Information.
+
+	"""
+	inheritance_choices = Gene.INHERITANCE_CHOICES
+
+	select_transcript = forms.ChoiceField()
+	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
+	conditions = forms.CharField(widget=forms.Textarea)
+	is_trio_de_novo = forms.BooleanField(required=False)
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.options = kwargs.pop('options')
+
+		super(VariantInfoFormSecondCheck, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['select_transcript'].choices = self.options
+		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
+		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
+		self.fields['inheritance_pattern'].widget.attrs['size'] = 6
+		self.fields['inheritance_pattern'].help_text = 'Hold shift ctrl to select multiple.'
+		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
+		self.fields['conditions'].widget.attrs['rows'] = 2
+		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
+		self.helper.form_id = 'sample-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			HTML('<h5>Edit transcript</h5>'),
+			Field('select_transcript'),
+			HTML('<hr><h5>Edit gene info</h5>'),
+			Field('inheritance_pattern'),
+			Field('conditions'),
+			HTML('<hr><h5>Is the variant de novo?</h5>'),
+			Field('is_trio_de_novo'),
+		)
+
+
 class FinaliseClassificationSecondCheckForm(forms.Form):
 	"""
 	Form for submitting the second check page.
@@ -317,6 +359,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 		)
 
 
+# Archive/ reset/ reassign forms ---------------------------------------------------
 class ArchiveClassificationForm(forms.Form):
 	"""
 	Form to archive a classification.
@@ -350,12 +393,9 @@ class ResetClassificationForm(forms.Form):
 
 
 class AssignSecondCheckToMeForm(forms.Form):
-
 	"""
 	Allow users to assign a second check to themselves in the History tab
-
 	"""
-
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
@@ -368,11 +408,11 @@ class AssignSecondCheckToMeForm(forms.Form):
 		self.helper.add_input(Submit('submit-assign', 'Assign Second Check to Me', css_class='btn-danger'))
 
 
+# panel forms -----------------------------------------------------------
 class NewPanelForm(forms.Form):
 	"""
 	A form to collect data specific to a sample/patient for the first check
 	"""
-
 	panel_name = forms.CharField()
 
 	def __init__(self, *args, **kwargs):

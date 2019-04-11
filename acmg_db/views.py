@@ -954,8 +954,17 @@ def second_check(request, pk):
 
 		panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
 
+		refseq_options = TranscriptVariant.objects.filter(variant=variant)
+		fixed_refseq_options = []
+
+		# Get relevant options for the variant transcripts
+		for transcript_var in refseq_options:
+
+			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
+
 		# make empty instances of forms
 		sample_form = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=panel_options)
+		variant_form = VariantInfoFormSecondCheck(classification_pk=classification.pk, options=fixed_refseq_options)
 		finalise_form = FinaliseClassificationSecondCheckForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
@@ -969,6 +978,7 @@ def second_check(request, pk):
 			'result_first': result_first,
 			'result_second': result_second,
 			'sample_form': sample_form,
+			'variant_form': variant_form,
 			'finalise_form': finalise_form,
 			'warn': []
 		}
@@ -999,6 +1009,32 @@ def second_check(request, pk):
 				# reload dict variables for rendering
 				context['classification'] = classification
 				context['sample_form'] = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=panel_options)
+
+			# VariantInfoForm
+			if 'inheritance_pattern' in request.POST:
+
+				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=fixed_refseq_options)
+
+				if variant_form.is_valid():
+
+					cleaned_data = variant_form.cleaned_data
+
+					# transcript section
+					select_transcript = cleaned_data['select_transcript']
+					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
+					classification.selected_transcript_variant = selected_transcript_variant
+					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+					classification.save()
+
+					# genes section
+					gene = classification.selected_transcript_variant.transcript.gene
+					gene.inheritance_pattern = cleaned_data['inheritance_pattern']
+					gene.conditions = cleaned_data['conditions']
+					gene.save()
+
+				# reload dict variables for rendering
+				context['classification'] = classification
+				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:

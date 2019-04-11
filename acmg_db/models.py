@@ -87,6 +87,14 @@ class Gene(models.Model):
 	Also stores additional data regarding the inheritance pattern for that gene and any conditions associated with a gene.
 
 	"""
+	INHERITANCE_CHOICES = (
+		('Autosomal dominant', 'Autosomal dominant'), 
+		('Autosomal recessive', 'Autosomal recessive'),
+		('X linked dominant', 'X linked dominant'),
+		('X linked recessive', 'X linked recessive'),
+		('Imprinting centre', 'Imprinting centre'),
+		('Somatic mutation', 'Somatic mutation'),
+	)
 
 	name = models.CharField(max_length=25, primary_key=True)
 	inheritance_pattern = models.CharField(max_length=60, null=True, blank=True)
@@ -484,9 +492,15 @@ class Evidence(models.Model):
 
 
 # register audit logs
-auditlog.register(Variant)
+auditlog.register(Worklist)
+auditlog.register(Panel)
 auditlog.register(Sample)
+auditlog.register(Variant)
+auditlog.register(Gene)
+auditlog.register(Transcript)
+auditlog.register(TranscriptVariant)
 auditlog.register(Classification)
 auditlog.register(ClassificationQuestion)
 auditlog.register(ClassificationAnswer)
 auditlog.register(UserComment)
+auditlog.register(Evidence)

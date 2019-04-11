@@ -214,7 +214,7 @@
 					<td>Gene inheritence pattern</td>
 					<td>
 					{% if classification.selected_transcript_variant.transcript.gene.inheritance_pattern %}
-						{{ classification.selected_transcript_variant.transcript.gene.inheritance_pattern }}
+						{{ classification.selected_transcript_variant.transcript.gene.all_inheritance_patterns }}
 					{% else %}
 						<span class="badge badge-danger">Empty - edit below</span>
 					{% endif %}
@@ -242,6 +242,21 @@
 		
 		</table>
 	
+	<!-- Form for extra info -->
+	<!-- Expandable box containing preset filters -->
+	<!-- Button to expand/hide the filter table -->
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-variant-info" role="button" aria-expanded="false" aria-controls="edit-variant-info">
+		Edit
+	</button>
+	<br>
+	<br>
+	<div class="collapse" id="edit-variant-info">
+		<div class="card card-body bg-light col-10">
+			{% crispy variant_form %}
+		</div>
+	</div>
+	<br>
+	<hr>
 
 	<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
 	<div class="alert alert-warning col-10" role="alert">
