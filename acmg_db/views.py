@@ -490,7 +490,7 @@ def new_classification(request, pk):
 							classification.initiate_classification()
 
 						# save final_class as output of calculate_acmg_score_first
-						classification.first_final_class = classification.calculate_acmg_score_first()[1]
+						classification.first_final_class = classification.calculate_acmg_score_first()
 
 					# genuine - use previous classification
 					elif cleaned_data['genuine'] == '2':
@@ -573,7 +573,7 @@ def new_classification(request, pk):
 						# if new classification, pull score from the acmg section and save to final class
 						if classification.genuine == '1':
 
-							classification.first_final_class = classification.calculate_acmg_score_first()[1]
+							classification.first_final_class = classification.calculate_acmg_score_first()
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
@@ -645,11 +645,8 @@ def ajax_acmg_classification_first(request):
 
 			classification_answer_obj.save()
 
-		# Calculate the score
-		result = classification.calculate_acmg_score_first()[0]
-
 		# update the score in the database
-		classification.first_final_class = classification.calculate_acmg_score_first()[1]
+		classification.first_final_class = classification.calculate_acmg_score_first()
 		classification.save()
 
 		html = render_to_string('acmg_db/acmg_results_first.html', {'result': classification.display_first_classification()})

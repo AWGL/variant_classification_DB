@@ -355,6 +355,7 @@ class Classification(models.Model):
 
 		return None
 
+
 	def calculate_acmg_score_first(self):
 		"""
 		Use the acmg_classifer util to generate the ACMG classification.
@@ -363,69 +364,35 @@ class Classification(models.Model):
 
 		Output:
 
-		tuple - text_classification, integer
-
-		Where the integer refers to what to store in the database model.
+		integer classification to store in database, corresponding to FINAL_CLASS_CHOICES above
 
 		"""
 
 		classification_answers = ClassificationAnswer.objects.filter(classification=self)
-
 		all_questions_count = ClassificationQuestion.objects.all().count()
 
 		#Check we have all the answers
 		if len(classification_answers) != all_questions_count:
-
-			return 'NA', '7'
+			return '7'
 
 		results = []
-
 		tags = []
 
 		# Only get the ones where the user has selected True
 		for answer in classification_answers:
 
 			if answer.selected_first == True:
-
 				results.append((answer.classification_question.acmg_code, answer.strength_first))
-
 				tags.append(answer.classification_question.acmg_code)
 
 
 		if acmg_classifier.valid_input(tags) == True:
+			final_class = acmg_classifier.classify_test(results)
 
-			updated_acmg_codes = acmg_classifier.adjust_strength(results)
+			return final_class
 
-			final_class = acmg_classifier.classify(updated_acmg_codes)
-			
-			# convert to code for saving to Classification.final_class
-			if final_class.startswith('Pathogenic'):
+		return '2'
 
-				code = '5'
-
-			elif final_class.startswith('Likely Pathogenic'):
-
-				code = '4'
-
-			elif final_class == 'VUS - contradictory evidence provided':
-
-				code = '3'
-
-			elif final_class == 'VUS - criteria not met':
-
-				code = '2'
-
-			elif final_class.startswith('Likely Benign'):
-
-				code = '1'
-
-			elif final_class.startswith('Benign'):
-
-				code = '0'
-
-			return final_class, code
-
-		return 'VUS - criteria not met', '2'
 
 	def calculate_acmg_score_second(self):
 		"""
@@ -558,13 +525,13 @@ class ClassificationQuestion(models.Model):
 
 			return ['PV','PS', 'PM', 'PP']
 
-		elif self.pathogenic_question == False and self.acmg_code != 'BA1':
+		elif self.pathogenic_question == False and (self.acmg_code == 'BA1' or self.acmg_code == 'BS1'):
 
-			return ['BS', 'BP']
+			return ['BA', 'BS', 'BP']
 
 		else:
 
-			return ['BA', 'BS', 'BP']
+			return ['BS', 'BP']
 
 
 class ClassificationAnswer(models.Model):

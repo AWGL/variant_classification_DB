@@ -39,7 +39,7 @@ def valid_input(input):
 
 	"""
 
-	possible_classifications = ['PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
+	possible_classifications = ['PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PS4_M', 'PS4_S', 'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
 
 								'BA1', 'BS1', 'BS2', 'BS3', 'BS4', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
 
@@ -276,7 +276,93 @@ def adjust_strength(user_classifications):
 	return updated_classifications
 
 
+def classify_test(user_classification):
+	classification_dict = {
+		'PV': 0,
+		'PS': 0,
+		'PM': 0,
+		'PP': 0,
+		'BA': 0,
+		'BS': 0,
+		'BP': 0
+	}
 
+	for code in user_classification:
+		strength = code[1]
+		classification_dict[strength] += 1
+	
+	print(classification_dict)
+
+	PVS1_count = classification_dict['PV']
+	PS_count = classification_dict['PS']
+	PM_count = classification_dict['PM']
+	PP_count = classification_dict['PP']
+	pathogenic_count = PVS1_count + PS_count + PM_count + PP_count
+
+	BA_count = classification_dict['BA']
+	BS_count = classification_dict['BS']
+	BP_count = classification_dict['BP']
+	benign_count = BA_count + BS_count + BP_count
+
+	if pathogenic_count > 0 and benign_count > 0:
+		return '3'
+	
+	elif BA_count >= 1:
+		return '0'
+
+	elif BS_count >= 2:
+		return '0'
+
+	elif BS_count == 1 and BP_count == 1:
+		return '1'
+
+	elif BP_count >= 2:
+		return '1'
+
+	if PVS1_count == 1 and PS_count >= 1:
+		return '5'
+
+	elif PVS1_count == 1 and PM_count >= 2:
+		return '5'
+
+	elif PVS1_count == 1 and (PM_count == 1 and PP_count == 1):
+		return '5'
+
+	elif PVS1_count == 1 and PP_count >= 2:
+		return '5'
+
+	elif PS_count >= 2:
+		return '5'
+
+	elif PS_count == 1 and PM_count >= 3:
+		return '5'
+
+	elif PS_count == 1 and (PM_count == 2 and PP_count >= 2):
+		return '5'
+
+	elif PS_count == 1 and (PM_count == 1 and PP_count >= 4):
+		return '5'
+
+	elif PVS1_count == 1 and PM_count == 1:
+		return '4'
+
+	elif PS_count == 1 and (PM_count == 1 or PM_count == 2):
+		return '4'
+
+	elif PS_count == 1 and PP_count >= 2:
+		return '4'
+
+	elif PM_count >= 3:
+		return '4'
+
+	elif PM_count == 2 and PP_count >= 2:
+		return '4'
+
+	elif PM_count == 1 and PP_count >= 4:
+		return '4'
+
+	else:
+		return '2'
 
 
 def classify(user_classifications):
