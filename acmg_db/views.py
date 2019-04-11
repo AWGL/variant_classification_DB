@@ -1192,7 +1192,6 @@ def panels(request):
 	if request.method == 'POST':
 
 		form = NewPanelForm(request.POST)
-		print(request.user)
 
 		if form.is_valid():
 			new_panel, created = Panel.objects.get_or_create(
