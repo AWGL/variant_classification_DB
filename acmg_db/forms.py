@@ -228,15 +228,8 @@ class GenuineArtefactForm(forms.Form):
 	"""
 	Form to select whether a variant is genuine or an artefact, and whether to start a new classification or use a previous one.
 	"""
-	GENUINE_ARTEFACT_CHOICES = (
-		('0', 'Pending'), 
-		('1', 'Genuine - New Classification'), 
-		('2', 'Genuine - Use Previous Classification'),
-		('3', 'Genuine - Not Analysed'),
-		('4', 'Artefact')
-	)
-
-	genuine = forms.ChoiceField(choices=GENUINE_ARTEFACT_CHOICES)
+	genuine_artefact_choices = Classification.GENUINE_ARTEFACT_CHOICES
+	genuine = forms.ChoiceField(choices=genuine_artefact_choices)
 
 	def __init__(self, *args, **kwargs):
 
@@ -263,11 +256,8 @@ class FinaliseClassificationForm(forms.Form):
 	"""
 	Form for submitting the first check page.
 	"""
-	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
-	('3', 'Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)'))
-
-	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
+	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('8', 'Use classification (don\'t override)'),)
+	final_classification = forms.ChoiceField(choices=final_class_choices)
 	confirm = forms.BooleanField(required=True)
 
 	def __init__(self, *args, **kwargs):
@@ -298,11 +288,8 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 	"""
 	Form for submitting the second check page.
 	"""
-	FINAL_CLASS_CHOICES =(('0', 'Benign'), ('1', 'Likely Benign'), ('2', 'VUS - Criteria Not Met'),
-	('3', 'Contradictory Evidence Provided'), ('4', 'Likely Pathogenic'), ('5', 'Pathogenic'),
-	('6', 'Artefact'), ('7', 'NA'), ('8', 'Use classification (don\'t override)')) 
-
-	final_classification = forms.ChoiceField(choices=FINAL_CLASS_CHOICES)
+	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('8', 'Use classification (don\'t override)'),)
+	final_classification = forms.ChoiceField(choices=final_class_choices)
 	confirm = forms.BooleanField(required=True)
 
 	def __init__(self, *args, **kwargs):
@@ -333,9 +320,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 class ArchiveClassificationForm(forms.Form):
 	"""
 	Form to archive a classification.
-
 	"""
-
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
@@ -351,10 +336,7 @@ class ArchiveClassificationForm(forms.Form):
 class ResetClassificationForm(forms.Form):
 	"""
 	Form to reset a classification
-
 	"""
-
-
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')

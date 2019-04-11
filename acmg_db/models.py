@@ -4,6 +4,7 @@ from auditlog.registry import auditlog
 from auditlog.models import LogEntry
 from auditlog.models import AuditlogHistoryField
 
+
 class Worklist(models.Model):
 	"""
 	Model to store which worklist the sample was on.
@@ -11,6 +12,7 @@ class Worklist(models.Model):
 
 	"""
 	name = models.CharField(max_length=50, primary_key=True)
+
 
 class Panel(models.Model):
 	"""
@@ -78,8 +80,6 @@ class Variant(models.Model):
 		return None, None, 0
 
 
-
-
 class Gene(models.Model):
 	"""
 	Model to hold information specific to a gene.
@@ -105,7 +105,6 @@ class Gene(models.Model):
 
 		inheritance_string = ', '.join(inheritance_list)
 		return inheritance_string
-
 
 
 class Transcript(models.Model):
@@ -141,19 +140,14 @@ class TranscriptVariant(models.Model):
 		Function to display the HGVSc
 
 		"""
-
 		if self.hgvs_c == None:
-
 			return None
 
 		else:
-
 			try:
-
 				return self.hgvs_c.split(':')[1]
 
 			except:
-
 				return self.hgvs_c 
 
 	def display_hgvsp(self):
@@ -161,19 +155,14 @@ class TranscriptVariant(models.Model):
 		Function to display the HGVSp
 
 		"""
-
 		if self.hgvs_p == None:
-
 			return None
 
 		else:
-
 			try:
-
 				return self.hgvs_p.split(':')[1]
 
 			except:
-
 				return self.hgvs_p
 
 
@@ -193,7 +182,7 @@ class Classification(models.Model):
 	# Some choices for the CharFields
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
-	STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'Archived'))
+	STATUS_CHOICES = (('0', 'First Check'), ('1', 'Second Check'), ('2', 'Complete'), ('3', 'Archived'))
 	GENUINE_ARTEFACT_CHOICES = (
 		('0', 'Pending'), 
 		('1', 'Genuine - New Classification'), 
@@ -209,7 +198,7 @@ class Classification(models.Model):
 		('4', 'Likely Pathogenic'), 
 		('5', 'Pathogenic'),
 		('6', 'Artefact'), 
-		('7', 'NA')
+		('7', 'Not analysed')
 	)
 
 	history = AuditlogHistoryField()
@@ -232,28 +221,15 @@ class Classification(models.Model):
 	def display_status(self):
 		"""
 		Take the status in the database e.g. 0 and return the string \
-		which corresponds to that e.g Awaiting Analysis
+		which corresponds to that e.g First check
 		"""
-
-		STATUS_CHOICES = (('0', 'Awaiting Analysis'), ('1', 'Awaiting Second Check'), ('2', 'Complete'), ('3', 'Archived'))
-
-		return STATUS_CHOICES[int(self.status)][1]
+		return self.STATUS_CHOICES[int(self.status)][1]
 
 	def display_genuine(self):
 		"""
 		Display the genuine status attribute.
-
 		"""
-
-		GENUINE_ARTEFACT_CHOICES = (
-		('0', 'Pending'), 
-		('1', 'Genuine - New Classification'), 
-		('2', 'Genuine - Use Previous Classification'),
-		('3', 'Genuine - Not Analysed'),
-		('4', 'Artefact')
-		)
-
-		return GENUINE_ARTEFACT_CHOICES[int(self.genuine)][1]
+		return self.GENUINE_ARTEFACT_CHOICES[int(self.genuine)][1]
 
 	def display_first_classification(self):
 		"""
@@ -261,21 +237,8 @@ class Classification(models.Model):
 		which corresponds to that e.g Pathogenic
 
 		This displays the result of the first check analysis.
-
 		"""
-
-		FINAL_CLASS_CHOICES = (
-		('0', 'Benign'), 
-		('1', 'Likely Benign'), 
-		('2', 'VUS - Criteria Not Met'),
-		('3', 'Contradictory Evidence Provided'), 
-		('4', 'Likely Pathogenic'), 
-		('5', 'Pathogenic'),
-		('6', 'Artefact'), 
-		('7', 'NA')
-		)
-
-		return FINAL_CLASS_CHOICES[int(self.first_final_class)][1]		
+		return self.FINAL_CLASS_CHOICES[int(self.first_final_class)][1]		
 
 	def display_final_classification(self):
 
@@ -284,56 +247,31 @@ class Classification(models.Model):
 		which corresponds to that e.g Pathogenic.
 
 		This displays the result of the second check analysis.
-
 		"""
-
-		FINAL_CLASS_CHOICES = (
-		('0', 'Benign'), 
-		('1', 'Likely Benign'), 
-		('2', 'VUS - Criteria Not Met'),
-		('3', 'Contradictory Evidence Provided'), 
-		('4', 'Likely Pathogenic'), 
-		('5', 'Pathogenic'),
-		('6', 'Artefact'), 
-		('7', 'NA')
-		)
-
 		if  self.second_final_class == 'False':
-
 			return 'False'
-
 		else:
-
-			return FINAL_CLASS_CHOICES[int(self.second_final_class)][1]	
+			return self.FINAL_CLASS_CHOICES[int(self.second_final_class)][1]	
 
 	def display_classification(self):
 		"""
 		For instances where we only want to display the final class if the \
 		classification has been completed i.e. second check has been done.
-
 		"""
-
 		if self.status == '2' or self.status == '3':
-
 			return self.display_final_classification()
-
 		else:
-
 			return 'Pending'
 
 	def initiate_classification(self):
 		"""
 		Creates the needed ClassificationAnswer objects for a new classification.
-
 		"""
-
 		answers = ClassificationAnswer.objects.filter(classification=self)
 
 		#Check we're not running the function twice
 		if len(answers) == 0:
-
 			questions = ClassificationQuestion.objects.all()
-
 			questions = questions.order_by('order')
 
 			for question in questions:
@@ -346,15 +284,12 @@ class Classification(models.Model):
 					strength_first = question.default_strength,
 					strength_second = question.default_strength,
 					)
-
 				new_answer.save()
 
 		else:
-
 			return HttpResponseForbidden()
 
 		return None
-
 
 	def calculate_acmg_score_first(self):
 		"""
@@ -391,7 +326,6 @@ class Classification(models.Model):
 
 		return '2'
 
-
 	def calculate_acmg_score_second(self):
 		"""
 		Use the acmg_classifer util to generate the ACMG classification.
@@ -423,7 +357,6 @@ class Classification(models.Model):
 			return final_class
 
 		return '2'
-
 
 
 class ClassificationQuestion(models.Model):
