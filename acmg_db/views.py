@@ -625,9 +625,7 @@ def ajax_acmg_classification_first(request):
 			raise PermissionDenied('You do not have permission to start this classification.')
 
 		correct_number_of_questions = ClassificationQuestion.objects.all().count()
-
 		if len(classification_answers) != correct_number_of_questions:
-
 			raise Exception('Wrong number of questions')
 
 		# Update the classification answers
@@ -705,11 +703,11 @@ def ajax_acmg_classification_second(request):
 
 		acmg_result_first = classification.display_first_classification()
 
-		acmg_result_second = classification.calculate_acmg_score_second()[0].split('(')[0]
+		# update the score in the database
+		classification.second_final_class = classification.calculate_acmg_score_second()
+		classification.save()
 
-		if acmg_result_second == 'VUS - contradictory evidence provided':
-
-			acmg_result_second = 'Contradictory evidence provided'
+		acmg_result_second = classification.display_final_classification()
 
 		html = render_to_string('acmg_db/acmg_results_second.html', {'result_first': acmg_result_first, 'result_second': acmg_result_second})
 
@@ -902,8 +900,6 @@ def view_classification(request, pk):
 
 		comments = UserComment.objects.filter(classification=classification, visible=True)
 
-		acmg_result = classification.calculate_acmg_score_second()
-
 		archive_form = ArchiveClassificationForm(classification_pk = classification.pk)
 		reset_form = ResetClassificationForm(classification_pk = classification.pk)
 		assign_form = AssignSecondCheckToMeForm(classification_pk = classification.pk)
@@ -911,7 +907,6 @@ def view_classification(request, pk):
 		return render(request, 'acmg_db/view_classification.html', {'classification': classification,
 									 'classification_answers': classification_answers,
 									 'comments': comments,
-									 'acmg_result': acmg_result,
 									 'archive_form': archive_form,
 									 'reset_form': reset_form,
 									 'assign_form': assign_form})
@@ -949,7 +944,7 @@ def second_check(request, pk):
 		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		result_first = classification.display_first_classification()
-		result_second = classification.calculate_acmg_score_second()[0].split('(')[0]  # current class to display
+		result_second = classification.display_final_classification()
 
 		if result_second == 'VUS - contradictory evidence provided':
 
@@ -1051,7 +1046,7 @@ def second_check(request, pk):
 						# if new classification, pull score from the acmg section and save to final class
 						if classification.genuine == '1':
 
-							classification.second_final_class = classification.calculate_acmg_score_second()[1]
+							classification.second_final_class = classification.calculate_acmg_score_second()
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':

@@ -359,15 +359,12 @@ class Classification(models.Model):
 	def calculate_acmg_score_first(self):
 		"""
 		Use the acmg_classifer util to generate the ACMG classification.
-
 		Calculates based on the first user's input.
-
 		Output:
-
-		integer classification to store in database, corresponding to FINAL_CLASS_CHOICES above
-
+		integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
 		"""
-
+		# pull out all classification questions and answers
 		classification_answers = ClassificationAnswer.objects.filter(classification=self)
 		all_questions_count = ClassificationQuestion.objects.all().count()
 
@@ -382,6 +379,7 @@ class Classification(models.Model):
 		for answer in classification_answers:
 
 			if answer.selected_first == True:
+
 				results.append((answer.classification_question.acmg_code, answer.strength_first))
 				tags.append(answer.classification_question.acmg_code)
 
@@ -397,28 +395,19 @@ class Classification(models.Model):
 	def calculate_acmg_score_second(self):
 		"""
 		Use the acmg_classifer util to generate the ACMG classification.
-
 		Calculates based on the second user's input.
-
-		Output:
-
-		tuple - text_classification, integer
-
-		Where the integer refers to what to store in the database model.
-
-
+		Output: integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
 		"""
-
+		# pull out all classification questions and answers
 		classification_answers = ClassificationAnswer.objects.filter(classification=self)
-
 		all_questions_count = ClassificationQuestion.objects.all().count()
 
 		#Check we have all the answers
 		if len(classification_answers) != all_questions_count:
+			return '7'
 
-			return 'NA', '7'
 		results = []
-
 		tags = []
 
 		# Only get the ones where the user has selected True
@@ -427,44 +416,13 @@ class Classification(models.Model):
 			if answer.selected_second == True:
 
 				results.append((answer.classification_question.acmg_code, answer.strength_second))
-
 				tags.append(answer.classification_question.acmg_code)
 
-
 		if acmg_classifier.valid_input(tags) == True:
+			final_class = acmg_classifier.classify_test(results)
+			return final_class
 
-			updated_acmg_codes = acmg_classifier.adjust_strength(results)
-
-			final_class = acmg_classifier.classify(updated_acmg_codes)
-
-			# convert to code for saving to Classification.final_class
-			if final_class.startswith('Pathogenic'):
-
-				code = '5'
-
-			elif final_class.startswith('Likely Pathogenic'):
-
-				code = '4'
-
-			elif final_class == 'VUS - contradictory evidence provided':
-
-				code = '3'
-
-			elif final_class == 'VUS - criteria not met':
-
-				code = '2'
-
-			elif final_class.startswith('Likely Benign'):
-
-				code = '1'
-
-			elif final_class.startswith('Benign'):
-
-				code = '0'
-
-			return final_class, code
-
-		return 'VUS - criteria not met', '2'
+		return '2'
 
 
 
