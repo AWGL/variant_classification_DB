@@ -25,7 +25,7 @@ def auto_input(request):
 	"""
 
 	# make a list of all panels and pass to the form to populate the dropdown
-	panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
+	panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	# Inititate the upload form
 	form = VariantFileUploadForm(options=panel_options)
@@ -46,7 +46,7 @@ def auto_input(request):
 		if form.is_valid():
 
 			# get panel
-			analysis_performed_pk = form.cleaned_data['panel_applied']
+			analysis_performed_pk = form.cleaned_data['panel_applied'].lower()
 			panel_obj = get_object_or_404(Panel, panel = analysis_performed_pk)
 
 			# get affected with
@@ -215,7 +215,7 @@ def manual_input(request):
 
 
 	# make a list of all panels and pass to the form to populate the dropdown
-	panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
+	panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	form = ManualUploadForm(options =panel_options )
 	context = {
@@ -242,7 +242,7 @@ def manual_input(request):
 
 			sample_name_query = cleaned_data['sample_name'].strip()
 			affected_with_query = cleaned_data['affected_with'].strip()
-			analysis_performed_query = cleaned_data['analysis_performed'].strip()
+			analysis_performed_query = cleaned_data['analysis_performed'].strip().lower()
 			other_changes_query = cleaned_data['other_changes'].strip()
 			worklist_query = cleaned_data['worklist'].strip()
 			consequence_query = cleaned_data['consequence'].strip()
@@ -395,7 +395,7 @@ def new_classification(request, pk):
 			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
 
 		# make a list of all panels and pass to the form to populate the dropdown
-		panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
+		panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 		# make empty instances of forms
 		sample_form = SampleInfoForm(classification_pk=classification.pk, options=panel_options)
@@ -434,7 +434,7 @@ def new_classification(request, pk):
 					cleaned_data = sample_form.cleaned_data
 
 
-					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'])
+					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'].lower())
 
 					sample = classification.sample
 					sample.analysis_performed = panel
@@ -952,7 +952,7 @@ def second_check(request, pk):
 
 		transcript = classification.selected_transcript_variant.transcript
 
-		panel_options = [(str(panel.pk), panel.panel) for panel in Panel.objects.all()]
+		panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 		refseq_options = TranscriptVariant.objects.filter(variant=variant)
 		fixed_refseq_options = []
@@ -997,7 +997,7 @@ def second_check(request, pk):
 
 					cleaned_data = sample_form.cleaned_data
 
-					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'])
+					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'].lower())
 
 					sample = classification.sample
 					sample.analysis_performed = panel
@@ -1182,24 +1182,35 @@ def view_variant(request, pk):
 
 	return render (request, 'acmg_db/view_variant.html', {'variant': variant, 'classifications': classifications})
 
+
 @transaction.atomic
 @login_required
 def panels(request):
+	"""
+	Page to view panels and add new panels. All panels are stored in lowercase
+	"""
+	# get list of all panels
 	panels = Panel.objects.all().order_by('panel')
+
+	# make empty form
 	form = NewPanelForm()
 	context = {'panels': panels, 'form': form}
 
+	# if form submitted
 	if request.method == 'POST':
-
 		form = NewPanelForm(request.POST)
 
 		if form.is_valid():
-			new_panel, created = Panel.objects.get_or_create(
-				panel = form.cleaned_data['panel_name'],
-				added_by = request.user
-			)
-		
-		if not created:
-			context['warn'] = ['Panel already exists']
+			# throw error if panel already exists
+			try:
+				new_panel = Panel.objects.get(panel = form.cleaned_data['panel_name'].lower())
+				context['warn'] = ['Panel already exists']
+
+			# add the panel if it doesnt
+			except Panel.DoesNotExist:
+				new_panel = Panel.objects.create(
+					panel = form.cleaned_data['panel_name'].lower(),
+					added_by = request.user
+				)
 
 	return render(request, 'acmg_db/panels.html', context)

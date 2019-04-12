@@ -125,7 +125,7 @@
 		{% endif %}
 	  </td>
 		<td>{{ classification.sample.worklist.name }}</td>
-		<td>{{ classification.sample.analysis_performed.panel }}</td>
+		<td>{{ classification.sample.analysis_performed }}</td>
 	  <td>{{ classification.sample.sample_name_only }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
 	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}</td>
@@ -218,10 +218,12 @@ $(document).ready(function(){
 		
 		// if param is in the list above, replace the value in the dict/variable, otherwise ignore it
 		var param = query[i].split("=");
+		// if param is for main search
 		if (param[0] === 'search')
-			main_search_params = decodeURIComponent(param[1] || "");
+			main_search_params = decodeURIComponent(param[1] || "").replace("+", " ");
+		// if param is for column searches
 		if (param[0] in col_search_params)
-			col_search_params[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+			col_search_params[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "").replace("+", " ");
 	}
 	
 	// make list from the column dict for column search

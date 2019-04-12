@@ -24,6 +24,9 @@ class Panel(models.Model):
 	panel = models.CharField(max_length=100, primary_key=True)
 	added_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 
+	def __str__(self):
+		return self.panel.capitalize()
+
 
 class Sample(models.Model):
 	"""

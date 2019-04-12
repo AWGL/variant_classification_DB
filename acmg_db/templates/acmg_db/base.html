@@ -52,7 +52,9 @@
       </ul>
 
       <span class="navbar-text">
+        {% if request.user.is_authenticated %}
         {{request.user}}
+        {% endif %}
       </span>
       
       <ul class="navbar-nav">
@@ -60,7 +62,9 @@
            <a class="nav-link" href="{% url 'about' %}">About<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
+          {% if request.user.is_authenticated %}
           <a class="nav-link" href="/logout">Logout<span class="sr-only">(current)</span></a>
+          {% endif %}
         </li>
       </ul>
 
