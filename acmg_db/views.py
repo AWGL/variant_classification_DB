@@ -231,7 +231,7 @@ def manual_input(request):
 		if form.is_valid():
 
 			cleaned_data = form.cleaned_data
-			
+
 			# Get the user input from the form.
 			search_query = cleaned_data['variant'].strip()
 			gene_query = cleaned_data['gene'].strip()

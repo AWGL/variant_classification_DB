@@ -86,7 +86,7 @@ def get_variant_info_mutalzer(variant, mutalyzer_url, mutalyzer_build):
 
 	except:
 
-		return [False, ['process_variant_input() Error']]
+		return [False, ['process_variant_input() Error: Check that your variant is formatted correctly.']]
 
 	chromosome = variant_info[1]
 
