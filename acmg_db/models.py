@@ -329,7 +329,11 @@ class Classification(models.Model):
 				results.append((answer.classification_question.acmg_code, answer.strength_first))
 				tags.append(answer.classification_question.acmg_code)
 
+		# If nothing applied, return VUS
+		if len(results) == 0:
+			return '2'
 
+		# otherwise, if valid, classify
 		if acmg_classifier.valid_input(tags) == True:
 			final_class = acmg_classifier.classify(results)
 
@@ -363,6 +367,11 @@ class Classification(models.Model):
 				results.append((answer.classification_question.acmg_code, answer.strength_second))
 				tags.append(answer.classification_question.acmg_code)
 
+		# If nothing applied, return VUS
+		if len(results) == 0:
+			return '2'
+
+		# otherwise, if valid, classify
 		if acmg_classifier.valid_input(tags) == True:
 			final_class = acmg_classifier.classify(results)
 			return final_class
