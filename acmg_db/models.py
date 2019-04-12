@@ -331,11 +331,11 @@ class Classification(models.Model):
 
 
 		if acmg_classifier.valid_input(tags) == True:
-			final_class = acmg_classifier.classify_test(results)
+			final_class = acmg_classifier.classify(results)
 
 			return final_class
 
-		return '2'
+		return '7'
 
 	def calculate_acmg_score_second(self):
 		"""
@@ -364,10 +364,10 @@ class Classification(models.Model):
 				tags.append(answer.classification_question.acmg_code)
 
 		if acmg_classifier.valid_input(tags) == True:
-			final_class = acmg_classifier.classify_test(results)
+			final_class = acmg_classifier.classify(results)
 			return final_class
 
-		return '2'
+		return '7'
 
 
 class ClassificationQuestion(models.Model):

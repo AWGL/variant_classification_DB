@@ -25,9 +25,13 @@ def valid_input(input):
 	The user input should not be a empty list
 
 	"""
-	possible_classifications = ['PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PS4_M', 'PS4_S', 'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
-
-								'BA1', 'BS1', 'BS2', 'BS3', 'BS4', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
+	possible_classifications = [
+		'PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PS4_M', 'PS4_P', 
+		'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 
+		'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
+		'BA1', 'BS1', 'BS2', 'BS3', 'BS4', 
+		'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7'
+	]
 
 	#Have we got a list?
 	if type(input) is not list:
@@ -46,11 +50,22 @@ def valid_input(input):
 	if len(input) != len(set(input)):
 		return False
 
+	#Have PS4, PS4_M, PS4_P been applied together?
+	n = 0
+	if 'PS4' in input:
+		n += 1
+	if 'PS4_M' in input:
+		n += 1
+	if 'PS4_P' in input:
+		n += 1
+	if n > 1:
+		return False
+
 	#Input is a valid list and no invalid classifactions and no duplicates so return True
 	return True
 
 
-def classify_test(user_classification):
+def classify(user_classification):
 	'''
 	Takes a list of ACMG codes and calculates a classification.
 
@@ -161,7 +176,7 @@ def classify_test(user_classification):
 def main():
 	#for debugging
 	user_classifications = ['PVS1', 'BS1', 'PS4', 'PS2']
-	print(classify_test(user_classifications))
+	print(classify(user_classifications))
 
 
 if __name__ == "__main__":

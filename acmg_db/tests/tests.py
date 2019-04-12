@@ -126,7 +126,7 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=26)
-		self.assertEqual(classification_obj.calculate_acmg_score_first()[1], '2')
+		self.assertEqual(classification_obj.calculate_acmg_score_first(), '7')
 
 		response = self.client.get('/classification/26/')
 		self.assertEqual(response.status_code,200)
@@ -136,7 +136,7 @@ class TestSubmitACMGData(TestCase):
 		response = self.client.post('/ajax/acmg_classification_first/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 
 		self.assertEqual(response.status_code,200)
-		self.assertEqual(classification_obj.calculate_acmg_score_first()[1], '4')
+		self.assertEqual(classification_obj.calculate_acmg_score_first(), '4')
 
 
 	def test_faithful_transmisson_first_check(self):
@@ -145,7 +145,7 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=26)
-		self.assertEqual(classification_obj.calculate_acmg_score_first()[1], '2')
+		self.assertEqual(classification_obj.calculate_acmg_score_first(), '7')
 
 		response = self.client.get('/classification/26/')
 		self.assertEqual(response.status_code,200)
@@ -180,7 +180,7 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=24)
-		self.assertEqual(classification_obj.calculate_acmg_score_second()[1], '2')
+		self.assertEqual(classification_obj.calculate_acmg_score_second(), '7')
 
 		response = self.client.get('/second_check/24/')
 		self.assertEqual(response.status_code,200)
@@ -190,7 +190,7 @@ class TestSubmitACMGData(TestCase):
 		response = self.client.post('/ajax/acmg_classification_second/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 
 		self.assertEqual(response.status_code,200)
-		self.assertEqual(classification_obj.calculate_acmg_score_second()[1], '4')
+		self.assertEqual(classification_obj.calculate_acmg_score_second(), '4')
 
 
 	def test_faithful_transmisson_second_check(self):
@@ -199,7 +199,7 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=24)
-		self.assertEqual(classification_obj.calculate_acmg_score_second()[1], '2')
+		self.assertEqual(classification_obj.calculate_acmg_score_second(), '7')
 
 		response = self.client.get('/second_check/24/')
 		self.assertEqual(response.status_code,200)
