@@ -70,16 +70,15 @@ def auto_input(request):
 
 			# add sample
 			try:
-				sample_obj = Sample.objects.get(name=worksheet_id + '-' + sample_id)
+				sample_obj = Sample.objects.get(name=worksheet_id + '-' + sample_id + '-' + analysis_performed_pk)
 
 				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
-				if sample_obj.analysis_performed.panel == analysis_performed_pk:
-					context['error'] = [f'ERROR: {sample_obj.name} has already been uploaded with the {analysis_performed_pk} panel.']
-					return render(request, 'acmg_db/auto_input.html', context)
+				context['error'] = [f'ERROR: {sample_obj.name} has already been uploaded with the {analysis_performed_pk} panel.']
+				return render(request, 'acmg_db/auto_input.html', context)
 
 			except Sample.DoesNotExist:
 				sample_obj = Sample.objects.create(
-						name = worksheet_id + '-' + sample_id,
+						name = worksheet_id + '-' + sample_id + analysis_performed_pk,
 						sample_name_only = sample_id,
 						worklist = worksheet_obj,
 						affected_with = affected_with,
@@ -276,12 +275,12 @@ def manual_input(request):
 				# Get or create working strangely on samples so create it the old fashioned way.
 				try:
 
-					sample_obj = Sample.objects.get(name=worklist_query + '-' + sample_name_query)
+					sample_obj = Sample.objects.get(name=worklist_query + '-' + sample_name_query + '-' + analysis_performed_query)
 
 				except Sample.DoesNotExist:
 
 					sample_obj = Sample.objects.create(
-						name = worklist_query + '-' + sample_name_query,
+						name = worklist_query + '-' + sample_name_query + '-' + analysis_performed_query,
 						sample_name_only = sample_name_query,
 						worklist = worklist,
 						affected_with = affected_with_query,
@@ -808,6 +807,79 @@ def view_previous_classifications(request):
 	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 
 
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def reporting(request):
+	"""
+	Page to view completed worksheets for reporting
+
+	"""
+	panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
+
+	context = {
+		'classifications': None, 
+		'form': ReportingSearchForm(options=panel_options),
+		'worksheet_status': None,
+		'first_checker': None,
+		'second_checker': None,
+	}
+
+	# if form is submitted
+	if request.method == 'POST':
+		form = ReportingSearchForm(request.POST, options=panel_options)
+		if form.is_valid():
+			cleaned_data = form.cleaned_data
+
+			# pull out classifications
+			sample_obj = Sample.objects.get(
+				name = cleaned_data['worksheet'] + '-' + cleaned_data['sample'] + '-' + cleaned_data['panel_name'].lower()
+			)
+			classifications = Classification.objects.filter(
+				sample=sample_obj,
+			)
+
+			# work out if the worksheet has been completed
+			worksheet_status = 'Completed'
+			status_values = classifications.values('status')
+			for s in status_values:
+				if s['status'] in ['0', '1']:
+					worksheet_status = 'Pending'
+
+			# pull out any first checkers
+			first_checker_values = classifications.values('user_first_checker').distinct()
+			first_checker_list = []
+			for value in first_checker_values:
+				if value['user_first_checker']:
+					user = User.objects.get(id=value['user_first_checker'])
+					first_checker_list.append(user.username)
+				else:
+					first_checker_list.append('Unassigned')
+			first_checker = ', '.join(first_checker_list)
+
+			# pull out any second checkers
+			second_checker_values = classifications.values('user_second_checker').distinct()
+			second_checker_list = []
+			for value in second_checker_values:
+				if value['user_second_checker']:
+					user = User.objects.get(id=value['user_second_checker'])
+					second_checker_list.append(user.username)
+				else:
+					second_checker_list.append('Unassigned')
+			second_checker = ', '.join(second_checker_list)
+
+			context = {
+				'classifications': classifications,
+				'form': form,
+				'worksheet_status': worksheet_status,
+				'first_checker': first_checker,
+				'second_checker': second_checker,
+			}
+
+	return render(request, 'acmg_db/reporting.html', context)
+
+
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def view_classification(request, pk):
