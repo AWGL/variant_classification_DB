@@ -433,3 +433,32 @@ class NewPanelForm(forms.Form):
 			Field('panel_name'),
 		)
 
+
+# reporting forms -----------------------------------------------------------
+class ReportingSearchForm(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient for the first check
+	"""
+	sample = forms.CharField()
+	worksheet = forms.CharField()
+	panel_name = forms.ChoiceField()
+
+	def __init__(self, *args, **kwargs):
+
+		self.panel_options = kwargs.pop('options')
+
+		super(ReportingSearchForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'reporting-search-form'
+		self.fields['panel_name'].choices = self.panel_options
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('reporting')
+		self.helper.add_input(Submit('submit', 'Search', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('sample'),
+			Field('worksheet'),
+			Field('panel_name'),
+		)
