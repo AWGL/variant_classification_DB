@@ -54,6 +54,7 @@
   <thead>
 	<tr>
 		<th></th>
+		<th style="display:none;"></th>
 	  <th>Status</th>
 		<th>Worksheet</th>
 		<th>Panel</th>
@@ -71,6 +72,7 @@
 	{% for classification in classifications %}
 	<tr>
 		<td></td>
+		<td style="display:none;">{{ classification.pk }}</td>
 	  <td>
 		{% if classification.status == '0' %}
 			First Check
@@ -169,13 +171,15 @@ $(document).ready(function(){
 		$(".submit-selected").click(function(){
 				// pull out entire dataset for each selected row
 				var selected_rows = table.rows( { selected: true } ).data();
-				// add the data section for each row into a new array
-				var processed_array = [];
-				for (var i = 0; i < selected_rows['length']; i++) {
-						processed_array.push(selected_rows[i]);
-				};
-				//TODO - Format for export to pdf/LIMS XML
-				console.log(JSON.stringify(processed_array))
+				if (selected_rows['length'] > 0) {
+					// add the primary key for each selected variant into a new array
+					var processed_array = [];
+					for (var i = 0; i < selected_rows['length']; i++) {
+							processed_array.push(selected_rows[i][1]);
+					};
+					//TODO - pass list of primary keys to python function to make XML
+					console.log(JSON.stringify(processed_array))
+				} 
 		} );
 
 });
