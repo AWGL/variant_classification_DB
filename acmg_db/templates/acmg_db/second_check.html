@@ -352,7 +352,7 @@
               <th class='strength_first'> First Strength </th>
               <th class='selected_first'> First Decision </th>
               <th class='strength'> Second Strength </th>
-              <th class='selected'> Second Decision </th>
+              <th class='selected_second'> Second Decision </th>
               <th class='comment'> Comment </th>
             </tr>
           </thead>
@@ -400,15 +400,15 @@
 
               {% if answer.classification_question.pathogenic_question == True and answer.selected_second == True %}
 
-                  <td class='selected table-danger'>
+                  <td class='selected_second table-danger'>
 
               {% elif answer.classification_question.pathogenic_question == False and  answer.selected_second == True%}
 
-                  <td class='selected table-info'>
+                  <td class='selected_second table-info'>
 
               {% else %}
 
-                   <td class='selected'>
+                   <td class='selected_second'>
 
               {% endif %}
 
@@ -645,7 +645,7 @@ $(document).ready(function(){
         }
 
         var question  = $(rows[i]).children('td.question').text().trim();
-        var selected = $(rows[i]).children('td.selected').children().val();
+        var selected = $(rows[i]).children('td.selected_second').children().val();
         var comment = $(rows[i]).children('td.comment').children().val();
         console.log(pk, question, strength, selected, comment)
         classification_dict[pk] = [question, strength, selected, comment];

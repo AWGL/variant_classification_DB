@@ -87,7 +87,7 @@ def reporting(request):
 			except ObjectDoesNotExist:
 				context = {
 					'classifications': None, 
-					'form': ReportingSearchForm(options=PANEL_OPTIONS),
+					'form': form,
 					'worksheet_status': None,
 					'first_checker': None,
 					'second_checker': None,

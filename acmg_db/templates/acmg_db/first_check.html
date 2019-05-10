@@ -347,7 +347,7 @@
 		  <th class='question'> Evidence Category  </th>
 		  <th class='description'> Description </th>
 		  <th class='strength'> Strength </th>
-		  <th class='selected'> Decision </th>
+		  <th class='selected_first'> Decision </th>
 		  <th class='comment'> Comment </th>
 		</tr>
 	  </thead>
@@ -384,7 +384,8 @@
 				{% endif %}
 			  </td>
 			  <!-- Select whether or not to apply the criteria -->
-			  <td class='selected'>
+			  <td class='selected_first'>
+
 				<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
 				  <option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
 				  {% if answer.selected_first == False %}
@@ -617,7 +618,7 @@ $(document).ready(function(){
 				}
 
 				var question  = $(rows[i]).children('td.question').text().trim();
-				var selected = $(rows[i]).children('td.selected').children().val();
+				var selected = $(rows[i]).children('td.selected_first').children().val();
 				var comment = $(rows[i]).children('td.comment').children().val();
 				console.log(pk, question, strength, selected, comment)
 				classification_dict[pk] = [question, strength, selected, comment];
