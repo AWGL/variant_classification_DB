@@ -14,13 +14,13 @@ PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_b
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
-def view_previous_classifications(request):
+def pending_classifications(request):
 	"""
-	Page to view previous classifications
+	Page to view classifications that havent yet been completed
 
 	"""
 
-	classifications = Classification.objects.all().order_by('-creation_date')
+	classifications = Classification.objects.filter(status__in=['0', '1']).order_by('-creation_date')
 
 	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
 

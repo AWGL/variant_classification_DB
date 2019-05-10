@@ -255,7 +255,7 @@ def first_check(request, pk):
 						classification.save()
 
 						#return redirect('home')
-						return redirect('/view_previous_classifications?sample={}&worksheet={}&panel={}'.format(
+						return redirect('/pending_classifications?sample={}&worksheet={}&panel={}'.format(
 							classification.sample.sample_name_only,
 							classification.sample.worklist.name,
 							classification.sample.analysis_performed.panel

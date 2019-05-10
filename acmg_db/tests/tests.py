@@ -28,9 +28,9 @@ class TestViewsSimple(TestCase):
 		response = self.client.get('/first_check/24/')
 		self.assertEqual(response.status_code,200)
 
-	def test_view_previous_classifications(self):
+	def test_pending_classifications(self):
 
-		response = self.client.get('/view_previous_classifications')
+		response = self.client.get('/pending_classifications')
 		self.assertEqual(response.status_code,200)
 
 	def test_view_view_classification(self):
