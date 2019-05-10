@@ -78,6 +78,12 @@ To run using the development server:
 Coming Soon.
 
 
+## Saving JSON file of ACMG criteria
+
+If the ACMG criteria are changed, a JSON file should be saved into the fixtures folder so that a new database can be initialised with the same criteria.
+
+To do this, run the command `python manage.py dumpdata acmg_db.classificationquestion > <date>_acmg_questions.json`
+
 
 ## References
 
