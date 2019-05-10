@@ -22,7 +22,7 @@ def pending_classifications(request):
 
 	classifications = Classification.objects.filter(status__in=['0', '1']).order_by('-creation_date')
 
-	return render(request, 'acmg_db/view_classifications.html', {'classifications': classifications})
+	return render(request, 'acmg_db/pending_classifications.html', {'classifications': classifications})
 
 
 #--------------------------------------------------------------------------------------------------
