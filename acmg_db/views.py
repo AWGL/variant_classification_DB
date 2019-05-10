@@ -18,7 +18,12 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
+# GLOBAL VARIABLES
+# list of all panels to populate dropdown lists
+PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
+
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def auto_input(request):
@@ -27,13 +32,8 @@ def auto_input(request):
 
 	"""
 
-	# make a list of all panels and pass to the form to populate the dropdown
-	panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
-	# Inititate the upload form
-	form = VariantFileUploadForm(options=panel_options)
-
-	# make empty dict for context
+	# Inititate the upload form and context dict to pass to template
+	form = VariantFileUploadForm(options=PANEL_OPTIONS)
 	context = {
 		'form': form, 
 		'error': None,
@@ -44,7 +44,7 @@ def auto_input(request):
 
 	if request.POST:
 
-		form = VariantFileUploadForm(request.POST, request.FILES, options=panel_options)
+		form = VariantFileUploadForm(request.POST, request.FILES, options=PANEL_OPTIONS)
 
 		if form.is_valid():
 
@@ -215,11 +215,7 @@ def manual_input(request):
 	Allows users to create a new classification for a variant.
 	"""
 
-
-	# make a list of all panels and pass to the form to populate the dropdown
-	panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
-	form = ManualUploadForm(options =panel_options )
+	form = ManualUploadForm(options=PANEL_OPTIONS)
 	context = {
 		'form': form,
 		'error': [], 
@@ -228,7 +224,7 @@ def manual_input(request):
 	# If the user has clicked submit
 	if request.POST:
 
-		form = ManualUploadForm(request.POST, options =panel_options)
+		form = ManualUploadForm(request.POST, options=PANEL_OPTIONS)
 
 		if form.is_valid():
 
@@ -336,7 +332,7 @@ def manual_input(request):
 				new_classification_obj.save()
 				
 				# Go to the new_classification page.
-				return redirect(new_classification, new_classification_obj.pk)
+				return redirect(first_check, new_classification_obj.pk)
 
 			else:
 
@@ -351,7 +347,7 @@ def manual_input(request):
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
-def new_classification(request, pk):
+def first_check(request, pk):
 	"""
 	Page for entering new classifications.
 
@@ -393,14 +389,10 @@ def new_classification(request, pk):
 
 		# Get relevant options for the variant transcripts
 		for transcript_var in refseq_options:
-
 			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
 
-		# make a list of all panels and pass to the form to populate the dropdown
-		panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
 		# make empty instances of forms
-		sample_form = SampleInfoForm(classification_pk=classification.pk, options=panel_options)
+		sample_form = SampleInfoForm(classification_pk=classification.pk, options=PANEL_OPTIONS)
 		variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
@@ -428,7 +420,7 @@ def new_classification(request, pk):
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 
-				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk, options = panel_options)
+				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk, options=PANEL_OPTIONS)
 
 				# load in data
 				if sample_form.is_valid():
@@ -446,7 +438,7 @@ def new_classification(request, pk):
 					
 				# reload dict variables for rendering
 				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk, options=panel_options)
+				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk, options=PANEL_OPTIONS)
 
 			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
@@ -595,8 +587,8 @@ def new_classification(request, pk):
 							classification.sample.analysis_performed.panel
 						))
 
-			return render(request, 'acmg_db/new_classifications.html', context)
-		return render(request, 'acmg_db/new_classifications.html', context)
+			return render(request, 'acmg_db/first_check.html', context)
+		return render(request, 'acmg_db/first_check.html', context)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -604,7 +596,7 @@ def new_classification(request, pk):
 @login_required
 def ajax_acmg_classification_first(request):
 	"""
-	Gets the ajax results from the new_classifications.html page \
+	Gets the ajax results from the first_check.html page \
 	and stores them in the database - also returns the calculated result.
 
 	This view is for the first check.
@@ -795,7 +787,6 @@ def ajax_comments(request):
 		raise Http404
 
 
-
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
@@ -818,11 +809,10 @@ def reporting(request):
 	Page to view completed worksheets for reporting
 
 	"""
-	panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	context = {
 		'classifications': None, 
-		'form': ReportingSearchForm(options=panel_options),
+		'form': ReportingSearchForm(options=PANEL_OPTIONS),
 		'worksheet_status': None,
 		'first_checker': None,
 		'second_checker': None,
@@ -831,7 +821,7 @@ def reporting(request):
 
 	# if form is submitted
 	if request.method == 'POST':
-		form = ReportingSearchForm(request.POST, options=panel_options)
+		form = ReportingSearchForm(request.POST, options=PANEL_OPTIONS)
 		if form.is_valid():
 			cleaned_data = form.cleaned_data
 
@@ -886,7 +876,7 @@ def reporting(request):
 			except ObjectDoesNotExist:
 				context = {
 					'classifications': None, 
-					'form': ReportingSearchForm(options=panel_options),
+					'form': ReportingSearchForm(options=PANEL_OPTIONS),
 					'worksheet_status': None,
 					'first_checker': None,
 					'second_checker': None,
@@ -1001,6 +991,7 @@ def view_classification(request, pk):
 									 'assign_form': assign_form})
 
 
+#--------------------------------------------------------------------------------------------------
 @login_required
 @transaction.atomic
 def second_check(request, pk):
@@ -1041,8 +1032,6 @@ def second_check(request, pk):
 
 		transcript = classification.selected_transcript_variant.transcript
 
-		panel_options = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
 		refseq_options = TranscriptVariant.objects.filter(variant=variant)
 		fixed_refseq_options = []
 
@@ -1052,7 +1041,7 @@ def second_check(request, pk):
 			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
 
 		# make empty instances of forms
-		sample_form = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=panel_options)
+		sample_form = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=PANEL_OPTIONS)
 		variant_form = VariantInfoFormSecondCheck(classification_pk=classification.pk, options=fixed_refseq_options)
 		finalise_form = FinaliseClassificationSecondCheckForm(classification_pk=classification.pk)
 
@@ -1079,7 +1068,7 @@ def second_check(request, pk):
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 
-				sample_form = SampleInfoFormSecondCheck(request.POST, classification_pk=classification.pk, options=panel_options)
+				sample_form = SampleInfoFormSecondCheck(request.POST, classification_pk=classification.pk, options=PANEL_OPTIONS)
 
 				# load in data
 				if sample_form.is_valid():
@@ -1097,7 +1086,7 @@ def second_check(request, pk):
 				
 				# reload dict variables for rendering
 				context['classification'] = classification
-				context['sample_form'] = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=panel_options)
+				context['sample_form'] = SampleInfoFormSecondCheck(classification_pk=classification.pk, options=PANEL_OPTIONS)
 
 			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
@@ -1191,10 +1180,11 @@ def second_check(request, pk):
 							classification.sample.analysis_performed.panel
 						))
 
-			return render(request, 'acmg_db/second_check_new.html', context)
-		return render(request, 'acmg_db/second_check_new.html', context)
+			return render(request, 'acmg_db/second_check.html', context)
+		return render(request, 'acmg_db/second_check.html', context)
 
 
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 def signup(request):
 	"""
@@ -1229,6 +1219,7 @@ def signup(request):
 		return render(request, 'acmg_db/signup.html', {'form': form, 'warning': []})
 
 
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def about(request):
@@ -1239,6 +1230,7 @@ def about(request):
 	return render(request, 'acmg_db/about.html', {})
 
 
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def view_variants(request):
@@ -1257,6 +1249,7 @@ def view_variants(request):
 	return render(request, 'acmg_db/view_variants.html', {'all_variants': most_recent_classifications})
 
 
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def view_variant(request, pk):
@@ -1272,6 +1265,7 @@ def view_variant(request, pk):
 	return render (request, 'acmg_db/view_variant.html', {'variant': variant, 'classifications': classifications})
 
 
+#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def panels(request):

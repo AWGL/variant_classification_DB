@@ -113,7 +113,7 @@
 	  <td style="display:none;">{{ classification.pk }}</td>
 	  <td>
 		{% if classification.status == '0' %}
-		<a href="{% url 'new_classification' pk=classification.pk %}">First Check</a>
+		<a href="{% url 'first_check' pk=classification.pk %}">First Check</a>
 		{% elif classification.status == '1' %}
 		<a href="{% url 'second_check' pk=classification.pk %}">Second Check</a>
 		{% elif classification.status == '2' %}

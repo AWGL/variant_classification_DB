@@ -23,9 +23,9 @@ class TestViewsSimple(TestCase):
 		response = self.client.get('/manual_input/')
 		self.assertEqual(response.status_code,200)
 
-	def test_view_new_classification(self):
+	def test_view_first_check(self):
 
-		response = self.client.get('/classification/24/')
+		response = self.client.get('/first_check/24/')
 		self.assertEqual(response.status_code,200)
 
 	def test_view_previous_classifications(self):
@@ -78,7 +78,7 @@ class TestViewsComplex(TestCase):
 		Test that a user can't access the first check if the variant status is second check
 		"""
 
-		response = self.client.get('/classification/24/')
+		response = self.client.get('/first_check/24/')
 		self.assertEqual(response.status_code,403)
 
 	def test_other_user_cannot_access_second_analysis(self):
@@ -97,7 +97,7 @@ class TestViewsComplex(TestCase):
 		"""
 
 		self.client.login(username='testuser', password='hello123!')
-		response = self.client.get('/classification/24/')
+		response = self.client.get('/first_check/24/')
 		self.assertEqual(response.status_code,403)
 
 	def test_view_specific_variant(self):
@@ -126,9 +126,9 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=26)
-		self.assertEqual(classification_obj.calculate_acmg_score_first(), '7')
+		self.assertEqual(classification_obj.calculate_acmg_score_first(), '2')
 
-		response = self.client.get('/classification/26/')
+		response = self.client.get('/first_check/26/')
 		self.assertEqual(response.status_code,200)
 
 		# Create POST data for ajax submission and check class is updated
@@ -145,9 +145,9 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=26)
-		self.assertEqual(classification_obj.calculate_acmg_score_first(), '7')
+		self.assertEqual(classification_obj.calculate_acmg_score_first(), '2')
 
-		response = self.client.get('/classification/26/')
+		response = self.client.get('/first_check/26/')
 		self.assertEqual(response.status_code,200)
 
 		# Create POST data for ajax submission and check class is updated
@@ -180,7 +180,7 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=24)
-		self.assertEqual(classification_obj.calculate_acmg_score_second(), '7')
+		self.assertEqual(classification_obj.calculate_acmg_score_second(), '2')
 
 		response = self.client.get('/second_check/24/')
 		self.assertEqual(response.status_code,200)
@@ -199,7 +199,7 @@ class TestSubmitACMGData(TestCase):
 
 		"""
 		classification_obj = Classification.objects.get(pk=24)
-		self.assertEqual(classification_obj.calculate_acmg_score_second(), '7')
+		self.assertEqual(classification_obj.calculate_acmg_score_second(), '2')
 
 		response = self.client.get('/second_check/24/')
 		self.assertEqual(response.status_code,200)
