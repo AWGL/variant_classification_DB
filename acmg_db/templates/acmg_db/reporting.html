@@ -121,6 +121,17 @@
 
 
 {% endif %}
+
+
+<!-- BOX TO SHOW ERRORS -->
+{% if warn %}
+  {% for w in warn %}
+    <div class="alert alert-danger" role="alert">
+	    Error: {{ w }}
+	  </div>
+  {% endfor %}
+{% endif %}
+
 <br>
 <br>
 <!------------------------------------- END OF HTML ------------------------------------->
@@ -164,7 +175,7 @@ $(document).ready(function(){
 						processed_array.push(selected_rows[i]);
 				};
 				//TODO - Format for export to pdf/LIMS XML
-				console.log(processed_array); 
+				console.log(JSON.stringify(processed_array))
 		} );
 
 });

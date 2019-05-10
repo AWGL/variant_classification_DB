@@ -1,20 +1,23 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import *
-from django.conf import settings
-from .models import *
-from .utils.variant_utils import *
-from django.utils import timezone
-from django.template.loader import render_to_string
-from django.http import HttpResponse
-from django.core.exceptions import PermissionDenied
 import json
 import base64
+from io import TextIOWrapper
+
+from .forms import *
+from .models import *
+from .utils.variant_utils import *
+
+from django.conf import settings
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from io import TextIOWrapper
 from django.db import transaction
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+
 
 @transaction.atomic
 @login_required
@@ -823,6 +826,7 @@ def reporting(request):
 		'worksheet_status': None,
 		'first_checker': None,
 		'second_checker': None,
+		'warn': None,
 	}
 
 	# if form is submitted
@@ -832,49 +836,62 @@ def reporting(request):
 			cleaned_data = form.cleaned_data
 
 			# pull out classifications
-			sample_obj = Sample.objects.get(
-				name = cleaned_data['worksheet'] + '-' + cleaned_data['sample'] + '-' + cleaned_data['panel_name'].lower()
-			)
-			classifications = Classification.objects.filter(
-				sample=sample_obj,
-			)
+			try:
+				sample_obj = Sample.objects.get(
+					name = cleaned_data['worksheet'] + '-' + cleaned_data['sample'] + '-' + cleaned_data['panel_name'].lower()
+				)
 
-			# work out if the worksheet has been completed
-			worksheet_status = 'Completed'
-			status_values = classifications.values('status')
-			for s in status_values:
-				if s['status'] in ['0', '1']:
-					worksheet_status = 'Pending'
+				classifications = Classification.objects.filter(
+					sample=sample_obj,
+				)
 
-			# pull out any first checkers
-			first_checker_values = classifications.values('user_first_checker').distinct()
-			first_checker_list = []
-			for value in first_checker_values:
-				if value['user_first_checker']:
-					user = User.objects.get(id=value['user_first_checker'])
-					first_checker_list.append(user.username)
-				else:
-					first_checker_list.append('Unassigned')
-			first_checker = ', '.join(first_checker_list)
+				# work out if the worksheet has been completed
+				worksheet_status = 'Completed'
+				status_values = classifications.values('status')
+				for s in status_values:
+					if s['status'] in ['0', '1']:
+						worksheet_status = 'Pending'
 
-			# pull out any second checkers
-			second_checker_values = classifications.values('user_second_checker').distinct()
-			second_checker_list = []
-			for value in second_checker_values:
-				if value['user_second_checker']:
-					user = User.objects.get(id=value['user_second_checker'])
-					second_checker_list.append(user.username)
-				else:
-					second_checker_list.append('Unassigned')
-			second_checker = ', '.join(second_checker_list)
+				# pull out any first checkers
+				first_checker_values = classifications.values('user_first_checker').distinct()
+				first_checker_list = []
+				for value in first_checker_values:
+					if value['user_first_checker']:
+						user = User.objects.get(id=value['user_first_checker'])
+						first_checker_list.append(user.username)
+					else:
+						first_checker_list.append('Unassigned')
+				first_checker = ', '.join(first_checker_list)
 
-			context = {
-				'classifications': classifications,
-				'form': form,
-				'worksheet_status': worksheet_status,
-				'first_checker': first_checker,
-				'second_checker': second_checker,
-			}
+				# pull out any second checkers
+				second_checker_values = classifications.values('user_second_checker').distinct()
+				second_checker_list = []
+				for value in second_checker_values:
+					if value['user_second_checker']:
+						user = User.objects.get(id=value['user_second_checker'])
+						second_checker_list.append(user.username)
+					else:
+						second_checker_list.append('Unassigned')
+				second_checker = ', '.join(second_checker_list)
+
+				context = {
+					'classifications': classifications,
+					'form': form,
+					'worksheet_status': worksheet_status,
+					'first_checker': first_checker,
+					'second_checker': second_checker,
+					'warn': None,
+				}
+			
+			except ObjectDoesNotExist:
+				context = {
+					'classifications': None, 
+					'form': ReportingSearchForm(options=panel_options),
+					'worksheet_status': None,
+					'first_checker': None,
+					'second_checker': None,
+					'warn': ['Analysis does not exist.'],
+				}
 
 	return render(request, 'acmg_db/reporting.html', context)
 
