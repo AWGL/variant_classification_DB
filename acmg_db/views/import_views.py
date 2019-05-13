@@ -11,10 +11,6 @@ from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-# GLOBAL VARIABLES
-# list of all panels to populate dropdown lists
-PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
@@ -24,6 +20,8 @@ def auto_input(request):
 	Allows users to upload a file of variants to classify.
 
 	"""
+
+	PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	# Inititate the upload form and context dict to pass to template
 	form = VariantFileUploadForm(options=PANEL_OPTIONS)
@@ -207,6 +205,8 @@ def manual_input(request):
 
 	Allows users to create a new classification for a variant.
 	"""
+
+	PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	form = ManualUploadForm(options=PANEL_OPTIONS)
 	context = {

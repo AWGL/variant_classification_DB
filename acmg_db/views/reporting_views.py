@@ -7,11 +7,6 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import render
 
-# GLOBAL VARIABLES
-# list of all panels to populate dropdown lists
-PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
-
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
@@ -20,6 +15,8 @@ def reporting(request):
 	Page to view completed worksheets for reporting
 
 	"""
+
+	PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	context = {
 		'classifications': None, 
