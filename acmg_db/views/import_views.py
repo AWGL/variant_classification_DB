@@ -74,7 +74,7 @@ def auto_input(request):
 
 			except Sample.DoesNotExist:
 				sample_obj = Sample.objects.create(
-						name = worksheet_id + '-' + sample_id + analysis_performed_pk,
+						name = worksheet_id + '-' + sample_id + '-' + analysis_performed_pk,
 						sample_name_only = sample_id,
 						worklist = worksheet_obj,
 						affected_with = affected_with,
