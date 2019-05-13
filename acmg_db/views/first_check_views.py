@@ -1,5 +1,6 @@
 import json
 import base64
+import re
 
 from ..forms import SampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm
 from ..models import *
