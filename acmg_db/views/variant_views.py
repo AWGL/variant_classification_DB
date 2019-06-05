@@ -4,10 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404
 
-# GLOBAL VARIABLES
-# list of all panels to populate dropdown lists
-PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

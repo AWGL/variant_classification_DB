@@ -11,11 +11,6 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-# GLOBAL VARIABLES
-# list of all panels to populate dropdown lists
-PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
-
-
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
@@ -86,6 +81,8 @@ def second_check(request, pk):
 	Page for entering doing a second check classifications.
 
 	"""
+
+	PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
 
 	classification = get_object_or_404(Classification, pk=pk)
 
