@@ -1,4 +1,6 @@
 
+# for details on backup and restore - see https://www.postgresql.org/docs/9.1/backup-dump.html#BACKUP-DUMP-RESTORE
+
 BACKUP_DIR="/home/webapps/acmg_backups/"
 UPLOAD_DIR="/home/webapps/variant_classification_DB/mysite/media/uploads/"
 
