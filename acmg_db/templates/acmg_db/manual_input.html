@@ -20,9 +20,30 @@
 	{% endif %}
   </div>
 
+	{% if success %}
+	  {% for s in success %}
+		  <div class="alert alert-success col-lg-2-8">
+		    {{ s }} <a href={% url 'pending_classifications' %}{{ params }}>View here.</a>
+	    </div>
+	  {% endfor %}
+  {% endif %}
+
+  
+
   <br>
 	<h5><a href="{% url 'auto_input' %}">Import variants from a file</a></h5>
 	<br><br>
 </center>
+
+
+
+
+<script>
+$(document).ready(function(){
+$("#file-upload-form").on("submit", function () {
+    $(this).find(":submit").prop("disabled", true);
+});
+});
+</script>
 	
 {% endblock %}
