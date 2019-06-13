@@ -44,17 +44,10 @@ class ManualUploadForm(forms.Form):
 	"""
 
 	variant = forms.CharField(required=False, max_length=255)
-	gene = forms.CharField(max_length=25)
-	transcript = forms.CharField(max_length=25)
-	hgvs_c = forms.CharField(max_length=100)
-	hgvs_p = forms.CharField(max_length=100)
-	exon = forms.CharField(max_length=10, required=False)
-	consequence = forms.CharField(max_length=100)
 	sample_name = forms.CharField(max_length=50)
 	worklist = forms.CharField(max_length=50)
-	analysis_performed = forms.ChoiceField()
+	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(max_length=100)
-	other_changes = forms.CharField(max_length=500, required=False)
 
 
 	def __init__(self, *args, **kwargs):
@@ -64,10 +57,8 @@ class ManualUploadForm(forms.Form):
 		super(ManualUploadForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'search-data-form'
-		self.fields['analysis_performed'].choices = self.panel_options
-		self.fields['analysis_performed'].help_text = 'Enter the analysis performed or panel applied. Click on Panels in the top bar to add new analyses/ panels.'
-		self.fields['hgvs_c'].label = 'HGVSc'
-		self.fields['hgvs_p'].label = 'HGVSp'
+		self.fields['panel_applied'].choices = self.panel_options
+		self.fields['panel_applied'].help_text = 'Enter the analysis performed or panel applied. Click on Panels in the top bar to add new analyses/ panels.'
 		self.fields['worklist'].label = 'Worksheet'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -77,17 +68,10 @@ class ManualUploadForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('variant', placeholder='Enter the variant in the format 17:41197732G>A', title=False),
-			Field('gene', placeholder='Enter the gene name', title=False),
-			Field('transcript', placeholder='Enter the RefSeq transcript name, e.g. NM_12345.6', title=False),
-			Field('hgvs_c', placeholder='Enter the HGVSc nomenclature for the variant, e.g. c.12913G>A', title=False),
-			Field('hgvs_p', placeholder='Enter the HGVSp nomenclature for the variant, e.g. p.Val4305Ile', title=False),
-			Field('exon', placeholder='Enter the exon number for the variant, and total number of exons, e.g. 2/10. Not required if non-coding.', title=False),
-			Field('consequence', placeholder='Enter the consequence of the variant e.g. missense, frameshift, deletion...', title=False),
 			Field('sample_name', placeholder='Enter the sample name, e.g. 19M12345', title=False),
 			Field('worklist', placeholder='Enter the worksheet name, e.g. 19-4321', title=False),
-			Field('analysis_performed', title=False),
+			Field('panel_applied', title=False),
 			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),
-			Field('other_changes', placeholder='Enter details of any other changes detected in the patient, leave blank if none.', title=False)
 		)
 
 

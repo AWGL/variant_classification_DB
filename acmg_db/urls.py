@@ -33,6 +33,6 @@ urlpatterns = [
 
     path('panels/', views.panels, name='panels'),
 
-]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
 
-
+# add   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) to urlpatterns for development to get media to work correctly - need to remove this for nginx
