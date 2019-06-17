@@ -189,7 +189,7 @@ def first_check(request, pk):
 				# reload dict variables for rendering
 				result = classification.display_first_classification()
 				context['result'] = result
-				context['answers'] = ClassificationAnswer.objects.filter(classification=classification)
+				context['answers'] = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['genuine_form'] = GenuineArtefactForm(classification_pk=classification.pk)
 

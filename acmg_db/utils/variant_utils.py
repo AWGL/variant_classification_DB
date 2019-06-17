@@ -230,8 +230,9 @@ def get_vep_info_local(variant_list, vep_info, sample):
 			vcf_writer.writerow(row[1:3] + ['.'] + row[3:5])
 
 	# Run vep
+
 	command = f'source activate acmg_db && vep --input_file {vcf_file_name} --format vcf -o stdout --cache --offline --assembly GRCh37 --fasta {reference_genome} --refseq --dir {vep_cache} --flag_pick --species homo_sapiens --check_ref --cache_version 94 --json --numbers  --symbol --hgvs --no_stats --exclude_predicted'
-	result = subprocess.check_output(command, shell=True)
+	result = subprocess.check_output(command, shell=True, executable='/bin/bash')
 
 	# Collect output and put into json
 	result = result.decode("utf-8") 
