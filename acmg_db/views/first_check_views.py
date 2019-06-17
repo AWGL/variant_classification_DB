@@ -98,12 +98,7 @@ def first_check(request, pk):
 				if sample_form.is_valid():
 
 					cleaned_data = sample_form.cleaned_data
-
-
-					panel = get_object_or_404(Panel, panel = cleaned_data['analysis_performed'].lower())
-
 					sample = classification.sample
-					sample.analysis_performed = panel
 					sample.affected_with =  cleaned_data['affected_with']
 					sample.other_changes = cleaned_data['other_changes']
 					sample.save()
