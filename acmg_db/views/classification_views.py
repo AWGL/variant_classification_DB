@@ -112,14 +112,22 @@ def view_classification(request, pk):
 			.order_by('classification_question__order'))
 
 		comments = UserComment.objects.filter(classification=classification, visible=True)
+		classification_history = classification.history.all()
+		sample_history = classification.sample.history.all()
+		history = (classification_history | sample_history).order_by('-timestamp')
 
 		archive_form = ArchiveClassificationForm(classification_pk = classification.pk)
 		reset_form = ResetClassificationForm(classification_pk = classification.pk)
 		assign_form = AssignSecondCheckToMeForm(classification_pk = classification.pk)
 
-		return render(request, 'acmg_db/view_classification.html', {'classification': classification,
-									 'classification_answers': classification_answers,
-									 'comments': comments,
-									 'archive_form': archive_form,
-									 'reset_form': reset_form,
-									 'assign_form': assign_form})
+		return render(request, 'acmg_db/view_classification.html', 
+			{	
+				'classification': classification,
+				'classification_answers': classification_answers,
+				'comments': comments,
+				'archive_form': archive_form,
+				'reset_form': reset_form,
+				'assign_form': assign_form,
+				'history': history
+			}
+		)

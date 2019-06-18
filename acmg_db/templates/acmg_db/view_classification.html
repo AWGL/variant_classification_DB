@@ -239,20 +239,20 @@
  <table id="history" class = "table table-hover table-bordered" style="width:100%">
     <thead>
       <tr>
-        <th> ID </th>
-        <th> Time </th>
-        <th> User</th>
-        <th> Changes </th>
+        <th>ID</th>
+        <th>Time</th>
+        <th>User</th>
+        <th>Changes</th>
 
       </tr>
     </thead>
     <tbody>
-      {% for history in classification.history.all %}
+      {% for h in history %}
 
-            <td>{{history.object_pk}}</td>
-            <td>{{history.timestamp}}</td>
-            <td>{{history.actor}}</td>
-            <td>{{history.changes}}</td>
+            <td>{{h.object_pk}}</td>
+            <td>{{h.timestamp}}</td>
+            <td>{{h.actor}}</td>
+            <td>{{h.changes}}</td>
           </tr>
           
         {% endfor %}
