@@ -1,341 +1,433 @@
 import unittest
 from acmg_db.utils.acmg_classifier import *
 
+
 class TestACMGRatings(unittest.TestCase):
 
-	'''
 	def test_pathogenic(self):
 
-		test_1a_1 = ['PVS1', 'PS1']
-		test_1a_2 = ['PVS1', 'PS2', 'BS1']
-		test_1a_3 = ['PVS1', 'PS3', 'PS4', 'PS1']
-		test_1a_4 = ['PVS1', 'PS3', 'PS4', 'PS2', 'PS1' ]
-		test_1a_5 = ['PVS1', 'PS3', 'PS4', 'PS1', 'PM1', 'PM2', 'BP1' ]
-		test_1a_6 = ['PVS1', 'PS3']
-		test_1a_7 = ['PVS1', 'PS3' ,'BA1']
-		test_1a_8 = ['PVS1', 'PS3' ,'PM2', 'BS1', 'PM1', 'BS2', 'BP3', 'BP4' ]
-		
-		test_1b_1 = ['PVS1', 'PM1', 'PM6']
-		test_1b_2 = ['PVS1', 'PM1', 'PM6', 'PM3']
-		test_1b_3 = ['PVS1', 'PM2', 'PM5']
-		test_1b_4 = ['PVS1', 'PM1', 'PM3', 'BS1']
-		test_1b_5 = ['PVS1', 'PM4', 'BP1', 'PM2']
-		test_1b_6 = ['PM5', 'BP6', 'BA1' 'PM4', 'PM2', 'PM3', 'PVS1']
-		
-		test_1c_1 = ['PVS1', 'PM1', 'PP1']
-		test_1c_2 = ['PM1', 'PP2', 'PVS1']
-		test_1c_3 = ['PP5', 'PVS1', 'PM1']
-		test_1c_4 = ['PVS1', 'BS1', 'PP3', 'PM2']
-		test_1c_5 = ['PVS1', 'PP2', 'BA1', 'BS2', 'PM4']
-		test_1c_6 = ['PM2', 'PP2', 'PP3', 'PP4', 'PSV1']
-		
-		test_1d_1 = ['PVS1', 'PP1', 'PP2', 'PP3']
-		test_1d_2 = ['PVS1', 'PP2', 'PP4']
-		test_1d_3 = ['PVS1', 'PP5', 'PP1', 'BA1', 'BS1', 'BS2', 'BS3']
-		test_1d_4 = ['PVS1', 'BS3', 'PP2', 'PP4']
-		test_1d_5 = ['PVS1', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5']
-		test_1d_6 = ['PP3', 'PP1', 'PVS1']
-		test_1d_7 = ['PP4', 'PVS1', 'PP5']
+		test_path_1a_1 = [('PVS1', 'PV'), ('PS1', 'PS')]
+		test_path_1a_2 = [('PVS1', 'PV'), ('PS3', 'PS'), ('PS4', 'PS')]
+		test_path_1a_3 = [('PVS1', 'PV'), ('PS3', 'PS'), ('PS4', 'PS'), ('PS1', 'PS')]
+		test_path_1a_4 = [('PVS1', 'PV'), ('PS3', 'PS'), ('PS4', 'PS'), ('PS2', 'PS'), ('PS1', 'PS')]
 
-		test_2_1 = ['PS1', 'PS2', 'PS3']
-		test_2_2 = ['PS1', 'PS2']
-		test_2_3 = ['PS4', 'PS3']
-		test_2_4 = ['PS1', 'PS2', 'PS3', 'PS4']
-		test_2_5 = ['BS1', 'BS2', 'PS1', 'PS2', 'PS3', 'PS4']
-		test_2_6 = ['PS1', 'BS1', 'PS2', 'BS3', 'PS3', 'PS4']
+		test_path_1b_1 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM6', 'PM')]
+		test_path_1b_2 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM6', 'PM'), ('PM3', 'PM')]
+		test_path_1b_3 = [('PVS1', 'PV'), ('PM5', 'PM'), ('PM4', 'PM'), ('PM2', 'PM'), ('PM3', 'PM')]
+		test_path_1b_4 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM')]
+		test_path_1b_5 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM')]
+		
+		test_path_1c_1 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PP1', 'PP')]
+		
+		test_path_1d_1 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP')]
+		test_path_1d_2 = [('PVS1', 'PV'), ('PP2', 'PP'), ('PP4', 'PP'), ('PP3', 'PP')]
+		test_path_1d_3 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
+		test_path_1d_4 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
+
+		test_path_2_1 = [('PS1', 'PS'), ('PS2', 'PS')]
+		test_path_2_2 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS')]
+		test_path_2_3 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS'), ('PS4', 'PS')]
 					
-		test_3a_1 = ['PS1', 'PM1', 'PM2', 'PM3', 'PM4']
-		test_3a_2 = ['PS1', 'PM1', 'PM2', 'PM3', 'PP1']
-		test_3a_3 = ['PP3', 'PM1', 'PM2', 'PM3', 'PS2']
-		test_3a_4 = ['PS1', 'PM1', 'PM2', 'PM3']
-		test_3a_5 = ['BA1', 'BS1', 'BS2', 'PM1', 'PS3', 'BS3', 'PM2', 'PM3']
+		test_path_3a_1 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM')]
+		test_path_3a_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM')]
+		test_path_3a_3 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM')]
+		test_path_3a_4 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM')]
 
-		test_3b_1 = ['PS1', 'PM1', 'PM2', 'PP3', 'PP4']
-		test_3b_2 = ['PS1', 'PM1', 'PM2', 'PP3', 'PP1', 'PP2']
-		test_3b_3 = ['PS4', 'PM2', 'PM3', 'PP4', 'PP5']
-		test_3b_4 = ['PP4', 'PM1', 'PM3', 'PP2', 'PS3']
-		test_3b_5 = ['PS1', 'PM1', 'PM2', 'PP3', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5']
+		test_path_3b_1 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP')]
+		test_path_3b_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP')]
+		test_path_3b_3 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
+		test_path_3b_4 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
+
+		test_path_3c_1 = [('PS2', 'PS'), ('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
+		test_path_3c_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
+
+		self.assertEqual(classify(test_path_1a_1), '5')
+		self.assertEqual(classify(test_path_1a_2), '5')
+		self.assertEqual(classify(test_path_1a_3), '5')
+		self.assertEqual(classify(test_path_1a_4), '5')
+
+		self.assertEqual(classify(test_path_1b_1), '5')
+		self.assertEqual(classify(test_path_1b_2), '5')
+		self.assertEqual(classify(test_path_1b_3), '5')
+		self.assertEqual(classify(test_path_1b_4), '5')
+		self.assertEqual(classify(test_path_1b_5), '5')
+
+		self.assertEqual(classify(test_path_1c_1), '5')
 		
-		test_3c_1 = ['PS2', 'PM1', 'PP2', 'PP3', 'PP4', 'PP1']
-		test_3c_2 = ['PS1', 'PM1', 'PP2', 'PP3', 'PP1', 'PP2', 'PP5']
-		test_3c_3 = ['PP2', 'PP1', 'PS2', 'PP3', 'PP4', 'PM1']
-		test_3c_4 = ['PM2', 'PP1', 'PP2', 'PP3', 'PP4', 'PS1']
-		test_3c_5 = ['BS3', 'PS1', 'PM1', 'BS1', 'PP2', 'PP3', 'PP1', 'PP2' ,'BS2']
+		self.assertEqual(classify(test_path_1d_1), '5')
+		self.assertEqual(classify(test_path_1d_2), '5')
+		self.assertEqual(classify(test_path_1d_3), '5')
+		self.assertEqual(classify(test_path_1d_4), '5')
 
-
-		self.assertEqual(get_pathogenicity_classification(test_1a_1), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_2), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_3), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_4), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_5), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_6), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_7), 'Pathogenic (Ia)')
-		self.assertEqual(get_pathogenicity_classification(test_1a_8), 'Pathogenic (Ia)')
-
-		self.assertEqual(get_pathogenicity_classification(test_1b_1), 'Pathogenic (Ib)')
-		self.assertEqual(get_pathogenicity_classification(test_1b_2), 'Pathogenic (Ib)')
-		self.assertEqual(get_pathogenicity_classification(test_1b_3), 'Pathogenic (Ib)')
-		self.assertEqual(get_pathogenicity_classification(test_1b_4), 'Pathogenic (Ib)')
-		self.assertEqual(get_pathogenicity_classification(test_1b_5), 'Pathogenic (Ib)')
-		self.assertEqual(get_pathogenicity_classification(test_1b_6), 'Pathogenic (Ib)')
-
-		self.assertEqual(get_pathogenicity_classification(test_1c_1), 'Pathogenic (Ic)')
-		self.assertEqual(get_pathogenicity_classification(test_1c_2), 'Pathogenic (Ic)')
-		self.assertEqual(get_pathogenicity_classification(test_1c_3), 'Pathogenic (Ic)')
-		self.assertEqual(get_pathogenicity_classification(test_1c_4), 'Pathogenic (Ic)')
-		self.assertEqual(get_pathogenicity_classification(test_1c_5), 'Pathogenic (Ic)')
+		self.assertEqual(classify(test_path_2_1), '5')
+		self.assertEqual(classify(test_path_2_2), '5')
+		self.assertEqual(classify(test_path_2_3), '5')
 		
-		self.assertEqual(get_pathogenicity_classification(test_1d_1), 'Pathogenic (Id)')
-		self.assertEqual(get_pathogenicity_classification(test_1d_2), 'Pathogenic (Id)')
-		self.assertEqual(get_pathogenicity_classification(test_1d_3), 'Pathogenic (Id)')
-		self.assertEqual(get_pathogenicity_classification(test_1d_4), 'Pathogenic (Id)')
-		self.assertEqual(get_pathogenicity_classification(test_1d_5), 'Pathogenic (Id)')
-		self.assertEqual(get_pathogenicity_classification(test_1d_6), 'Pathogenic (Id)')
-		self.assertEqual(get_pathogenicity_classification(test_1d_7), 'Pathogenic (Id)')
+		self.assertEqual(classify(test_path_3a_1), '5')
+		self.assertEqual(classify(test_path_3a_2), '5')
+		self.assertEqual(classify(test_path_3a_3), '5')
+		self.assertEqual(classify(test_path_3a_4), '5')
 
-		self.assertEqual(get_pathogenicity_classification(test_2_1), 'Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(test_2_2), 'Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(test_2_3), 'Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(test_2_4), 'Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(test_2_5), 'Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(test_2_6), 'Pathogenic (II)')
-		
-		self.assertEqual(get_pathogenicity_classification(test_3a_1), 'Pathogenic (IIIa)')
-		self.assertEqual(get_pathogenicity_classification(test_3a_2), 'Pathogenic (IIIa)')
-		self.assertEqual(get_pathogenicity_classification(test_3a_3), 'Pathogenic (IIIa)')
-		self.assertEqual(get_pathogenicity_classification(test_3a_4), 'Pathogenic (IIIa)')
-		self.assertEqual(get_pathogenicity_classification(test_3a_5), 'Pathogenic (IIIa)')
+		self.assertEqual(classify(test_path_3b_1), '5')
+		self.assertEqual(classify(test_path_3b_2), '5')
+		self.assertEqual(classify(test_path_3b_3), '5')
+		self.assertEqual(classify(test_path_3b_4), '5')
 
-		self.assertEqual(get_pathogenicity_classification(test_3b_1), 'Pathogenic (IIIb)')
-		self.assertEqual(get_pathogenicity_classification(test_3b_2), 'Pathogenic (IIIb)')
-		self.assertEqual(get_pathogenicity_classification(test_3b_3), 'Pathogenic (IIIb)')
-		self.assertEqual(get_pathogenicity_classification(test_3b_4), 'Pathogenic (IIIb)')
-		self.assertEqual(get_pathogenicity_classification(test_3b_5), 'Pathogenic (IIIb)')
-
-		self.assertEqual(get_pathogenicity_classification(test_3c_1), 'Pathogenic (IIIc)')
-		self.assertEqual(get_pathogenicity_classification(test_3c_2), 'Pathogenic (IIIc)')
-		self.assertEqual(get_pathogenicity_classification(test_3c_3), 'Pathogenic (IIIc)')
-		self.assertEqual(get_pathogenicity_classification(test_3c_4), 'Pathogenic (IIIc)')
-		self.assertEqual(get_pathogenicity_classification(test_3c_5), 'Pathogenic (IIIc)')
+		self.assertEqual(classify(test_path_3c_1), '5')
+		self.assertEqual(classify(test_path_3c_2), '5')
 
 
 	def test_likely_pathogenic(self):
 
-		testlp_1_1 = ['PVS1', 'PM1']
-		testlp_1_2 = ['PVS1', 'PM5']
-		testlp_1_3 = ['PM1', 'PVS1']
-		testlp_1_4 = ['PM1', 'BS1', 'PVS1']
-		testlp_1_5 = ['BS2', 'BS3', 'PM1', 'BS1', 'PVS1', 'BS4']
+		test_lp_1_1 = [('PVS1', 'PV'), ('PM1', 'PM')]
 
-		testlp_2_1 = ['PS1', 'PM1']
-		testlp_2_2 = ['PS1', 'PM5', 'PM1']
-		testlp_2_3 = ['PM2', 'PS3']
-		testlp_2_4 = ['PM3', 'PS3', 'PM3']
-		testlp_2_5 = ['BS1', 'PM3', 'BS2', 'PS3', 'PM3', 'BA1']
+		test_lp_2_1 = [('PS1', 'PS'), ('PM1', 'PM')]
+		test_lp_2_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM5', 'PM')]
 
-		testlp_3_1 = ['PS1', 'PP1', 'PP2']
-		testlp_3_2 = ['PS1', 'PP5', 'PP1', 'PP4']
-		testlp_3_3 = ['PS1', 'PP5', 'PP1', 'PP4', 'PP2']
-		testlp_3_4 = ['PS1', 'PP5', 'PP1', 'PP4', 'PP2', 'PP3']
-		testlp_3_5 = ['PS1', 'PP5', 'PP1', 'PP4', 'PP2', 'PP3', 'BS1']
-		testlp_3_6 = ['PS3', 'PP4', 'PP5']
+		test_lp_3_1 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP')]
+		test_lp_3_2 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP')]
+		test_lp_3_3 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
+		test_lp_3_4 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
 
-		testlp_4_1 = ['PM1', 'PM2', 'PM3']
-		testlp_4_2 = ['PM1', 'PM2', 'PM3', 'PM4']
-		testlp_4_3 = ['PM1', 'PM2', 'PM3', 'PM4', 'PM5']
-		testlp_4_4 = ['PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'BS1', 'BS2', 'BS3']
-		testlp_4_5 = ['PM1', 'PM2', 'PM3', 'BS1', 'BS2', 'BS3']
-		testlp_4_6 = ['PM4', 'PM5', 'PM6']
+		test_lp_4_1 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM')]
+		test_lp_4_2 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM')]
+		test_lp_4_3 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM')]
+		test_lp_4_4 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM')]
 
-		testlp_5_1 = ['PM1', 'PM2', 'PP1', 'PP3']
-		testlp_5_2 = ['PM1', 'PM2', 'PP1', 'PP3', 'PP5']
-		testlp_5_3 = ['PM1', 'PP1', 'PP3', 'PM4', 'PP5']
-		testlp_5_4 = ['PM4', 'PM6', 'PP2', 'PP5']
-		testlp_5_5 = ['BS2', 'PM4', 'PM6', 'PP2', 'PP5', 'PP1', 'BS1']
+		test_lp_5_1 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP')]
+		test_lp_5_2 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
+		test_lp_5_3 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
 
-		testlp_6_1 = ['PM1', 'PP1', 'PP3', 'PP2', 'PP5']
-		testlp_6_2 = ['PM1', 'PP1', 'PP3', 'PP5', 'PP2', 'PP4']
-		testlp_6_3 = ['PM1', 'PP1', 'PP3', 'BS1', 'PP5', 'PP2', 'PP4', 'BS2']
-		testlp_6_4 = ['PM5', 'PP4', 'PP5', 'PP3', 'PP2']
-		testlp_6_5 = ['PP1', 'PP3', 'PP5', 'PP2', 'PP4', 'PM6']
+		test_lp_6_1 = [('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
+		test_lp_6_2 = [('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
 		
-		
-		self.assertEqual(get_pathogenicity_classification(testlp_1_1), 'Likely Pathogenic (I)')
-		self.assertEqual(get_pathogenicity_classification(testlp_1_2), 'Likely Pathogenic (I)')
-		self.assertEqual(get_pathogenicity_classification(testlp_1_3), 'Likely Pathogenic (I)')
-		self.assertEqual(get_pathogenicity_classification(testlp_1_4), 'Likely Pathogenic (I)')
-		self.assertEqual(get_pathogenicity_classification(testlp_1_5), 'Likely Pathogenic (I)')
+		self.assertEqual(classify(test_lp_1_1), '4')
 
-		self.assertEqual(get_pathogenicity_classification(testlp_2_1), 'Likely Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(testlp_2_2), 'Likely Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(testlp_2_3), 'Likely Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(testlp_2_4), 'Likely Pathogenic (II)')
-		self.assertEqual(get_pathogenicity_classification(testlp_2_5), 'Likely Pathogenic (II)')
+		self.assertEqual(classify(test_lp_2_1), '4')
+		self.assertEqual(classify(test_lp_2_2), '4')
 
-		self.assertEqual(get_pathogenicity_classification(testlp_3_1), 'Likely Pathogenic (III)')
-		self.assertEqual(get_pathogenicity_classification(testlp_3_2), 'Likely Pathogenic (III)')
-		self.assertEqual(get_pathogenicity_classification(testlp_3_3), 'Likely Pathogenic (III)')
-		self.assertEqual(get_pathogenicity_classification(testlp_3_4), 'Likely Pathogenic (III)')
-		self.assertEqual(get_pathogenicity_classification(testlp_3_5), 'Likely Pathogenic (III)')
-		self.assertEqual(get_pathogenicity_classification(testlp_3_6), 'Likely Pathogenic (III)')
+		self.assertEqual(classify(test_lp_3_1), '4')
+		self.assertEqual(classify(test_lp_3_2), '4')
+		self.assertEqual(classify(test_lp_3_3), '4')
+		self.assertEqual(classify(test_lp_3_4), '4')
 
-		self.assertEqual(get_pathogenicity_classification(testlp_4_1), 'Likely Pathogenic (IV)')
-		self.assertEqual(get_pathogenicity_classification(testlp_4_2), 'Likely Pathogenic (IV)')
-		self.assertEqual(get_pathogenicity_classification(testlp_4_3), 'Likely Pathogenic (IV)')
-		self.assertEqual(get_pathogenicity_classification(testlp_4_4), 'Likely Pathogenic (IV)')
-		self.assertEqual(get_pathogenicity_classification(testlp_4_5), 'Likely Pathogenic (IV)')
-		self.assertEqual(get_pathogenicity_classification(testlp_4_6), 'Likely Pathogenic (IV)')
+		self.assertEqual(classify(test_lp_4_1), '4')
+		self.assertEqual(classify(test_lp_4_2), '4')
+		self.assertEqual(classify(test_lp_4_3), '4')
+		self.assertEqual(classify(test_lp_4_4), '4')
 
-		self.assertEqual(get_pathogenicity_classification(testlp_5_1), 'Likely Pathogenic (V)')
-		self.assertEqual(get_pathogenicity_classification(testlp_5_2), 'Likely Pathogenic (V)')
-		self.assertEqual(get_pathogenicity_classification(testlp_5_3), 'Likely Pathogenic (V)')
-		self.assertEqual(get_pathogenicity_classification(testlp_5_4), 'Likely Pathogenic (V)')
-		self.assertEqual(get_pathogenicity_classification(testlp_5_5), 'Likely Pathogenic (V)')
+		self.assertEqual(classify(test_lp_5_1), '4')
+		self.assertEqual(classify(test_lp_5_2), '4')
+		self.assertEqual(classify(test_lp_5_3), '4')
 
-		self.assertEqual(get_pathogenicity_classification(testlp_6_1), 'Likely Pathogenic (VI)')
-		self.assertEqual(get_pathogenicity_classification(testlp_6_2), 'Likely Pathogenic (VI)')
-		self.assertEqual(get_pathogenicity_classification(testlp_6_3), 'Likely Pathogenic (VI)')
-		self.assertEqual(get_pathogenicity_classification(testlp_6_4), 'Likely Pathogenic (VI)')
-		self.assertEqual(get_pathogenicity_classification(testlp_6_5), 'Likely Pathogenic (VI)')
-	'''
+		self.assertEqual(classify(test_lp_6_1), '4')
+		self.assertEqual(classify(test_lp_6_2), '4')
 
-	def test_pathogenic_VUS(self):
 
-		test_VUS1 = [('PVS1', 'PV')]
-		test_VUS2 = [('PVS1', 'PV'), ('PP1', 'PP')]
-		test_VUS3 = [('PS1', 'PS'), ('PP1', 'PP')]
-		test_VUS4 = [('PS1', 'PS')]
-		test_VUS5 = [('PM1', 'PM'), ('PM2', 'PM')]
-		test_VUS6 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP5', 'PP')]
-		test_VUS7 = [('PM4', 'PP'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP')]
-		test_VUS8 = [('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
-
-		self.assertEqual(classify(test_VUS1), '2')
-		self.assertEqual(classify(test_VUS2), '2')
-		self.assertEqual(classify(test_VUS3), '2')
-		self.assertEqual(classify(test_VUS4), '2')
-		self.assertEqual(classify(test_VUS5), '2')
-		self.assertEqual(classify(test_VUS6), '2')
-		self.assertEqual(classify(test_VUS7), '2')
-		self.assertEqual(classify(test_VUS8), '2')
-
-	'''
 	def test_benign(self):
 
-		test_benign_1_1 = ['BA1']
-		test_benign_1_2 = ['BA1', 'BP1']
-		test_benign_1_3 = ['BA1', 'BP1', 'BS1']
-		test_benign_1_4 = ['BA1', 'BP1', 'BS1', 'PVS1']
-		test_benign_1_5 = ['PP1', 'PP2', 'BA1']
-		test_benign_1_5 = ['PP1', 'PP2', 'BA1']
-		test_benign_2_1 =['BS1', 'BS2']
-		test_benign_2_2 =['BS1', 'BS2', 'BS3']
-		test_benign_2_3 =['BS1', 'BS2', 'BP1']
-		test_benign_2_4 =['BP2', 'BP3', 'BS3', 'BS4', 'BP1']
-		test_benign_2_5 =['BP2', 'BP3', 'BS3', 'BS4', 'BP1', 'PP1']
-		test_benign_2_6 =['BS1', 'BS2', 'PVS1']
+		test_benign_1_1 = [('BA1', 'BA')]
+		test_benign_1_2 = [('BA1', 'BA'), ('BS1', 'BS')]
+		test_benign_1_3 = [('BA1', 'BA'), ('BP1', 'BP')]
+		test_benign_1_4 = [('BA1', 'BA'), ('BS1', 'BS'), ('BP1', 'BP')]
+		test_benign_1_5 = [('BS1', 'BA')]
+		test_benign_2_1 = [('BS1', 'BS'), ('BS2', 'BS')]
+		test_benign_2_2 = [('BS1', 'BS'), ('BS2', 'BS'), ('BS3', 'BS')]
+		test_benign_2_3 = [('BS1', 'BS'), ('BS2', 'BS'), ('BS3', 'BS'), ('BS4', 'BS')]
+		test_benign_2_4 = [('BS1', 'BS'), ('BS2', 'BS'), ('BP1', 'BP')]
+		test_benign_2_5 = [('BS3', 'BS'), ('BS4', 'BS'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP1', 'BP')]
 		
-		self.assertEqual(get_benign_classification(test_benign_1_1), 'Benign (I)')
-		self.assertEqual(get_benign_classification(test_benign_1_2), 'Benign (I)')
-		self.assertEqual(get_benign_classification(test_benign_1_3), 'Benign (I)')
-		self.assertEqual(get_benign_classification(test_benign_1_4), 'Benign (I)')
-		self.assertEqual(get_benign_classification(test_benign_1_5), 'Benign (I)')
-		self.assertEqual(get_benign_classification(test_benign_2_1), 'Benign (II)')
-		self.assertEqual(get_benign_classification(test_benign_2_2), 'Benign (II)')
-		self.assertEqual(get_benign_classification(test_benign_2_3), 'Benign (II)')
-		self.assertEqual(get_benign_classification(test_benign_2_4), 'Benign (II)')
-		self.assertEqual(get_benign_classification(test_benign_2_5), 'Benign (II)')
-		self.assertEqual(get_benign_classification(test_benign_2_6), 'Benign (II)')
-	
+		self.assertEqual(classify(test_benign_1_1), '0')
+		self.assertEqual(classify(test_benign_1_2), '0')
+		self.assertEqual(classify(test_benign_1_3), '0')
+		self.assertEqual(classify(test_benign_1_4), '0')
+		self.assertEqual(classify(test_benign_1_5), '0')
+		self.assertEqual(classify(test_benign_2_1), '0')
+		self.assertEqual(classify(test_benign_2_2), '0')
+		self.assertEqual(classify(test_benign_2_3), '0')
+		self.assertEqual(classify(test_benign_2_4), '0')
+		self.assertEqual(classify(test_benign_2_5), '0')
+
 
 	def test_likely_benign(self):
 
-		testlb_1_1 =['BS2', 'BP1']
-		testlb_1_2 =['BS4', 'BP7']
-		testlb_1_3 =['BS3', 'BP6']
+		test_lb_1_1 = [('BS1', 'BS'), ('BP1', 'BP')]
+		test_lb_1_2 = [('BS1', 'BS'), ('BP1', 'BP'), ('BP2', 'BP')]
+		test_lb_1_3 = [('BS2', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP')]
+		test_lb_1_4 = [('BS3', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP5', 'BP'), ('BP6', 'BP')]
+		test_lb_1_5 = [('BS4', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP')]
+		test_lb_1_6 = [('BS1', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP')]
+		test_lb_1_7 = [('BS2', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP')]
 
-		testlb_2_1 =['BP2', 'BP1']
-		testlb_2_2 =['BP2', 'BP1', 'BP3']
-		testlb_2_3 =['BP3', 'BP7']
-		testlb_2_4 =['BP6', 'BP2', 'BP5']
-		testlb_2_5 =['BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
+		test_lb_2_1 = [('BP1', 'BP'), ('BP2', 'BP')]
+		test_lb_2_2 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP')]
+		test_lb_2_3 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP5', 'BP'), ('BP6', 'BP')]
+		test_lb_2_4 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP')]
+		test_lb_2_5 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP')]
+		test_lb_2_6 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP')]
 
-		self.assertEqual(get_benign_classification(testlb_1_1), 'Likely Benign (I)')
-		self.assertEqual(get_benign_classification(testlb_1_2), 'Likely Benign (I)')
-		self.assertEqual(get_benign_classification(testlb_1_3), 'Likely Benign (I)')
+		self.assertEqual(classify(test_lb_1_1), '1')
+		self.assertEqual(classify(test_lb_1_2), '1')
+		self.assertEqual(classify(test_lb_1_3), '1')
+		self.assertEqual(classify(test_lb_1_4), '1')
+		self.assertEqual(classify(test_lb_1_5), '1')
+		self.assertEqual(classify(test_lb_1_6), '1')
+		self.assertEqual(classify(test_lb_1_7), '1')
 
-		self.assertEqual(get_benign_classification(testlb_2_1), 'Likely Benign (II)')
-		self.assertEqual(get_benign_classification(testlb_2_2), 'Likely Benign (II)')
-		self.assertEqual(get_benign_classification(testlb_2_3), 'Likely Benign (II)')
-		self.assertEqual(get_benign_classification(testlb_2_4), 'Likely Benign (II)')
-		self.assertEqual(get_benign_classification(testlb_2_5), 'Likely Benign (II)')
-
-
-	def test_benign_VUS(self):
-
-		test_benign_VUS1 = ['BP1']
-		test_benign_VUS2 = ['BP2']
-		test_benign_VUS3 = ['BP3']
-		test_benign_VUS4 = ['BP4']
-		test_benign_VUS5 = ['BP5']
-		test_benign_VUS6 = ['BP6']
-		test_benign_VUS7 = ['BP7']
-		test_benign_VUS8 = ['BS1']
-		test_benign_VUS9 = ['BS2']
-		test_benign_VUS10 = ['BS3']
-		test_benign_VUS11 = ['BS4']
-
-		self.assertEqual(get_benign_classification(test_benign_VUS1), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS2), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS3), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS4), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS5), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS6), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS7), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS8), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS9), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS10), 'VUS')
-		self.assertEqual(get_benign_classification(test_benign_VUS11), 'VUS')
+		self.assertEqual(classify(test_lb_2_1), '1')
+		self.assertEqual(classify(test_lb_2_2), '1')
+		self.assertEqual(classify(test_lb_2_3), '1')
+		self.assertEqual(classify(test_lb_2_4), '1')
+		self.assertEqual(classify(test_lb_2_5), '1')
+		self.assertEqual(classify(test_lb_2_6), '1')
 
 
-	def test_final(self):
+	def test_insufficient_evidence_VUS(self):
 
-		path1 = 'Pathogenic (Ia)'
-		benign1 = 'VUS'
+		test_path_VUS1 = [('PVS1', 'PV')]
+		test_path_VUS2 = [('PVS1', 'PV'), ('PP1', 'PP')]
+		test_path_VUS3 = [('PS1', 'PS')]
+		test_path_VUS4 = [('PS1', 'PS'), ('PP1', 'PP')]
+		test_path_VUS5 = [('PM1', 'PM'), ('PM2', 'PM')]
+		test_path_VUS6 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP5', 'PP')]
+		test_path_VUS7 = [('PM4', 'PP'), ('PP1', 'PP')]
+		test_path_VUS8 = [('PM4', 'PP'), ('PP1', 'PP'), ('PP2', 'PP')]
+		test_path_VUS9 = [('PM4', 'PP'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP')]
+		test_path_VUS10 = [('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
 
-		path2 = 'Likely Pathogenic (III)'
-		benign2 = 'VUS'
+		test_benign_VUS1 = [('BP1', 'BP')]
+		test_benign_VUS2 = [('BP2', 'BP')]
+		test_benign_VUS3 = [('BP3', 'BP')]
+		test_benign_VUS4 = [('BP4', 'BP')]
+		test_benign_VUS5 = [('BP5', 'BP')]
+		test_benign_VUS6 = [('BP6', 'BP')]
+		test_benign_VUS7 = [('BP7', 'BP')]
+		test_benign_VUS8 = [('BS1', 'BS')]
+		test_benign_VUS9 = [('BS2', 'BS')]
+		test_benign_VUS10 = [('BS3', 'BS')]
+		test_benign_VUS11 = [('BS4', 'BS')]
 
-		path3 = 'VUS'
-		benign3 = 'Benign (I)'
+		self.assertEqual(classify(test_path_VUS1), '2')
+		self.assertEqual(classify(test_path_VUS2), '2')
+		self.assertEqual(classify(test_path_VUS3), '2')
+		self.assertEqual(classify(test_path_VUS4), '2')
+		self.assertEqual(classify(test_path_VUS5), '2')
+		self.assertEqual(classify(test_path_VUS6), '2')
+		self.assertEqual(classify(test_path_VUS7), '2')
+		self.assertEqual(classify(test_path_VUS8), '2')
+		self.assertEqual(classify(test_path_VUS9), '2')
+		self.assertEqual(classify(test_path_VUS10), '2')
 
-		path4 = 'VUS'
-		benign4 = 'Likely Benign (I)'
+		self.assertEqual(classify(test_benign_VUS1), '2')
+		self.assertEqual(classify(test_benign_VUS2), '2')
+		self.assertEqual(classify(test_benign_VUS3), '2')
+		self.assertEqual(classify(test_benign_VUS4), '2')
+		self.assertEqual(classify(test_benign_VUS5), '2')
+		self.assertEqual(classify(test_benign_VUS6), '2')
+		self.assertEqual(classify(test_benign_VUS7), '2')
+		self.assertEqual(classify(test_benign_VUS8), '2')
+		self.assertEqual(classify(test_benign_VUS9), '2')
+		self.assertEqual(classify(test_benign_VUS10), '2')
+		self.assertEqual(classify(test_benign_VUS11), '2')
+	
 
-		path5 = 'Pathogenic (Ia)'
-		benign5 = 'Benign (I)'
+	def test_conflicting_evidence_VUS(self):
 
-		path6 = 'Likely Pathogenic (I)'
-		benign6 = 'Benign (II)'
-		
-		self.assertEqual(get_final_classification(path1, benign1), 'Pathogenic (Ia)')
-		self.assertEqual(get_final_classification(path2, benign2), 'Likely Pathogenic (III)')
-		self.assertEqual(get_final_classification(path3, benign3), 'Benign (I)')
-		self.assertEqual(get_final_classification(path4, benign4), 'Likely Benign (I)')
-		self.assertEqual(get_final_classification(path5, benign5), 'VUS - contradictory evidence provided')
-		self.assertEqual(get_final_classification(path6, benign6), 'VUS - contradictory evidence provided')
-		self.assertEqual(get_final_classification(path3, benign1), 'VUS - criteria not met')
-	'''
+		test_conflicting_path_1a_1 = [('PVS1', 'PV'), ('PS1', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_1a_2 = [('PVS1', 'PV'), ('PS3', 'PS'), ('PS4', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_1a_3 = [('PVS1', 'PV'), ('PS3', 'PS'), ('PS4', 'PS'), ('PS1', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_1a_4 = [('PVS1', 'PV'), ('PS3', 'PS'), ('PS4', 'PS'), ('PS2', 'PS'), ('PS1', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_1b_1 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM6', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_1b_2 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM6', 'PM'), ('PM3', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_1b_3 = [('PVS1', 'PV'), ('PM5', 'PM'), ('PM4', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_1b_4 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_1b_5 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_1c_1 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PP1', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_1d_1 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_1d_2 = [('PVS1', 'PV'), ('PP2', 'PP'), ('PP4', 'PP'), ('PP3', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_1d_3 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_1d_4 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_2_1 = [('PS1', 'PS'), ('PS2', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_2_2 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_2_3 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS'), ('PS4', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_3a_1 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_3a_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_3a_3 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_3a_4 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_3b_1 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_3b_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_3b_3 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_3b_4 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_3c_1 = [('PS2', 'PS'), ('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_3c_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+
+		test_conflicting_lp_1_1 = [('PVS1', 'PV'), ('PM1', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_2_1 = [('PS1', 'PS'), ('PM1', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_2_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM5', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_3_1 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_3_2 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_3_3 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_3_4 = [('PS1', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_4_1 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_4_2 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_4_3 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_4_4 = [('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM'), ('BP1', 'BP')]
+		test_conflicting_lp_5_1 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_5_2 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_5_3 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP1', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_6_1 = [('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('BP1', 'BP')]
+		test_conflicting_lp_6_2 = [('PM1', 'PM'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+
+		test_conflicting_path_VUS1 = [('PVS1', 'PV'), ('BP1', 'BP')]
+		test_conflicting_path_VUS2 = [('PVS1', 'PV'), ('PP1', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_VUS3 = [('PS1', 'PS'), ('BP1', 'BP')]
+		test_conflicting_path_VUS4 = [('PS1', 'PS'), ('PP1', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_VUS5 = [('PM1', 'PM'), ('PM2', 'PM'), ('BP1', 'BP')]
+		test_conflicting_path_VUS6 = [('PM1', 'PM'), ('PM2', 'PM'), ('PP5', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_VUS7 = [('PM4', 'PP'), ('PP1', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_VUS8 = [('PM4', 'PP'), ('PP1', 'PP'), ('PP2', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_VUS9 = [('PM4', 'PP'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('BP1', 'BP')]
+		test_conflicting_path_VUS10 = [('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP'), ('BP1', 'BP')]
+
+		test_conflicting_benign_VUS1 = [('BP1', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS2 = [('BP2', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS3 = [('BP3', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS4 = [('BP4', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS5 = [('BP5', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS6 = [('BP6', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS7 = [('BP7', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS8 = [('BS1', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS9 = [('BS2', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS10 = [('BS3', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_VUS11 = [('BS4', 'BS'), ('PP1', 'PP')]
+
+		test_conflicting_lb_1_1 = [('BS1', 'BS'), ('BP1', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_1_2 = [('BS1', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_1_3 = [('BS2', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_1_4 = [('BS3', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_1_5 = [('BS4', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_1_6 = [('BS1', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_1_7 = [('BS2', 'BS'), ('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_2_1 = [('BP1', 'BP'), ('BP2', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_2_2 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_2_3 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_2_4 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_2_5 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP'), ('PP1', 'PP')]
+		test_conflicting_lb_2_6 = [('BP1', 'BP'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP4', 'BP'), ('BP5', 'BP'), ('BP6', 'BP'), ('BP7', 'BP'), ('PP1', 'PP')]
+
+		test_conflicting_benign_1_1 = [('BA1', 'BA'), ('PP1', 'PP')]
+		test_conflicting_benign_1_2 = [('BA1', 'BA'), ('BS1', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_1_3 = [('BA1', 'BA'), ('BP1', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_1_4 = [('BA1', 'BA'), ('BS1', 'BS'), ('BP1', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_1_5 = [('BS1', 'BA'), ('PP1', 'PP')]
+		test_conflicting_benign_2_1 = [('BS1', 'BS'), ('BS2', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_2_2 = [('BS1', 'BS'), ('BS2', 'BS'), ('BS3', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_2_3 = [('BS1', 'BS'), ('BS2', 'BS'), ('BS3', 'BS'), ('BS4', 'BS'), ('PP1', 'PP')]
+		test_conflicting_benign_2_4 = [('BS1', 'BS'), ('BS2', 'BS'), ('BP1', 'BP'), ('PP1', 'PP')]
+		test_conflicting_benign_2_5 = [('BS3', 'BS'), ('BS4', 'BS'), ('BP2', 'BP'), ('BP3', 'BP'), ('BP1', 'BP'), ('PP1', 'PP')]
+
+		self.assertEqual(classify(test_conflicting_path_1a_1), '3')
+		self.assertEqual(classify(test_conflicting_path_1a_2), '3')
+		self.assertEqual(classify(test_conflicting_path_1a_3), '3')
+		self.assertEqual(classify(test_conflicting_path_1a_4), '3')
+		self.assertEqual(classify(test_conflicting_path_1b_1), '3')
+		self.assertEqual(classify(test_conflicting_path_1b_2), '3')
+		self.assertEqual(classify(test_conflicting_path_1b_3), '3')
+		self.assertEqual(classify(test_conflicting_path_1b_4), '3')
+		self.assertEqual(classify(test_conflicting_path_1b_5), '3')
+		self.assertEqual(classify(test_conflicting_path_1c_1), '3')
+		self.assertEqual(classify(test_conflicting_path_1d_1), '3')
+		self.assertEqual(classify(test_conflicting_path_1d_2), '3')
+		self.assertEqual(classify(test_conflicting_path_1d_3), '3')
+		self.assertEqual(classify(test_conflicting_path_1d_4), '3')
+		self.assertEqual(classify(test_conflicting_path_2_1), '3')
+		self.assertEqual(classify(test_conflicting_path_2_2), '3')
+		self.assertEqual(classify(test_conflicting_path_2_3), '3')
+		self.assertEqual(classify(test_conflicting_path_3a_1), '3')
+		self.assertEqual(classify(test_conflicting_path_3a_2), '3')
+		self.assertEqual(classify(test_conflicting_path_3a_3), '3')
+		self.assertEqual(classify(test_conflicting_path_3a_4), '3')
+		self.assertEqual(classify(test_conflicting_path_3b_1), '3')
+		self.assertEqual(classify(test_conflicting_path_3b_2), '3')
+		self.assertEqual(classify(test_conflicting_path_3b_3), '3')
+		self.assertEqual(classify(test_conflicting_path_3b_4), '3')
+		self.assertEqual(classify(test_conflicting_path_3c_1), '3')
+		self.assertEqual(classify(test_conflicting_path_3c_2), '3')
+
+		self.assertEqual(classify(test_conflicting_lp_1_1), '3')
+		self.assertEqual(classify(test_conflicting_lp_2_1), '3')
+		self.assertEqual(classify(test_conflicting_lp_2_2), '3')
+		self.assertEqual(classify(test_conflicting_lp_3_1), '3')
+		self.assertEqual(classify(test_conflicting_lp_3_2), '3')
+		self.assertEqual(classify(test_conflicting_lp_3_3), '3')
+		self.assertEqual(classify(test_conflicting_lp_3_4), '3')
+		self.assertEqual(classify(test_conflicting_lp_4_1), '3')
+		self.assertEqual(classify(test_conflicting_lp_4_2), '3')
+		self.assertEqual(classify(test_conflicting_lp_4_3), '3')
+		self.assertEqual(classify(test_conflicting_lp_4_4), '3')
+		self.assertEqual(classify(test_conflicting_lp_5_1), '3')
+		self.assertEqual(classify(test_conflicting_lp_5_2), '3')
+		self.assertEqual(classify(test_conflicting_lp_5_3), '3')
+		self.assertEqual(classify(test_conflicting_lp_6_1), '3')
+		self.assertEqual(classify(test_conflicting_lp_6_2), '3')
+
+		self.assertEqual(classify(test_conflicting_path_VUS1), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS2), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS3), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS4), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS5), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS6), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS7), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS8), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS9), '3')
+		self.assertEqual(classify(test_conflicting_path_VUS10), '3')
+
+		self.assertEqual(classify(test_conflicting_benign_VUS1), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS2), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS3), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS4), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS5), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS6), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS7), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS8), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS9), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS10), '3')
+		self.assertEqual(classify(test_conflicting_benign_VUS11), '3')
+
+		self.assertEqual(classify(test_conflicting_lb_1_1), '3')
+		self.assertEqual(classify(test_conflicting_lb_1_2), '3')
+		self.assertEqual(classify(test_conflicting_lb_1_3), '3')
+		self.assertEqual(classify(test_conflicting_lb_1_4), '3')
+		self.assertEqual(classify(test_conflicting_lb_1_5), '3')
+		self.assertEqual(classify(test_conflicting_lb_1_6), '3')
+		self.assertEqual(classify(test_conflicting_lb_1_7), '3')
+		self.assertEqual(classify(test_conflicting_lb_2_1), '3')
+		self.assertEqual(classify(test_conflicting_lb_2_2), '3')
+		self.assertEqual(classify(test_conflicting_lb_2_3), '3')
+		self.assertEqual(classify(test_conflicting_lb_2_4), '3')
+		self.assertEqual(classify(test_conflicting_lb_2_5), '3')
+		self.assertEqual(classify(test_conflicting_lb_2_6), '3')
+
+		self.assertEqual(classify(test_conflicting_benign_1_1), '3')
+		self.assertEqual(classify(test_conflicting_benign_1_2), '3')
+		self.assertEqual(classify(test_conflicting_benign_1_3), '3')
+		self.assertEqual(classify(test_conflicting_benign_1_4), '3')
+		self.assertEqual(classify(test_conflicting_benign_1_5), '3')
+		self.assertEqual(classify(test_conflicting_benign_2_1), '3')
+		self.assertEqual(classify(test_conflicting_benign_2_2), '3')
+		self.assertEqual(classify(test_conflicting_benign_2_3), '3')
+		self.assertEqual(classify(test_conflicting_benign_2_4), '3')
+		self.assertEqual(classify(test_conflicting_benign_2_5), '3')
+
 
 	def test_valid_input(self):
 
-		input1 =['PVS1', 'PS1', 'PS2', 'BS1']
-		input2 =['PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
-				'BA1', 'BS1', 'BS2', 'BS3', 'BS4', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
-
-		input3 =['PVS1', 'PS1', 'PS2', 'BS1', 'Cheese']
-		input4 =['PVS1', 'PS1', 'PS1', 'PS2']
-		input5 =[]
+		input1 = ['PVS1', 'PS1', 'PS2', 'BS1']
+		input2 = ['PVS1', 'PS1', 'PS2', 'PS3', 'PS4', 'PM1', 'PM2', 'PM3', 'PM4', 'PM5', 'PM6', 'PP1', 'PP2', 'PP3', 'PP4', 'PP5',
+				  'BA1', 'BS1', 'BS2', 'BS3', 'BS4', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7']
+		input3 = ['PVS1', 'PS1', 'PS2', 'BS1', 'Cheese']
+		input4 = ['PVS1', 'PS1', 'PS1', 'PS2']
+		input5 = []
 		input6 = 32442
 
 		self.assertTrue(valid_input(input1)) #valid input
@@ -344,51 +436,7 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertFalse(valid_input(input4)) #duplicates in list
 		self.assertFalse(valid_input(input5)) #empty list
 		self.assertFalse(valid_input(input6)) #not a list
-	
-	'''
-	def test_adjust_strength(self):
 
-		input1 = [('PVS1', 'PM'), ('PM1', 'PM'), ('PS2', 'PM')]
-		input3 = [('BA1', 'BS'), ('BP1', 'BP'), ('BS1', 'BP')]
-		input4 = [('BP1', 'BS'), ('BS2', 'BP'), ('BP7', 'BP')]
-		input6 = [('PP1', 'PS'), ('BS2', 'BP'), ('BM4', 'PP')]
-		input7 = [('PP1', 'PS'), ('BS2', 'BP'), ('BM4', 'PP'), ('PVS1', 'PM'), ('PM1', 'PP'), ('PS2', 'PM')]
-		
-		self.assertEqual(adjust_strength(input1), ['PMS1', 'PM1', 'PM2'])
-		self.assertEqual(adjust_strength(input3), ['BS1', 'BP1', 'BP1'])
-		self.assertEqual(adjust_strength(input4), ['BS1', 'BP2', 'BP7'])
-		self.assertEqual(adjust_strength(input6), ['PS1', 'BP2', 'PP4'])
-		self.assertEqual(adjust_strength(input7), ['PS1', 'BP2', 'PP4', 'PMS1', 'PP1', 'PM2'])
-
-
-	def test_classify(self):
-
-		input1 = ['PVS1', 'PS1', 'BP1']
-		input2 = ['PVS1', 'PS1', 'PS1']
-		input3 = ['BA1', 'PP1']
-		input4 = ['PVS1', 'BA1', 'PS1']
-		input5 = ['PP1', 'BP1']
-		input6 = ['BS1', 'BP1', 'PS1', 'PM1', 'PM2', 'PM3']
-		input7 = ['PVS1', 'PM6', 'BS1']
-		input8 = ['BS2', 'BP1', 'BS1']
-		input9 = ['PVS1']
-		input10 = ['PM1', 'PM2', 'PM3', 'PM4', 'PM5']
-		input11= ['BS2', 'BP1']
-		input12=['PS1','PP1','PS3']
-		
-		self.assertEqual(classify(input1), 'Pathogenic (Ia)')
-		self.assertEqual(classify(input2), 'Pathogenic (Ia)')
-		self.assertEqual(classify(input3), 'Benign (I)')
-		self.assertEqual(classify(input4), 'VUS - contradictory evidence provided')
-		self.assertEqual(classify(input5), 'VUS - criteria not met')
-		self.assertEqual(classify(input6), 'VUS - contradictory evidence provided')
-		self.assertEqual(classify(input7), 'Likely Pathogenic (I)')
-		self.assertEqual(classify(input8), 'Benign (II)')
-		self.assertEqual(classify(input9), 'VUS - criteria not met')
-		self.assertEqual(classify(input10), 'Likely Pathogenic (IV)')
-		self.assertEqual(classify(input11), 'Likely Benign (I)')
-		self.assertEqual(classify(input12), 'Pathogenic (II)')
-	'''
 
 if __name__ == '__main__':
 
