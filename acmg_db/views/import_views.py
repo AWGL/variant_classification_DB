@@ -183,8 +183,8 @@ def auto_input(request):
 
 				new_classification_obj.save()
 
-			success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
-			params = '?worksheet={}&sample={}'.format(worksheet_id, sample_id)
+			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
+			params = '?worksheet={}&sample={}&panel={}'.format(worksheet_id, sample_id, analysis_performed_pk)
 
 			context = {
 					'form': form, 
@@ -261,8 +261,8 @@ def manual_input(request):
 				sample_obj = Sample.objects.get(name=worksheet_id + '-' + sample_id + '-' + analysis_performed_pk)
 
 				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
-				context['error'] = [f'ERROR: {sample_obj.name} has already been uploaded with the {analysis_performed_pk} panel.']
-				return render(request, 'acmg_db/manual_input.html', context)
+				#context['error'] = [f'ERROR: {sample_obj.name} has already been uploaded with the {analysis_performed_pk} panel.']
+				#return render(request, 'acmg_db/manual_input.html', context)
 
 			except Sample.DoesNotExist:
 				sample_obj = Sample.objects.create(
@@ -377,8 +377,8 @@ def manual_input(request):
 
 				new_classification_obj.save()
 
-			success = ['Worksheet {} - Sample {} - Upload completed '.format(worksheet_id, sample_id)]
-			params = '?worksheet={}&sample={}'.format(worksheet_id, sample_id)
+			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
+			params = '?worksheet={}&sample={}&panel={}'.format(worksheet_id, sample_id, analysis_performed_pk)
 
 			context = {
 					'form': form, 
