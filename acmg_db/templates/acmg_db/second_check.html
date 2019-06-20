@@ -356,13 +356,13 @@
             <tr>
               <th style="display:none;" class='answer_pk'> Answer PK </th>
               <th style="display:none;" class='cat'> Category </th>
-              <th class='question'> Evidence Category  </th>
-              <th class='description'> Description </th>
-              <th class='strength_first'> First Strength </th>
-              <th class='selected_first'> First Decision </th>
-              <th class='strength'> Second Strength </th>
-              <th class='selected_second'> Second Decision </th>
-              <th class='comment'> Comment </th>
+              <th class='question col-1'> Evidence Category  </th>
+              <th class='description col-3'> Description </th>
+              <th class='strength_first col-1'> First Strength </th>
+              <th class='selected_first col-1'> First Decision </th>
+              <th class='strength col-1'> Second Strength </th>
+              <th class='selected_second col-1'> Second Decision </th>
+              <th class='comment col-4'> Comment </th>
             </tr>
           </thead>
           <tbody>
@@ -370,25 +370,25 @@
                 <tr class='answer'>
               <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
               <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
-              <td class='question'> {{ answer.classification_question.acmg_code  }}</td>
-              <td class='description'> {{ answer.classification_question.text  }}</td>
-              <td class='strength_first'>{{answer.strength_first}}</td>
+              <td class='question col-1'> {{ answer.classification_question.acmg_code  }}</td>
+              <td class='description col-3'> {{ answer.classification_question.text  }}</td>
+              <td class='strength_first col-1'>{{answer.strength_first}}</td>
 
               {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
 
-                  <td class='selected_first table-danger'>{{answer.selected_first}}</td>
+                  <td class='selected_first table-danger col-1'>{{answer.selected_first}}</td>
 
               {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True %}
 
-                  <td class='selected_first table-info'>{{answer.selected_first}}</td>
+                  <td class='selected_first table-info col-1'>{{answer.selected_first}}</td>
 
               {% else %}
 
-                   <td class='selected_first'>{{answer.selected_first}}</td>
+                   <td class='selected_first col-1'>{{answer.selected_first}}</td>
 
               {% endif %}
 
-              <td class='strength'>
+              <td class='strength col-1'>
                 {% if answer.classification_question.allowed_strength_change == False %}
                   {{answer.classification_question.default_strength}}
                 {% else %}
@@ -409,15 +409,15 @@
 
               {% if answer.classification_question.pathogenic_question == True and answer.selected_second == True %}
 
-                  <td class='selected_second table-danger'>
+                  <td class='selected_second table-danger col-1'>
 
               {% elif answer.classification_question.pathogenic_question == False and  answer.selected_second == True%}
 
-                  <td class='selected_second table-info'>
+                  <td class='selected_second table-info col-1'>
 
               {% else %}
 
-                   <td class='selected_second'>
+                   <td class='selected_second col-1'>
 
               {% endif %}
 
@@ -434,7 +434,7 @@
                 </select>
               </td>
 
-              <td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+              <td class='comment col-4'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
 
               </tr>
             

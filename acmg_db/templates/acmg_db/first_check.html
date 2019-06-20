@@ -353,11 +353,11 @@
 		<tr>
 		  <th style="display:none;" class='answer_pk'> Answer PK </th>
 		  <th style="display:none;" class='cat'> Category </th>
-		  <th class='question'> Evidence Category  </th>
-		  <th class='description'> Description </th>
-		  <th class='strength'> Strength </th>
-		  <th class='selected_first'> Decision </th>
-		  <th class='comment'> Comment </th>
+		  <th class='question col-1'> Evidence Category  </th>
+		  <th class='description col-3'> Description </th>
+		  <th class='strength col-1'> Strength </th>
+		  <th class='selected_first col-1'> Decision </th>
+		  <th class='comment col-6'> Comment </th>
 		</tr>
 	  </thead>
 
@@ -374,10 +374,10 @@
 		  	  <!-- Hidden columns for rendering table sections properly -->
 			  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
 			  <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
-		      <td class='question'> {{ answer.classification_question.acmg_code  }}</td>
-			  <td class='description'> {{ answer.classification_question.text  }}</td>
+		      <td class='question col-1'> {{ answer.classification_question.acmg_code  }}</td>
+			  <td class='description col-3'> {{ answer.classification_question.text  }}</td>
 			  <!-- Change criteria strength -->
-			  <td class='strength'>
+			  <td class='strength col-1'>
 				{% if answer.classification_question.allowed_strength_change == False %}
 				  {{answer.classification_question.default_strength}}
 				{% else %}
@@ -393,7 +393,7 @@
 				{% endif %}
 			  </td>
 			  <!-- Select whether or not to apply the criteria -->
-			  <td class='selected_first'>
+			  <td class='selected_first col-1'>
 
 				<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
 				  <option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
@@ -405,7 +405,7 @@
 				</select>
 			  </td>
 			  <!-- Comments box -->
-			  <td class='comment'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+			  <td class='comment col-6'> <input type="text" class="form-control" value="{{answer.comment}}"></td>
 			</tr>	
 		{% endfor %}
 	  </tbody>
