@@ -64,7 +64,10 @@ Set these to your preferred settings or use the default. The secret key should b
 
 There are some tests for the acmg classifier as well as checking all the views work.
 
-`python manage.py test`
+`python manage.py test --keepdb`
+
+**Note - encoding error when running tests**: If run without the keepdb flag the encoding will default to LATIN9, which won't be able to load the example data fixtures, and then the database will be deleted. 
+If the test database is kept with the keepdb flag, you can log into the psql terminal and change the encoding to UTF8 with the command `update pg_database set encoding = pg_char_to_encoding('UTF8') where datname = 'test_variant_classification_db'`, and then re-run the tests again.
 
 ## Run
 
