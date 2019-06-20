@@ -124,11 +124,11 @@ def get_variant_info_mutalzer(variant, mutalyzer_url, mutalyzer_build):
 
 		if mutalyzer_light_response['errors'] > 0:
 
-			return [False, ['Mutalyzer Light Error: Error returned in response.']]
+			return [False, ['Mutalyzer Light Error: Check that your variant is formatted correctly.']]
 
 	except:
 
-		return [False, ['Mutalyzer Light Error: Not a valid Variant.']]
+		return [False, ['Mutalyzer Light Error: Check that your variant is formatted correctly.']]
 
 
 	transcript_variant_list = mutalyzer_pos_response['string']
