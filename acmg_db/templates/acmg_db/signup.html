@@ -10,12 +10,14 @@
 <div class="card bg-light mb-6">
   <div class="card-header">Login</div>
     <div class="card-body">
+        <div class="alert alert-danger" role="alert">
+          <p><b>NOTE:</b></p>
+          <p>Use your <b>NHS email address</b> as your username.</p>
+          <p>Email <b>bioinformatics.team@wales.nhs.uk</b> after filling in this form to activate your account.</p>
+        </div>
     <form class="form-horizontal" method="post">{% csrf_token %}
       {{ form.as_p }}
-      <br>
-      <div class="alert alert-warning" role="alert">
-        <b>IMPORTANT:</b> You need to activate your account before you can use it, email bioinformatics.team@wales.nhs.uk after filling in this form to activate your account.
-      </div>
+
       <br>
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Submit</button>
