@@ -20,11 +20,11 @@
 		
 		<thead>
 			<tr>
-				<td style="width: 10.00%" class="col-1">Worksheet</td>
-				<td style="width: 10.00%"class="col-1">Sample</td>
-				<td style="width: 20.00%"class="col-4">Variant</td>
-				<td style="width: 40.00%"class="col-2">Current Classification</td>
-				<td style="width: 20.00%"class="col-2">Status</td>
+				<td style="width: 10.00%">Worksheet</td>
+				<td style="width: 10.00%">Sample</td>
+				<td style="width: 20.00%">Variant</td>
+				<td style="width: 40.00%">Current Classification</td>
+				<td style="width: 20.00%">Status</td>
 			</tr>
 		</thead>
 		
@@ -612,7 +612,7 @@ $(document).ready(function(){
 		for (var i =0; i<rows.length; i++){
 
 				// skip group rows in table
-				if ($(rows[i]).hasClass('group') == false){
+				if ($(rows[i]).hasClass('dtrg-group') == false){
 
 				var pk = $(rows[i]).children('td.answer_pk').text();
 				// allow either select drop downs or plain text
