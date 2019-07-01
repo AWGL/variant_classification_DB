@@ -100,7 +100,7 @@ class Gene(models.Model):
 	)
 
 	name = models.CharField(max_length=25, primary_key=True)
-	inheritance_pattern = models.CharField(max_length=60, null=True, blank=True)
+	inheritance_pattern = models.CharField(max_length=255, null=True, blank=True)
 	conditions = models.TextField(null=True, blank=True)
 
 	def all_inheritance_patterns(self):
