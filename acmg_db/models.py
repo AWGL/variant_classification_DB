@@ -437,7 +437,7 @@ class ClassificationQuestion(models.Model):
 
 			return ['PV','PS', 'PM', 'PP']
 
-		elif self.pathogenic_question == False and (self.acmg_code == 'BA1' or self.acmg_code == 'BS1'):
+		elif self.pathogenic_question == False and self.acmg_code == 'BA1':
 
 			return ['BA', 'BS', 'BP']
 
