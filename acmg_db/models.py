@@ -91,6 +91,7 @@ class Gene(models.Model):
 
 	"""
 	INHERITANCE_CHOICES = (
+		('Unknown', 'Unknown'), 
 		('Autosomal dominant', 'Autosomal dominant'), 
 		('Autosomal recessive', 'Autosomal recessive'),
 		('X linked dominant', 'X linked dominant'),
