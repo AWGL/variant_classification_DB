@@ -229,15 +229,24 @@ def manual_input(request):
 			affected_with = form.cleaned_data['affected_with'].strip()
 
 			# get variant
-			variants = form.cleaned_data['variant'].strip()
+			variants = form.cleaned_data['variant'].strip().upper()
+			# sanitise input
+			for character in list(variants):
+				if character not in 'ACGT0123456789>:':
+					context = {
+						'form': form,
+						'error': f'Invalid character in variant field: {character}',
+					}
+					return render(request, 'acmg_db/manual_input.html', context)
 
 			# check whether entered variant is valid
 			variant_info = get_variant_info_mutalzer(variants, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
 
 			if variant_info[0] == False:
-
-				context['error'] = variant_info[1][0]
-
+				context = {
+					'form': form,
+					'error': variant_info[1][0],
+				}
 				return render(request, 'acmg_db/manual_input.html', context)
 
 			# put variant into list - just so we can reuse code from above
@@ -245,10 +254,26 @@ def manual_input(request):
 			unique_variants = [variants]
 
 			# get worksheet
-			worksheet_id = form.cleaned_data['worklist'].strip()
+			worksheet_id = form.cleaned_data['worklist'].strip().upper().replace(' ', '_')
+			# sanitise input
+			for character in list(worksheet_id):
+				if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_':
+					context = {
+						'form': form,
+						'error': f'Invalid character in worksheet field: {character}',
+					}
+					return render(request, 'acmg_db/manual_input.html', context)
 
 			#get sample 
-			sample_id = form.cleaned_data['sample_name'].strip()
+			sample_id = form.cleaned_data['sample_name'].strip().upper().replace(' ', '_')
+			# sanitise input
+			for character in list(sample_id):
+				if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_':
+					context = {
+						'form': form,
+						'error': f'Invalid character in sample name field: {character}',
+					}
+					return render(request, 'acmg_db/manual_input.html', context)
 
 
 			# add worksheet
