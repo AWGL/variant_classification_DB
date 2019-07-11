@@ -232,7 +232,7 @@ def manual_input(request):
 			variants = form.cleaned_data['variant'].strip().upper()
 			# sanitise input
 			for character in list(variants):
-				if character not in 'ACGT0123456789>:':
+				if character not in 'ACGT0123456789XYM>:':
 					context = {
 						'form': form,
 						'error': f'Invalid character in variant field: {character}',
