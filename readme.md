@@ -75,12 +75,6 @@ To run using the development server:
 
 `python manage.py runserver`
 
-
-## User Guide
-
-Coming Soon.
-
-
 ## Saving JSON file of ACMG criteria
 
 If the ACMG criteria are changed, a JSON file should be saved into the fixtures folder so that a new database can be initialised with the same criteria.

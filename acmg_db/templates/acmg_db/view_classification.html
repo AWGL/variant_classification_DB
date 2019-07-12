@@ -167,6 +167,17 @@
     <tbody>
       {% for answer in classification_answers %}
 
+              {% if answer.classification.status == '1' %}
+
+              {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
+                <tr class='answer table-danger'>
+              {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True %}
+                <tr class='answer table-info'>
+              {% else %}
+                <tr class='answer'>
+              {% endif %}
+
+              {% else %}
 
               {% if answer.classification_question.pathogenic_question == True and answer.selected_second == True %}
                 <tr class='answer table-danger'>
@@ -174,7 +185,21 @@
                 <tr class='answer table-info'>
               {% else %}
                 <tr class='answer'>
+
+
+
               {% endif %}
+
+
+
+              {% endif %}
+
+
+
+
+
+
+
 
             <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
             <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
