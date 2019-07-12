@@ -1,0 +1,40 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<br>
+<h5> Welcome to the  Variant Classifier DB. </h5>
+<br>
+<table class="table">
+
+			<thead>
+			</thead>
+			
+			<tbody>
+				<tr>
+					<td style="width: 25.00%" class="col-2">Contact</td>
+					<td style="width: 75.00%" class="col-8"><a href = "mailto: bioinformatics.team@wales.nhs.uk">Bioinformatics.Team@wales.nhs.uk</a> </td>
+				</tr>
+				<tr>
+					<td style="width: 25.00%" class="col-2">Issues</td>
+					<td style="width: 75.00%" class="col-8"><a href = "https://github.com/AWGL/variant_classification_DB/">GitHub</a> </td>
+				</tr>
+				<tr>
+					<td>Version</td>
+					<td> 1.0.0 </td>
+				</tr>
+				<tr>
+					<td>Genome Build</td>
+					<td> GRCh37/hg19 </td>
+				</tr>
+					<tr>
+					<td>VEP Cache Version</td>
+					<td> 94 (RefSeq) </td>
+				</tr>
+
+			</tbody>
+				
+		</table>
+
+{% endblock %}

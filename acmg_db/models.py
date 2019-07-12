@@ -1,9 +1,53 @@
 from django.db import models
+from .utils import acmg_classifier
+from auditlog.registry import auditlog
+from auditlog.models import LogEntry
+from auditlog.models import AuditlogHistoryField
 
-class Variant(models.Model):
+
+class Worklist(models.Model):
+	"""
+	Model to store which worklist the sample was on.
+	For example 18-1234.
 
 	"""
-	Model to hold unique variants within the DB.
+	name = models.CharField(max_length=50, primary_key=True)
+
+
+class Panel(models.Model):
+	"""
+	Which panel is applied to the sample.
+
+	This corresponds to the analysis_performed field in the Sample model.
+	"""
+
+	panel = models.CharField(max_length=100, primary_key=True)
+	added_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+	def __str__(self):
+		return self.panel.capitalize()
+
+
+class Sample(models.Model):
+	"""
+	Model to hold information specific to a sample.
+
+	"""
+
+	history = AuditlogHistoryField()
+
+	name = models.CharField(max_length=50, unique=True) # worksheet_id + '-' + sample_id + '-' + analysis performed
+	sample_name_only = models.CharField(max_length=50)  # sample_id only
+	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
+	affected_with = models.TextField()
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
+	analysis_complete = models.BooleanField()
+	other_changes = models.TextField()
+
+
+class Variant(models.Model):
+	"""
+	Model to hold unique variants within the database.
 
 	"""
 
@@ -14,22 +58,71 @@ class Variant(models.Model):
 	ref = models.TextField()
 	alt = models.TextField()
 
+	def most_recent_classification(self):
+		"""
+		Return the most recent classification that is either complete or archived
+
+		"""
+
+		classifications = Classification.objects.filter(variant=self, status__in=['2', '3']).order_by('-second_check_date')
+
+		if len(classifications) >0:
+
+			most_recent = classifications[0]
+
+			all_classes = [classification.display_classification() for classification in classifications]
+
+			all_classes = list(set(all_classes))
+
+			all_classes = '|'.join(all_classes)
+
+			count = len(classifications)
+
+			return most_recent, all_classes, count
+
+		return None, None, 0
+
 
 class Gene(models.Model):
+	"""
+	Model to hold information specific to a gene.
+
+	Also stores additional data regarding the inheritance pattern for that gene and any conditions associated with a gene.
 
 	"""
-	Class to hold a gene model.
-
-
-	"""
+	INHERITANCE_CHOICES = (
+		('Unknown', 'Unknown'), 
+		('Autosomal dominant', 'Autosomal dominant'), 
+		('Autosomal recessive', 'Autosomal recessive'),
+		('X linked dominant', 'X linked dominant'),
+		('X linked recessive', 'X linked recessive'),
+		('Imprinting centre', 'Imprinting centre'),
+		('Somatic mutation', 'Somatic mutation'),
+	)
 
 	name = models.CharField(max_length=25, primary_key=True)
+	inheritance_pattern = models.CharField(max_length=255, null=True, blank=True)
+	conditions = models.TextField(null=True, blank=True)
+
+	def all_inheritance_patterns(self):
+		'''
+		Join all inheritance patterns together into a string for viewing in the app.
+		Making the initial list is over complicated because the list is represented as a string in the database,
+		so it needs to be converte back into a list before joining
+		'''
+		inheritance_list = []
+		for i in str(self.inheritance_pattern).split(', '):
+			i = i.replace('[', '').replace(']', '').replace("'", "")
+			inheritance_list.append(i)
+
+		inheritance_string = ', '.join(inheritance_list)
+		return inheritance_string
 
 
 class Transcript(models.Model):
-
 	"""
-	Class to hold a transcript e.g NM0001.2
+	Model to hold a transcript e.g NM_007298.3
+	Each transcript appears in a gene.
 
 	"""
 
@@ -39,85 +132,366 @@ class Transcript(models.Model):
 
 class TranscriptVariant(models.Model):
 	"""
-	Class to link a variant with a transcript
+	Model to link a variant with a transcript.
+
+	A variant can potentially fall within many transcripts.
+
+	Holds data on HGVS as well as exon data and consequence.
 
 	"""
-	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
-	transcript = models.ForeignKey(Transcript,on_delete=models.CASCADE)
-	hgvs_c = models.TextField()
 
+	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+	transcript = models.ForeignKey(Transcript, on_delete=models.CASCADE, null=True, blank=True)
+	hgvs_c = models.TextField(null=True, blank=True)
+	hgvs_p = models.TextField(null=True, blank=True)
+	exon = models.CharField(max_length=10,null=True, blank=True)
+	consequence = models.CharField(max_length=100, null=True, blank=True)
+
+	def display_hgvsc(self):
+		"""
+		Function to display the HGVSc
+
+		"""
+		if self.hgvs_c == None:
+			return None
+
+		else:
+			try:
+				return self.hgvs_c.split(':')[1]
+
+			except:
+				return self.hgvs_c 
+
+	def display_hgvsp(self):
+		"""
+		Function to display the HGVSp
+
+		"""
+		if self.hgvs_p == None:
+			return None
+
+		else:
+			try:
+				return self.hgvs_p.split(':')[1]
+
+			except:
+				return self.hgvs_p
 
 
 class Classification(models.Model):
 
 	"""
-	Class to hold results of ACMG classification
+	Class to hold results of ACMG classification.
 
+	The overall model for storing classifications is as follows;
+
+	1) Classification class holds a unique classification. A variant can be classified many times.
+	2) Each classification is initiated and the ACMG answers (ClassificationAnswer) are created from ClassificationQuestions
+	3) The ClassificationAnswer class stores what the user selected for each question.
 
 	"""
 
+	# Some choices for the CharFields
 	PATH_CHOICES = (('VS', 'VERY_STRONG'),('ST', 'STRONG'), ('MO', 'MODERATE'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
 	BENIGN_CHOICES = (('BA', 'STAND_ALONE'), ('ST', 'STRONG'), ('PP', 'SUPPORTING', ), ('NA', 'NA'))
-	STATUS_CHOICES = (('0', 'NONE'), ('1', 'Awaiting Second Check'), ('2', 'Complete'))
-	SAMPLE_TYPE_CHOICES = (('G', 'Germline'), ('S', 'Somatic'))
+	STATUS_CHOICES = (('0', 'First Check'), ('1', 'Second Check'), ('2', 'Complete'), ('3', 'Archived'))
+	GENUINE_ARTEFACT_CHOICES = (
+		('0', 'Pending'), 
+		('1', 'Genuine - New Classification'), 
+		('2', 'Genuine - Use Previous Classification'),
+		('3', 'Genuine - Not Analysed'),
+		('4', 'Artefact')
+	)
+	FINAL_CLASS_CHOICES = (
+		('0', 'Benign'), 
+		('1', 'Likely Benign'), 
+		('2', 'VUS - Criteria Not Met'),
+		('3', 'Contradictory Evidence Provided'), 
+		('4', 'Likely Pathogenic'), 
+		('5', 'Pathogenic'),
+		('6', 'Artefact'), 
+		('7', 'Not analysed')
+	)
 
-	variant = models.ForeignKey(Variant,on_delete=models.CASCADE)
-	creation_date = models.DateTimeField(null=True, blank=True)
+	history = AuditlogHistoryField()
+
+	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
+	selected_transcript_variant = models.ForeignKey(TranscriptVariant, on_delete=models.CASCADE, null=True, blank=True)
+	creation_date = models.DateTimeField()
+	first_check_date = models.DateTimeField(null=True, blank=True)
 	second_check_date = models.DateTimeField(null=True, blank=True)
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='user_creator')
+	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_first_checker')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='user_second_checker')
-	status = models.CharField(max_length=1, choices =STATUS_CHOICES, default='0')
-	acmg_class = models.CharField(max_length=25, null=True, blank=True)
-	final_class = models.CharField(max_length=25, null=True, blank=True)
-	sample = models.CharField(max_length=25, null =True, blank=True)
-	sample_type = models.CharField(max_length=1, choices=SAMPLE_TYPE_CHOICES, null=True, blank=True)
-	sample_comment = models.TextField(null=True, blank=True)
+	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
+	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
+	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)
+	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)  # The actual one we want to display.
+	is_trio_de_novo = models.BooleanField()
+
+	def display_status(self):
+		"""
+		Take the status in the database e.g. 0 and return the string \
+		which corresponds to that e.g First check
+		"""
+		return self.STATUS_CHOICES[int(self.status)][1]
+
+	def display_genuine(self):
+		"""
+		Display the genuine status attribute.
+		"""
+		return self.GENUINE_ARTEFACT_CHOICES[int(self.genuine)][1]
+
+	def display_first_classification(self):
+		"""
+		Take the classification in the database e.g. 0 and return the string \
+		which corresponds to that e.g Pathogenic
+
+		This displays the result of the first check analysis.
+		"""
+		return self.FINAL_CLASS_CHOICES[int(self.first_final_class)][1]		
+
+	def display_final_classification(self):
+
+		"""
+		Take the classification in the database e.g. 0 and return the string \
+		which corresponds to that e.g Pathogenic.
+
+		This displays the result of the second check analysis.
+		"""
+		if  self.second_final_class == 'False':
+			return 'False'
+		else:
+			return self.FINAL_CLASS_CHOICES[int(self.second_final_class)][1]	
+
+	def display_classification(self):
+		"""
+		For instances where we only want to display the final class if the \
+		classification has been completed i.e. second check has been done.
+		"""
+		if self.status == '2' or self.status == '3':
+			return self.display_final_classification()
+		else:
+			return 'Pending'
+
+	def initiate_classification(self):
+		"""
+		Creates the needed ClassificationAnswer objects for a new classification.
+		"""
+		answers = ClassificationAnswer.objects.filter(classification=self)
+
+		#Check we're not running the function twice
+		if len(answers) == 0:
+			questions = ClassificationQuestion.objects.all()
+			questions = questions.order_by('order')
+
+			for question in questions:
+
+				new_answer = ClassificationAnswer.objects.create(
+					classification = self,
+					classification_question=question,
+					selected_first = False,
+					selected_second = False,
+					strength_first = question.default_strength,
+					strength_second = question.default_strength,
+					)
+				new_answer.save()
+
+		else:
+			return HttpResponseForbidden()
+
+		return None
+
+	def calculate_acmg_score_first(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+		Calculates based on the first user's input.
+		Output:
+		integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
+		"""
+		# pull out all classification questions and answers
+		classification_answers = ClassificationAnswer.objects.filter(classification=self)
+		all_questions_count = ClassificationQuestion.objects.all().count()
+
+		#Check we have all the answers
+		if len(classification_answers) != all_questions_count:
+			return '7'
+
+		results = []
+		tags = []
+
+		# Only get the ones where the user has selected True
+		for answer in classification_answers:
+
+			if answer.selected_first == True:
+
+				results.append((answer.classification_question.acmg_code, answer.strength_first))
+				tags.append(answer.classification_question.acmg_code)
+
+		# If nothing applied, return VUS
+		if len(results) == 0:
+			return '2'
+
+		# otherwise, if valid, classify
+		if acmg_classifier.valid_input(tags) == True:
+			final_class = acmg_classifier.classify(results)
+
+			return final_class
+
+		return '7'
+
+	def calculate_acmg_score_second(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+		Calculates based on the second user's input.
+		Output: integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
+		"""
+		# pull out all classification questions and answers
+		classification_answers = ClassificationAnswer.objects.filter(classification=self)
+		all_questions_count = ClassificationQuestion.objects.all().count()
+
+		#Check we have all the answers
+		if len(classification_answers) != all_questions_count:
+			return '7'
+
+		results = []
+		tags = []
+
+		# Only get the ones where the user has selected True
+		for answer in classification_answers:
+
+			if answer.selected_second == True:
+
+				results.append((answer.classification_question.acmg_code, answer.strength_second))
+				tags.append(answer.classification_question.acmg_code)
+
+		# If nothing applied, return VUS
+		if len(results) == 0:
+			return '2'
+
+		# otherwise, if valid, classify
+		if acmg_classifier.valid_input(tags) == True:
+			final_class = acmg_classifier.classify(results)
+			return final_class
+
+		return '7'
 
 
-	PVS1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS3 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PS4 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM2 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM3 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM4 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM5 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PM6 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP1 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP2 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP3 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP4 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
-	PP5 = models.CharField(max_length=2, choices=PATH_CHOICES, default='NA')
+class ClassificationQuestion(models.Model):
+	"""
+	Model to hold the possible questions that a user may be asked.
+
+	That is hold all the ACMG questions e.g. PVS1
+
+	"""
+
+	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),
+						('PS', 'PATH_STRONG'),
+	 					('PM', 'PATH_MODERATE'),
+						('PP', 'PATH_SUPPORTING', ),
+	 					('BA', 'BENIGN_STAND_ALONE'),
+						('BS', 'BENIGN_STRONG'),
+						('BP', 'BENIGN_SUPPORTING'))
 
 
-	BA1 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS1 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS2 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS3 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BS4 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP1 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP2 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP3 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP4 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP5 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP6 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
-	BP7 = models.CharField(max_length=2, choices=BENIGN_CHOICES, default='NA')
+	CATEGORY_CHOICES = (('Variant type and gene-variant profile', 'A'), 
+						('Frequency data', 'B'),
+						('Review of literature and databases', 'C'),
+						('Functional studies', 'D'),
+						('Computer predictions', 'E'),
+						('De novo variants', 'F'),
+						('Phenotype and family history information', 'G'),
+						('Multiple variants identified in a patient', 'H'))
+		
+	acmg_code = models.CharField(max_length=5)
+	order = models.IntegerField()
+	text = models.TextField()
+	default_strength = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	allowed_strength_change = models.BooleanField() #Can the user change the strength?
+	pathogenic_question = models.BooleanField()
+	category = models.TextField(choices= CATEGORY_CHOICES)
 
+	def __str__ (self):
+		return self.acmg_code
+
+	def strength_options(self):
+		"""
+		Returns the strength options for a question.
+
+		Used to create a choice field in the relevant forms.
+
+		"""
+
+		if self.allowed_strength_change == False:
+
+			return default_strength
+
+		elif self.pathogenic_question == True and self.acmg_code != 'PVS1':
+
+			return ['PS', 'PM', 'PP']
+
+		elif self.pathogenic_question == True and self.acmg_code == 'PVS1':
+
+			return ['PV','PS', 'PM', 'PP']
+
+		elif self.pathogenic_question == False and self.acmg_code == 'BA1':
+
+			return ['BA', 'BS', 'BP']
+
+		else:
+
+			return ['BS', 'BP']
+
+
+class ClassificationAnswer(models.Model):
+	"""
+	Model to store the user's selected answer (True, False) and the selected strength for each \
+	ClassificationQuestion in a Classification.
+
+	"""
+
+	STRENGTH_CHOICES = (('PV', 'PATH_VERY_STRONG'),('PS', 'PATH_STRONG'),
+	 ('PM', 'PATH_MODERATE'), ('PP', 'PATH_SUPPORTING', ),
+	 ('BA', 'BENIGN_STAND_ALONE'), ('BS', 'BENIGN_STRONG'), ('BP', 'BENIGN_SUPPORTING'))
+
+	history = AuditlogHistoryField()
+
+	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
+	classification_question = models.ForeignKey(ClassificationQuestion, on_delete=models.CASCADE)
+	selected_first = models.BooleanField()
+	strength_first = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	selected_second = models.BooleanField()
+	strength_second = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
+	comment = models.TextField()
 
 
 class UserComment(models.Model):
+	"""
+	Model to hold a comment by a user against a Classification object.
 
 	"""
 
-	A class to hold a comment by a user against a classification.
-
-	"""
 	classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
 	user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 	text = models.TextField()
 	time = models.DateTimeField()
+	visible = models.BooleanField(default=True)
+
+	def get_evidence(self):
+		"""
+		Return the evidence associated with a comment.
+
+		"""
+		evidence = Evidence.objects.filter(comment=self)
+
+		if len(evidence) == 0:
+
+			return None
+
+		return evidence
 
 
 class Evidence(models.Model):
@@ -125,9 +499,21 @@ class Evidence(models.Model):
 	Model to hold files that relate to evidence e.g. pdfs, screenshots.
 	Must be associated with a comment.
 	"""
-	file = models.FileField(upload_to='uploads/%y/%m/', null=True, blank=True)
+
+	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
 
 
-
-
+# register audit logs
+auditlog.register(Worklist)
+auditlog.register(Panel)
+auditlog.register(Sample)
+auditlog.register(Variant)
+auditlog.register(Gene)
+auditlog.register(Transcript)
+auditlog.register(TranscriptVariant)
+auditlog.register(Classification)
+auditlog.register(ClassificationQuestion)
+auditlog.register(ClassificationAnswer)
+auditlog.register(UserComment)
+auditlog.register(Evidence)

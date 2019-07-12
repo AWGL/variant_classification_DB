@@ -1,0 +1,789 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br>
+
+<!-- BOX TO SHOW ERRORS -->
+{% if warn %}
+  {% for w in warn %}
+    <div class="alert alert-danger" role="alert">
+	    Error: {{ w }}
+	  </div>
+  {% endfor %}
+{% endif %}
+
+<!-- VARIANT SUMMARY BOX -->
+<div>
+	<table class="table table-bordered">
+		
+		<thead>
+			<tr>
+				<td style="width: 10.00%">Worksheet</td>
+				<td style="width: 10.00%">Sample</td>
+				<td style="width: 20.00%">Variant</td>
+				<td style="width: 40.00%">Current Classification</td>
+				<td style="width: 20.00%">Status</td>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+				<td>{{ classification.sample.worklist.name }}</td>
+				<td>{{ classification.sample.sample_name_only }}</td>
+				<td>
+					({{ classification.selected_transcript_variant.transcript.gene.name }}):
+					{{ classification.selected_transcript_variant.display_hgvsc }}
+				{% if classification.selected_transcript_variant.hgvs_p %}
+					({{ classification.selected_transcript_variant.display_hgvsp }})
+				{% else %}
+					(p.?)
+				{% endif %}
+				</td>
+				<td>
+					<div id="class_box">
+					{% if 'Pathogenic' in result %}
+						<button type="button" class="btn btn-danger" style="width: 100%;">{{result}}</span></button>
+					{% elif 'Benign' in result %}
+						<button type="button" class="btn btn-info" style="width: 100%;">{{result}}</button>
+					{% elif 'VUS' in result %}
+						<button type="button" class="btn btn-warning" style="width: 100%;">{{result}}</button>
+					{% elif 'Artefact' in result %}
+						<button type="button" class="btn btn-secondary" style="width: 100%;">{{result}}</button>
+					{% elif 'Contradictory' in result %}
+                        <button type="button" class="btn btn-primary" style="width: 100%;">{{result}}</button>
+					{% else %}
+						<button type="button" class="btn btn-secondary" style="width: 100%;">{{result}}</button>
+					{% endif %}
+					</div>
+				</td>
+				<td>{{ classification.display_status }}</td>
+			</tr>
+		</tbody>
+
+	</table>
+	<hr>
+</div>
+
+<!-- TABS FOR CLASSIFICATION SECTIONS -->
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+	<a class="nav-item nav-link active" id="nav-sample-tab" data-toggle="tab" href="#nav-sample" role="tab" aria-controls="nav-sample" aria-selected="true">Sample Information</a>
+	<a class="nav-item nav-link" id="nav-variant-tab" data-toggle="tab" href="#nav-variant" role="tab" aria-controls="nav-variant" aria-selected="true">Variant Information</a>
+	<a class="nav-item nav-link" id="nav-acmg-tab" data-toggle="tab" href="#nav-acmg" role="tab" aria-controls="nav-acmg" aria-selected="false">ACMG Criteria</a>
+	<a class="nav-item nav-link" id="nav-evidence-tab" data-toggle="tab" href="#nav-evidence" role="tab" aria-controls="nav-evidence" aria-selected="false">Evidence/Comments</a>
+	<a class="nav-item nav-link" id="nav-audit-tab" data-toggle="tab" href="#nav-audit" role="tab" aria-controls="nav-audit" aria-selected="false">Finalise</a>	
+</div>
+</nav>
+
+<!-- START OF CLASSIFICATION SECTIONS -->
+<div class="tab-content" id="nav-tabContent">
+
+  <!-- SAMPLE INFORMATION SECTION -->
+  <div class="tab-pane fade show active" id="nav-sample" role="tabpanel" aria-labelledby="nav-sample-tab">
+  <br>
+
+	<!-- Summary table for classification-->
+	<h5>Sample information</h5>
+  <table id="classification_info" class="table table-hover table-bordered table-sm col-10">
+	
+		<thead>
+		</thead>
+	
+	  <tbody>
+      <tr>
+        <td style="width: 25.00%" class="col-2">Sample Lab Number </td>
+        <td style="width: 75.00%" class="col-8">{{ classification.sample.sample_name_only }}</td>
+      </tr>
+      <tr>
+        <td>Worksheet</td>
+        <td>{{ classification.sample.worklist.name }}</td>
+			</tr>
+      <tr>
+        <td>Panel Applied</td>
+        <td>{{ classification.sample.analysis_performed|linebreaksbr }}</td>
+			</tr>
+			<tr>
+				<td>Affected With</td>
+				<td>{{ classification.sample.affected_with|linebreaksbr }}</td>
+			</tr> 
+      <tr>
+        <td>Other Changes</td>
+        <td>{{ classification.sample.other_changes|linebreaksbr }}</td>
+      </tr>
+ 
+	  </tbody>
+	
+	</table>
+
+	<!-- Expandable box containing preset filters -->
+	<!-- Button to expand/hide the filter table -->
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-sample-info" role="button" aria-expanded="false" aria-controls="edit-sample-info">
+		Edit
+	</button>
+	<br>
+	<div class="collapse" id="edit-sample-info">
+		<br>
+		<div class="card card-body bg-light col-10">
+
+			{% crispy sample_form %}
+		</div>
+	</div>
+	<br>
+	
+	</div>
+
+
+	<!-- VARIANT INFORMATION SECTION -->
+	<div class="tab-pane fade" id="nav-variant" role="tabpanel" aria-labelledby="nav-variant-tab">
+	<br>
+
+
+	<!-- Variant information table -->
+	<h5>Variant information</h5>
+	<table class="table table-hover table-bordered table-sm col-10">
+	
+			<thead>
+			</thead>
+		
+			<tbody>
+				<tr>
+					<td  style="width: 25.00%" class="col-2">Variant</td>
+					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
+				</tr>
+				<tr>
+					<td> Transcript</td>
+					<td>{{ classification.selected_transcript_variant.transcript.name }}</td>
+				</tr>
+				<tr>
+					<td>HGVSc</td>
+					<td>{{ classification.selected_transcript_variant.display_hgvsc }}</td>
+				</tr>
+				<tr>
+					<td>HGVSp</td>
+					<td>{{ classification.selected_transcript_variant.display_hgvsp }}</td>
+				</tr>
+				<tr>
+					<td>Consequence</td>
+					<td>{{ classification.selected_transcript_variant.consequence }}</td>
+				</tr>
+				<tr>
+					<td>De novo?</td>
+					<td>
+						{% if classification.is_trio_de_novo %}
+							Yes
+						{% else %}
+							No
+						{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Gene</td>
+					<td>{{classification.selected_transcript_variant.transcript.gene.name}}</td>
+				</tr>
+				<tr>
+					<td>Exon</td>
+					<td>
+					{% if classification.selected_transcript_variant.exon %}
+						{{ classification.selected_transcript_variant.exon }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Gene inheritence pattern</td>
+					<td>
+					{% if classification.selected_transcript_variant.transcript.gene.inheritance_pattern %}
+						{{ classification.selected_transcript_variant.transcript.gene.all_inheritance_patterns}}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Conditions associated with gene</td>
+					<td>
+					{% if classification.selected_transcript_variant.transcript.gene.conditions %}
+						{{ classification.selected_transcript_variant.transcript.gene.conditions }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					</td>
+				</tr> 
+				<tr>
+					<td>Genuine Variant?</td>
+					<td>
+						{{ classification.display_genuine }}
+	
+					</td>
+				</tr> 
+			</tbody>
+		
+		</table>
+	
+	<!-- Form for extra info -->
+	<!-- Expandable box containing preset filters -->
+	<!-- Button to expand/hide the filter table -->
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-variant-info" role="button" aria-expanded="false" aria-controls="edit-variant-info">
+		Edit
+	</button>
+	<br>
+	<br>
+	<div class="collapse" id="edit-variant-info">
+		<div class="card card-body bg-light col-10">
+			{% crispy variant_form %}
+		</div>
+	</div>
+	<br>
+	<hr>
+
+	<!-- BOX TO SHOW PREVIOUS CLASSIFICATIONS -->
+	<div class="alert alert-warning col-10" role="alert">
+		<h5><b>Previous classifications</b></h5>
+
+		{% if previous_classifications|length  > 0 %}
+		<p>This variant has been seen <b>{{ previous_classifications|length }} times</b> before.</p>
+		<table class="table col-8">
+			<tr>
+				<td class="col-2"><b>Last seen:</b></td>
+				<td class="col-1">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td class="col-3">
+					{% if 'Pathogenic' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-danger btn-sm">
+					{% elif 'Benign' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-info btn-sm">
+					{% elif 'VUS' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-warning btn-sm">
+					{% elif 'Artefact' in previous_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-secondary btn-sm">
+					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
+                    <button type="button" class="btn btn-primary btn-sm">
+					{% else %}
+					<button type="button" class="btn btn-muted btn-sm">
+					{% endif %}
+						{{ previous_classifications.0.display_final_classification }}
+					</button></td>
+				
+				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
+			</tr>
+
+			{% if previous_full_classifications|length  > 0 %}
+			<tr>
+				<td class="col-2"><b>Last full classification:</b></td>
+
+				<td class="col-1">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td class="col-3">
+					{% if 'Pathogenic' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-danger btn-sm">
+					{% elif 'Benign' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-info btn-sm">
+					{% elif 'VUS' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-warning btn-sm">
+					{% elif 'Artefact' in previous_full_classifications.0.display_final_classification %}
+					<button type="button" class="btn btn-secondary btn-sm">
+					{% elif 'Contradictory' in previous_full_classifications.0.display_final_classification %}
+                    <button type="button" class="btn btn-primary btn-sm">
+					{% else %}
+					<button type="button" class="btn btn-muted btn-sm">
+					{% endif %}
+						{{ previous_full_classifications.0.display_final_classification }}
+					</button>
+				</td>
+				
+				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
+				
+			</tr>
+			{% endif %}
+
+			<tr>
+				<td class="col-2"></td>
+				<td class="col-1"></td>
+				<td class="col-3"></td>
+				<td class="col-1">
+					<a class="btn btn-light btn-sm" href="{% url 'view_variant' pk=variant.variant_hash %}" role="button">View all</a>
+				</td>
+			</tr>
+	</table>
+	<br>
+	<!--<button type="button" class="btn btn-success btn-sm">View all previous classifications</button>-->
+
+	{% else %}
+	<p>This variant has not been seen before.</p>
+
+	{% endif %}
+	</div>
+	<br>
+	<hr>
+
+	{% if classification.genuine == '0' %}
+
+
+	<!-- Genuine/ artefact sections section-->
+	<h5>Is this a genuine variant?</h5>
+	{% crispy genuine_form %}
+	<br>
+
+	{% else %}
+
+	<div class="alert alert-warning col-10" role="alert">
+
+		This Classification has been set as {{ classification.display_genuine }}. To change this you will need to reset the classification.
+
+	</div>
+
+	{% endif %}
+
+  </div>
+
+
+  <!-- ACMG RULES SECTION -->
+  <div class="tab-pane fade" id="nav-acmg" role="tabpanel" aria-labelledby="nav-acmg-tab">
+	<br>
+	
+	{% if classification.genuine == '1' %}
+	<!-- Button to recalculate the classification -->
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
+
+	<!-- Table listing all ACMG codes and option to apply them -->
+	<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+
+	  <thead>
+		<tr>
+		  <th style="display:none;" class='answer_pk'> Answer PK </th>
+		  <th style="display:none;" class='cat'> Category </th>
+		  <th style="width: 8.00%" class='question'> Evidence Category  </th>
+		  <th style="width: 24.00%" class='description'> Description </th>
+		  <th style="width: 8.00%" class='strength'> Strength </th>
+		  <th style="width: 8.00%" class='selected_first'> Decision </th>
+		  <th style="width: 52.00%" class='comment'> Comment </th>
+		</tr>
+	  </thead>
+
+	  <tbody>
+		<!-- Set colour of row depending on evidence applied -->
+		{% for answer in answers %}
+		  {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
+			<tr class='answer table-danger'>
+		  {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True%}
+			<tr class='answer table-info'>
+		  {% else %}
+			<tr class='answer'>
+		  {% endif %}
+		  	  <!-- Hidden columns for rendering table sections properly -->
+			  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+			  <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
+		      <td class='question' style="width: 8.00%"> {{ answer.classification_question.acmg_code  }}</td>
+			  <td class='description' style="width: 24.00%"> {{ answer.classification_question.text  }}</td>
+			  <!-- Change criteria strength -->
+			  <td class='strength' style="width: 8.00%">
+				{% if answer.classification_question.allowed_strength_change == False %}
+				  {{answer.classification_question.default_strength}}
+				{% else %}
+				  <select size="1" id="strength-{{answer.pk}}" name="strength-{{answer.pk}}">
+					{% for strength in answer.classification_question.strength_options %}
+					  {% if strength == answer.strength_first %}
+						<option value="{{strength}}" selected> {{strength}} </option>
+					  {% else %}
+						<option value="{{strength}}"> {{strength}} </option>
+					  {% endif %}
+					{% endfor %}	
+				  </select>
+				{% endif %}
+			  </td>
+			  <!-- Select whether or not to apply the criteria -->
+			  <td class='selected_first' style="width: 8.00%">
+
+				<select size="1" id="selected-{{answer.pk}}" name="selected-{{answer.pk}}" class="answer-selected">
+				  <option value="{{answer.selected_first}}" selected> {{answer.selected_first}} </option>
+				  {% if answer.selected_first == False %}
+					<option value=True> True </option>
+				  {% elif answer.selected_first == True %}
+					<option value=False> False </option>
+				  {% endif %}
+				</select>
+			  </td>
+			  <!-- Comments box -->
+			  <td class='comment' style="width: 52.00%"> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+			</tr>	
+		{% endfor %}
+	  </tbody>
+
+	</table>
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
+
+	{% else %}
+	<div class="alert alert-warning" role="alert">
+		<p>This variant is not set for a new ACMG classification to be carried out.</p>
+		<p>To carry out a new classification, change the settings in the 'Is this a genuine variant?' section under the 'Variant information' tab.</p>
+	</div>
+
+	{% endif %}
+	<br>
+	<br>
+
+	</div>
+
+
+  <!-- COMMENTS AND ATTACHMENTS SECTION -->
+  <div class="tab-pane fade" id="nav-evidence" role="tabpanel" aria-labelledby="nav-evidence-tab">
+	<br>
+	  
+	<!-- Comment box holds the comments and files for the variant - updated via ajax -->
+	<div id='comment_box'>
+	  {% for comment in comments %}
+		<div class="card">
+		  <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+		  <div class="card-body">
+			{{comment.text|linebreaks}}
+			{% if comment.get_evidence == None %}
+			{% else %}
+			  <hr>
+			  {% for evidence in comment.get_evidence %}
+				<p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+			  {% endfor %}
+			{% endif %}
+		  </div>
+		</div>
+		<hr>
+	  {% endfor %}
+	</div>
+
+
+	<!-- Form to add comments/ attach files or screenshots -->
+	<form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
+	  <div class="form-group">
+		<label for="comment">Comment:</label>
+		<textarea class="form-control" rows="5" id="comment_text" style="resize:none;"></textarea>
+	  </div>
+	  <button type="button" class="btn btn-success btn-sm" id='comment_button'>Add Comment/File</button>
+	  <div class="btn btn-default btn-sm">
+		Attach File <input type="file"  id='file_upload' name='file'>
+	  </div>
+	  <hr>
+	  <div class="alert alert-info" id='file_name' style="display: none;"></div>
+	  <input type="hidden" id='hidden_image_field'>
+	</form>
+	<canvas style="border:1px solid grey;" id="my_canvas" width="300" height="300"></canvas>
+	<div class="form-check">
+	  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+	  <label class="form-check-label" for="defaultCheck1">
+		Allow Image Pasting
+	  </label>
+	</div>
+	<br><br>
+		
+  </div>
+	
+	<!-- AUDIT SECTION -->
+  <div class="tab-pane fade" id="nav-audit" role="tabpanel" aria-labelledby="nav-audit-tab">
+	<br>
+
+		<!-- Finalise classification form -->
+		<h5>Finalise Classification</h5>
+		
+		<!-- display a 'reclassify' button to make sure the user hasnt made any changes that alter the class-->
+		{% if classification.genuine == '1' %}
+
+
+		<div class="row">
+			<div class="col-2">Reclassify</div>
+			<div class="col-8">
+				<button type="button" class="btn btn-danger acmg_submit" id='submit_acmg'>Calculate classification</button>
+				<br>
+				<br>
+				<p><strong>Make sure that the classification currently displayed is up-to-date before submitting</strong></p>
+			</div>
+		</div>
+		<br>
+		{% endif %}
+
+		<!-- display the finalise form -->
+		{% crispy finalise_form %}
+		<br>
+		<br>
+
+		<!-- diplay the audit trail for the variant -->
+		<hr>
+		<h5>Classification history</h5>
+		<table class="table table-hover table-bordered table-sm col-10">
+
+			<thead>
+			</thead>
+			
+			<tbody>
+				<tr>
+					<td style="width: 25.00%" class="col-2">Classification ID</td>
+					<td style="width: 75.00%" class="col-8">{{ classification.pk }}</td>
+				</tr>
+				<tr>
+					<td>Status</td>
+					<td>{{ classification.display_status }}</td>
+				</tr>
+				<tr>
+					<td>Created Date </td>
+					<td>{{ classification.creation_date }}</td>
+				</tr>
+				<tr>
+					<td>Creation User</td>
+					<td>{{ classification.user_creator }}</td>
+				</tr>
+				<tr>
+					<td>First Check Date</td>
+					<td>{{ classification.first_check_date }}</td>
+				</tr>
+				<tr>
+					<td>First Check User</td>
+					<td>{{ classification.user_first_checker }}</td>
+				</tr>
+				<tr>
+					<td>Second Check Date</td>
+					<td>{{ classification.second_check_date }}</td>
+				</tr>
+				<tr>
+					<td>Second Check User</td>
+					<td>{{ classification.user_second_checker }}</td>
+				</tr>
+
+			</tbody>
+				
+		</table>
+
+	</div>
+
+<!-- END OF CLASSIFICATION SECTIONS -->
+</div>
+
+
+
+<!------------------------------------- END OF HTML ------------------------------------->
+
+<!-- JAVASCRIPT -->
+<script>
+$(document).ready(function(){
+
+	var canvas_entered =false;
+
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip()
+	})
+
+	// Inititialise DataTable
+	var table = $('#acmg_question_table').DataTable({
+		"paging":   false,
+		"ordering": false,
+		"info":     false,
+		"searching": false,
+		"rowGroup": {
+        dataSrc: 1
+    }
+		});
+
+	//Colour row when clicked
+	$(".answer-selected").change(function(){
+		// what is the value of the drop down
+		value = $(this).val()
+		// if true set the value to red or green depending on whether it is a P or B question
+		if (value == 'True'){
+			question = $(this).parent().siblings('td.question').text();
+			path = question.trim().substring(0, 1);
+			if (path == 'P'){
+				$(this).parent().parent().addClass("table-danger")
+			} else {
+				$(this).parent().parent().addClass("table-info")
+			}
+			
+		} else {
+			// remove classes when moving to false
+			$(this).parent().parent().removeClass("table-danger");
+			$(this).parent().parent().removeClass("table-info");
+		}
+	});
+	
+	// When we click the submit ACMG
+	$(".acmg_submit").click(function(){
+
+		// construct a dictionary of objects to submit to server
+		var rows = $("#acmg_question_table").children('tbody').children();
+		var classification_dict = {}
+
+		// Loop though each row
+		for (var i =0; i<rows.length; i++){
+
+				// skip group rows in table
+				if ($(rows[i]).hasClass('dtrg-group') == false){
+
+				var pk = $(rows[i]).children('td.answer_pk').text();
+				// allow either select drop downs or plain text
+				var type = $(rows[i]).children('td.strength').children().is("select")
+				if (type == true){
+
+					var strength = $(rows[i]).children('td.strength').children().val()
+
+				} else {
+
+					var strength = $.trim($(rows[i]).children('td.strength').text());
+				}
+
+				var question  = $(rows[i]).children('td.question').text().trim();
+				var selected = $(rows[i]).children('td.selected_first').children().val();
+				var comment = $(rows[i]).children('td.comment').children().val();
+				console.log(pk, question, strength, selected, comment)
+				classification_dict[pk] = [question, strength, selected, comment];
+			}}
+
+		var formData = new FormData();
+		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
+		formData.append('classifications', JSON.stringify(classification_dict));
+		formData.append('classification_pk', "{{classification.pk}}" );
+		$.ajax({
+			url: '/ajax/acmg_classification_first/',
+			type: 'POST',
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+			processData: false, // NEEDED, DON'T OMIT THIS
+			success: function(data) {
+			$("#class_box").html(data);
+			},
+			failure: function(data) {
+			alert('Got an error');
+			}
+			});
+	});
+
+
+	$('#file_upload').on('change', function() { //runs when a file is selected
+		var file = this.files[0];
+		$('#file_name').text(file.name + " has been selected. Click Add Comment/File to upload.");
+		$('#file_name').show();
+	});
+
+
+	$("#comment_button").click(function(){
+
+		var comment_text = $("#comment_text").val();
+		var formData = new FormData(); //create empty form data
+		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
+		formData.append('classification_pk', "{{classification.pk}}"); //add sample primary key
+		formData.append('comment_text', comment_text); //add comment text
+		var file = $('#file_upload')[0].files[0];
+		var canvas = document.getElementById('my_canvas');
+		var dataURL = canvas.toDataURL("image/png");
+		document.getElementById('hidden_image_field').value = dataURL;
+		formData.append('file', file); //add file
+
+		if (canvas_entered ==true){
+			formData.append('image_data', $("#hidden_image_field").val()); //add image file
+			canvas_entered =false;
+		}
+
+		console.log(comment_text.length);
+
+		if (comment_text == ''){
+
+			alert('You need to enter a comment to submit.')
+		} else{
+
+
+
+		$.ajax({
+			url: '/ajax/comments/',
+			type: 'POST',
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+			processData: false, // NEEDED, DON'T OMIT THIS
+			success: function(data) {
+				$("#comment_box").html(data);
+				$("#comment_text").val('');
+				$('#file_name').hide();
+				$('#file_upload').val('');
+					var c = document.getElementById("my_canvas");
+					var ctx = c.getContext("2d");
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					c.width = 300;
+					c.height = 300;
+
+			},
+
+			failure: function(data) {
+				alert('Got an error');
+			}
+		});
+		}
+	});
+
+
+$("#defaultCheck1").click(function() {
+
+	if (this.checked) {
+        var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);
+		var canvas_entered =false;
+    } 
+});
+
+//copy and paste from clipboard
+//Taken from https://stackoverflow.com/questions/18377891/how-can-i-let-user-paste-image-data-from-the-clipboard-into-a-canvas-element-in
+
+/**
+ * image pasting into canvas
+ * 
+ * @param {string} canvas_id - canvas id
+ * @param {boolean} autoresize - if canvas will be resized
+ */
+function CLIPBOARD_CLASS(canvas_id, autoresize) {
+	var _self = this;
+	var canvas = document.getElementById(canvas_id);
+	var ctx = document.getElementById(canvas_id).getContext("2d");
+
+	//handlers
+	document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
+
+	//on paste
+	this.paste_auto = function (e) {
+
+		if (e.clipboardData) {
+			var items = e.clipboardData.items;
+			if (!items) return;
+			
+			//access data directly
+			for (var i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf("image") !== -1) {
+					//image
+					var blob = items[i].getAsFile();
+					var URLObj = window.URL || window.webkitURL;
+					var source = URLObj.createObjectURL(blob);
+					this.paste_createImage(source);
+				}
+			}
+			e.preventDefault();
+		}
+	};
+	//draw pasted image to canvas
+	this.paste_createImage = function (source) {
+		var pastedImage = new Image();
+		canvas_entered =true;
+		pastedImage.onload = function () {
+			if(autoresize == true){
+				//resize
+				canvas.width = pastedImage.width;
+				canvas.height = pastedImage.height;
+			}
+			else{
+				//clear canvas
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+			}
+			ctx.drawImage(pastedImage, 0, 0);
+		};
+		pastedImage.src = source;
+	};
+}
+
+
+
+});
+
+</script>
+
+{% csrf_token %}
+{% endblock %}

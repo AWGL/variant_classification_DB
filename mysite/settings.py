@@ -25,7 +25,7 @@ SECRET_KEY = '-#^pc5%n_!*d0s_t1xq83vzx%706#u+0y$itz*ltbc(((yzu*1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '10.59.210.245', '10.59.210.247', '10.59.210.197']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'acmg_db',
     'crispy_forms',
+    'auditlog',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auditlog.middleware.AuditlogMiddleware'
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -75,10 +77,22 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+f= open('/export/home/webapps/password.txt')
+
+password = f.readline()
+password = password.strip()
+f.close()
+
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'variant_classification_db',
+	'USER': 'variant_classification_db_user',
+	'PASSWORD': password,
+	'HOST': 'localhost',
+	'PORT': '',
     }
 }
 
@@ -125,9 +139,27 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
-MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
 
+ENV_PATH = os.path.abspath(os.path.dirname(__file__))
+MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
+MEDIA_URL = '/media/'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = '/login/'
+
+
+# Enternal resources 
+
+# Url to the Mutalyzer wsdl api
+MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
+# Which Mutalyzer build to use
 MUTALYZER_BUILD = 'hg19' 
+# Which Reference genome for VEP to use
+REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
+# Which VEP Cache to use
+VEP_CACHE = '/export/home/webapps/vep_94_cache/'
+# Which temp directory to use for storing vcfs
+VEP_TEMP_DIR = 'temp/'
 
 
 

@@ -1,0 +1,116 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<h4>All unique variants</h4>
+<br>
+
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Variant <br>(Click to view all)</th>
+	  <th>Gene</th>
+	  <th>Transcript</th>
+	  <th>HGVSc</th>
+	  <th>HGVSp</th>
+	  <th>Last Classification (Click to view)</th>
+	  <th>Last Classification Date</th>
+	  <th>All Classifications</th>
+	  <th>Classification Count</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for variant in all_variants %}
+	<tr>
+		<td>  <a href="{% url 'view_variant' pk=variant.0.variant_hash %}" > {{ variant.0.chromosome }}:{{ variant.0.position }}{{ variant.0.ref|truncatechars:10 }}>{{ variant.0.alt|truncatechars:10 }}</td>
+		<td> {{variant.1.0.selected_transcript_variant.transcript.gene.name}} </td>
+		<td> {{variant.1.0.selected_transcript_variant.transcript.name}} </td>
+		<td> {{variant.1.0.selected_transcript_variant.display_hgvsc|truncatechars:25}}</td>
+		<td> {{variant.1.0.selected_transcript_variant.display_hgvsp|truncatechars:25}}</td>
+
+		<td>
+		{% if 'Benign' in variant.1.0.display_classification %}
+		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% elif 'Pathogenic' in variant.1.0.display_classification%}
+		<a class="btn btn-danger btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% elif 'VUS' in variant.1.0.display_classification %}
+		<a class="btn btn-warning btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% elif 'Artefact' in variant.1.0.display_classification %}
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% elif 'Contradictory' in variant.1.0.display_classification %}
+         <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		{% endif %}
+			<span class="fa fa-binoculars"></span>  {{ variant.1.0.display_classification}} 
+		</a>
+	</td>
+		<td> {{variant.1.0.second_check_date|date:"Y/m/d"}}</td>
+		<td> {{variant.1.1}}</td>
+		<td> {{variant.1.2}}</td>
+	 
+	</tr>
+	{% endfor %}
+  </tbody>
+
+  <tfoot>
+	<tr>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th> </th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	</tr>
+  </tfoot>
+
+</table>
+<br>
+<br>
+
+
+
+<script>
+$(document).ready(function(){
+
+ // Setup - add a text input to each footer cell
+    $('#classifications tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" class="form-control" placeholder="Search '+title+'" />' );
+    } );
+ 
+    // DataTable
+    	// Inititialise DataTable
+	var table = $('#classifications').DataTable({
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"pageLength": 25,
+		"searching": true,
+		"aaSorting": [],
+	});
+ 
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+
+
+});
+</script>
+
+{% endblock %}

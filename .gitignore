@@ -2,3 +2,9 @@
 db.sqlite3
 *.pyc
 acmg_db/migrations
+mysite/media/
+test_data
+stdout_warnings.txt
+.coverage
+static/
+sqlite3.db

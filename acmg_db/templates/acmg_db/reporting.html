@@ -1,0 +1,188 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br>
+<h4>Reporting</h4>
+<br>
+<h5>Select worksheet to view summary</h5>
+
+
+<!-- Worksheet search form -->
+<div class="card card-body bg-light">
+	{% crispy form %}
+</div>
+<br>
+
+
+<!-- Message if search hasnt been submitted -->
+{% if classifications == None %}
+<!--<div class="alert alert-warning" role="alert">
+	Search for a run above.
+</div>-->
+
+
+<!-- Summary of worksheet -->
+{% else %}
+<h5>Worksheet status</h5>
+<table class = "table table-hover table-bordered col-5">
+	<tr>
+		<td style="width: 20%">Status</td>
+		<td style="width: 20%">{{ worksheet_status }}</td>
+	</tr>
+	<tr>
+		<td>First checker(s)</td>
+		<td>{{ first_checker }}</td>
+	</tr>
+	<tr>
+		<td>Second checker(s)</td>
+		<td>{{ second_checker }}</td>
+	</tr>
+	<tr>
+		<td>Number of variants</td>
+		<td id="num_variants"></td>
+	</tr>
+</table>
+
+
+<!-- List of variants -->
+<br>
+<h5>Variants</h5>
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+		<th></th>
+		<th style="display:none;"></th>
+	  <th>Status</th>
+		<th>Worksheet</th>
+		<th>Panel</th>
+	  <th>Sample</th>
+	  <th>Gene</th>
+	  <th>Variant</th>
+	  <th>Transcript</th>
+	  <th>HGVSc</th>
+	  <th>HGVSp</th>
+	  <th>Classification</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for classification in classifications %}
+	<tr>
+		<td></td>
+		<td style="display:none;">{{ classification.pk }}</td>
+	  <td>
+		{% if classification.status == '0' %}
+			First Check
+		{% elif classification.status == '1' %}
+			Second Check
+		{% elif classification.status == '2' %}
+		  Completed
+		{% elif classification.status == '3' %}
+		  Archived
+		{% else %}
+		  Unknown
+		{% endif %}
+	  </td>
+		<td>{{ classification.sample.worklist.name }}</td>
+		<td>{{ classification.sample.analysis_performed }}</td>
+	  <td>{{ classification.sample.sample_name_only }}</td>
+	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
+	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}</td>
+	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
+	  <td>{{ classification.selected_transcript_variant.display_hgvsc|truncatechars:25 }}</td>
+	  <td>{{ classification.selected_transcript_variant.display_hgvsp|truncatechars:25 }}</td>
+	  <td>
+		{% if 'Benign' in classification.display_classification %}
+		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Pathogenic' in classification.display_classification %}
+		<a class="btn btn-danger btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'VUS' in classification.display_classification %}
+		<a class="btn btn-warning btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Artefact' in classification.display_classification %}
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Contradictory' in classification.display_classification %}
+    <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% endif %}
+		<span class="fa fa-binoculars"></span>  {{ classification.display_classification}}
+		</a>
+	  </td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+</table>
+
+
+<!-- Button to export to PDF/ LIMS... -->
+<!--<button type="button" class="btn btn-success submit-selected">Export</button>-->
+
+
+{% endif %}
+
+
+<!-- BOX TO SHOW ERRORS -->
+{% if warn %}
+  {% for w in warn %}
+    <div class="alert alert-danger" role="alert">
+	    Error: {{ w }}
+	  </div>
+  {% endfor %}
+{% endif %}
+
+<br>
+<br>
+<!------------------------------------- END OF HTML ------------------------------------->
+
+
+<!-- JAVASCRIPT -->
+<script>
+$(document).ready(function(){
+
+	  // Inititialise DataTable
+	  var table = $('#classifications').DataTable( {
+				'paging':    false,
+				'ordering':  false,
+				'info':      false,
+				'searching': false,
+				'columnDefs': [ {
+						'orderable': false,
+						'className': 'select-checkbox',
+						'targets':   0
+				} ],
+				select: {
+						'style':    'multi',
+						'selector': 'td:first-child'
+				},
+				order: [[ 1, 'asc']]
+		} );
+
+
+		// make header showing total number of classification and number shown in the table
+		var info = table.page.info();
+		document.getElementById('num_variants').innerHTML = info['recordsTotal'];
+
+
+		// get selected rows
+		$(".submit-selected").click(function(){
+				// pull out entire dataset for each selected row
+				var selected_rows = table.rows( { selected: true } ).data();
+				if (selected_rows['length'] > 0) {
+					// add the primary key for each selected variant into a new array
+					var processed_array = [];
+					for (var i = 0; i < selected_rows['length']; i++) {
+							processed_array.push(selected_rows[i][1]);
+					};
+					//TODO - pass list of primary keys to python function to make XML
+					console.log(JSON.stringify(processed_array))
+				} 
+		} );
+
+});
+</script>
+
+{% endblock %}
