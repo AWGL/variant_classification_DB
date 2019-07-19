@@ -43,7 +43,7 @@ class ManualUploadForm(forms.Form):
 	Used for inputting individual variants into the database
 	"""
 
-	variant = forms.CharField(required=False, max_length=100000)
+	variant = forms.CharField(required=False, max_length=20000)
 	sample_name = forms.CharField(max_length=50)
 	worklist = forms.CharField(max_length=50)
 	panel_applied = forms.ChoiceField()
