@@ -97,7 +97,6 @@ def auto_input(request):
 				var = variant[1]
 				variant_data = process_variant_input(var)
 
-				key = variant_data[5]
 				variant_hash = variant_data[0]
 				chromosome = variant_data[1]
 				position = variant_data[2]
@@ -105,7 +104,6 @@ def auto_input(request):
 				alt = variant_data[4]
 					
 				variant_obj, created = Variant.objects.get_or_create(
-						key = key,
 						variant_hash = variant_hash,
 						chromosome = chromosome,
 						position = position,
@@ -316,7 +314,6 @@ def manual_input(request):
 				var = variant[1]
 				variant_data = process_variant_input(var)
 
-				key = variant_data[5]
 				variant_hash = variant_data[0]
 				chromosome = variant_data[1]
 				position = variant_data[2]
@@ -324,7 +321,6 @@ def manual_input(request):
 				alt = variant_data[4]
 					
 				variant_obj, created = Variant.objects.get_or_create(
-						key = key,
 						variant_hash = variant_hash,
 						chromosome = chromosome,
 						position = position,
