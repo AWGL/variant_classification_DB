@@ -51,8 +51,7 @@ class Variant(models.Model):
 
 	"""
 
-	key = models.TextField(primary_key=True)
-	variant_hash = models.CharField(max_length=64, unique =True)
+	variant_hash = models.CharField(max_length=64, primary_key =True)
 	chromosome  = models.CharField(max_length=25)
 	position  = models.IntegerField()
 	ref = models.TextField()
