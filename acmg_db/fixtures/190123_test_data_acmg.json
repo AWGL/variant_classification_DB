@@ -1,1 +1,4112 @@
-[{"model": "acmg_db.worklist", "pk": "18-7514", "fields": {}}, {"model": "acmg_db.sample", "pk": 4, "fields": {"name": "18-7514-sample1", "sample_name_only": "sample1", "worklist": "18-7514", "affected_with": "disease", "analysis_performed": "test", "analysis_complete": false, "other_changes": ""}}, {"model": "acmg_db.variant", "pk": "1-105607830-G-A", "fields": {"variant_hash": "10439c524cbac071d73b00f4a574490f6749c9e14df990ccc19ed9234caba85c", "chromosome": "1", "position": 105607830, "ref": "G", "alt": "A"}}, {"model": "acmg_db.variant", "pk": "1-161596104-C-G", "fields": {"variant_hash": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e", "chromosome": "1", "position": 161596104, "ref": "C", "alt": "G"}}, {"model": "acmg_db.variant", "pk": "18-59739962-TA-T", "fields": {"variant_hash": "0040132323d9453fb573ada0770cef4776dfc4a11e7481c03344618cb52e4ea9", "chromosome": "18", "position": 59739962, "ref": "TA", "alt": "T"}}, {"model": "acmg_db.variant", "pk": "19-41183190-C-T", "fields": {"variant_hash": "67173ad9bc7ade5a3769a01aae6541a5f9b1d3fd759e2e5a83094755c5baf3ef", "chromosome": "19", "position": 41183190, "ref": "C", "alt": "T"}}, {"model": "acmg_db.variant", "pk": "19-41736900-C-T", "fields": {"variant_hash": "09102e06b7aedf86931bc91e71da953e2229b1bd8f68672eb3e7185e5af52bca", "chromosome": "19", "position": 41736900, "ref": "C", "alt": "T"}}, {"model": "acmg_db.variant", "pk": "2-170112639-G-A", "fields": {"variant_hash": "e94f4355a948148c9dab64fd74622433c0b5527484a7f708f84777ad48d85999", "chromosome": "2", "position": 170112639, "ref": "G", "alt": "A"}}, {"model": "acmg_db.variant", "pk": "2-179468753-T-C", "fields": {"variant_hash": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4", "chromosome": "2", "position": 179468753, "ref": "T", "alt": "C"}}, {"model": "acmg_db.variant", "pk": "2-179579025-C-T", "fields": {"variant_hash": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4", "chromosome": "2", "position": 179579025, "ref": "C", "alt": "T"}}, {"model": "acmg_db.variant", "pk": "2-234638237-C-T", "fields": {"variant_hash": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05", "chromosome": "2", "position": 234638237, "ref": "C", "alt": "T"}}, {"model": "acmg_db.variant", "pk": "2-241661268-C-G", "fields": {"variant_hash": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b", "chromosome": "2", "position": 241661268, "ref": "C", "alt": "G"}}, {"model": "acmg_db.variant", "pk": "20-57486209-T-TA", "fields": {"variant_hash": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca", "chromosome": "20", "position": 57486209, "ref": "T", "alt": "TA"}}, {"model": "acmg_db.variant", "pk": "21-47421938-G-A", "fields": {"variant_hash": "18af32b1293453b5d482b7b9db3ade348d4352d006a50b708746ae1d91f4cc11", "chromosome": "21", "position": 47421938, "ref": "G", "alt": "A"}}, {"model": "acmg_db.variant", "pk": "5-176637550-A-G", "fields": {"variant_hash": "e700d61844bace84e8ed1509e33e55101292e01ecaa8c8d79385a2a3e1800e56", "chromosome": "5", "position": 176637550, "ref": "A", "alt": "G"}}, {"model": "acmg_db.variant", "pk": "8-117864952-TA-T", "fields": {"variant_hash": "bc33033efca61ca7da57984f49c9f5970ed5a9c0b1e315902e7ac7f16912c332", "chromosome": "8", "position": 117864952, "ref": "TA", "alt": "T"}}, {"model": "acmg_db.variant", "pk": "8-38271216-G-A", "fields": {"variant_hash": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e", "chromosome": "8", "position": 38271216, "ref": "G", "alt": "A"}}, {"model": "acmg_db.gene", "pk": "AXL", "fields": {"inheritance_pattern": "NA", "conditions": "NA"}}, {"model": "acmg_db.gene", "pk": "COL6A1", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "FCGR3B", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "FGFR1", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "GNAS", "fields": {"inheritance_pattern": "NA", "conditions": "NA"}}, {"model": "acmg_db.gene", "pk": "KIF1A", "fields": {"inheritance_pattern": "genetic", "conditions": "genetic"}}, {"model": "acmg_db.gene", "pk": "LETM2", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "LRP2", "fields": {"inheritance_pattern": "AR", "conditions": "AR"}}, {"model": "acmg_db.gene", "pk": "NSD1", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "NUMBL", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "None", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "PIGN", "fields": {"inheritance_pattern": "NA", "conditions": "NA"}}, {"model": "acmg_db.gene", "pk": "RAD21", "fields": {"inheritance_pattern": "AR", "conditions": "AD"}}, {"model": "acmg_db.gene", "pk": "TTN", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "TTN-AS1", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A10", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A3", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A4", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A5", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A6", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A7", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A8", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.gene", "pk": "UGT1A9", "fields": {"inheritance_pattern": null, "conditions": null}}, {"model": "acmg_db.transcript", "pk": "NM_000516.4", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_000516.5", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_000570.4", "fields": {"gene": "FCGR3B"}}, {"model": "acmg_db.transcript", "pk": "NM_001072.3", "fields": {"gene": "UGT1A6"}}, {"model": "acmg_db.transcript", "pk": "NM_001077488.2", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001077488.3", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001077489.2", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001077489.3", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001077490.1", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001077490.2", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001174063.1", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_001174064.1", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_001174065.1", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_001174066.1", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_001174067.1", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_001199659.2", "fields": {"gene": "LETM2"}}, {"model": "acmg_db.transcript", "pk": "NM_001199660.2", "fields": {"gene": "LETM2"}}, {"model": "acmg_db.transcript", "pk": "NM_001244008.1", "fields": {"gene": "KIF1A"}}, {"model": "acmg_db.transcript", "pk": "NM_001244753.1", "fields": {"gene": "FCGR3B"}}, {"model": "acmg_db.transcript", "pk": "NM_001256850.1", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_001267550.1", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_001267550.2", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_001271035.1", "fields": {"gene": "FCGR3B"}}, {"model": "acmg_db.transcript", "pk": "NM_001271036.1", "fields": {"gene": "FCGR3B"}}, {"model": "acmg_db.transcript", "pk": "NM_001271037.1", "fields": {"gene": "FCGR3B"}}, {"model": "acmg_db.transcript", "pk": "NM_001278599.1", "fields": {"gene": "AXL"}}, {"model": "acmg_db.transcript", "pk": "NM_001286787.1", "fields": {"gene": "LETM2"}}, {"model": "acmg_db.transcript", "pk": "NM_001286819.1", "fields": {"gene": "LETM2"}}, {"model": "acmg_db.transcript", "pk": "NM_001289979.1", "fields": {"gene": "NUMBL"}}, {"model": "acmg_db.transcript", "pk": "NM_001289980.2", "fields": {"gene": "NUMBL"}}, {"model": "acmg_db.transcript", "pk": "NM_001309840.1", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001309861.1", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_001320705.1", "fields": {"gene": "KIF1A"}}, {"model": "acmg_db.transcript", "pk": "NM_001330289.1", "fields": {"gene": "KIF1A"}}, {"model": "acmg_db.transcript", "pk": "NM_001330290.1", "fields": {"gene": "KIF1A"}}, {"model": "acmg_db.transcript", "pk": "NM_001330515.1", "fields": {"gene": "LETM2"}}, {"model": "acmg_db.transcript", "pk": "NM_001699.5", "fields": {"gene": "AXL"}}, {"model": "acmg_db.transcript", "pk": "NM_001848.2", "fields": {"gene": "COL6A1"}}, {"model": "acmg_db.transcript", "pk": "NM_003319.4", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_004321.6", "fields": {"gene": "KIF1A"}}, {"model": "acmg_db.transcript", "pk": "NM_004321.7", "fields": {"gene": "KIF1A"}}, {"model": "acmg_db.transcript", "pk": "NM_004525.2", "fields": {"gene": "LRP2"}}, {"model": "acmg_db.transcript", "pk": "NM_004756.3", "fields": {"gene": "NUMBL"}}, {"model": "acmg_db.transcript", "pk": "NM_004756.4", "fields": {"gene": "NUMBL"}}, {"model": "acmg_db.transcript", "pk": "NM_006265.2", "fields": {"gene": "RAD21"}}, {"model": "acmg_db.transcript", "pk": "NM_007120.2", "fields": {"gene": "UGT1A4"}}, {"model": "acmg_db.transcript", "pk": "NM_012327.5", "fields": {"gene": "PIGN"}}, {"model": "acmg_db.transcript", "pk": "NM_015850.3", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_016592.2", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_016592.3", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_019075.2", "fields": {"gene": "UGT1A10"}}, {"model": "acmg_db.transcript", "pk": "NM_019076.4", "fields": {"gene": "UGT1A8"}}, {"model": "acmg_db.transcript", "pk": "NM_019077.2", "fields": {"gene": "UGT1A7"}}, {"model": "acmg_db.transcript", "pk": "NM_019078.1", "fields": {"gene": "UGT1A5"}}, {"model": "acmg_db.transcript", "pk": "NM_019093.2", "fields": {"gene": "UGT1A3"}}, {"model": "acmg_db.transcript", "pk": "NM_021027.2", "fields": {"gene": "UGT1A9"}}, {"model": "acmg_db.transcript", "pk": "NM_021913.4", "fields": {"gene": "AXL"}}, {"model": "acmg_db.transcript", "pk": "NM_022455.4", "fields": {"gene": "NSD1"}}, {"model": "acmg_db.transcript", "pk": "NM_023105.2", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_023106.2", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_023110.2", "fields": {"gene": "FGFR1"}}, {"model": "acmg_db.transcript", "pk": "NM_080425.2", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_080425.3", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_080426.2", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_080426.3", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NM_133378.4", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_133432.3", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_133437.3", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_133437.4", "fields": {"gene": "TTN"}}, {"model": "acmg_db.transcript", "pk": "NM_144652.3", "fields": {"gene": "LETM2"}}, {"model": "acmg_db.transcript", "pk": "NM_172349.2", "fields": {"gene": "NSD1"}}, {"model": "acmg_db.transcript", "pk": "NM_176787.4", "fields": {"gene": "PIGN"}}, {"model": "acmg_db.transcript", "pk": "NM_205862.1", "fields": {"gene": "UGT1A6"}}, {"model": "acmg_db.transcript", "pk": "NR_003259.1", "fields": {"gene": "GNAS"}}, {"model": "acmg_db.transcript", "pk": "NR_038271.1", "fields": {"gene": "TTN-AS1"}}, {"model": "acmg_db.transcript", "pk": "NR_038272.1", "fields": {"gene": "TTN-AS1"}}, {"model": "acmg_db.transcript", "pk": "None", "fields": {"gene": "None"}}, {"model": "acmg_db.transcriptvariant", "pk": 1, "fields": {"variant": "1-105607830-G-A", "transcript": "None", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "intergenic_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 2, "fields": {"variant": "2-170112639-G-A", "transcript": "NM_004525.2", "hgvs_c": "NM_004525.2:c.2747C>T", "hgvs_p": "NP_004516.2:p.Pro916Leu", "exon": "19/79", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 3, "fields": {"variant": "2-241661268-C-G", "transcript": "NM_001244008.1", "hgvs_c": "NM_001244008.1:c.4699G>C", "hgvs_p": "NP_001230937.1:p.Glu1567Gln", "exon": "44/49", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 4, "fields": {"variant": "2-241661268-C-G", "transcript": "NM_001320705.1", "hgvs_c": "NM_001320705.1:c.4423G>C", "hgvs_p": "NP_001307634.1:p.Glu1475Gln", "exon": "43/48", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 5, "fields": {"variant": "2-241661268-C-G", "transcript": "NM_001330289.1", "hgvs_c": "NM_001330289.1:c.4450G>C", "hgvs_p": "NP_001317218.1:p.Glu1484Gln", "exon": "44/49", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 6, "fields": {"variant": "2-241661268-C-G", "transcript": "NM_001330290.1", "hgvs_c": "NM_001330290.1:c.4498G>C", "hgvs_p": "NP_001317219.1:p.Glu1500Gln", "exon": "43/48", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 7, "fields": {"variant": "2-241661268-C-G", "transcript": "NM_004321.6", "hgvs_c": "NM_004321.6:c.4396G>C", "hgvs_p": "NP_004312.2:p.Glu1466Gln", "exon": "41/46", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 8, "fields": {"variant": "2-241661268-C-G", "transcript": "NM_004321.7", "hgvs_c": "NM_004321.7:c.4396G>C", "hgvs_p": "NP_004312.2:p.Glu1466Gln", "exon": "42/47", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 9, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_001072.3", "hgvs_c": "NM_001072.3:c.861+35726C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 10, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_007120.2", "hgvs_c": "NM_007120.2:c.867+9904C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 11, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_019075.2", "hgvs_c": "NM_019075.2:c.856-37443C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 12, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_019076.4", "hgvs_c": "NM_019076.4:c.856-37443C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 13, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_019077.2", "hgvs_c": "NM_019077.2:c.856-37443C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 14, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_019078.1", "hgvs_c": "NM_019078.1:c.867+15733C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 15, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_019093.2", "hgvs_c": "NM_019093.2:c.465C>T", "hgvs_p": "NP_061966.1:p.Asn155=", "exon": "1/5", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 16, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_021027.2", "hgvs_c": "NM_021027.2:c.856-37443C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 17, "fields": {"variant": "2-234638237-C-T", "transcript": "NM_205862.1", "hgvs_c": "NM_205862.1:c.60+35726C>T", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 18, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001174063.1", "hgvs_c": "NM_001174063.1:c.2393C>T", "hgvs_p": "NP_001167534.1:p.Pro798Leu", "exon": "18/18", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 19, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001174064.1", "hgvs_c": "NM_001174064.1:c.2369C>T", "hgvs_p": "NP_001167535.1:p.Pro790Leu", "exon": "19/19", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 20, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001174065.1", "hgvs_c": "NM_001174065.1:c.2393C>T", "hgvs_p": "NP_001167536.1:p.Pro798Leu", "exon": "18/18", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 21, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001174066.1", "hgvs_c": "NM_001174066.1:c.2132C>T", "hgvs_p": "NP_001167537.1:p.Pro711Leu", "exon": "17/17", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 22, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001174067.1", "hgvs_c": "NM_001174067.1:c.2492C>T", "hgvs_p": "NP_001167538.1:p.Pro831Leu", "exon": "19/19", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 23, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001199659.2", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "downstream_gene_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 24, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001199660.2", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "downstream_gene_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 25, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001286787.1", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "downstream_gene_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 26, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001286819.1", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "downstream_gene_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 27, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_001330515.1", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "downstream_gene_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 28, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_015850.3", "hgvs_c": "NM_015850.3:c.2393C>T", "hgvs_p": "NP_056934.2:p.Pro798Leu", "exon": "18/18", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 29, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_023105.2", "hgvs_c": "NM_023105.2:c.2132C>T", "hgvs_p": "NP_075593.1:p.Pro711Leu", "exon": "17/17", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 30, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_023106.2", "hgvs_c": "NM_023106.2:c.2126C>T", "hgvs_p": "NP_075594.1:p.Pro709Leu", "exon": "17/17", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 31, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_023110.2", "hgvs_c": "NM_023110.2:c.2399C>T", "hgvs_p": "NP_075598.2:p.Pro800Leu", "exon": "18/18", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 32, "fields": {"variant": "8-38271216-G-A", "transcript": "NM_144652.3", "hgvs_c": null, "hgvs_p": null, "exon": "NA", "consequence": "downstream_gene_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 33, "fields": {"variant": "19-41183190-C-T", "transcript": "NM_001289979.1", "hgvs_c": "NM_001289979.1:c.554G>A", "hgvs_p": "NP_001276908.1:p.Arg185His", "exon": "6/9", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 34, "fields": {"variant": "19-41183190-C-T", "transcript": "NM_001289980.2", "hgvs_c": "NM_001289980.2:c.554G>A", "hgvs_p": "NP_001276909.1:p.Arg185His", "exon": "6/9", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 35, "fields": {"variant": "19-41183190-C-T", "transcript": "NM_004756.3", "hgvs_c": "NM_004756.3:c.677G>A", "hgvs_p": "NP_004747.1:p.Arg226His", "exon": "7/10", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 36, "fields": {"variant": "19-41183190-C-T", "transcript": "NM_004756.4", "hgvs_c": "NM_004756.4:c.677G>A", "hgvs_p": "NP_004747.1:p.Arg226His", "exon": "7/10", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 37, "fields": {"variant": "21-47421938-G-A", "transcript": "NM_001848.2", "hgvs_c": "NM_001848.2:c.2020G>A", "hgvs_p": "NP_001839.2:p.Val674Met", "exon": "31/35", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 38, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_001256850.1", "hgvs_c": "NM_001256850.1:c.25525G>A", "hgvs_p": "NP_001243779.1:p.Val8509Ile", "exon": "89/313", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 39, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_001267550.1", "hgvs_c": "NM_001267550.1:c.26476G>A", "hgvs_p": "NP_001254479.1:p.Val8826Ile", "exon": "91/363", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 40, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_001267550.2", "hgvs_c": "NM_001267550.2:c.26476G>A", "hgvs_p": "NP_001254479.2:p.Val8826Ile", "exon": "91/363", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 41, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_003319.4", "hgvs_c": "NM_003319.4:c.13282+23784G>A", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 42, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_133378.4", "hgvs_c": "NM_133378.4:c.22744G>A", "hgvs_p": "NP_596869.4:p.Val7582Ile", "exon": "88/312", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 43, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_133432.3", "hgvs_c": "NM_133432.3:c.13657+23784G>A", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 44, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_133437.3", "hgvs_c": "NM_133437.3:c.13858+23784G>A", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 45, "fields": {"variant": "2-179579025-C-T", "transcript": "NM_133437.4", "hgvs_c": "NM_133437.4:c.13858+23784G>A", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 46, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_001256850.1", "hgvs_c": "NM_001256850.1:c.49738A>G", "hgvs_p": "NP_001243779.1:p.Ile16580Val", "exon": "232/313", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 47, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_001267550.1", "hgvs_c": "NM_001267550.1:c.54661A>G", "hgvs_p": "NP_001254479.1:p.Ile18221Val", "exon": "282/363", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 48, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_001267550.2", "hgvs_c": "NM_001267550.2:c.54661A>G", "hgvs_p": "NP_001254479.2:p.Ile18221Val", "exon": "282/363", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 49, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_003319.4", "hgvs_c": "NM_003319.4:c.27466A>G", "hgvs_p": "NP_003310.4:p.Ile9156Val", "exon": "110/191", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 50, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_133378.4", "hgvs_c": "NM_133378.4:c.46957A>G", "hgvs_p": "NP_596869.4:p.Ile15653Val", "exon": "231/312", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 51, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_133432.3", "hgvs_c": "NM_133432.3:c.27841A>G", "hgvs_p": "NP_597676.3:p.Ile9281Val", "exon": "111/192", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 52, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_133437.3", "hgvs_c": "NM_133437.3:c.28042A>G", "hgvs_p": "NP_597681.3:p.Ile9348Val", "exon": "111/192", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 53, "fields": {"variant": "2-179468753-T-C", "transcript": "NM_133437.4", "hgvs_c": "NM_133437.4:c.28042A>G", "hgvs_p": "NP_597681.4:p.Ile9348Val", "exon": "111/192", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 54, "fields": {"variant": "2-179468753-T-C", "transcript": "NR_038271.1", "hgvs_c": "NR_038271.1:n.683-4141T>C", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant|non_coding_transcript_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 55, "fields": {"variant": "2-179468753-T-C", "transcript": "NR_038272.1", "hgvs_c": "NR_038272.1:n.3918-705T>C", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant|non_coding_transcript_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 56, "fields": {"variant": "1-161596104-C-G", "transcript": "NM_000570.4", "hgvs_c": "NM_000570.4:c.408G>C", "hgvs_p": "NP_000561.3:p.Leu136=", "exon": "5/6", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 57, "fields": {"variant": "1-161596104-C-G", "transcript": "NM_001244753.1", "hgvs_c": "NM_001244753.1:c.516G>C", "hgvs_p": "NP_001231682.1:p.Leu172=", "exon": "4/5", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 58, "fields": {"variant": "1-161596104-C-G", "transcript": "NM_001271035.1", "hgvs_c": "NM_001271035.1:c.513G>C", "hgvs_p": "NP_001257964.1:p.Leu171=", "exon": "4/5", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 59, "fields": {"variant": "1-161596104-C-G", "transcript": "NM_001271036.1", "hgvs_c": "NM_001271036.1:c.357G>C", "hgvs_p": "NP_001257965.1:p.Leu119=", "exon": "4/5", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 60, "fields": {"variant": "1-161596104-C-G", "transcript": "NM_001271037.1", "hgvs_c": "NM_001271037.1:c.269-1675G>C", "hgvs_p": null, "exon": "NA", "consequence": "intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 61, "fields": {"variant": "19-41736900-C-T", "transcript": "NM_001278599.1", "hgvs_c": "NM_001278599.1:c.-190C>T", "hgvs_p": null, "exon": "2/17", "consequence": "5_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 62, "fields": {"variant": "19-41736900-C-T", "transcript": "NM_001699.5", "hgvs_c": "NM_001699.5:c.615C>T", "hgvs_p": "NP_001690.2:p.Cys205=", "exon": "5/19", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 63, "fields": {"variant": "19-41736900-C-T", "transcript": "NM_021913.4", "hgvs_c": "NM_021913.4:c.615C>T", "hgvs_p": "NP_068713.2:p.Cys205=", "exon": "5/20", "consequence": "synonymous_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 64, "fields": {"variant": "5-176637550-A-G", "transcript": "NM_022455.4", "hgvs_c": "NM_022455.4:c.2150A>G", "hgvs_p": "NP_071900.2:p.Lys717Arg", "exon": "5/23", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 65, "fields": {"variant": "5-176637550-A-G", "transcript": "NM_172349.2", "hgvs_c": "NM_172349.2:c.1343A>G", "hgvs_p": "NP_758859.1:p.Lys448Arg", "exon": "6/24", "consequence": "missense_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 66, "fields": {"variant": "8-117864952-TA-T", "transcript": "NM_006265.2", "hgvs_c": "NM_006265.2:c.1162-6del", "hgvs_p": null, "exon": "NA", "consequence": "splice_region_variant|intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 67, "fields": {"variant": "18-59739962-TA-T", "transcript": "NM_012327.5", "hgvs_c": "NM_012327.5:c.2620-5del", "hgvs_p": null, "exon": "NA", "consequence": "splice_region_variant|intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 68, "fields": {"variant": "18-59739962-TA-T", "transcript": "NM_176787.4", "hgvs_c": "NM_176787.4:c.2620-5del", "hgvs_p": null, "exon": "NA", "consequence": "splice_region_variant|intron_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 69, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_000516.4", "hgvs_c": "NM_000516.4:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 70, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_000516.5", "hgvs_c": "NM_000516.5:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 71, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001077488.2", "hgvs_c": "NM_001077488.2:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 72, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001077488.3", "hgvs_c": "NM_001077488.3:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 73, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001077489.2", "hgvs_c": "NM_001077489.2:c.*333dup", "hgvs_p": null, "exon": "12/12", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 74, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001077489.3", "hgvs_c": "NM_001077489.3:c.*333dup", "hgvs_p": null, "exon": "12/12", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 75, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001077490.1", "hgvs_c": "NM_001077490.1:c.*1379dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 76, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001077490.2", "hgvs_c": "NM_001077490.2:c.*1379dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 77, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001309840.1", "hgvs_c": "NM_001309840.1:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 78, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_001309861.1", "hgvs_c": "NM_001309861.1:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 79, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_016592.2", "hgvs_c": "NM_016592.2:c.*1424dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 80, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_016592.3", "hgvs_c": "NM_016592.3:c.*1424dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 81, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_080425.2", "hgvs_c": "NM_080425.2:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 82, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_080425.3", "hgvs_c": "NM_080425.3:c.*333dup", "hgvs_p": null, "exon": "13/13", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 83, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_080426.2", "hgvs_c": "NM_080426.2:c.*333dup", "hgvs_p": null, "exon": "12/12", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 84, "fields": {"variant": "20-57486209-T-TA", "transcript": "NM_080426.3", "hgvs_c": "NM_080426.3:c.*333dup", "hgvs_p": null, "exon": "12/12", "consequence": "3_prime_UTR_variant"}}, {"model": "acmg_db.transcriptvariant", "pk": 85, "fields": {"variant": "20-57486209-T-TA", "transcript": "NR_003259.1", "hgvs_c": "NR_003259.1:n.1608dup", "hgvs_p": null, "exon": "13/13", "consequence": "non_coding_transcript_exon_variant"}}, {"model": "acmg_db.classificationquestion", "pk": 1, "fields": {"acmg_code": "PVS1", "order": 1, "text": "Null variant (nonsense, frameshift, canonical \u00b11 or 2 splice sites, initiation codon, single or multi-exon\r\ndeletion) in a gene where LOF is a known mechanism of disease.", "default_strength": "PV", "allowed_strength_change": true, "pathogenic_question": true, "category": "Variant type and gene-variant profile"}}, {"model": "acmg_db.classificationquestion", "pk": 2, "fields": {"acmg_code": "PS1", "order": 11, "text": "Same amino acid change as a previously established pathogenic variant regardless of nucleotide change.", "default_strength": "PS", "allowed_strength_change": true, "pathogenic_question": true, "category": "Review of literature and databases"}}, {"model": "acmg_db.classificationquestion", "pk": 3, "fields": {"acmg_code": "PS2", "order": 19, "text": "De novo (both maternity and paternity confirmed) in a patient with the disease and no family history.", "default_strength": "PS", "allowed_strength_change": true, "pathogenic_question": true, "category": "De novo variants"}}, {"model": "acmg_db.classificationquestion", "pk": 4, "fields": {"acmg_code": "PS3", "order": 14, "text": "Well-established in vitro or in vivo functional studies supportive of a damaging effect on the gene or gene product.", "default_strength": "PS", "allowed_strength_change": true, "pathogenic_question": true, "category": "Functional studies"}}, {"model": "acmg_db.classificationquestion", "pk": 5, "fields": {"acmg_code": "PS4", "order": 6, "text": "The prevalence of the variant in affected individuals is significantly increased compared with the prevalence in controls.", "default_strength": "PS", "allowed_strength_change": true, "pathogenic_question": true, "category": "Frequency data"}}, {"model": "acmg_db.classificationquestion", "pk": 6, "fields": {"acmg_code": "PM1", "order": 12, "text": "Located in a mutational hot spot and/or critical and well-established functional domain (e.g., active site of an enzyme) without benign variation.", "default_strength": "PM", "allowed_strength_change": true, "pathogenic_question": true, "category": "Review of literature and databases"}}, {"model": "acmg_db.classificationquestion", "pk": 7, "fields": {"acmg_code": "PM2", "order": 7, "text": "Absent from controls (or at extremely low frequency if recessive) (Table 6) in Exome Sequencing Project,\r\n1000 Genomes Project, or Exome Aggregation Consortium.", "default_strength": "PM", "allowed_strength_change": true, "pathogenic_question": true, "category": "Frequency data"}}, {"model": "acmg_db.classificationquestion", "pk": 8, "fields": {"acmg_code": "PM3", "order": 24, "text": "For recessive disorders, detected in trans with a pathogenic variant.", "default_strength": "PM", "allowed_strength_change": true, "pathogenic_question": true, "category": "Multiple variants identified in a patient"}}, {"model": "acmg_db.classificationquestion", "pk": 9, "fields": {"acmg_code": "PM4", "order": 2, "text": "Protein length changes as a result of in-frame deletions/insertions in a nonrepeat region or stop-loss variants.", "default_strength": "PM", "allowed_strength_change": true, "pathogenic_question": true, "category": "Variant type and gene-variant profile"}}, {"model": "acmg_db.classificationquestion", "pk": 10, "fields": {"acmg_code": "PM5", "order": 13, "text": "Missense change at an amino acid where a different missense change has previously been established as (likely) pathogenic.", "default_strength": "PM", "allowed_strength_change": true, "pathogenic_question": true, "category": "Review of literature and databases"}}, {"model": "acmg_db.classificationquestion", "pk": 11, "fields": {"acmg_code": "PM6", "order": 20, "text": "Assumed de novo, but without confirmation of paternity and maternity.", "default_strength": "PM", "allowed_strength_change": true, "pathogenic_question": true, "category": "De novo variants"}}, {"model": "acmg_db.classificationquestion", "pk": 12, "fields": {"acmg_code": "PP1", "order": 21, "text": "Cosegregation with disease in multiple affected family members in a gene definitively known to cause the disease.", "default_strength": "PP", "allowed_strength_change": true, "pathogenic_question": true, "category": "Phenotype and family history information"}}, {"model": "acmg_db.classificationquestion", "pk": 13, "fields": {"acmg_code": "PP2", "order": 3, "text": "Missense variant in a gene that has a low rate of benign missense variation and in which missense variants are a common mechanism of disease.", "default_strength": "PP", "allowed_strength_change": true, "pathogenic_question": true, "category": "Variant type and gene-variant profile"}}, {"model": "acmg_db.classificationquestion", "pk": 14, "fields": {"acmg_code": "PP3", "order": 16, "text": "Multiple lines of computational evidence support a deleterious effect on the gene or gene product\r\n(conservation, evolutionary, splicing impact, etc.).", "default_strength": "PP", "allowed_strength_change": true, "pathogenic_question": true, "category": "Computer predictions"}}, {"model": "acmg_db.classificationquestion", "pk": 15, "fields": {"acmg_code": "PP4", "order": 22, "text": "Patient\u2019s phenotype or family history is highly specific for a disease with a single genetic etiology.", "default_strength": "PP", "allowed_strength_change": true, "pathogenic_question": true, "category": "Phenotype and family history information"}}, {"model": "acmg_db.classificationquestion", "pk": 16, "fields": {"acmg_code": "BA1", "order": 8, "text": "Allele frequency is >5% in Exome Sequencing Project, 1000 Genomes Project, or Exome Aggregation Consortium.", "default_strength": "BA", "allowed_strength_change": true, "pathogenic_question": false, "category": "Frequency data"}}, {"model": "acmg_db.classificationquestion", "pk": 17, "fields": {"acmg_code": "BS1", "order": 9, "text": "Allele frequency is greater than expected for disorder.", "default_strength": "BS", "allowed_strength_change": true, "pathogenic_question": false, "category": "Frequency data"}}, {"model": "acmg_db.classificationquestion", "pk": 18, "fields": {"acmg_code": "BS2", "order": 10, "text": "Observed in a healthy adult individual for a recessive (homozygous), dominant (heterozygous), or X-linked (hemizygous) disorder, with full penetrance expected at an early age.", "default_strength": "BS", "allowed_strength_change": true, "pathogenic_question": false, "category": "Frequency data"}}, {"model": "acmg_db.classificationquestion", "pk": 19, "fields": {"acmg_code": "BS3", "order": 15, "text": "Well-established in vitro or in vivo functional studies show no damaging effect on protein function or splicing.", "default_strength": "BS", "allowed_strength_change": true, "pathogenic_question": false, "category": "Functional studies"}}, {"model": "acmg_db.classificationquestion", "pk": 20, "fields": {"acmg_code": "BS4", "order": 23, "text": "Lack of segregation in affected members of a family.", "default_strength": "BS", "allowed_strength_change": true, "pathogenic_question": false, "category": "Phenotype and family history information"}}, {"model": "acmg_db.classificationquestion", "pk": 21, "fields": {"acmg_code": "BP1", "order": 4, "text": "Missense variant in a gene for which primarily truncating variants are known to cause disease.", "default_strength": "BP", "allowed_strength_change": true, "pathogenic_question": false, "category": "Variant type and gene-variant profile"}}, {"model": "acmg_db.classificationquestion", "pk": 22, "fields": {"acmg_code": "BP2", "order": 25, "text": "Observed in trans with a pathogenic variant for a fully penetrant dominant gene/disorder or observed in cis with a pathogenic variant in any inheritance pattern.", "default_strength": "BP", "allowed_strength_change": true, "pathogenic_question": false, "category": "Multiple variants identified in a patient"}}, {"model": "acmg_db.classificationquestion", "pk": 23, "fields": {"acmg_code": "BP3", "order": 5, "text": "In-frame deletions/insertions in a repetitive region without a known function.", "default_strength": "BP", "allowed_strength_change": true, "pathogenic_question": false, "category": "Variant type and gene-variant profile"}}, {"model": "acmg_db.classificationquestion", "pk": 24, "fields": {"acmg_code": "BP4", "order": 17, "text": "Multiple lines of computational evidence suggest no impact on gene or gene product (conservation, evolutionary, splicing impact, etc.).", "default_strength": "BP", "allowed_strength_change": true, "pathogenic_question": false, "category": "Computer predictions"}}, {"model": "acmg_db.classificationquestion", "pk": 25, "fields": {"acmg_code": "BP7", "order": 18, "text": "A synonymous (silent) variant for which splicing prediction algorithms predict no impact to the splice consensus sequence nor the creation of a new splice site AND the nucleotide is not highly conserved", "default_strength": "BP", "allowed_strength_change": true, "pathogenic_question": false, "category": "Computer predictions"}}, {"model": "acmg_db.classificationquestion", "pk": 26, "fields": {"acmg_code": "BP5", "order": 26, "text": "Variant found in a case with an alternate molecular basis for disease.", "default_strength": "BP", "allowed_strength_change": true, "pathogenic_question": false, "category": "Multiple variants identified in a patient"}}, {"model": "acmg_db.classificationanswer", "pk": 79, "fields": {"classification": 24, "classification_question": 1, "selected_first": true, "strength_first": "PV", "selected_second": false, "strength_second": "PV", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 80, "fields": {"classification": 24, "classification_question": 9, "selected_first": true, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 81, "fields": {"classification": 24, "classification_question": 13, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 82, "fields": {"classification": 24, "classification_question": 21, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 83, "fields": {"classification": 24, "classification_question": 23, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 84, "fields": {"classification": 24, "classification_question": 5, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 85, "fields": {"classification": 24, "classification_question": 7, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 86, "fields": {"classification": 24, "classification_question": 16, "selected_first": false, "strength_first": "BA", "selected_second": false, "strength_second": "BA", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 87, "fields": {"classification": 24, "classification_question": 17, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 88, "fields": {"classification": 24, "classification_question": 18, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 89, "fields": {"classification": 24, "classification_question": 2, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 90, "fields": {"classification": 24, "classification_question": 6, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 91, "fields": {"classification": 24, "classification_question": 10, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 92, "fields": {"classification": 24, "classification_question": 4, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 93, "fields": {"classification": 24, "classification_question": 19, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 94, "fields": {"classification": 24, "classification_question": 14, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 95, "fields": {"classification": 24, "classification_question": 24, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 96, "fields": {"classification": 24, "classification_question": 25, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 97, "fields": {"classification": 24, "classification_question": 3, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 98, "fields": {"classification": 24, "classification_question": 11, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 99, "fields": {"classification": 24, "classification_question": 12, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 100, "fields": {"classification": 24, "classification_question": 15, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 101, "fields": {"classification": 24, "classification_question": 20, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 102, "fields": {"classification": 24, "classification_question": 8, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 103, "fields": {"classification": 24, "classification_question": 22, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 104, "fields": {"classification": 24, "classification_question": 26, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 105, "fields": {"classification": 25, "classification_question": 1, "selected_first": false, "strength_first": "PV", "selected_second": false, "strength_second": "PV", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 106, "fields": {"classification": 25, "classification_question": 9, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 107, "fields": {"classification": 25, "classification_question": 13, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 108, "fields": {"classification": 25, "classification_question": 21, "selected_first": true, "strength_first": "BP", "selected_second": true, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 109, "fields": {"classification": 25, "classification_question": 23, "selected_first": true, "strength_first": "BP", "selected_second": true, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 110, "fields": {"classification": 25, "classification_question": 5, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 111, "fields": {"classification": 25, "classification_question": 7, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 112, "fields": {"classification": 25, "classification_question": 16, "selected_first": false, "strength_first": "BA", "selected_second": false, "strength_second": "BA", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 113, "fields": {"classification": 25, "classification_question": 17, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 114, "fields": {"classification": 25, "classification_question": 18, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 115, "fields": {"classification": 25, "classification_question": 2, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 116, "fields": {"classification": 25, "classification_question": 6, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 117, "fields": {"classification": 25, "classification_question": 10, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 118, "fields": {"classification": 25, "classification_question": 4, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 119, "fields": {"classification": 25, "classification_question": 19, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 120, "fields": {"classification": 25, "classification_question": 14, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 121, "fields": {"classification": 25, "classification_question": 24, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 122, "fields": {"classification": 25, "classification_question": 25, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 123, "fields": {"classification": 25, "classification_question": 3, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 124, "fields": {"classification": 25, "classification_question": 11, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 125, "fields": {"classification": 25, "classification_question": 12, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 126, "fields": {"classification": 25, "classification_question": 15, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 127, "fields": {"classification": 25, "classification_question": 20, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 128, "fields": {"classification": 25, "classification_question": 8, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 129, "fields": {"classification": 25, "classification_question": 22, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 130, "fields": {"classification": 25, "classification_question": 26, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 131, "fields": {"classification": 26, "classification_question": 1, "selected_first": false, "strength_first": "PV", "selected_second": false, "strength_second": "PV", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 132, "fields": {"classification": 26, "classification_question": 9, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 133, "fields": {"classification": 26, "classification_question": 13, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 134, "fields": {"classification": 26, "classification_question": 21, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 135, "fields": {"classification": 26, "classification_question": 23, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 136, "fields": {"classification": 26, "classification_question": 5, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 137, "fields": {"classification": 26, "classification_question": 7, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 138, "fields": {"classification": 26, "classification_question": 16, "selected_first": false, "strength_first": "BA", "selected_second": false, "strength_second": "BA", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 139, "fields": {"classification": 26, "classification_question": 17, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 140, "fields": {"classification": 26, "classification_question": 18, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 141, "fields": {"classification": 26, "classification_question": 2, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 142, "fields": {"classification": 26, "classification_question": 6, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 143, "fields": {"classification": 26, "classification_question": 10, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 144, "fields": {"classification": 26, "classification_question": 4, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 145, "fields": {"classification": 26, "classification_question": 19, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 146, "fields": {"classification": 26, "classification_question": 14, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 147, "fields": {"classification": 26, "classification_question": 24, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 148, "fields": {"classification": 26, "classification_question": 25, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 149, "fields": {"classification": 26, "classification_question": 3, "selected_first": false, "strength_first": "PS", "selected_second": false, "strength_second": "PS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 150, "fields": {"classification": 26, "classification_question": 11, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 151, "fields": {"classification": 26, "classification_question": 12, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 152, "fields": {"classification": 26, "classification_question": 15, "selected_first": false, "strength_first": "PP", "selected_second": false, "strength_second": "PP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 153, "fields": {"classification": 26, "classification_question": 20, "selected_first": false, "strength_first": "BS", "selected_second": false, "strength_second": "BS", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 154, "fields": {"classification": 26, "classification_question": 8, "selected_first": false, "strength_first": "PM", "selected_second": false, "strength_second": "PM", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 155, "fields": {"classification": 26, "classification_question": 22, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "acmg_db.classificationanswer", "pk": 156, "fields": {"classification": 26, "classification_question": 26, "selected_first": false, "strength_first": "BP", "selected_second": false, "strength_second": "BP", "comment": ""}}, {"model": "auth.permission", "pk": 1, "fields": {"name": "Can add log entry", "content_type": 1, "codename": "add_logentry"}}, {"model": "auth.permission", "pk": 2, "fields": {"name": "Can change log entry", "content_type": 1, "codename": "change_logentry"}}, {"model": "auth.permission", "pk": 3, "fields": {"name": "Can delete log entry", "content_type": 1, "codename": "delete_logentry"}}, {"model": "auth.permission", "pk": 4, "fields": {"name": "Can view log entry", "content_type": 1, "codename": "view_logentry"}}, {"model": "auth.permission", "pk": 5, "fields": {"name": "Can add permission", "content_type": 2, "codename": "add_permission"}}, {"model": "auth.permission", "pk": 6, "fields": {"name": "Can change permission", "content_type": 2, "codename": "change_permission"}}, {"model": "auth.permission", "pk": 7, "fields": {"name": "Can delete permission", "content_type": 2, "codename": "delete_permission"}}, {"model": "auth.permission", "pk": 8, "fields": {"name": "Can view permission", "content_type": 2, "codename": "view_permission"}}, {"model": "auth.permission", "pk": 9, "fields": {"name": "Can add group", "content_type": 3, "codename": "add_group"}}, {"model": "auth.permission", "pk": 10, "fields": {"name": "Can change group", "content_type": 3, "codename": "change_group"}}, {"model": "auth.permission", "pk": 11, "fields": {"name": "Can delete group", "content_type": 3, "codename": "delete_group"}}, {"model": "auth.permission", "pk": 12, "fields": {"name": "Can view group", "content_type": 3, "codename": "view_group"}}, {"model": "auth.permission", "pk": 13, "fields": {"name": "Can add user", "content_type": 4, "codename": "add_user"}}, {"model": "auth.permission", "pk": 14, "fields": {"name": "Can change user", "content_type": 4, "codename": "change_user"}}, {"model": "auth.permission", "pk": 15, "fields": {"name": "Can delete user", "content_type": 4, "codename": "delete_user"}}, {"model": "auth.permission", "pk": 16, "fields": {"name": "Can view user", "content_type": 4, "codename": "view_user"}}, {"model": "auth.permission", "pk": 17, "fields": {"name": "Can add content type", "content_type": 5, "codename": "add_contenttype"}}, {"model": "auth.permission", "pk": 18, "fields": {"name": "Can change content type", "content_type": 5, "codename": "change_contenttype"}}, {"model": "auth.permission", "pk": 19, "fields": {"name": "Can delete content type", "content_type": 5, "codename": "delete_contenttype"}}, {"model": "auth.permission", "pk": 20, "fields": {"name": "Can view content type", "content_type": 5, "codename": "view_contenttype"}}, {"model": "auth.permission", "pk": 21, "fields": {"name": "Can add session", "content_type": 6, "codename": "add_session"}}, {"model": "auth.permission", "pk": 22, "fields": {"name": "Can change session", "content_type": 6, "codename": "change_session"}}, {"model": "auth.permission", "pk": 23, "fields": {"name": "Can delete session", "content_type": 6, "codename": "delete_session"}}, {"model": "auth.permission", "pk": 24, "fields": {"name": "Can view session", "content_type": 6, "codename": "view_session"}}, {"model": "auth.permission", "pk": 25, "fields": {"name": "Can add worklist", "content_type": 7, "codename": "add_worklist"}}, {"model": "auth.permission", "pk": 26, "fields": {"name": "Can change worklist", "content_type": 7, "codename": "change_worklist"}}, {"model": "auth.permission", "pk": 27, "fields": {"name": "Can delete worklist", "content_type": 7, "codename": "delete_worklist"}}, {"model": "auth.permission", "pk": 28, "fields": {"name": "Can view worklist", "content_type": 7, "codename": "view_worklist"}}, {"model": "auth.permission", "pk": 29, "fields": {"name": "Can add panel", "content_type": 8, "codename": "add_panel"}}, {"model": "auth.permission", "pk": 30, "fields": {"name": "Can change panel", "content_type": 8, "codename": "change_panel"}}, {"model": "auth.permission", "pk": 31, "fields": {"name": "Can delete panel", "content_type": 8, "codename": "delete_panel"}}, {"model": "auth.permission", "pk": 32, "fields": {"name": "Can view panel", "content_type": 8, "codename": "view_panel"}}, {"model": "auth.permission", "pk": 33, "fields": {"name": "Can add sample", "content_type": 9, "codename": "add_sample"}}, {"model": "auth.permission", "pk": 34, "fields": {"name": "Can change sample", "content_type": 9, "codename": "change_sample"}}, {"model": "auth.permission", "pk": 35, "fields": {"name": "Can delete sample", "content_type": 9, "codename": "delete_sample"}}, {"model": "auth.permission", "pk": 36, "fields": {"name": "Can view sample", "content_type": 9, "codename": "view_sample"}}, {"model": "auth.permission", "pk": 37, "fields": {"name": "Can add variant", "content_type": 10, "codename": "add_variant"}}, {"model": "auth.permission", "pk": 38, "fields": {"name": "Can change variant", "content_type": 10, "codename": "change_variant"}}, {"model": "auth.permission", "pk": 39, "fields": {"name": "Can delete variant", "content_type": 10, "codename": "delete_variant"}}, {"model": "auth.permission", "pk": 40, "fields": {"name": "Can view variant", "content_type": 10, "codename": "view_variant"}}, {"model": "auth.permission", "pk": 41, "fields": {"name": "Can add gene", "content_type": 11, "codename": "add_gene"}}, {"model": "auth.permission", "pk": 42, "fields": {"name": "Can change gene", "content_type": 11, "codename": "change_gene"}}, {"model": "auth.permission", "pk": 43, "fields": {"name": "Can delete gene", "content_type": 11, "codename": "delete_gene"}}, {"model": "auth.permission", "pk": 44, "fields": {"name": "Can view gene", "content_type": 11, "codename": "view_gene"}}, {"model": "auth.permission", "pk": 45, "fields": {"name": "Can add transcript", "content_type": 12, "codename": "add_transcript"}}, {"model": "auth.permission", "pk": 46, "fields": {"name": "Can change transcript", "content_type": 12, "codename": "change_transcript"}}, {"model": "auth.permission", "pk": 47, "fields": {"name": "Can delete transcript", "content_type": 12, "codename": "delete_transcript"}}, {"model": "auth.permission", "pk": 48, "fields": {"name": "Can view transcript", "content_type": 12, "codename": "view_transcript"}}, {"model": "auth.permission", "pk": 49, "fields": {"name": "Can add transcript variant", "content_type": 13, "codename": "add_transcriptvariant"}}, {"model": "auth.permission", "pk": 50, "fields": {"name": "Can change transcript variant", "content_type": 13, "codename": "change_transcriptvariant"}}, {"model": "auth.permission", "pk": 51, "fields": {"name": "Can delete transcript variant", "content_type": 13, "codename": "delete_transcriptvariant"}}, {"model": "auth.permission", "pk": 52, "fields": {"name": "Can view transcript variant", "content_type": 13, "codename": "view_transcriptvariant"}}, {"model": "auth.permission", "pk": 53, "fields": {"name": "Can add classification", "content_type": 14, "codename": "add_classification"}}, {"model": "auth.permission", "pk": 54, "fields": {"name": "Can change classification", "content_type": 14, "codename": "change_classification"}}, {"model": "auth.permission", "pk": 55, "fields": {"name": "Can delete classification", "content_type": 14, "codename": "delete_classification"}}, {"model": "auth.permission", "pk": 56, "fields": {"name": "Can view classification", "content_type": 14, "codename": "view_classification"}}, {"model": "auth.permission", "pk": 57, "fields": {"name": "Can add classification question", "content_type": 15, "codename": "add_classificationquestion"}}, {"model": "auth.permission", "pk": 58, "fields": {"name": "Can change classification question", "content_type": 15, "codename": "change_classificationquestion"}}, {"model": "auth.permission", "pk": 59, "fields": {"name": "Can delete classification question", "content_type": 15, "codename": "delete_classificationquestion"}}, {"model": "auth.permission", "pk": 60, "fields": {"name": "Can view classification question", "content_type": 15, "codename": "view_classificationquestion"}}, {"model": "auth.permission", "pk": 61, "fields": {"name": "Can add classification answer", "content_type": 16, "codename": "add_classificationanswer"}}, {"model": "auth.permission", "pk": 62, "fields": {"name": "Can change classification answer", "content_type": 16, "codename": "change_classificationanswer"}}, {"model": "auth.permission", "pk": 63, "fields": {"name": "Can delete classification answer", "content_type": 16, "codename": "delete_classificationanswer"}}, {"model": "auth.permission", "pk": 64, "fields": {"name": "Can view classification answer", "content_type": 16, "codename": "view_classificationanswer"}}, {"model": "auth.permission", "pk": 65, "fields": {"name": "Can add user comment", "content_type": 17, "codename": "add_usercomment"}}, {"model": "auth.permission", "pk": 66, "fields": {"name": "Can change user comment", "content_type": 17, "codename": "change_usercomment"}}, {"model": "auth.permission", "pk": 67, "fields": {"name": "Can delete user comment", "content_type": 17, "codename": "delete_usercomment"}}, {"model": "auth.permission", "pk": 68, "fields": {"name": "Can view user comment", "content_type": 17, "codename": "view_usercomment"}}, {"model": "auth.permission", "pk": 69, "fields": {"name": "Can add evidence", "content_type": 18, "codename": "add_evidence"}}, {"model": "auth.permission", "pk": 70, "fields": {"name": "Can change evidence", "content_type": 18, "codename": "change_evidence"}}, {"model": "auth.permission", "pk": 71, "fields": {"name": "Can delete evidence", "content_type": 18, "codename": "delete_evidence"}}, {"model": "auth.permission", "pk": 72, "fields": {"name": "Can view evidence", "content_type": 18, "codename": "view_evidence"}}, {"model": "auth.permission", "pk": 73, "fields": {"name": "Can add log entry", "content_type": 19, "codename": "add_logentry"}}, {"model": "auth.permission", "pk": 74, "fields": {"name": "Can change log entry", "content_type": 19, "codename": "change_logentry"}}, {"model": "auth.permission", "pk": 75, "fields": {"name": "Can delete log entry", "content_type": 19, "codename": "delete_logentry"}}, {"model": "auth.permission", "pk": 76, "fields": {"name": "Can view log entry", "content_type": 19, "codename": "view_logentry"}}, {"model": "auth.user", "pk": 1, "fields": {"password": "pbkdf2_sha256$120000$frgYSiNUTnJR$KPK662iifZM6r57p2950OlycGYH3tfnC+qYHqq5EpU8=", "last_login": "2019-01-24T11:21:57.727Z", "is_superuser": true, "username": "admin", "first_name": "", "last_name": "", "email": "", "is_staff": true, "is_active": true, "date_joined": "2019-01-23T15:00:00.191Z", "groups": [], "user_permissions": []}}, {"model": "auth.user", "pk": 3, "fields": {"password": "pbkdf2_sha256$120000$lCBJ2tl0Wmrf$VeDw/TtP/jglJ/bz86o/b2RHnD+aBTIQHfJQAqDfBSs=", "last_login": "2019-01-23T16:57:34.171Z", "is_superuser": false, "username": "testuser", "first_name": "", "last_name": "", "email": "", "is_staff": false, "is_active": true, "date_joined": "2019-01-23T16:56:41Z", "groups": [], "user_permissions": []}}, {"model": "acmg_db.classification", "pk": 24, "fields": {"variant": "2-170112639-G-A", "sample": 4, "selected_transcript_variant": 2, "creation_date": "2019-01-23T16:02:44.949Z", "first_check_date": "2019-01-23T16:58:10.138Z", "second_check_date": null, "user_creator": 1, "user_first_checker": 3, "user_second_checker": null, "status": "1", "genuine": "1", "first_final_class": "4", "second_final_class": "7", "is_trio_de_novo": false}}, {"model": "acmg_db.classification", "pk": 25, "fields": {"variant": "2-241661268-C-G", "sample": 4, "selected_transcript_variant": 3, "creation_date": "2019-01-23T16:02:44.969Z", "first_check_date": "2019-01-23T16:58:53.433Z", "second_check_date": "2019-01-23T16:59:52.017Z", "user_creator": 1, "user_first_checker": 3, "user_second_checker": 3, "status": "2", "genuine": "1", "first_final_class": "1", "second_final_class": "1", "is_trio_de_novo": false}}, {"model": "acmg_db.classification", "pk": 26, "fields": {"variant": "5-176637550-A-G", "sample": 4, "selected_transcript_variant": 64, "creation_date": "2019-01-23T16:02:44.978Z", "first_check_date": null, "second_check_date": null, "user_creator": 1, "user_first_checker": 1, "user_second_checker": null, "status": "0", "genuine": "1", "first_final_class": "2", "second_final_class": "7", "is_trio_de_novo": false}}, {"model": "acmg_db.classification", "pk": 27, "fields": {"variant": "8-117864952-TA-T", "sample": 4, "selected_transcript_variant": 66, "creation_date": "2019-01-23T16:02:44.994Z", "first_check_date": null, "second_check_date": null, "user_creator": 1, "user_first_checker": null, "user_second_checker": null, "status": "0", "genuine": "0", "first_final_class": "7", "second_final_class": "7", "is_trio_de_novo": false}}, {"model": "acmg_db.classification", "pk": 28, "fields": {"variant": "18-59739962-TA-T", "sample": 4, "selected_transcript_variant": 68, "creation_date": "2019-01-23T16:02:45.003Z", "first_check_date": null, "second_check_date": null, "user_creator": 1, "user_first_checker": null, "user_second_checker": null, "status": "0", "genuine": "0", "first_final_class": "7", "second_final_class": "7", "is_trio_de_novo": false}}, {"model": "acmg_db.classification", "pk": 29, "fields": {"variant": "20-57486209-T-TA", "sample": 4, "selected_transcript_variant": 81, "creation_date": "2019-01-23T16:02:45.036Z", "first_check_date": null, "second_check_date": null, "user_creator": 1, "user_first_checker": null, "user_second_checker": null, "status": "0", "genuine": "0", "first_final_class": "7", "second_final_class": "7", "is_trio_de_novo": false}}, {"model": "acmg_db.panel", "pk": "test", "fields": {"added_by": 1}}]
+[
+  {
+    "model": "acmg_db.worklist",
+    "pk": "18-7514",
+    "fields": {}
+  },
+  {
+    "model": "acmg_db.sample",
+    "pk": 4,
+    "fields": {
+      "name": "18-7514-sample1",
+      "sample_name_only": "sample1",
+      "worklist": "18-7514",
+      "affected_with": "disease",
+      "analysis_performed": "test",
+      "analysis_complete": false,
+      "other_changes": ""
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "10439c524cbac071d73b00f4a574490f6749c9e14df990ccc19ed9234caba85c",
+    "fields": {
+      "chromosome": "1",
+      "position": 105607830,
+      "ref": "G",
+      "alt": "A"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e",
+    "fields": {
+      "chromosome": "1",
+      "position": 161596104,
+      "ref": "C",
+      "alt": "G"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "0040132323d9453fb573ada0770cef4776dfc4a11e7481c03344618cb52e4ea9",
+    "fields": {
+      "chromosome": "18",
+      "position": 59739962,
+      "ref": "TA",
+      "alt": "T"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "67173ad9bc7ade5a3769a01aae6541a5f9b1d3fd759e2e5a83094755c5baf3ef",
+    "fields": {
+      "chromosome": "19",
+      "position": 41183190,
+      "ref": "C",
+      "alt": "T"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "09102e06b7aedf86931bc91e71da953e2229b1bd8f68672eb3e7185e5af52bca",
+    "fields": {
+      "chromosome": "19",
+      "position": 41736900,
+      "ref": "C",
+      "alt": "T"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "e94f4355a948148c9dab64fd74622433c0b5527484a7f708f84777ad48d85999",
+    "fields": {
+      "chromosome": "2",
+      "position": 170112639,
+      "ref": "G",
+      "alt": "A"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+    "fields": {
+      "chromosome": "2",
+      "position": 179468753,
+      "ref": "T",
+      "alt": "C"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+    "fields": {
+      "chromosome": "2",
+      "position": 179579025,
+      "ref": "C",
+      "alt": "T"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+    "fields": {
+      "chromosome": "2",
+      "position": 234638237,
+      "ref": "C",
+      "alt": "T"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+    "fields": {
+      "chromosome": "2",
+      "position": 241661268,
+      "ref": "C",
+      "alt": "G"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+    "fields": {
+      "chromosome": "20",
+      "position": 57486209,
+      "ref": "T",
+      "alt": "TA"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "18af32b1293453b5d482b7b9db3ade348d4352d006a50b708746ae1d91f4cc11",
+    "fields": {
+      "chromosome": "21",
+      "position": 47421938,
+      "ref": "G",
+      "alt": "A"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "e700d61844bace84e8ed1509e33e55101292e01ecaa8c8d79385a2a3e1800e56",
+    "fields": {
+      "chromosome": "5",
+      "position": 176637550,
+      "ref": "A",
+      "alt": "G"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "bc33033efca61ca7da57984f49c9f5970ed5a9c0b1e315902e7ac7f16912c332",
+    "fields": {
+      "chromosome": "8",
+      "position": 117864952,
+      "ref": "TA",
+      "alt": "T"
+    }
+  },
+  {
+    "model": "acmg_db.variant",
+    "pk": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+    "fields": {
+      "chromosome": "8",
+      "position": 38271216,
+      "ref": "G",
+      "alt": "A"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "AXL",
+    "fields": {
+      "inheritance_pattern": "NA",
+      "conditions": "NA"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "COL6A1",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "FCGR3B",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "FGFR1",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "GNAS",
+    "fields": {
+      "inheritance_pattern": "NA",
+      "conditions": "NA"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "KIF1A",
+    "fields": {
+      "inheritance_pattern": "genetic",
+      "conditions": "genetic"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "LETM2",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "LRP2",
+    "fields": {
+      "inheritance_pattern": "AR",
+      "conditions": "AR"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "NSD1",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "NUMBL",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "None",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "PIGN",
+    "fields": {
+      "inheritance_pattern": "NA",
+      "conditions": "NA"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "RAD21",
+    "fields": {
+      "inheritance_pattern": "AR",
+      "conditions": "AD"
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "TTN",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "TTN-AS1",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A10",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A3",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A4",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A5",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A6",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A7",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A8",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.gene",
+    "pk": "UGT1A9",
+    "fields": {
+      "inheritance_pattern": null,
+      "conditions": null
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_000516.4",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_000516.5",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_000570.4",
+    "fields": {
+      "gene": "FCGR3B"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001072.3",
+    "fields": {
+      "gene": "UGT1A6"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001077488.2",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001077488.3",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001077489.2",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001077489.3",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001077490.1",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001077490.2",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001174063.1",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001174064.1",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001174065.1",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001174066.1",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001174067.1",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001199659.2",
+    "fields": {
+      "gene": "LETM2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001199660.2",
+    "fields": {
+      "gene": "LETM2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001244008.1",
+    "fields": {
+      "gene": "KIF1A"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001244753.1",
+    "fields": {
+      "gene": "FCGR3B"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001256850.1",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001267550.1",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001267550.2",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001271035.1",
+    "fields": {
+      "gene": "FCGR3B"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001271036.1",
+    "fields": {
+      "gene": "FCGR3B"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001271037.1",
+    "fields": {
+      "gene": "FCGR3B"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001278599.1",
+    "fields": {
+      "gene": "AXL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001286787.1",
+    "fields": {
+      "gene": "LETM2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001286819.1",
+    "fields": {
+      "gene": "LETM2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001289979.1",
+    "fields": {
+      "gene": "NUMBL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001289980.2",
+    "fields": {
+      "gene": "NUMBL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001309840.1",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001309861.1",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001320705.1",
+    "fields": {
+      "gene": "KIF1A"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001330289.1",
+    "fields": {
+      "gene": "KIF1A"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001330290.1",
+    "fields": {
+      "gene": "KIF1A"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001330515.1",
+    "fields": {
+      "gene": "LETM2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001699.5",
+    "fields": {
+      "gene": "AXL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_001848.2",
+    "fields": {
+      "gene": "COL6A1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_003319.4",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_004321.6",
+    "fields": {
+      "gene": "KIF1A"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_004321.7",
+    "fields": {
+      "gene": "KIF1A"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_004525.2",
+    "fields": {
+      "gene": "LRP2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_004756.3",
+    "fields": {
+      "gene": "NUMBL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_004756.4",
+    "fields": {
+      "gene": "NUMBL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_006265.2",
+    "fields": {
+      "gene": "RAD21"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_007120.2",
+    "fields": {
+      "gene": "UGT1A4"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_012327.5",
+    "fields": {
+      "gene": "PIGN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_015850.3",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_016592.2",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_016592.3",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_019075.2",
+    "fields": {
+      "gene": "UGT1A10"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_019076.4",
+    "fields": {
+      "gene": "UGT1A8"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_019077.2",
+    "fields": {
+      "gene": "UGT1A7"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_019078.1",
+    "fields": {
+      "gene": "UGT1A5"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_019093.2",
+    "fields": {
+      "gene": "UGT1A3"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_021027.2",
+    "fields": {
+      "gene": "UGT1A9"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_021913.4",
+    "fields": {
+      "gene": "AXL"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_022455.4",
+    "fields": {
+      "gene": "NSD1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_023105.2",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_023106.2",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_023110.2",
+    "fields": {
+      "gene": "FGFR1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_080425.2",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_080425.3",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_080426.2",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_080426.3",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_133378.4",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_133432.3",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_133437.3",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_133437.4",
+    "fields": {
+      "gene": "TTN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_144652.3",
+    "fields": {
+      "gene": "LETM2"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_172349.2",
+    "fields": {
+      "gene": "NSD1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_176787.4",
+    "fields": {
+      "gene": "PIGN"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NM_205862.1",
+    "fields": {
+      "gene": "UGT1A6"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NR_003259.1",
+    "fields": {
+      "gene": "GNAS"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NR_038271.1",
+    "fields": {
+      "gene": "TTN-AS1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "NR_038272.1",
+    "fields": {
+      "gene": "TTN-AS1"
+    }
+  },
+  {
+    "model": "acmg_db.transcript",
+    "pk": "None",
+    "fields": {
+      "gene": "None"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 1,
+    "fields": {
+      "variant": "10439c524cbac071d73b00f4a574490f6749c9e14df990ccc19ed9234caba85c",
+      "transcript": "None",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intergenic_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 2,
+    "fields": {
+      "variant": "e94f4355a948148c9dab64fd74622433c0b5527484a7f708f84777ad48d85999",
+      "transcript": "NM_004525.2",
+      "hgvs_c": "NM_004525.2:c.2747C>T",
+      "hgvs_p": "NP_004516.2:p.Pro916Leu",
+      "exon": "19/79",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 3,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "transcript": "NM_001244008.1",
+      "hgvs_c": "NM_001244008.1:c.4699G>C",
+      "hgvs_p": "NP_001230937.1:p.Glu1567Gln",
+      "exon": "44/49",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 4,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "transcript": "NM_001320705.1",
+      "hgvs_c": "NM_001320705.1:c.4423G>C",
+      "hgvs_p": "NP_001307634.1:p.Glu1475Gln",
+      "exon": "43/48",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 5,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "transcript": "NM_001330289.1",
+      "hgvs_c": "NM_001330289.1:c.4450G>C",
+      "hgvs_p": "NP_001317218.1:p.Glu1484Gln",
+      "exon": "44/49",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 6,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "transcript": "NM_001330290.1",
+      "hgvs_c": "NM_001330290.1:c.4498G>C",
+      "hgvs_p": "NP_001317219.1:p.Glu1500Gln",
+      "exon": "43/48",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 7,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "transcript": "NM_004321.6",
+      "hgvs_c": "NM_004321.6:c.4396G>C",
+      "hgvs_p": "NP_004312.2:p.Glu1466Gln",
+      "exon": "41/46",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 8,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "transcript": "NM_004321.7",
+      "hgvs_c": "NM_004321.7:c.4396G>C",
+      "hgvs_p": "NP_004312.2:p.Glu1466Gln",
+      "exon": "42/47",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 9,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_001072.3",
+      "hgvs_c": "NM_001072.3:c.861+35726C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 10,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_007120.2",
+      "hgvs_c": "NM_007120.2:c.867+9904C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 11,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_019075.2",
+      "hgvs_c": "NM_019075.2:c.856-37443C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 12,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_019076.4",
+      "hgvs_c": "NM_019076.4:c.856-37443C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 13,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_019077.2",
+      "hgvs_c": "NM_019077.2:c.856-37443C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 14,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_019078.1",
+      "hgvs_c": "NM_019078.1:c.867+15733C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 15,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_019093.2",
+      "hgvs_c": "NM_019093.2:c.465C>T",
+      "hgvs_p": "NP_061966.1:p.Asn155=",
+      "exon": "1/5",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 16,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_021027.2",
+      "hgvs_c": "NM_021027.2:c.856-37443C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 17,
+    "fields": {
+      "variant": "0022c68d4d7e9fce5650d3d8e835aae22b490d0bb9d5d0606e7b8c29267fdf05",
+      "transcript": "NM_205862.1",
+      "hgvs_c": "NM_205862.1:c.60+35726C>T",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 18,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001174063.1",
+      "hgvs_c": "NM_001174063.1:c.2393C>T",
+      "hgvs_p": "NP_001167534.1:p.Pro798Leu",
+      "exon": "18/18",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 19,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001174064.1",
+      "hgvs_c": "NM_001174064.1:c.2369C>T",
+      "hgvs_p": "NP_001167535.1:p.Pro790Leu",
+      "exon": "19/19",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 20,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001174065.1",
+      "hgvs_c": "NM_001174065.1:c.2393C>T",
+      "hgvs_p": "NP_001167536.1:p.Pro798Leu",
+      "exon": "18/18",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 21,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001174066.1",
+      "hgvs_c": "NM_001174066.1:c.2132C>T",
+      "hgvs_p": "NP_001167537.1:p.Pro711Leu",
+      "exon": "17/17",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 22,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001174067.1",
+      "hgvs_c": "NM_001174067.1:c.2492C>T",
+      "hgvs_p": "NP_001167538.1:p.Pro831Leu",
+      "exon": "19/19",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 23,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001199659.2",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "downstream_gene_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 24,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001199660.2",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "downstream_gene_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 25,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001286787.1",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "downstream_gene_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 26,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001286819.1",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "downstream_gene_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 27,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_001330515.1",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "downstream_gene_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 28,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_015850.3",
+      "hgvs_c": "NM_015850.3:c.2393C>T",
+      "hgvs_p": "NP_056934.2:p.Pro798Leu",
+      "exon": "18/18",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 29,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_023105.2",
+      "hgvs_c": "NM_023105.2:c.2132C>T",
+      "hgvs_p": "NP_075593.1:p.Pro711Leu",
+      "exon": "17/17",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 30,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_023106.2",
+      "hgvs_c": "NM_023106.2:c.2126C>T",
+      "hgvs_p": "NP_075594.1:p.Pro709Leu",
+      "exon": "17/17",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 31,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_023110.2",
+      "hgvs_c": "NM_023110.2:c.2399C>T",
+      "hgvs_p": "NP_075598.2:p.Pro800Leu",
+      "exon": "18/18",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 32,
+    "fields": {
+      "variant": "f93951dc85eba2be5ceab007826ac6fa4cd2aa7ce259d180f09d1e301d5eae9e",
+      "transcript": "NM_144652.3",
+      "hgvs_c": null,
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "downstream_gene_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 33,
+    "fields": {
+      "variant": "67173ad9bc7ade5a3769a01aae6541a5f9b1d3fd759e2e5a83094755c5baf3ef",
+      "transcript": "NM_001289979.1",
+      "hgvs_c": "NM_001289979.1:c.554G>A",
+      "hgvs_p": "NP_001276908.1:p.Arg185His",
+      "exon": "6/9",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 34,
+    "fields": {
+      "variant": "67173ad9bc7ade5a3769a01aae6541a5f9b1d3fd759e2e5a83094755c5baf3ef",
+      "transcript": "NM_001289980.2",
+      "hgvs_c": "NM_001289980.2:c.554G>A",
+      "hgvs_p": "NP_001276909.1:p.Arg185His",
+      "exon": "6/9",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 35,
+    "fields": {
+      "variant": "67173ad9bc7ade5a3769a01aae6541a5f9b1d3fd759e2e5a83094755c5baf3ef",
+      "transcript": "NM_004756.3",
+      "hgvs_c": "NM_004756.3:c.677G>A",
+      "hgvs_p": "NP_004747.1:p.Arg226His",
+      "exon": "7/10",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 36,
+    "fields": {
+      "variant": "67173ad9bc7ade5a3769a01aae6541a5f9b1d3fd759e2e5a83094755c5baf3ef",
+      "transcript": "NM_004756.4",
+      "hgvs_c": "NM_004756.4:c.677G>A",
+      "hgvs_p": "NP_004747.1:p.Arg226His",
+      "exon": "7/10",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 37,
+    "fields": {
+      "variant": "18af32b1293453b5d482b7b9db3ade348d4352d006a50b708746ae1d91f4cc11",
+      "transcript": "NM_001848.2",
+      "hgvs_c": "NM_001848.2:c.2020G>A",
+      "hgvs_p": "NP_001839.2:p.Val674Met",
+      "exon": "31/35",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 38,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_001256850.1",
+      "hgvs_c": "NM_001256850.1:c.25525G>A",
+      "hgvs_p": "NP_001243779.1:p.Val8509Ile",
+      "exon": "89/313",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 39,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_001267550.1",
+      "hgvs_c": "NM_001267550.1:c.26476G>A",
+      "hgvs_p": "NP_001254479.1:p.Val8826Ile",
+      "exon": "91/363",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 40,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_001267550.2",
+      "hgvs_c": "NM_001267550.2:c.26476G>A",
+      "hgvs_p": "NP_001254479.2:p.Val8826Ile",
+      "exon": "91/363",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 41,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_003319.4",
+      "hgvs_c": "NM_003319.4:c.13282+23784G>A",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 42,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_133378.4",
+      "hgvs_c": "NM_133378.4:c.22744G>A",
+      "hgvs_p": "NP_596869.4:p.Val7582Ile",
+      "exon": "88/312",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 43,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_133432.3",
+      "hgvs_c": "NM_133432.3:c.13657+23784G>A",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 44,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_133437.3",
+      "hgvs_c": "NM_133437.3:c.13858+23784G>A",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 45,
+    "fields": {
+      "variant": "c92b29769000f8453a38f5426bae600d72ccf760507ad649ab04364ed8dc07d4",
+      "transcript": "NM_133437.4",
+      "hgvs_c": "NM_133437.4:c.13858+23784G>A",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 46,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_001256850.1",
+      "hgvs_c": "NM_001256850.1:c.49738A>G",
+      "hgvs_p": "NP_001243779.1:p.Ile16580Val",
+      "exon": "232/313",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 47,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_001267550.1",
+      "hgvs_c": "NM_001267550.1:c.54661A>G",
+      "hgvs_p": "NP_001254479.1:p.Ile18221Val",
+      "exon": "282/363",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 48,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_001267550.2",
+      "hgvs_c": "NM_001267550.2:c.54661A>G",
+      "hgvs_p": "NP_001254479.2:p.Ile18221Val",
+      "exon": "282/363",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 49,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_003319.4",
+      "hgvs_c": "NM_003319.4:c.27466A>G",
+      "hgvs_p": "NP_003310.4:p.Ile9156Val",
+      "exon": "110/191",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 50,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_133378.4",
+      "hgvs_c": "NM_133378.4:c.46957A>G",
+      "hgvs_p": "NP_596869.4:p.Ile15653Val",
+      "exon": "231/312",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 51,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_133432.3",
+      "hgvs_c": "NM_133432.3:c.27841A>G",
+      "hgvs_p": "NP_597676.3:p.Ile9281Val",
+      "exon": "111/192",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 52,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_133437.3",
+      "hgvs_c": "NM_133437.3:c.28042A>G",
+      "hgvs_p": "NP_597681.3:p.Ile9348Val",
+      "exon": "111/192",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 53,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NM_133437.4",
+      "hgvs_c": "NM_133437.4:c.28042A>G",
+      "hgvs_p": "NP_597681.4:p.Ile9348Val",
+      "exon": "111/192",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 54,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NR_038271.1",
+      "hgvs_c": "NR_038271.1:n.683-4141T>C",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant|non_coding_transcript_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 55,
+    "fields": {
+      "variant": "9ebca21f0e23443c57c98eef374d65f8af46ac22bb7fd61278d8f3ebe90de9f4",
+      "transcript": "NR_038272.1",
+      "hgvs_c": "NR_038272.1:n.3918-705T>C",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant|non_coding_transcript_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 56,
+    "fields": {
+      "variant": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e",
+      "transcript": "NM_000570.4",
+      "hgvs_c": "NM_000570.4:c.408G>C",
+      "hgvs_p": "NP_000561.3:p.Leu136=",
+      "exon": "5/6",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 57,
+    "fields": {
+      "variant": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e",
+      "transcript": "NM_001244753.1",
+      "hgvs_c": "NM_001244753.1:c.516G>C",
+      "hgvs_p": "NP_001231682.1:p.Leu172=",
+      "exon": "4/5",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 58,
+    "fields": {
+      "variant": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e",
+      "transcript": "NM_001271035.1",
+      "hgvs_c": "NM_001271035.1:c.513G>C",
+      "hgvs_p": "NP_001257964.1:p.Leu171=",
+      "exon": "4/5",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 59,
+    "fields": {
+      "variant": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e",
+      "transcript": "NM_001271036.1",
+      "hgvs_c": "NM_001271036.1:c.357G>C",
+      "hgvs_p": "NP_001257965.1:p.Leu119=",
+      "exon": "4/5",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 60,
+    "fields": {
+      "variant": "ca6a901e0c08fd484fdeee545e88cc0ea8968341806dc17d2a3495819525e31e",
+      "transcript": "NM_001271037.1",
+      "hgvs_c": "NM_001271037.1:c.269-1675G>C",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 61,
+    "fields": {
+      "variant": "09102e06b7aedf86931bc91e71da953e2229b1bd8f68672eb3e7185e5af52bca",
+      "transcript": "NM_001278599.1",
+      "hgvs_c": "NM_001278599.1:c.-190C>T",
+      "hgvs_p": null,
+      "exon": "2/17",
+      "consequence": "5_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 62,
+    "fields": {
+      "variant": "09102e06b7aedf86931bc91e71da953e2229b1bd8f68672eb3e7185e5af52bca",
+      "transcript": "NM_001699.5",
+      "hgvs_c": "NM_001699.5:c.615C>T",
+      "hgvs_p": "NP_001690.2:p.Cys205=",
+      "exon": "5/19",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 63,
+    "fields": {
+      "variant": "09102e06b7aedf86931bc91e71da953e2229b1bd8f68672eb3e7185e5af52bca",
+      "transcript": "NM_021913.4",
+      "hgvs_c": "NM_021913.4:c.615C>T",
+      "hgvs_p": "NP_068713.2:p.Cys205=",
+      "exon": "5/20",
+      "consequence": "synonymous_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 64,
+    "fields": {
+      "variant": "e700d61844bace84e8ed1509e33e55101292e01ecaa8c8d79385a2a3e1800e56",
+      "transcript": "NM_022455.4",
+      "hgvs_c": "NM_022455.4:c.2150A>G",
+      "hgvs_p": "NP_071900.2:p.Lys717Arg",
+      "exon": "5/23",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 65,
+    "fields": {
+      "variant": "e700d61844bace84e8ed1509e33e55101292e01ecaa8c8d79385a2a3e1800e56",
+      "transcript": "NM_172349.2",
+      "hgvs_c": "NM_172349.2:c.1343A>G",
+      "hgvs_p": "NP_758859.1:p.Lys448Arg",
+      "exon": "6/24",
+      "consequence": "missense_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 66,
+    "fields": {
+      "variant": "bc33033efca61ca7da57984f49c9f5970ed5a9c0b1e315902e7ac7f16912c332",
+      "transcript": "NM_006265.2",
+      "hgvs_c": "NM_006265.2:c.1162-6del",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "splice_region_variant|intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 67,
+    "fields": {
+      "variant": "0040132323d9453fb573ada0770cef4776dfc4a11e7481c03344618cb52e4ea9",
+      "transcript": "NM_012327.5",
+      "hgvs_c": "NM_012327.5:c.2620-5del",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "splice_region_variant|intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 68,
+    "fields": {
+      "variant": "0040132323d9453fb573ada0770cef4776dfc4a11e7481c03344618cb52e4ea9",
+      "transcript": "NM_176787.4",
+      "hgvs_c": "NM_176787.4:c.2620-5del",
+      "hgvs_p": null,
+      "exon": "NA",
+      "consequence": "splice_region_variant|intron_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 69,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_000516.4",
+      "hgvs_c": "NM_000516.4:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 70,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_000516.5",
+      "hgvs_c": "NM_000516.5:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 71,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001077488.2",
+      "hgvs_c": "NM_001077488.2:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 72,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001077488.3",
+      "hgvs_c": "NM_001077488.3:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 73,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001077489.2",
+      "hgvs_c": "NM_001077489.2:c.*333dup",
+      "hgvs_p": null,
+      "exon": "12/12",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 74,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001077489.3",
+      "hgvs_c": "NM_001077489.3:c.*333dup",
+      "hgvs_p": null,
+      "exon": "12/12",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 75,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001077490.1",
+      "hgvs_c": "NM_001077490.1:c.*1379dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 76,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001077490.2",
+      "hgvs_c": "NM_001077490.2:c.*1379dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 77,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001309840.1",
+      "hgvs_c": "NM_001309840.1:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 78,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_001309861.1",
+      "hgvs_c": "NM_001309861.1:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 79,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_016592.2",
+      "hgvs_c": "NM_016592.2:c.*1424dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 80,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_016592.3",
+      "hgvs_c": "NM_016592.3:c.*1424dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 81,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_080425.2",
+      "hgvs_c": "NM_080425.2:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 82,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_080425.3",
+      "hgvs_c": "NM_080425.3:c.*333dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 83,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_080426.2",
+      "hgvs_c": "NM_080426.2:c.*333dup",
+      "hgvs_p": null,
+      "exon": "12/12",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 84,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NM_080426.3",
+      "hgvs_c": "NM_080426.3:c.*333dup",
+      "hgvs_p": null,
+      "exon": "12/12",
+      "consequence": "3_prime_UTR_variant"
+    }
+  },
+  {
+    "model": "acmg_db.transcriptvariant",
+    "pk": 85,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "transcript": "NR_003259.1",
+      "hgvs_c": "NR_003259.1:n.1608dup",
+      "hgvs_p": null,
+      "exon": "13/13",
+      "consequence": "non_coding_transcript_exon_variant"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 1,
+    "fields": {
+      "acmg_code": "PVS1",
+      "order": 1,
+      "text": "Null variant (nonsense, frameshift, canonical ±1 or 2 splice sites, initiation codon, single or multi-exon\r\ndeletion) in a gene where LOF is a known mechanism of disease.",
+      "default_strength": "PV",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Variant type and gene-variant profile"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 2,
+    "fields": {
+      "acmg_code": "PS1",
+      "order": 11,
+      "text": "Same amino acid change as a previously established pathogenic variant regardless of nucleotide change.",
+      "default_strength": "PS",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Review of literature and databases"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 3,
+    "fields": {
+      "acmg_code": "PS2",
+      "order": 19,
+      "text": "De novo (both maternity and paternity confirmed) in a patient with the disease and no family history.",
+      "default_strength": "PS",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "De novo variants"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 4,
+    "fields": {
+      "acmg_code": "PS3",
+      "order": 14,
+      "text": "Well-established in vitro or in vivo functional studies supportive of a damaging effect on the gene or gene product.",
+      "default_strength": "PS",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Functional studies"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 5,
+    "fields": {
+      "acmg_code": "PS4",
+      "order": 6,
+      "text": "The prevalence of the variant in affected individuals is significantly increased compared with the prevalence in controls.",
+      "default_strength": "PS",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Frequency data"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 6,
+    "fields": {
+      "acmg_code": "PM1",
+      "order": 12,
+      "text": "Located in a mutational hot spot and/or critical and well-established functional domain (e.g., active site of an enzyme) without benign variation.",
+      "default_strength": "PM",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Review of literature and databases"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 7,
+    "fields": {
+      "acmg_code": "PM2",
+      "order": 7,
+      "text": "Absent from controls (or at extremely low frequency if recessive) (Table 6) in Exome Sequencing Project,\r\n1000 Genomes Project, or Exome Aggregation Consortium.",
+      "default_strength": "PM",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Frequency data"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 8,
+    "fields": {
+      "acmg_code": "PM3",
+      "order": 24,
+      "text": "For recessive disorders, detected in trans with a pathogenic variant.",
+      "default_strength": "PM",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Multiple variants identified in a patient"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 9,
+    "fields": {
+      "acmg_code": "PM4",
+      "order": 2,
+      "text": "Protein length changes as a result of in-frame deletions/insertions in a nonrepeat region or stop-loss variants.",
+      "default_strength": "PM",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Variant type and gene-variant profile"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 10,
+    "fields": {
+      "acmg_code": "PM5",
+      "order": 13,
+      "text": "Missense change at an amino acid where a different missense change has previously been established as (likely) pathogenic.",
+      "default_strength": "PM",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Review of literature and databases"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 11,
+    "fields": {
+      "acmg_code": "PM6",
+      "order": 20,
+      "text": "Assumed de novo, but without confirmation of paternity and maternity.",
+      "default_strength": "PM",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "De novo variants"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 12,
+    "fields": {
+      "acmg_code": "PP1",
+      "order": 21,
+      "text": "Cosegregation with disease in multiple affected family members in a gene definitively known to cause the disease.",
+      "default_strength": "PP",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Phenotype and family history information"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 13,
+    "fields": {
+      "acmg_code": "PP2",
+      "order": 3,
+      "text": "Missense variant in a gene that has a low rate of benign missense variation and in which missense variants are a common mechanism of disease.",
+      "default_strength": "PP",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Variant type and gene-variant profile"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 14,
+    "fields": {
+      "acmg_code": "PP3",
+      "order": 16,
+      "text": "Multiple lines of computational evidence support a deleterious effect on the gene or gene product\r\n(conservation, evolutionary, splicing impact, etc.).",
+      "default_strength": "PP",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Computer predictions"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 15,
+    "fields": {
+      "acmg_code": "PP4",
+      "order": 22,
+      "text": "Patient’s phenotype or family history is highly specific for a disease with a single genetic etiology.",
+      "default_strength": "PP",
+      "allowed_strength_change": true,
+      "pathogenic_question": true,
+      "category": "Phenotype and family history information"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 16,
+    "fields": {
+      "acmg_code": "BA1",
+      "order": 8,
+      "text": "Allele frequency is >5% in Exome Sequencing Project, 1000 Genomes Project, or Exome Aggregation Consortium.",
+      "default_strength": "BA",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Frequency data"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 17,
+    "fields": {
+      "acmg_code": "BS1",
+      "order": 9,
+      "text": "Allele frequency is greater than expected for disorder.",
+      "default_strength": "BS",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Frequency data"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 18,
+    "fields": {
+      "acmg_code": "BS2",
+      "order": 10,
+      "text": "Observed in a healthy adult individual for a recessive (homozygous), dominant (heterozygous), or X-linked (hemizygous) disorder, with full penetrance expected at an early age.",
+      "default_strength": "BS",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Frequency data"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 19,
+    "fields": {
+      "acmg_code": "BS3",
+      "order": 15,
+      "text": "Well-established in vitro or in vivo functional studies show no damaging effect on protein function or splicing.",
+      "default_strength": "BS",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Functional studies"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 20,
+    "fields": {
+      "acmg_code": "BS4",
+      "order": 23,
+      "text": "Lack of segregation in affected members of a family.",
+      "default_strength": "BS",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Phenotype and family history information"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 21,
+    "fields": {
+      "acmg_code": "BP1",
+      "order": 4,
+      "text": "Missense variant in a gene for which primarily truncating variants are known to cause disease.",
+      "default_strength": "BP",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Variant type and gene-variant profile"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 22,
+    "fields": {
+      "acmg_code": "BP2",
+      "order": 25,
+      "text": "Observed in trans with a pathogenic variant for a fully penetrant dominant gene/disorder or observed in cis with a pathogenic variant in any inheritance pattern.",
+      "default_strength": "BP",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Multiple variants identified in a patient"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 23,
+    "fields": {
+      "acmg_code": "BP3",
+      "order": 5,
+      "text": "In-frame deletions/insertions in a repetitive region without a known function.",
+      "default_strength": "BP",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Variant type and gene-variant profile"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 24,
+    "fields": {
+      "acmg_code": "BP4",
+      "order": 17,
+      "text": "Multiple lines of computational evidence suggest no impact on gene or gene product (conservation, evolutionary, splicing impact, etc.).",
+      "default_strength": "BP",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Computer predictions"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 25,
+    "fields": {
+      "acmg_code": "BP7",
+      "order": 18,
+      "text": "A synonymous (silent) variant for which splicing prediction algorithms predict no impact to the splice consensus sequence nor the creation of a new splice site AND the nucleotide is not highly conserved",
+      "default_strength": "BP",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Computer predictions"
+    }
+  },
+  {
+    "model": "acmg_db.classificationquestion",
+    "pk": 26,
+    "fields": {
+      "acmg_code": "BP5",
+      "order": 26,
+      "text": "Variant found in a case with an alternate molecular basis for disease.",
+      "default_strength": "BP",
+      "allowed_strength_change": true,
+      "pathogenic_question": false,
+      "category": "Multiple variants identified in a patient"
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 79,
+    "fields": {
+      "classification": 24,
+      "classification_question": 1,
+      "selected_first": true,
+      "strength_first": "PV",
+      "selected_second": false,
+      "strength_second": "PV",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 80,
+    "fields": {
+      "classification": 24,
+      "classification_question": 9,
+      "selected_first": true,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 81,
+    "fields": {
+      "classification": 24,
+      "classification_question": 13,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 82,
+    "fields": {
+      "classification": 24,
+      "classification_question": 21,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 83,
+    "fields": {
+      "classification": 24,
+      "classification_question": 23,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 84,
+    "fields": {
+      "classification": 24,
+      "classification_question": 5,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 85,
+    "fields": {
+      "classification": 24,
+      "classification_question": 7,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 86,
+    "fields": {
+      "classification": 24,
+      "classification_question": 16,
+      "selected_first": false,
+      "strength_first": "BA",
+      "selected_second": false,
+      "strength_second": "BA",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 87,
+    "fields": {
+      "classification": 24,
+      "classification_question": 17,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 88,
+    "fields": {
+      "classification": 24,
+      "classification_question": 18,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 89,
+    "fields": {
+      "classification": 24,
+      "classification_question": 2,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 90,
+    "fields": {
+      "classification": 24,
+      "classification_question": 6,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 91,
+    "fields": {
+      "classification": 24,
+      "classification_question": 10,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 92,
+    "fields": {
+      "classification": 24,
+      "classification_question": 4,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 93,
+    "fields": {
+      "classification": 24,
+      "classification_question": 19,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 94,
+    "fields": {
+      "classification": 24,
+      "classification_question": 14,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 95,
+    "fields": {
+      "classification": 24,
+      "classification_question": 24,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 96,
+    "fields": {
+      "classification": 24,
+      "classification_question": 25,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 97,
+    "fields": {
+      "classification": 24,
+      "classification_question": 3,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 98,
+    "fields": {
+      "classification": 24,
+      "classification_question": 11,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 99,
+    "fields": {
+      "classification": 24,
+      "classification_question": 12,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 100,
+    "fields": {
+      "classification": 24,
+      "classification_question": 15,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 101,
+    "fields": {
+      "classification": 24,
+      "classification_question": 20,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 102,
+    "fields": {
+      "classification": 24,
+      "classification_question": 8,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 103,
+    "fields": {
+      "classification": 24,
+      "classification_question": 22,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 104,
+    "fields": {
+      "classification": 24,
+      "classification_question": 26,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 105,
+    "fields": {
+      "classification": 25,
+      "classification_question": 1,
+      "selected_first": false,
+      "strength_first": "PV",
+      "selected_second": false,
+      "strength_second": "PV",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 106,
+    "fields": {
+      "classification": 25,
+      "classification_question": 9,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 107,
+    "fields": {
+      "classification": 25,
+      "classification_question": 13,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 108,
+    "fields": {
+      "classification": 25,
+      "classification_question": 21,
+      "selected_first": true,
+      "strength_first": "BP",
+      "selected_second": true,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 109,
+    "fields": {
+      "classification": 25,
+      "classification_question": 23,
+      "selected_first": true,
+      "strength_first": "BP",
+      "selected_second": true,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 110,
+    "fields": {
+      "classification": 25,
+      "classification_question": 5,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 111,
+    "fields": {
+      "classification": 25,
+      "classification_question": 7,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 112,
+    "fields": {
+      "classification": 25,
+      "classification_question": 16,
+      "selected_first": false,
+      "strength_first": "BA",
+      "selected_second": false,
+      "strength_second": "BA",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 113,
+    "fields": {
+      "classification": 25,
+      "classification_question": 17,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 114,
+    "fields": {
+      "classification": 25,
+      "classification_question": 18,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 115,
+    "fields": {
+      "classification": 25,
+      "classification_question": 2,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 116,
+    "fields": {
+      "classification": 25,
+      "classification_question": 6,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 117,
+    "fields": {
+      "classification": 25,
+      "classification_question": 10,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 118,
+    "fields": {
+      "classification": 25,
+      "classification_question": 4,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 119,
+    "fields": {
+      "classification": 25,
+      "classification_question": 19,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 120,
+    "fields": {
+      "classification": 25,
+      "classification_question": 14,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 121,
+    "fields": {
+      "classification": 25,
+      "classification_question": 24,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 122,
+    "fields": {
+      "classification": 25,
+      "classification_question": 25,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 123,
+    "fields": {
+      "classification": 25,
+      "classification_question": 3,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 124,
+    "fields": {
+      "classification": 25,
+      "classification_question": 11,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 125,
+    "fields": {
+      "classification": 25,
+      "classification_question": 12,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 126,
+    "fields": {
+      "classification": 25,
+      "classification_question": 15,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 127,
+    "fields": {
+      "classification": 25,
+      "classification_question": 20,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 128,
+    "fields": {
+      "classification": 25,
+      "classification_question": 8,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 129,
+    "fields": {
+      "classification": 25,
+      "classification_question": 22,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 130,
+    "fields": {
+      "classification": 25,
+      "classification_question": 26,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 131,
+    "fields": {
+      "classification": 26,
+      "classification_question": 1,
+      "selected_first": false,
+      "strength_first": "PV",
+      "selected_second": false,
+      "strength_second": "PV",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 132,
+    "fields": {
+      "classification": 26,
+      "classification_question": 9,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 133,
+    "fields": {
+      "classification": 26,
+      "classification_question": 13,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 134,
+    "fields": {
+      "classification": 26,
+      "classification_question": 21,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 135,
+    "fields": {
+      "classification": 26,
+      "classification_question": 23,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 136,
+    "fields": {
+      "classification": 26,
+      "classification_question": 5,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 137,
+    "fields": {
+      "classification": 26,
+      "classification_question": 7,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 138,
+    "fields": {
+      "classification": 26,
+      "classification_question": 16,
+      "selected_first": false,
+      "strength_first": "BA",
+      "selected_second": false,
+      "strength_second": "BA",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 139,
+    "fields": {
+      "classification": 26,
+      "classification_question": 17,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 140,
+    "fields": {
+      "classification": 26,
+      "classification_question": 18,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 141,
+    "fields": {
+      "classification": 26,
+      "classification_question": 2,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 142,
+    "fields": {
+      "classification": 26,
+      "classification_question": 6,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 143,
+    "fields": {
+      "classification": 26,
+      "classification_question": 10,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 144,
+    "fields": {
+      "classification": 26,
+      "classification_question": 4,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 145,
+    "fields": {
+      "classification": 26,
+      "classification_question": 19,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 146,
+    "fields": {
+      "classification": 26,
+      "classification_question": 14,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 147,
+    "fields": {
+      "classification": 26,
+      "classification_question": 24,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 148,
+    "fields": {
+      "classification": 26,
+      "classification_question": 25,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 149,
+    "fields": {
+      "classification": 26,
+      "classification_question": 3,
+      "selected_first": false,
+      "strength_first": "PS",
+      "selected_second": false,
+      "strength_second": "PS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 150,
+    "fields": {
+      "classification": 26,
+      "classification_question": 11,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 151,
+    "fields": {
+      "classification": 26,
+      "classification_question": 12,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 152,
+    "fields": {
+      "classification": 26,
+      "classification_question": 15,
+      "selected_first": false,
+      "strength_first": "PP",
+      "selected_second": false,
+      "strength_second": "PP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 153,
+    "fields": {
+      "classification": 26,
+      "classification_question": 20,
+      "selected_first": false,
+      "strength_first": "BS",
+      "selected_second": false,
+      "strength_second": "BS",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 154,
+    "fields": {
+      "classification": 26,
+      "classification_question": 8,
+      "selected_first": false,
+      "strength_first": "PM",
+      "selected_second": false,
+      "strength_second": "PM",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 155,
+    "fields": {
+      "classification": 26,
+      "classification_question": 22,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "acmg_db.classificationanswer",
+    "pk": 156,
+    "fields": {
+      "classification": 26,
+      "classification_question": 26,
+      "selected_first": false,
+      "strength_first": "BP",
+      "selected_second": false,
+      "strength_second": "BP",
+      "comment": ""
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+      "name": "Can add log entry",
+      "content_type": 1,
+      "codename": "add_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+      "name": "Can change log entry",
+      "content_type": 1,
+      "codename": "change_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+      "name": "Can delete log entry",
+      "content_type": 1,
+      "codename": "delete_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+      "name": "Can view log entry",
+      "content_type": 1,
+      "codename": "view_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+      "name": "Can add permission",
+      "content_type": 2,
+      "codename": "add_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+      "name": "Can change permission",
+      "content_type": 2,
+      "codename": "change_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+      "name": "Can delete permission",
+      "content_type": 2,
+      "codename": "delete_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+      "name": "Can view permission",
+      "content_type": 2,
+      "codename": "view_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+      "name": "Can add group",
+      "content_type": 3,
+      "codename": "add_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+      "name": "Can change group",
+      "content_type": 3,
+      "codename": "change_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+      "name": "Can delete group",
+      "content_type": 3,
+      "codename": "delete_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+      "name": "Can view group",
+      "content_type": 3,
+      "codename": "view_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+      "name": "Can add user",
+      "content_type": 4,
+      "codename": "add_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+      "name": "Can change user",
+      "content_type": 4,
+      "codename": "change_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+      "name": "Can delete user",
+      "content_type": 4,
+      "codename": "delete_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+      "name": "Can view user",
+      "content_type": 4,
+      "codename": "view_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+      "name": "Can add content type",
+      "content_type": 5,
+      "codename": "add_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+      "name": "Can change content type",
+      "content_type": 5,
+      "codename": "change_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+      "name": "Can delete content type",
+      "content_type": 5,
+      "codename": "delete_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+      "name": "Can view content type",
+      "content_type": 5,
+      "codename": "view_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+      "name": "Can add session",
+      "content_type": 6,
+      "codename": "add_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+      "name": "Can change session",
+      "content_type": 6,
+      "codename": "change_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+      "name": "Can delete session",
+      "content_type": 6,
+      "codename": "delete_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+      "name": "Can view session",
+      "content_type": 6,
+      "codename": "view_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+      "name": "Can add worklist",
+      "content_type": 7,
+      "codename": "add_worklist"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+      "name": "Can change worklist",
+      "content_type": 7,
+      "codename": "change_worklist"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+      "name": "Can delete worklist",
+      "content_type": 7,
+      "codename": "delete_worklist"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+      "name": "Can view worklist",
+      "content_type": 7,
+      "codename": "view_worklist"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+      "name": "Can add panel",
+      "content_type": 8,
+      "codename": "add_panel"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+      "name": "Can change panel",
+      "content_type": 8,
+      "codename": "change_panel"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+      "name": "Can delete panel",
+      "content_type": 8,
+      "codename": "delete_panel"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+      "name": "Can view panel",
+      "content_type": 8,
+      "codename": "view_panel"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+      "name": "Can add sample",
+      "content_type": 9,
+      "codename": "add_sample"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+      "name": "Can change sample",
+      "content_type": 9,
+      "codename": "change_sample"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+      "name": "Can delete sample",
+      "content_type": 9,
+      "codename": "delete_sample"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+      "name": "Can view sample",
+      "content_type": 9,
+      "codename": "view_sample"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 37,
+    "fields": {
+      "name": "Can add variant",
+      "content_type": 10,
+      "codename": "add_variant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 38,
+    "fields": {
+      "name": "Can change variant",
+      "content_type": 10,
+      "codename": "change_variant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 39,
+    "fields": {
+      "name": "Can delete variant",
+      "content_type": 10,
+      "codename": "delete_variant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 40,
+    "fields": {
+      "name": "Can view variant",
+      "content_type": 10,
+      "codename": "view_variant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 41,
+    "fields": {
+      "name": "Can add gene",
+      "content_type": 11,
+      "codename": "add_gene"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 42,
+    "fields": {
+      "name": "Can change gene",
+      "content_type": 11,
+      "codename": "change_gene"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 43,
+    "fields": {
+      "name": "Can delete gene",
+      "content_type": 11,
+      "codename": "delete_gene"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 44,
+    "fields": {
+      "name": "Can view gene",
+      "content_type": 11,
+      "codename": "view_gene"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 45,
+    "fields": {
+      "name": "Can add transcript",
+      "content_type": 12,
+      "codename": "add_transcript"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 46,
+    "fields": {
+      "name": "Can change transcript",
+      "content_type": 12,
+      "codename": "change_transcript"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 47,
+    "fields": {
+      "name": "Can delete transcript",
+      "content_type": 12,
+      "codename": "delete_transcript"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 48,
+    "fields": {
+      "name": "Can view transcript",
+      "content_type": 12,
+      "codename": "view_transcript"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 49,
+    "fields": {
+      "name": "Can add transcript variant",
+      "content_type": 13,
+      "codename": "add_transcriptvariant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 50,
+    "fields": {
+      "name": "Can change transcript variant",
+      "content_type": 13,
+      "codename": "change_transcriptvariant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 51,
+    "fields": {
+      "name": "Can delete transcript variant",
+      "content_type": 13,
+      "codename": "delete_transcriptvariant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 52,
+    "fields": {
+      "name": "Can view transcript variant",
+      "content_type": 13,
+      "codename": "view_transcriptvariant"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 53,
+    "fields": {
+      "name": "Can add classification",
+      "content_type": 14,
+      "codename": "add_classification"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 54,
+    "fields": {
+      "name": "Can change classification",
+      "content_type": 14,
+      "codename": "change_classification"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 55,
+    "fields": {
+      "name": "Can delete classification",
+      "content_type": 14,
+      "codename": "delete_classification"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 56,
+    "fields": {
+      "name": "Can view classification",
+      "content_type": 14,
+      "codename": "view_classification"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 57,
+    "fields": {
+      "name": "Can add classification question",
+      "content_type": 15,
+      "codename": "add_classificationquestion"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 58,
+    "fields": {
+      "name": "Can change classification question",
+      "content_type": 15,
+      "codename": "change_classificationquestion"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 59,
+    "fields": {
+      "name": "Can delete classification question",
+      "content_type": 15,
+      "codename": "delete_classificationquestion"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 60,
+    "fields": {
+      "name": "Can view classification question",
+      "content_type": 15,
+      "codename": "view_classificationquestion"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 61,
+    "fields": {
+      "name": "Can add classification answer",
+      "content_type": 16,
+      "codename": "add_classificationanswer"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 62,
+    "fields": {
+      "name": "Can change classification answer",
+      "content_type": 16,
+      "codename": "change_classificationanswer"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 63,
+    "fields": {
+      "name": "Can delete classification answer",
+      "content_type": 16,
+      "codename": "delete_classificationanswer"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 64,
+    "fields": {
+      "name": "Can view classification answer",
+      "content_type": 16,
+      "codename": "view_classificationanswer"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 65,
+    "fields": {
+      "name": "Can add user comment",
+      "content_type": 17,
+      "codename": "add_usercomment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 66,
+    "fields": {
+      "name": "Can change user comment",
+      "content_type": 17,
+      "codename": "change_usercomment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 67,
+    "fields": {
+      "name": "Can delete user comment",
+      "content_type": 17,
+      "codename": "delete_usercomment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 68,
+    "fields": {
+      "name": "Can view user comment",
+      "content_type": 17,
+      "codename": "view_usercomment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 69,
+    "fields": {
+      "name": "Can add evidence",
+      "content_type": 18,
+      "codename": "add_evidence"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 70,
+    "fields": {
+      "name": "Can change evidence",
+      "content_type": 18,
+      "codename": "change_evidence"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 71,
+    "fields": {
+      "name": "Can delete evidence",
+      "content_type": 18,
+      "codename": "delete_evidence"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 72,
+    "fields": {
+      "name": "Can view evidence",
+      "content_type": 18,
+      "codename": "view_evidence"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 73,
+    "fields": {
+      "name": "Can add log entry",
+      "content_type": 19,
+      "codename": "add_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 74,
+    "fields": {
+      "name": "Can change log entry",
+      "content_type": 19,
+      "codename": "change_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 75,
+    "fields": {
+      "name": "Can delete log entry",
+      "content_type": 19,
+      "codename": "delete_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 76,
+    "fields": {
+      "name": "Can view log entry",
+      "content_type": 19,
+      "codename": "view_logentry"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$120000$frgYSiNUTnJR$KPK662iifZM6r57p2950OlycGYH3tfnC+qYHqq5EpU8=",
+      "last_login": "2019-01-24T11:21:57.727Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2019-01-23T15:00:00.191Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$120000$lCBJ2tl0Wmrf$VeDw/TtP/jglJ/bz86o/b2RHnD+aBTIQHfJQAqDfBSs=",
+      "last_login": "2019-01-23T16:57:34.171Z",
+      "is_superuser": false,
+      "username": "testuser",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2019-01-23T16:56:41Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "acmg_db.classification",
+    "pk": 24,
+    "fields": {
+      "variant": "e94f4355a948148c9dab64fd74622433c0b5527484a7f708f84777ad48d85999",
+      "sample": 4,
+      "selected_transcript_variant": 2,
+      "creation_date": "2019-01-23T16:02:44.949Z",
+      "first_check_date": "2019-01-23T16:58:10.138Z",
+      "second_check_date": null,
+      "user_creator": 1,
+      "user_first_checker": 3,
+      "user_second_checker": null,
+      "status": "1",
+      "genuine": "1",
+      "first_final_class": "4",
+      "second_final_class": "7",
+      "is_trio_de_novo": false
+    }
+  },
+  {
+    "model": "acmg_db.classification",
+    "pk": 25,
+    "fields": {
+      "variant": "15bf6934fcff979041fdb24c61acdc10b4ab3a967705334e817cb475087f5e5b",
+      "sample": 4,
+      "selected_transcript_variant": 3,
+      "creation_date": "2019-01-23T16:02:44.969Z",
+      "first_check_date": "2019-01-23T16:58:53.433Z",
+      "second_check_date": "2019-01-23T16:59:52.017Z",
+      "user_creator": 1,
+      "user_first_checker": 3,
+      "user_second_checker": 3,
+      "status": "2",
+      "genuine": "1",
+      "first_final_class": "1",
+      "second_final_class": "1",
+      "is_trio_de_novo": false
+    }
+  },
+  {
+    "model": "acmg_db.classification",
+    "pk": 26,
+    "fields": {
+      "variant": "e700d61844bace84e8ed1509e33e55101292e01ecaa8c8d79385a2a3e1800e56",
+      "sample": 4,
+      "selected_transcript_variant": 64,
+      "creation_date": "2019-01-23T16:02:44.978Z",
+      "first_check_date": null,
+      "second_check_date": null,
+      "user_creator": 1,
+      "user_first_checker": 1,
+      "user_second_checker": null,
+      "status": "0",
+      "genuine": "1",
+      "first_final_class": "2",
+      "second_final_class": "7",
+      "is_trio_de_novo": false
+    }
+  },
+  {
+    "model": "acmg_db.classification",
+    "pk": 27,
+    "fields": {
+      "variant": "bc33033efca61ca7da57984f49c9f5970ed5a9c0b1e315902e7ac7f16912c332",
+      "sample": 4,
+      "selected_transcript_variant": 66,
+      "creation_date": "2019-01-23T16:02:44.994Z",
+      "first_check_date": null,
+      "second_check_date": null,
+      "user_creator": 1,
+      "user_first_checker": null,
+      "user_second_checker": null,
+      "status": "0",
+      "genuine": "0",
+      "first_final_class": "7",
+      "second_final_class": "7",
+      "is_trio_de_novo": false
+    }
+  },
+  {
+    "model": "acmg_db.classification",
+    "pk": 28,
+    "fields": {
+      "variant": "0040132323d9453fb573ada0770cef4776dfc4a11e7481c03344618cb52e4ea9",
+      "sample": 4,
+      "selected_transcript_variant": 68,
+      "creation_date": "2019-01-23T16:02:45.003Z",
+      "first_check_date": null,
+      "second_check_date": null,
+      "user_creator": 1,
+      "user_first_checker": null,
+      "user_second_checker": null,
+      "status": "0",
+      "genuine": "0",
+      "first_final_class": "7",
+      "second_final_class": "7",
+      "is_trio_de_novo": false
+    }
+  },
+  {
+    "model": "acmg_db.classification",
+    "pk": 29,
+    "fields": {
+      "variant": "00a41a68546434a5eac85419e9456bf993dfc4775c499cb530530d87a42e40ca",
+      "sample": 4,
+      "selected_transcript_variant": 81,
+      "creation_date": "2019-01-23T16:02:45.036Z",
+      "first_check_date": null,
+      "second_check_date": null,
+      "user_creator": 1,
+      "user_first_checker": null,
+      "user_second_checker": null,
+      "status": "0",
+      "genuine": "0",
+      "first_final_class": "7",
+      "second_final_class": "7",
+      "is_trio_de_novo": false
+    }
+  },
+  {
+    "model": "acmg_db.panel",
+    "pk": "test",
+    "fields": {
+      "added_by": 1
+    }
+  }
+]
