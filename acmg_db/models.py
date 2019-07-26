@@ -118,6 +118,16 @@ class Gene(models.Model):
 		return inheritance_string
 
 
+	def get_inheritance_choices_as_list(self):
+
+		inheritance_list = []
+		for i in str(self.inheritance_pattern).split(', '):
+			i = i.replace('[', '').replace(']', '').replace("'", "")
+			inheritance_list.append(i)
+
+		return inheritance_list
+
+
 class Transcript(models.Model):
 	"""
 	Model to hold a transcript e.g NM_007298.3

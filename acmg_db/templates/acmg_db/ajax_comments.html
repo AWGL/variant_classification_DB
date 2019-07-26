@@ -16,7 +16,17 @@
 
     {% for evidence in comment.get_evidence %}
 
-      <p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+      	{% if evidence.file|make_list|slice:"-4:"|join:"" == ".png" %}
+
+
+		<a href="/media/{{ evidence.file }}" target="_blank"> <img class="evidence_images" src=/media/{{ evidence.file }} style="width:100%;max-width:300px"></a>
+
+		{% else %}
+
+		<a href="/media/{{ evidence.file }}" target="_blank">{{evidence.file }} </a>
+
+
+		{% endif %}
 
 
     {% endfor %}
