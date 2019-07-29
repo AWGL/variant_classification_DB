@@ -279,7 +279,7 @@ class VariantInfoFormSecondCheck(forms.Form):
 		self.helper = FormHelper()
 		self.fields['select_transcript'].choices = self.options
 		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
-		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.inheritance_pattern
+		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.get_inheritance_choices_as_list()
 		self.fields['inheritance_pattern'].widget.attrs['size'] = 7
 		self.fields['inheritance_pattern'].help_text = 'Hold shift ctrl to select multiple.'
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
