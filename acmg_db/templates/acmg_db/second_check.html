@@ -3,6 +3,18 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
+<style>
+.evidence_images {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.evidence_images:hover {opacity: 0.7;}
+
+</style>
+
+
 <br>
 
 <!-- BOX TO SHOW ERRORS -->
@@ -471,7 +483,18 @@
 			{% else %}
 			  <hr>
 			  {% for evidence in comment.get_evidence %}
-				<p><a href= /media/{{ evidence.file }} target="_blank"> {{ evidence.file }}</a> </p>
+				
+				{% if evidence.file|make_list|slice:"-4:"|join:"" == ".png" %}
+
+			  	<a href="/media/{{ evidence.file }}" target="_blank"> <img class="evidence_images" src=/media/{{ evidence.file }} style="width:100%;max-width:300px"></a>
+
+			  	{% else %}
+
+			  	<a href="/media/{{ evidence.file }}" target="_blank">{{evidence.file }} </a>
+
+
+			  {% endif %}
+
 			  {% endfor %}
 			{% endif %}
 		  </div>
