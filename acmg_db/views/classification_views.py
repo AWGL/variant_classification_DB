@@ -111,6 +111,85 @@ def view_classification(request, pk):
 		classification_answers = (ClassificationAnswer.objects.filter(classification=classification)
 			.order_by('classification_question__order'))
 
+		# make dictionaries for summary of codes applied
+		full_strength_dict = {
+			'PV':{'PVS1': 'not applied'}, 
+			'PS':{'PS1': 'not applied', 'PS2': 'not applied', 'PS3': 'not applied', 'PS4': 'not applied'}, 
+			'PM':{'PM1': 'not applied', 'PM2': 'not applied', 'PM3': 'not applied',
+			      'PM4': 'not applied', 'PM5': 'not applied', 'PM6': 'not applied'}, 
+			'PP':{'PP1': 'not applied', 'PP2': 'not applied', 'PP3': 'not applied', 'PP4': 'not applied'}, 
+			'BP':{'BP1': 'not applied', 'BP2': 'not applied', 'BP3': 'not applied', 
+				  'BP4': 'not applied', 'BP5': 'not applied', 'BP7': 'not applied'}, 
+			'BS':{'BS1': 'not applied', 'BS2': 'not applied', 'BS3': 'not applied', 'BS4': 'not applied', }, 
+			'BA':{'BA1': 'not applied'}
+			}
+		altered_strength_dict = {'PV':[], 'PS':[], 'PM':[], 'PP':[], 'BP':[], 'BS':[], 'BA':[]}
+		strength_count_dict = {'PV':0, 'PS':0, 'PM':0, 'PP':0, 'BP':0, 'BS':0, 'BA':0}
+
+		# loop through answers and edit dictionaries to show classification - currently based on second check
+		for a in classification_answers:
+			if classification.status == '0':
+				if a.selected_first:
+					# if code is applied, parse required fields
+					code = a.classification_question.acmg_code
+					default = a.classification_question.default_strength
+					set_strength = a.strength_first
+
+					# if strength isnt changed
+					if set_strength == default:
+						# special handling for PS4_M/P becuase they are seperate rules in the database
+						if code == 'PS4_M':
+							full_strength_dict['PS']['PS4'] = 'altered'
+							altered_strength_dict['PM'].append('PS4_M')
+						elif code == 'PS4_P':
+							full_strength_dict['PS']['PS4'] = 'altered'
+							altered_strength_dict['PP'].append('PS4_P')
+						else:
+							full_strength_dict[default][code] = 'applied'
+						strength_count_dict[set_strength] += 1
+					else:
+						# if strength is changed make new code ID
+						if set_strength == 'BA':
+							new_code = f'{code}_{set_strength}'
+						elif set_strength == 'PV':
+							new_code = f'{code}_VS'
+						else:
+							new_code = f'{code}_{set_strength[1]}'
+						full_strength_dict[default][code] = 'altered'
+						altered_strength_dict[set_strength].append(new_code)
+						strength_count_dict[set_strength] += 1
+			else:
+				if a.selected_second:
+					# if code is applied, parse required fields
+					code = a.classification_question.acmg_code
+					default = a.classification_question.default_strength
+					set_strength = a.strength_second
+
+					# if strength isnt changed
+					if set_strength == default:
+						# special handling for PS4_M/P becuase they are seperate rules in the database
+						if code == 'PS4_M':
+							full_strength_dict['PS']['PS4'] = 'altered'
+							altered_strength_dict['PM'].append('PS4_M')
+						elif code == 'PS4_P':
+							full_strength_dict['PS']['PS4'] = 'altered'
+							altered_strength_dict['PP'].append('PS4_P')
+						else:
+							full_strength_dict[default][code] = 'applied'
+						strength_count_dict[set_strength] += 1
+					else:
+						# if strength is changed make new code ID
+						if set_strength == 'BA':
+							new_code = f'{code}_{set_strength}'
+						elif set_strength == 'PV':
+							new_code = f'{code}_VS'
+						else:
+							new_code = f'{code}_{set_strength[1]}'
+						full_strength_dict[default][code] = 'altered'
+						altered_strength_dict[set_strength].append(new_code)
+						strength_count_dict[set_strength] += 1
+
+
 		comments = UserComment.objects.filter(classification=classification, visible=True)
 		classification_history = classification.history.all()
 		sample_history = classification.sample.history.all()
@@ -124,6 +203,9 @@ def view_classification(request, pk):
 			{	
 				'classification': classification,
 				'classification_answers': classification_answers,
+				'classes_full_strength': full_strength_dict,
+				'classes_altered_strength': altered_strength_dict,
+				'classes_count': strength_count_dict,
 				'comments': comments,
 				'archive_form': archive_form,
 				'reset_form': reset_form,
