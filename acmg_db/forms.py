@@ -48,7 +48,7 @@ class ManualUploadForm(forms.Form):
 	worklist = forms.CharField(max_length=50)
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
-
+	genotype = forms.ChoiceField(choices=(('HET', 'HET'), ('HOM','HOM'), ('NA', 'NA')))
 
 	def __init__(self, *args, **kwargs):
 
@@ -72,6 +72,7 @@ class ManualUploadForm(forms.Form):
 			Field('worklist', placeholder='Enter the worksheet name, e.g. 19-4321', title=False),
 			Field('panel_applied', title=False),
 			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),
+			Field('genotype', placeholder='Enter the genotype of the variant', title=False),
 		)
 
 
@@ -122,12 +123,25 @@ class VariantInfoForm(forms.Form):
 	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
+	genotype = forms.ChoiceField(choices = (('HET', 'HET'), ('HOM', 'HOM'), ('NA', 'NA')))
 
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 		self.options = kwargs.pop('options')
+
+		if self.classification.genotype == 1:
+
+			genotype_init = 'HET'
+
+		elif self.classification.genotype == 2:
+
+			genotype_init = 'HOM'
+
+		else:
+
+			genotype_init = 'NA'
 
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
@@ -140,6 +154,7 @@ class VariantInfoForm(forms.Form):
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
+		self.fields['genotype'].initial = genotype_init
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -155,6 +170,8 @@ class VariantInfoForm(forms.Form):
 			Field('conditions'),
 			HTML('<hr><h5>Is the variant de novo?</h5>'),
 			Field('is_trio_de_novo'),
+			HTML('<hr><h5>Variant Genotype?</h5>'),
+			Field('genotype'),
 		)
 
 
@@ -267,12 +284,25 @@ class VariantInfoFormSecondCheck(forms.Form):
 	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
+	genotype = forms.ChoiceField(choices = (('HET', 'HET'), ('HOM', 'HOM'), ('NA', 'NA')))
 
 	def __init__(self, *args, **kwargs):
 
 		self.classification_pk = kwargs.pop('classification_pk')
 		self.classification = Classification.objects.get(pk = self.classification_pk)
 		self.options = kwargs.pop('options')
+
+		if self.classification.genotype == 1:
+
+			genotype_init = 'HET'
+
+		elif self.classification.genotype == 2:
+
+			genotype_init = 'HOM'
+
+		else:
+
+			genotype_init = 'NA'
 
 		super(VariantInfoFormSecondCheck, self).__init__(*args, **kwargs)
 
@@ -285,6 +315,7 @@ class VariantInfoFormSecondCheck(forms.Form):
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
+		self.fields['genotype'].initial = genotype_init
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -300,6 +331,8 @@ class VariantInfoFormSecondCheck(forms.Form):
 			Field('conditions'),
 			HTML('<hr><h5>Is the variant de novo?</h5>'),
 			Field('is_trio_de_novo'),
+			HTML('<hr><h5>Variant Genotype?</h5>'),
+			Field('genotype'),
 		)
 
 

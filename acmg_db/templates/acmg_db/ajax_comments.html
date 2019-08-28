@@ -2,7 +2,11 @@
 
 
 <div class="card">
-<h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+<h7 class="card-header">{{comment.user}} on {{comment.time}}
+        <button id={{comment.pk}} type="button" class="close comment_destroy" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+</h7>
 <div class="card-body">
 
   {{comment.text|linebreaks}}
