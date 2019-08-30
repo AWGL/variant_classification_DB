@@ -112,7 +112,7 @@ def view_classification(request, pk):
 		elif 'submit-sendback' in request.POST:
 
 			# Only allow user to reset if status is second check and the user is None, the first checker or 2nd checker
-			if classification.status == '1' and (classification.user_second_checker == request.user or classification.user_first_checker == request.user or classification.user_second_checker == None):
+			if classification.status == '1' and (classification.user_second_checker == request.user or classification.user_first_checker == request.user):
 
 				form = SendBackToFirstCheckForm(request.POST, classification_pk = classification.pk)
 
