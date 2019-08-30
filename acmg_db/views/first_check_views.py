@@ -400,7 +400,7 @@ def ajax_comments(request):
 		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		html = render_to_string('acmg_db/ajax_comments.html',
-								{'comments': comments})
+								{'comments': comments, 'user': request.user})
 
 		return HttpResponse(html)
 

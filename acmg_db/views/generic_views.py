@@ -72,18 +72,32 @@ def ajax_delete_comment(request):
 		classification_pk = request.POST.get('classification_pk').strip()
 		classification = get_object_or_404(Classification, pk =classification_pk)
 
-		# only allow if classification is not complete
-		if classification.status == '0' or classification.status == '1':
+		# only the user who created the comment can delete
+		if request.user == comment.user:
 
-			comment.delete()
+			# only allow if classification is not complete
+			if classification.status == '0' or classification.status == '1':
 
-			comments = UserComment.objects.filter(classification=classification, visible=True)
+				comment.delete()
 
-			html = render_to_string('acmg_db/ajax_comments.html',
-									{'comments': comments})
+				comments = UserComment.objects.filter(classification=classification, visible=True)
 
-			return HttpResponse(html)
+				html = render_to_string('acmg_db/ajax_comments.html',
+										{'comments': comments, 'user': request.user})
+
+				return HttpResponse(html)
 
 		else:
+
+				comments = UserComment.objects.filter(classification=classification, visible=True)
+
+				html = render_to_string('acmg_db/ajax_comments.html',
+										{'comments': comments, 'user': request.user})
+
+				return HttpResponse(html)
+
+
+
+	else:
 
 			raise PermissionDenied('You do not have permission to delete this comment.')

@@ -418,6 +418,22 @@ class AssignSecondCheckToMeForm(forms.Form):
 		self.helper.add_input(Submit('submit-assign', 'Assign Second Check to Me', css_class='btn-danger'))
 
 
+class SendBackToFirstCheckForm(forms.Form):
+	"""
+	Allow users to send back a classification to first check.
+	"""
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+
+		super(SendBackToFirstCheckForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit-sendback', 'Send Back To First Check', css_class='btn-danger'))
+
+
 # panel forms -----------------------------------------------------------
 class NewPanelForm(forms.Form):
 	"""

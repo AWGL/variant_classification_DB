@@ -415,7 +415,40 @@
 
 {% endif %}
 
+{% if classification.status == '1'  %}
+
+  {% if classification.user_second_checker == request.user %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+
+  {% elif classification.user_first_checker == request.user %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+  {% elif classification.user_second_checker == None %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+
+{% endif %}
+{% endif %}
+
+
+
 </div>
+
+
+
+
+
+
 
 <br>
 <br>

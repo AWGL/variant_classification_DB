@@ -1,4 +1,4 @@
-from ..forms import ArchiveClassificationForm, ResetClassificationForm, AssignSecondCheckToMeForm
+from ..forms import ArchiveClassificationForm, ResetClassificationForm, AssignSecondCheckToMeForm, SendBackToFirstCheckForm
 from ..models import *
 
 from django.core.exceptions import PermissionDenied
@@ -74,6 +74,9 @@ def view_classification(request, pk):
 					classification.second_final_class = '7'
 					classification.save()
 
+					comments = UserComment.objects.filter(classification=classification)
+					comments.delete()
+
 					answers = ClassificationAnswer.objects.filter(classification=classification)
 					answers.delete()
 
@@ -96,6 +99,46 @@ def view_classification(request, pk):
 					classification = get_object_or_404(Classification, pk=form.classification_pk)
 
 					classification.user_second_checker = request.user
+					classification.save()
+
+					return redirect('home')
+
+			else:
+
+				raise PermissionDenied('You do not have permission to assign the second check to yourself.')	
+
+
+		# Allow users to assign the second check to themselves
+		elif 'submit-sendback' in request.POST:
+
+			# Only allow user to reset if status is second check and the user is None, the first checker or 2nd checker
+			if classification.status == '1' and (classification.user_second_checker == request.user or classification.user_first_checker == request.user or classification.user_second_checker == None):
+
+				form = SendBackToFirstCheckForm(request.POST, classification_pk = classification.pk)
+
+				if form.is_valid():
+
+					classification = get_object_or_404(Classification, pk=form.classification_pk)
+
+					# delete any second check answers
+					classification_answers = ClassificationAnswer.objects.filter(classification=classification)
+
+					for c_answer in classification_answers:
+
+						c_answer.selected_second = False
+						c_answer.strength_second = c_answer.classification_question.default_strength
+						c_answer.save()
+
+					# delete any second check comments
+					classification_comments = UserComment.objects.filter(classification =classification, user= classification.user_second_checker)
+					classification_comments.delete()
+
+					# reset other attributes
+					classification.first_check_date = None
+					classification.second_check_date = None
+					classification.user_second_checker = None
+					classification.status = '0'
+					classification.second_final_class = '7'
 					classification.save()
 
 					return redirect('home')
@@ -198,6 +241,7 @@ def view_classification(request, pk):
 		archive_form = ArchiveClassificationForm(classification_pk = classification.pk)
 		reset_form = ResetClassificationForm(classification_pk = classification.pk)
 		assign_form = AssignSecondCheckToMeForm(classification_pk = classification.pk)
+		sendback_form = SendBackToFirstCheckForm(classification_pk = classification.pk)
 
 		return render(request, 'acmg_db/view_classification.html', 
 			{	
@@ -210,6 +254,7 @@ def view_classification(request, pk):
 				'archive_form': archive_form,
 				'reset_form': reset_form,
 				'assign_form': assign_form,
+				'sendback_form': sendback_form,
 				'history': history
 			}
 		)
