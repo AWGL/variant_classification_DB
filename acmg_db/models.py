@@ -36,7 +36,7 @@ class Sample(models.Model):
 
 	history = AuditlogHistoryField()
 
-	name = models.CharField(max_length=50, unique=True) # worksheet_id + '-' + sample_id + '-' + analysis performed
+	name = models.CharField(max_length=255, unique=True) # worksheet_id + '-' + sample_id + '-' + analysis performed
 	sample_name_only = models.CharField(max_length=150)  # sample_id only
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
