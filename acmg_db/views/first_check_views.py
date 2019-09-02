@@ -121,6 +121,23 @@ def first_check(request, pk):
 					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
 					classification.selected_transcript_variant = selected_transcript_variant
 					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
+
+					genotype = cleaned_data['genotype']
+
+					if genotype == 'HET':
+
+						genotype = 1
+
+					elif genotype == 'HOM':
+
+						genotype = 2
+
+					else:
+
+						genotype = None
+
+					classification.genotype = genotype
+
 					classification.save()
 
 					# genes section
@@ -383,7 +400,7 @@ def ajax_comments(request):
 		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		html = render_to_string('acmg_db/ajax_comments.html',
-								{'comments': comments})
+								{'comments': comments, 'user': request.user})
 
 		return HttpResponse(html)
 

@@ -191,6 +191,10 @@
 					</td>
 				</tr> 
 				<tr>
+					<td>Genotype</td>
+					<td>{{classification.display_genotype}}</td>
+				</tr>
+				<tr>
 					<td>Gene</td>
 					<td>{{classification.selected_transcript_variant.transcript.gene.name}}</td>
 				</tr>
@@ -446,7 +450,18 @@
 	<div id='comment_box'>
 	  {% for comment in comments %}
 		<div class="card">
-		  <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+		  <h7 class="card-header">
+
+		  {{comment.user}} on {{comment.time}} 
+
+		  {% if user == comment.user %}
+
+		  	<button id={{comment.pk}} type="button" class="close comment_destroy" aria-label="Close">
+  				<span aria-hidden="true">&times;</span>
+			</button>
+
+		{% endif %}
+		 </h7> 
 		  <div class="card-body">
 			{{comment.text|linebreaks}}
 			{% if comment.get_evidence == None %}
@@ -624,6 +639,51 @@ $(document).ready(function(){
 			$(this).parent().parent().removeClass("table-info");
 		}
 	});
+
+
+	// When we destroy a comment
+	$('body').on('click', '.comment_destroy', function(e){
+
+		var r = confirm("Are you sure you want to delete this comment?");
+
+		if ( r ==true ){
+
+
+		comment_pk = this.id;
+
+		console.log(comment_pk);
+
+		var formData = new FormData();
+		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
+		formData.append('comment_pk', comment_pk); //add comment primary key
+		formData.append('classification_pk', "{{classification.pk}}")
+
+		$.ajax({
+			url: '/ajax/delete_comment/',
+			type: 'POST',
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+			processData: false, // NEEDED, DON'T OMIT THIS
+			success: function(data) {
+			$("#comment_box").html(data);
+			},
+			failure: function(data) {
+			alert('Got an error');
+			}
+			});
+	}
+
+	else {
+
+		console.log('didnt bother');
+
+	}
+
+
+	});
+
+
+
 	
 	// When we click the submit ACMG
 	$(".acmg_submit").click(function(){

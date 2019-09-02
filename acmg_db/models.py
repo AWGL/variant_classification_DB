@@ -36,8 +36,8 @@ class Sample(models.Model):
 
 	history = AuditlogHistoryField()
 
-	name = models.CharField(max_length=50, unique=True) # worksheet_id + '-' + sample_id + '-' + analysis performed
-	sample_name_only = models.CharField(max_length=50)  # sample_id only
+	name = models.CharField(max_length=255, unique=True) # worksheet_id + '-' + sample_id + '-' + analysis performed
+	sample_name_only = models.CharField(max_length=150)  # sample_id only
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
@@ -238,6 +238,7 @@ class Classification(models.Model):
 	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)
 	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)  # The actual one we want to display.
 	is_trio_de_novo = models.BooleanField()
+	genotype = models.IntegerField(null=True, blank=True)
 
 	def display_status(self):
 		"""
@@ -387,6 +388,23 @@ class Classification(models.Model):
 			return final_class
 
 		return '7'
+
+	def display_genotype(self):
+		"""
+		Display Genotype
+		"""
+
+		if self.genotype == 1:
+
+			return 'HET'
+
+		elif self.genotype == 2:
+
+			return 'HOM'
+
+		else:
+
+			return 'NA'
 
 
 class ClassificationQuestion(models.Model):

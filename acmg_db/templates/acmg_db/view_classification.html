@@ -117,6 +117,10 @@
       <tr>
         <td> Sample Lab Number </td>
         <td> {{classification.sample.sample_name_only }} </td>
+      <tr>
+        <td> Genotype </td>
+        <td> {{classification.display_genotype }} </td>
+      </tr>
       </tr>
         <tr>
         <td> Worklist </td>
@@ -411,7 +415,35 @@
 
 {% endif %}
 
+{% if classification.status == '1'  %}
+
+  {% if classification.user_second_checker == request.user %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+
+  {% elif classification.user_first_checker == request.user %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+
+
+{% endif %}
+{% endif %}
+
+
+
 </div>
+
+
+
+
+
+
 
 <br>
 <br>

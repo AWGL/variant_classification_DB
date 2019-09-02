@@ -57,6 +57,16 @@ def auto_input(request):
 			worksheet_id = df['WorklistId'].unique()[0]
 			sample_id = df['#SampleId'].unique()[0]
 
+			# create dict of links between variant and genotype
+			variant_genotype_dict = {}
+
+			for row in df.itertuples():
+
+				variant_genotype_dict[row.Variant] = row.Genotype
+
+			print (variant_genotype_dict)
+
+
 			# add worksheet
 			worksheet_obj, created = Worklist.objects.get_or_create(
 					name = worksheet_id
@@ -167,6 +177,41 @@ def auto_input(request):
 
 						selected = transcript_variant_obj
 
+				# process the genotype
+				genotype = variant_genotype_dict[f'{variant_obj.chromosome}:{variant_obj.position}{variant_obj.ref}>{variant_obj.alt}']
+
+
+				# for FH TSVs in which the genotype field is different e.g. A/G rather than HET
+				if '/' in genotype:
+
+					alt = variant_obj.alt
+
+					genotype = genotype.split('/')
+
+					if genotype.count(alt) == 1:
+
+						genotype = 'HET'
+
+					elif genotype.count(alt) == 2:
+
+						genotype = 'HOM'
+
+					else:
+						# something else set to None
+						genotype = None
+
+				if genotype == 'HET':
+
+					genotype = 1
+
+				elif genotype == 'HOM':
+
+					genotype = 2
+
+				else:
+
+					genotype = None
+
 				new_classification_obj = Classification.objects.create(
 					variant= variant_obj,
 					sample = sample_obj,
@@ -176,7 +221,8 @@ def auto_input(request):
 					is_trio_de_novo = False,
 					first_final_class = '7',
 					second_final_class = '7',
-					selected_transcript_variant = selected
+					selected_transcript_variant = selected,
+					genotype=genotype
 					)
 
 				new_classification_obj.save()
@@ -225,6 +271,22 @@ def manual_input(request):
 
 			# get affected with
 			affected_with = form.cleaned_data['affected_with'].strip()
+
+			# get genotype
+
+			genotype = form.cleaned_data['genotype']
+
+			if genotype == 'HET':
+
+				genotype = 1
+
+			elif genotype  == 'HOM':
+
+				genotype = 2
+
+			else:
+
+				genotype = None
 
 			# get variant
 			variants = form.cleaned_data['variant'].strip().upper()
@@ -393,7 +455,8 @@ def manual_input(request):
 					is_trio_de_novo = False,
 					first_final_class = '7',
 					second_final_class = '7',
-					selected_transcript_variant = selected
+					selected_transcript_variant = selected,
+					genotype = genotype
 					)
 
 				new_classification_obj.save()
