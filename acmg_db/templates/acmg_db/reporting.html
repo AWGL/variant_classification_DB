@@ -59,12 +59,14 @@
 		<th>Worksheet</th>
 		<th>Panel</th>
 	  <th>Sample</th>
+	  <th>Genotype</th>
 	  <th>Gene</th>
 	  <th>Variant</th>
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
 	  <th>Classification</th>
+	  <th>Version</th>
 	</tr>
   </thead>
 
@@ -89,6 +91,7 @@
 		<td>{{ classification.sample.worklist.name }}</td>
 		<td>{{ classification.sample.analysis_performed }}</td>
 	  <td>{{ classification.sample.sample_name_only }}</td>
+	  <td>{{ classification.display_genotype }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
 	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
@@ -111,6 +114,7 @@
 		<span class="fa fa-binoculars"></span>  {{ classification.display_classification}}
 		</a>
 	  </td>
+	  <td>{{ classification.guideline_version }}</td>
 	</tr>
 	{% endfor %}
   </tbody>

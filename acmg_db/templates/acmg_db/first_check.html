@@ -261,7 +261,7 @@
 
 		{% if previous_classifications|length  > 0 %}
 		<p>This variant has been seen <b>{{ previous_classifications|length }} times</b> before.</p>
-		<table class="table col-8">
+		<table class="table col-10">
 			<tr>
 				<td class="col-2"><b>Last seen:</b></td>
 				<td class="col-1">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
@@ -280,8 +280,9 @@
 					<button type="button" class="btn btn-muted btn-sm">
 					{% endif %}
 						{{ previous_classifications.0.display_final_classification }}
-					</button></td>
-				
+					</button>
+				</td>
+				<td class="col-2">{{ previous_classifications.0.guideline_version}}</td>
 				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
 			</tr>
 
@@ -307,7 +308,7 @@
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>
 				</td>
-				
+				<td class="col-2">{{ previous_full_classifications.0.guideline_version}}</td>
 				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 				
 			</tr>
@@ -317,6 +318,7 @@
 				<td class="col-2"></td>
 				<td class="col-1"></td>
 				<td class="col-3"></td>
+				<td class="col-2"></td>
 				<td class="col-1">
 					<a class="btn btn-light btn-sm" href="{% url 'view_variant' pk=variant.variant_hash %}" role="button">View all</a>
 				</td>
@@ -359,6 +361,9 @@
 	<br>
 	
 	{% if classification.genuine == '1' %}
+
+	<p><b>Guideline verison:</b> {{ classification.guideline_version }}</p>
+	
 	<!-- Button to recalculate the classification -->
 	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
 
