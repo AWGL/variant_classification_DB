@@ -13,6 +13,10 @@ call VUS-conflicting evidence if there was only mild evidence on one side. All c
 now done within the one function.
 """
 
+# specify guideline version so that record can be made in database
+# NOTE: change this variable if you make any changes to the guidelines (max_length 20)
+guideline_version = 'ACGS 2018'
+
 
 def valid_input(input):
 	"""
@@ -128,16 +132,13 @@ def classify(user_classification):
 	if PVS1_count == 1 and PS_count >= 1:
 		return '5'
 
-	elif PVS1_count == 1 and PM_count >= 2:
-		return '5'
-
-	elif PVS1_count == 1 and (PM_count == 1 and PP_count == 1):
+	elif PVS1_count == 1 and PM_count >= 1:
 		return '5'
 
 	elif PVS1_count == 1 and PP_count >= 2:
 		return '5'
 
-	elif PS_count >= 2:
+	elif PS_count >= 3:
 		return '5'
 
 	elif PS_count == 1 and PM_count >= 3:
@@ -150,7 +151,7 @@ def classify(user_classification):
 		return '5'
 
 	# likely pathogenic
-	elif PVS1_count == 1 and PM_count == 1:
+	elif PS_count == 2:
 		return '4'
 
 	elif PS_count == 1 and (PM_count == 1 or PM_count == 2):
