@@ -69,7 +69,7 @@
 					{% elif 'Contradictory' in result_first %}
                   		<button type="button" class="btn btn-primary" style="width: 100%;">First Analysis: {{result_first}}</button>
 					{% else %}
-						<button type="button" class="btn btn-secondary" style="width: 100%;">First Analysis: {{result_first}}</button>
+						<button type="button" class="btn btn-light" style="width: 100%;">First Analysis: {{result_first}}</button>
 					{% endif %}
 						<hr>
 
@@ -84,7 +84,7 @@
 					{% elif 'Contradictory' in result_second %}
                   		<button type="button" class="btn btn-primary" style="width: 100%;">Second Analysis: {{result_second}}</button>
 					{% else %}
-						<button type="button" class="btn btn-secondary" style="width: 100%">Second Analysis: {{result_second}}</button>
+						<button type="button" class="btn btn-light" style="width: 100%">Second Analysis: {{result_second}}</button>
 					{% endif %}
 					</div>
 				</td>
@@ -294,9 +294,9 @@
 					{% elif 'Artefact' in previous_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
 					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
-					<button type="button" class="btn btn-secondary btn-sm">
+					<button type="button" class="btn btn-primary btn-sm">
 					{% else %}
-					<button type="button" class="btn btn-muted btn-sm">
+					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
 						{{ previous_classifications.0.display_final_classification }}
 					</button>
@@ -319,9 +319,9 @@
 					{% elif 'Artefact' in previous_full_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
 					{% elif 'Contradictory' in previous_full_classifications.0.display_final_classification %}
-					<button type="button" class="btn btn-secondary btn-sm">
+					<button type="button" class="btn btn-primary btn-sm">
 					{% else %}
-					<button type="button" class="btn btn-muted btn-sm">
+					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>

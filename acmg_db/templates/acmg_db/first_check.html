@@ -66,7 +66,7 @@
 					{% elif 'Contradictory' in result %}
                         <button type="button" class="btn btn-primary" style="width: 100%;">{{result}}</button>
 					{% else %}
-						<button type="button" class="btn btn-secondary" style="width: 100%;">{{result}}</button>
+						<button type="button" class="btn btn-light" style="width: 100%;">{{result}}</button>
 					{% endif %}
 					</div>
 				</td>
@@ -277,7 +277,7 @@
 					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
                     <button type="button" class="btn btn-primary btn-sm">
 					{% else %}
-					<button type="button" class="btn btn-muted btn-sm">
+					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
 						{{ previous_classifications.0.display_final_classification }}
 					</button>
@@ -303,7 +303,7 @@
 					{% elif 'Contradictory' in previous_full_classifications.0.display_final_classification %}
                     <button type="button" class="btn btn-primary btn-sm">
 					{% else %}
-					<button type="button" class="btn btn-muted btn-sm">
+					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>
