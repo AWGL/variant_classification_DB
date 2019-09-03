@@ -365,9 +365,6 @@
 	<br>
 	
 	{% if classification.genuine == '1' %}
-
-	<p><b>Guideline verison:</b> {{ classification.guideline_version }}</p>
-
 	<!-- Button to recalculate the classification -->
 	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
 
@@ -593,6 +590,10 @@
 				<tr>
 					<td>Status</td>
 					<td>{{ classification.display_status }}</td>
+				</tr>
+				<tr>
+					<td>Guideline version</td>
+					<td>{{ classification.guideline_version }}</td>
 				</tr>
 				<tr>
 					<td>Created Date </td>
