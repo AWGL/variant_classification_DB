@@ -4,6 +4,7 @@ from ..forms import VariantFileUploadForm, ManualUploadForm
 from ..models import *
 from .first_check_views import first_check
 from ..utils.variant_utils import load_worksheet, get_vep_info_local, get_variant_info_mutalzer, process_variant_input
+from ..utils.acmg_classifier import guideline_version
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -222,7 +223,8 @@ def auto_input(request):
 					first_final_class = '7',
 					second_final_class = '7',
 					selected_transcript_variant = selected,
-					genotype=genotype
+					genotype=genotype,
+					guideline_version=guideline_version
 					)
 
 				new_classification_obj.save()
@@ -456,7 +458,8 @@ def manual_input(request):
 					first_final_class = '7',
 					second_final_class = '7',
 					selected_transcript_variant = selected,
-					genotype = genotype
+					genotype = genotype,
+					guideline_version=guideline_version
 					)
 
 				new_classification_obj.save()

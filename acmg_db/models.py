@@ -239,6 +239,7 @@ class Classification(models.Model):
 	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES)  # The actual one we want to display.
 	is_trio_de_novo = models.BooleanField()
 	genotype = models.IntegerField(null=True, blank=True)
+	guideline_version = models.CharField(max_length=20)
 
 	def display_status(self):
 		"""
