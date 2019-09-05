@@ -124,16 +124,19 @@ def first_check(request, pk):
 
 					genotype = cleaned_data['genotype']
 
-					if genotype == 'HET':
+					if genotype == 1:
+						return 'Het'
 
-						genotype = 1
+					elif genotype == 2:
+						return 'Hom'
 
-					elif genotype == 'HOM':
+					elif genotype == 3:
+						return 'Hemi'
 
-						genotype = 2
+					elif genotype == 4:
+						return 'Mosaic'
 
 					else:
-
 						genotype = None
 
 					classification.genotype = genotype

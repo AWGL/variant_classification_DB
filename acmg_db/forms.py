@@ -48,7 +48,15 @@ class ManualUploadForm(forms.Form):
 	worklist = forms.CharField(max_length=50)
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
-	genotype = forms.ChoiceField(choices=(('HET', 'HET'), ('HOM','HOM'), ('NA', 'NA')))
+	genotype = forms.ChoiceField(
+		choices = (
+			('Het', 'Het'),
+			('Hom', 'Hom'),
+			('Hemi', 'Hemi'),
+			('Mosaic', 'Mosaic'),
+			('NA', 'NA')
+		)
+	)
 
 	def __init__(self, *args, **kwargs):
 
@@ -123,7 +131,15 @@ class VariantInfoForm(forms.Form):
 	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
-	genotype = forms.ChoiceField(choices = (('HET', 'HET'), ('HOM', 'HOM'), ('NA', 'NA')))
+	genotype = forms.ChoiceField(
+		choices = (
+			('Het', 'Het'),
+			('Hom', 'Hom'),
+			('Hemi', 'Hemi'),
+			('Mosaic', 'Mosaic'),
+			('NA', 'NA')
+		)
+	)
 
 	def __init__(self, *args, **kwargs):
 
@@ -132,15 +148,18 @@ class VariantInfoForm(forms.Form):
 		self.options = kwargs.pop('options')
 
 		if self.classification.genotype == 1:
-
-			genotype_init = 'HET'
+			genotype_init = 'Het'
 
 		elif self.classification.genotype == 2:
+			genotype_init = 'Hom'
 
-			genotype_init = 'HOM'
+		elif self.classification.genotype == 3:
+			genotype_init = 'Hemi'
+
+		elif self.classification.genotype == 4:
+			genotype_init = 'Mosaic'
 
 		else:
-
 			genotype_init = 'NA'
 
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
@@ -284,7 +303,15 @@ class VariantInfoFormSecondCheck(forms.Form):
 	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
-	genotype = forms.ChoiceField(choices = (('HET', 'HET'), ('HOM', 'HOM'), ('NA', 'NA')))
+	genotype = forms.ChoiceField(
+		choices = (
+			('Het', 'Het'),
+			('Hom', 'Hom'),
+			('Hemi', 'Hemi'),
+			('Mosaic', 'Mosaic'),
+			('NA', 'NA')
+		)
+	)
 
 	def __init__(self, *args, **kwargs):
 
@@ -293,15 +320,18 @@ class VariantInfoFormSecondCheck(forms.Form):
 		self.options = kwargs.pop('options')
 
 		if self.classification.genotype == 1:
-
-			genotype_init = 'HET'
+			genotype_init = 'Het'
 
 		elif self.classification.genotype == 2:
+			genotype_init = 'Hom'
 
-			genotype_init = 'HOM'
+		elif self.classification.genotype == 3:
+			genotype_init = 'Hemi'
+
+		elif self.classification.genotype == 4:
+			genotype_init = 'Mosaic'
 
 		else:
-
 			genotype_init = 'NA'
 
 		super(VariantInfoFormSecondCheck, self).__init__(*args, **kwargs)

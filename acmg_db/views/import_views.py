@@ -278,16 +278,19 @@ def manual_input(request):
 
 			genotype = form.cleaned_data['genotype']
 
-			if genotype == 'HET':
-
+			if genotype == 'Het':
 				genotype = 1
 
-			elif genotype  == 'HOM':
-
+			elif genotype  == 'Hom':
 				genotype = 2
 
-			else:
+			elif genotype == 'Hemi':
+				genotype = 3
 
+			elif genotype == 'Mosaic':
+				genotype = 4
+
+			else:
 				genotype = None
 
 			# get variant

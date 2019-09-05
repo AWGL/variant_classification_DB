@@ -397,11 +397,19 @@ class Classification(models.Model):
 
 		if self.genotype == 1:
 
-			return 'HET'
+			return 'Het'
 
 		elif self.genotype == 2:
 
-			return 'HOM'
+			return 'Hom'
+
+		elif self.genotype == 3:
+
+			return 'Hemi'
+
+		elif self.genotype == 4:
+
+			return 'Mosaic'
 
 		else:
 
