@@ -19,6 +19,7 @@
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
 	  <th>Classification<br>(Click to view)</th>
+	  <th>Guideline version</th>
 	  <th>Genuine</th>
 	  <th>Completed Date</th>
 	</tr>
@@ -53,8 +54,9 @@
 			<span class="fa fa-binoculars"></span>  {{ classification.display_classification}} 
 		</a>
 	  </td>
-		<td> {{classification.display_genuine}} </td>
-		<td> {{classification.second_check_date}} </td>
+	  <td>{{ classification.guideline_version }}</td>
+	  <td> {{classification.display_genuine}} </td>
+	  <td> {{classification.second_check_date}} </td>
 
 	</tr>
 	{% endfor %}
