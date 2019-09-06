@@ -43,7 +43,7 @@
 		{% elif 'Contradictory' in variant.1.0.display_classification %}
          <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% else %}
-		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
+		<a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
 		{% endif %}
 			<span class="fa fa-binoculars"></span>  {{ variant.1.0.display_classification}} 
 		</a>

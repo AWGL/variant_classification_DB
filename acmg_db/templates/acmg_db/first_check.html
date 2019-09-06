@@ -66,7 +66,7 @@
 					{% elif 'Contradictory' in result %}
                         <button type="button" class="btn btn-primary" style="width: 100%;">{{result}}</button>
 					{% else %}
-						<button type="button" class="btn btn-secondary" style="width: 100%;">{{result}}</button>
+						<button type="button" class="btn btn-light" style="width: 100%;">{{result}}</button>
 					{% endif %}
 					</div>
 				</td>
@@ -261,7 +261,7 @@
 
 		{% if previous_classifications|length  > 0 %}
 		<p>This variant has been seen <b>{{ previous_classifications|length }} times</b> before.</p>
-		<table class="table col-8">
+		<table class="table col-10">
 			<tr>
 				<td class="col-2"><b>Last seen:</b></td>
 				<td class="col-1">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
@@ -277,11 +277,12 @@
 					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
                     <button type="button" class="btn btn-primary btn-sm">
 					{% else %}
-					<button type="button" class="btn btn-muted btn-sm">
+					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
 						{{ previous_classifications.0.display_final_classification }}
-					</button></td>
-				
+					</button>
+				</td>
+				<td class="col-2">{{ previous_classifications.0.guideline_version}}</td>
 				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
 			</tr>
 
@@ -302,12 +303,12 @@
 					{% elif 'Contradictory' in previous_full_classifications.0.display_final_classification %}
                     <button type="button" class="btn btn-primary btn-sm">
 					{% else %}
-					<button type="button" class="btn btn-muted btn-sm">
+					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>
 				</td>
-				
+				<td class="col-2">{{ previous_full_classifications.0.guideline_version}}</td>
 				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 				
 			</tr>
@@ -317,6 +318,7 @@
 				<td class="col-2"></td>
 				<td class="col-1"></td>
 				<td class="col-3"></td>
+				<td class="col-2"></td>
 				<td class="col-1">
 					<a class="btn btn-light btn-sm" href="{% url 'view_variant' pk=variant.variant_hash %}" role="button">View all</a>
 				</td>
@@ -559,6 +561,10 @@
 				<tr>
 					<td>Status</td>
 					<td>{{ classification.display_status }}</td>
+				</tr>
+				<tr>
+					<td>Guideline version</td>
+					<td>{{ classification.guideline_version }}</td>
 				</tr>
 				<tr>
 					<td>Created Date </td>

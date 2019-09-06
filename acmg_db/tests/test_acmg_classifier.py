@@ -16,6 +16,7 @@ class TestACMGRatings(unittest.TestCase):
 		test_path_1b_3 = [('PVS1', 'PV'), ('PM5', 'PM'), ('PM4', 'PM'), ('PM2', 'PM'), ('PM3', 'PM')]
 		test_path_1b_4 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM')]
 		test_path_1b_5 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM'), ('PM5', 'PM'), ('PM6', 'PM')]
+		test_path_1b_6 = [('PVS1', 'PV'), ('PM1', 'PM')]
 		
 		test_path_1c_1 = [('PVS1', 'PV'), ('PM1', 'PM'), ('PP1', 'PP')]
 		
@@ -24,9 +25,8 @@ class TestACMGRatings(unittest.TestCase):
 		test_path_1d_3 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP')]
 		test_path_1d_4 = [('PVS1', 'PV'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP'), ('PP4', 'PP'), ('PP5', 'PP')]
 
-		test_path_2_1 = [('PS1', 'PS'), ('PS2', 'PS')]
-		test_path_2_2 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS')]
-		test_path_2_3 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS'), ('PS4', 'PS')]
+		test_path_2_1 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS')]
+		test_path_2_2 = [('PS1', 'PS'), ('PS2', 'PS'), ('PS3', 'PS'), ('PS4', 'PS')]
 					
 		test_path_3a_1 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM')]
 		test_path_3a_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM2', 'PM'), ('PM3', 'PM'), ('PM4', 'PM')]
@@ -51,6 +51,7 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(classify(test_path_1b_3), '5')
 		self.assertEqual(classify(test_path_1b_4), '5')
 		self.assertEqual(classify(test_path_1b_5), '5')
+		self.assertEqual(classify(test_path_1b_6), '5')
 
 		self.assertEqual(classify(test_path_1c_1), '5')
 		
@@ -61,7 +62,6 @@ class TestACMGRatings(unittest.TestCase):
 
 		self.assertEqual(classify(test_path_2_1), '5')
 		self.assertEqual(classify(test_path_2_2), '5')
-		self.assertEqual(classify(test_path_2_3), '5')
 		
 		self.assertEqual(classify(test_path_3a_1), '5')
 		self.assertEqual(classify(test_path_3a_2), '5')
@@ -79,7 +79,7 @@ class TestACMGRatings(unittest.TestCase):
 
 	def test_likely_pathogenic(self):
 
-		test_lp_1_1 = [('PVS1', 'PV'), ('PM1', 'PM')]
+		test_lp_1_1 = [('PS1', 'PS'), ('PS2', 'PS')]
 
 		test_lp_2_1 = [('PS1', 'PS'), ('PM1', 'PM')]
 		test_lp_2_2 = [('PS1', 'PS'), ('PM1', 'PM'), ('PM5', 'PM')]

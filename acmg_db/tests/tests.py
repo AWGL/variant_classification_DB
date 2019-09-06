@@ -136,7 +136,7 @@ class TestSubmitACMGData(TestCase):
 		response = self.client.post('/ajax/acmg_classification_first/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 
 		self.assertEqual(response.status_code,200)
-		self.assertEqual(classification_obj.calculate_acmg_score_first(), '4')
+		self.assertEqual(classification_obj.calculate_acmg_score_first(), '5')
 
 
 	def test_faithful_transmisson_first_check(self):
@@ -190,7 +190,7 @@ class TestSubmitACMGData(TestCase):
 		response = self.client.post('/ajax/acmg_classification_second/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 
 		self.assertEqual(response.status_code,200)
-		self.assertEqual(classification_obj.calculate_acmg_score_second(), '4')
+		self.assertEqual(classification_obj.calculate_acmg_score_second(), '5')
 
 
 	def test_faithful_transmisson_second_check(self):
