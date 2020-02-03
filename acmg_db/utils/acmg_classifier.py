@@ -16,8 +16,8 @@ now done within the one function.
 # specify guideline version so that record can be made in database
 # NOTE: change this variable if you make any changes to the guidelines (max_length 20)
 
-guideline_version = 'ACGS 2020 v4'
 
+guideline_version = 'ACGS 2020 v4'
 
 def valid_input(input):
 	"""

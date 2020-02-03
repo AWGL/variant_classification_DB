@@ -8,3 +8,4 @@ stdout_warnings.txt
 .coverage
 static/
 sqlite3.db
+.ipynb_checkpoints/
