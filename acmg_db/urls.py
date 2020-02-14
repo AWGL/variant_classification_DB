@@ -39,7 +39,7 @@ urlpatterns = [
 
     path('ajax/delete_comment/', views.ajax_delete_comment, name='ajax_delete_comment'),
 
-]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # add   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) to urlpatterns for development to get media to work correctly - need to remove this for nginx
