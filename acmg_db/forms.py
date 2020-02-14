@@ -515,3 +515,26 @@ class ReportingSearchForm(forms.Form):
 			Field('worksheet'),
 			Field('panel_name'),
 		)
+
+# search forms -----------------------------------------------------------
+class SearchForm(forms.Form):
+	"""
+	Form for collecting user query for searching genes, variants, samples
+	"""
+
+	search_input = forms.CharField()
+
+	def __init__(self, *args, **kwargs):
+		
+		super(SearchForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'search-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('search')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('search_input', placeholder='Search for a variant, gene or sample.', title=False),
+		)

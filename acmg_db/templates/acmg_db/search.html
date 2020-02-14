@@ -1,0 +1,25 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br><br>
+<center>
+  <div>
+	<h4> Search for a variant, gene or sample. </h4>
+	<br>
+	
+	{% crispy form %}
+
+</div>
+</center>
+
+{% if message != None %}
+
+<div class="alert alert-danger">
+  <div>{{message}} </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

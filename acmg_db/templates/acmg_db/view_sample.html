@@ -1,0 +1,100 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<h4> Analyses Performed on Sample : {{sample_name}} </h4>
+<br>
+
+
+<table id="samples" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Sample Name </th>
+	  <th>Worklist</th>
+	  <th>Panel</th>
+	  <th>Affected With</th>
+	  <th>Other Changes</th>
+
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for sample in samples %}
+	<tr>
+		<td> {{sample.sample_name_only}} </td>
+		<td> {{sample.worklist.name}} </td>
+		<td> {{sample.analysis_performed}} </td>
+		<td> {{sample.affected_with}} </td>
+		<td> {{sample.other_changes}} </td>
+	 
+	</tr>
+	{% endfor %}
+  </tbody>
+
+
+</table>
+
+<br>
+<h4> All Completed Classifications Performed on Sample : {{sample_name}} </h4>
+<br>
+
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Status</th>
+	  <th>Worksheet</th>
+	  <th>Panel</th>
+	  <th>Genotype</th>
+	  <th>Gene</th>
+	  <th>Transcript</th>
+	  <th>HGVSc</th>
+	  <th>HGVSp</th>
+	  <th>Classification<br>(Click to view)</th>
+	  <th>Guideline version</th>
+	  <th>Genuine</th>
+	  <th>Completed Date</th>
+	</tr>
+  </thead>
+
+
+  <tbody>
+  	{% for classification in all_classifications %}
+	<tr>
+		<td> {{classification.display_status}} </td>
+		<td> {{classification.sample.worklist.name}} </td>
+		<td> {{classification.sample.analysis_performed.panel}} </td>
+		<td> {{classification.display_genotype}} </td>
+		<td> {{classification.selected_transcript_variant.transcript.gene.name}} </td>
+		<td> {{classification.selected_transcript_variant.transcript.name}} </td>
+		<td> {{classification.selected_transcript_variant.display_hgvsc}} </td>
+		<td> {{classification.selected_transcript_variant.display_hgvsp}} </td>
+	    <td>
+		{% if 'Benign' in classification.display_classification %}
+		<a class="btn btn-sm btn-info" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Pathogenic' in classification.display_classification %}
+		<a class="btn btn-sm btn-danger" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'VUS' in classification.display_classification %}
+		<a class="btn btn-sm btn-warning" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Artefact' in classification.display_classification %}
+		<a class="btn btn-sm btn-secondary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% elif 'Contradictory' in classification.display_classification %}
+		<a class="btn btn-sm btn-primary" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-sm btn-light" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
+		{% endif %}
+			<span class="fa fa-binoculars"></span>  {{ classification.display_classification}} 
+		</a>
+	  </td>
+	  <td>{{ classification.guideline_version }}</td>
+	  <td> {{classification.display_genuine}} </td>
+	  <td> {{classification.second_check_date}} </td>
+
+	</tr>
+	{% endfor %}
+  </tbody>
+  </</table>
+
+{% endblock %}

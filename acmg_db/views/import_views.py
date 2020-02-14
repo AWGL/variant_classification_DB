@@ -65,8 +65,6 @@ def auto_input(request):
 
 				variant_genotype_dict[row.Variant] = row.Genotype
 
-			print (variant_genotype_dict)
-
 
 			# add worksheet
 			worksheet_obj, created = Worklist.objects.get_or_create(
