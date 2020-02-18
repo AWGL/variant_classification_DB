@@ -135,7 +135,7 @@ class Transcript(models.Model):
 
 	"""
 
-	name = models.CharField(max_length=25, primary_key=True)
+	name = models.CharField(max_length=40, primary_key=True)
 	gene = models.ForeignKey(Gene, on_delete=models.CASCADE, null=True,blank=True)
 
 
