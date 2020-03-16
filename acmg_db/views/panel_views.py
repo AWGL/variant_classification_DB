@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render
 
-#--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
 def panels(request):

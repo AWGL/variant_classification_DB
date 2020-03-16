@@ -33,9 +33,13 @@ urlpatterns = [
 
     path('panels/', views.panels, name='panels'),
 
+    path('search/', views.search, name='search'),
+    path('view_gene/<str:pk>/', views.view_gene, name='view_gene'),
+    path('view_sample/<str:pk>/', views.view_sample, name='view_sample'),
+
     path('ajax/delete_comment/', views.ajax_delete_comment, name='ajax_delete_comment'),
 
-]  
+]
 
 #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # add   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) to urlpatterns for development to get media to work correctly - need to remove this for nginx

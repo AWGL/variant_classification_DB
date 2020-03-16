@@ -13,6 +13,9 @@ class Worklist(models.Model):
 	"""
 	name = models.CharField(max_length=50, primary_key=True)
 
+	def __str__(self):
+		return self.name
+
 
 class Panel(models.Model):
 	"""
@@ -44,6 +47,8 @@ class Sample(models.Model):
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
 
+	def __str__(self):
+		return self.name
 
 class Variant(models.Model):
 	"""
