@@ -9,3 +9,4 @@ stdout_warnings.txt
 static/
 sqlite3.db
 .ipynb_checkpoints/
+gunicorn.sh
