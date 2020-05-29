@@ -153,7 +153,7 @@ MUTALYZER_BUILD = 'hg19'
 # Which Reference genome for VEP to use
 REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
 # Which VEP Cache to use
-VEP_CACHE = '/export/home/webapps/vep_94_cache/'
+VEP_CACHE = '/export/home/webapps/vep_100_cache/'
 # Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
 
