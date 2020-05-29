@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+# Is the instance of the database being run on a local development computer or on the cluster
+# options are 'local' or 'cluster'
+DB_INSTANCE = 'local'
+
+# path to file containing database password
+PASSWORD_FILE = '/Users/erik/database_testing/password.txt'
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -77,12 +85,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-f= open('/export/home/webapps/password.txt')
-
-password = f.readline()
-password = password.strip()
-f.close()
-
+with open(PASSWORD_FILE) as f:
+    password = f.readline().strip()
 
 
 DATABASES = {
@@ -101,18 +105,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
 
@@ -120,13 +116,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Europe/London'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -160,12 +152,5 @@ REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
 VEP_CACHE = '/export/home/webapps/vep_94_cache/'
 # Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
-
-
-
-
-
-
-
 
 
