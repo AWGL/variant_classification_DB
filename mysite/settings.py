@@ -126,7 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# TODO - if static root is required by gunicorn/nginx, might need to have a loop with different settings for cluster and local
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
