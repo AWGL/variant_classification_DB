@@ -127,10 +127,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# TODO - if static root is required by gunicorn/nginx, might need to have a loop with different settings for cluster and local
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+# different static file settings for cluster and local
+if DB_INSTANCE == 'cluster':
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+elif DB_INSTANCE == 'local':
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+    ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
