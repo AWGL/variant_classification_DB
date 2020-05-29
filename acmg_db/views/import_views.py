@@ -203,7 +203,7 @@ def auto_input(request):
 
 					genotype = 1
 
-				elif genotype == 'HOM':
+				elif genotype == 'HOM' or genotype == 'HOM_ALT':
 
 					genotype = 2
 
