@@ -483,20 +483,23 @@ class ClassificationQuestion(models.Model):
 		Used to create a choice field in the relevant forms.
 
 		"""
+		# list of codes that can be applied at pathogenic very strong and benign standalone
+		allowed_pvs = ['PVS1', 'PS2', 'PM3', 'PM6']
+		allowed_ba = ['BA1', 'BS1']
 
 		if self.allowed_strength_change == False:
 
 			return default_strength
 
-		elif self.pathogenic_question == True and self.acmg_code != 'PVS1':
+		elif self.pathogenic_question == True and self.acmg_code not in allowed_pvs:
 
 			return ['PS', 'PM', 'PP']
 
-		elif self.pathogenic_question == True and self.acmg_code == 'PVS1':
+		elif self.pathogenic_question == True and self.acmg_code in allowed_pvs:
 
 			return ['PV','PS', 'PM', 'PP']
 
-		elif self.pathogenic_question == False and self.acmg_code == 'BA1':
+		elif self.pathogenic_question == False and self.acmg_code in allowed_ba:
 
 			return ['BA', 'BS', 'BP']
 
