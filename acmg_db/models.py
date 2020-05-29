@@ -102,6 +102,8 @@ class Gene(models.Model):
 		('Unknown', 'Unknown'), 
 		('Autosomal dominant', 'Autosomal dominant'), 
 		('Autosomal recessive', 'Autosomal recessive'),
+		('Digenic dominant', 'Digenic dominant'),
+		('Digenic recessive', 'Digenic recessive'),
 		('X linked dominant', 'X linked dominant'),
 		('X linked recessive', 'X linked recessive'),
 		('Imprinting centre', 'Imprinting centre'),
