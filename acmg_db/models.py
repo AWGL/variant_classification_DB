@@ -246,7 +246,7 @@ class Classification(models.Model):
 
 	history = AuditlogHistoryField()
 
-	variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+	variant = models.ForeignKey(Variant, on_delete=models.CASCADE, related_name='variant_classifications')
 	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
 	selected_transcript_variant = models.ForeignKey(TranscriptVariant, on_delete=models.CASCADE, null=True, blank=True)
 	creation_date = models.DateTimeField()

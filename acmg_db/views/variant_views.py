@@ -3,6 +3,7 @@ from ..models import *
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Prefetch
 
 
 #--------------------------------------------------------------------------------------------------
@@ -13,15 +14,56 @@ def view_variants(request):
 	Page to view all unique variants classified in the lab
 
 	"""
-	all_variants = Variant.objects.all().order_by('chromosome', 'position')
+	# query all variants, prefetch related classification objects and associated transcript/ gene objects
+	all_variants_query = Variant.objects.prefetch_related(
+		Prefetch(
+			'variant_classifications', 
+			queryset=Classification.objects.filter(
+					status__in=['2', '3']
+				).select_related(
+					'selected_transcript_variant', 
+					'selected_transcript_variant__transcript', 
+					'selected_transcript_variant__transcript__gene', 
+				).order_by('-second_check_date'), 
+			to_attr='variant_classification_cache'),
+	).order_by('chromosome', 'position')
+	
+	# loop through each variant to parse data
+	variant_data = []
+	for variant in all_variants_query:
 
-	# annotate each variant with information about how it was classified
-	most_recent_classifications = [[variant, variant.most_recent_classification()] for variant in all_variants]
+		# skip if there are no linked classifications
+		if len(variant.variant_classification_cache) > 0:
 
-	# Filter out the variants with no classification
-	most_recent_classifications = list(filter(lambda x: x[1][0] != None, most_recent_classifications))
+			# parse info
+			most_recent_obj = variant.variant_classification_cache[0]
+			most_recent_class = most_recent_obj.get_second_final_class_display()
+			hgvs_c = most_recent_obj.selected_transcript_variant.hgvs_c.split(':')[1]
+			hgvs_p = most_recent_obj.selected_transcript_variant.hgvs_p.split(':')[1]
+			transcript = most_recent_obj.selected_transcript_variant.transcript.name
+			gene = most_recent_obj.selected_transcript_variant.transcript.gene.name
 
-	return render(request, 'acmg_db/view_variants.html', {'all_variants': most_recent_classifications})
+			# get list of all unique classifications
+			all_classes_set = set()
+			for classification in variant.variant_classification_cache:
+				all_classes_set.add(classification.get_second_final_class_display())
+
+			# add dict containing variant info to list
+			variant_data.append({
+				'variant_id': str(variant),
+				'variant_hash': variant.variant_hash,
+				'gene': gene,
+				'transcript': transcript,
+				'hgvs_c': hgvs_c,
+				'hgvs_p': hgvs_p,
+				'num_classifications': len(variant.variant_classification_cache), 
+				'most_recent_obj': most_recent_obj, 
+				'most_recent_date': most_recent_obj.second_check_date, 
+				'most_recent_class': most_recent_obj.get_second_final_class_display(), 
+				'all_classes': '|'.join(all_classes_set)
+			})
+
+	return render(request, 'acmg_db/view_variants.html', {'all_variants': variant_data})
 
 
 #--------------------------------------------------------------------------------------------------
