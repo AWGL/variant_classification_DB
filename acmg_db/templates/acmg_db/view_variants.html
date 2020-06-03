@@ -6,16 +6,17 @@
 <h4>All unique variants</h4>
 <br>
 
-
+<!------------ table of unique variants ------------>
 <table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
   <thead>
 	<tr>
-	  <th>Variant <br>(Click to view all)</th>
+	  <th>Variant<br>(Click to view all)</th>
 	  <th>Gene</th>
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
-	  <th>Last Classification (Click to view)</th>
+	  <th>Last Classification<br>(Click to view)</th>
 	  <th>Last Classification Date</th>
 	  <th>All Classifications</th>
 	  <th>Classification Count</th>
@@ -25,32 +26,35 @@
   <tbody>
 	{% for variant in all_variants %}
 	<tr>
-		<td>  <a href="{% url 'view_variant' pk=variant.variant_hash %}" > {{ variant.variant_id }}</td>
-		<td> {{ variant.gene }} </td>
-		<td> {{ variant.transcript }} </td>
-		<td> {{ variant.hgvs_c | truncatechars:25}}</td>
-		<td> {{ variant.hgvs_p | truncatechars:25}}</td>
+	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</td>
+	  <td>{{ variant.gene }}</td>
+	  <td>{{ variant.transcript }}</td>
+	  <td>{{ variant.hgvs_c | truncatechars:25 }}</td>
+	  <td>{{ variant.hgvs_p | truncatechars:25 }}</td>
+	  <td>
+		<!-- change button colour based on class -->
+		<a class=
 
-		<td>
-		{% if 'Benign' in variant.most_recent_class %}
-		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"> 
-		{% elif 'Pathogenic' in variant.most_recent_class %}
-		<a class="btn btn-danger btn-sm" href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"> 
-		{% elif 'VUS' in variant.most_recent_class %}
-		<a class="btn btn-warning btn-sm" href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"> 
-		{% elif 'Artefact' in variant.most_recent_class %}
-		<a class="btn btn-secondary btn-sm" href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"> 
-		{% elif 'Contradictory' in variant.most_recent_class %}
-         <a class="btn btn-primary btn-sm" href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"> 
-		{% else %}
-		<a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"> 
-		{% endif %}
-			<span class="fa fa-binoculars"></span>  {{ variant.most_recent_class }} 
+			{% if 'Benign' in variant.most_recent_class %}
+			  "btn btn-info btn-sm"
+			{% elif 'Pathogenic' in variant.most_recent_class %}
+			  "btn btn-danger btn-sm"
+			{% elif 'VUS' in variant.most_recent_class %}
+			  "btn btn-warning btn-sm"
+			{% elif 'Artefact' in variant.most_recent_class %}
+			  "btn btn-secondary btn-sm"
+			{% elif 'Contradictory' in variant.most_recent_class %}
+			  "btn btn-primary btn-sm"
+			{% else %}
+			  "btn btn-light btn-sm"
+			{% endif %}
+
+		  href="{% url 'view_classification' pk=variant.most_recent_obj.pk %}" role="button"><span class="fa fa-binoculars"></span>{{ variant.most_recent_class }}
 		</a>
-	</td>
-		<td> {{ variant.most_recent_date | date:"Y/m/d"}}</td>
-		<td> {{ variant.all_classes }}</td>
-		<td> {{ variant.num_classifications }}</td>
+	  </td>
+	  <td>{{ variant.most_recent_date | date:"Y/m/d" }}</td>
+	  <td>{{ variant.all_classes }}</td>
+	  <td>{{ variant.num_classifications }}</td>
 	 
 	</tr>
 	{% endfor %}
@@ -63,7 +67,7 @@
 	  <th></th>
 	  <th></th>
 	  <th></th>
-	  <th> </th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>
@@ -75,7 +79,7 @@
 <br>
 
 
-
+<!------------ Javascript ------------>
 <script>
 $(document).ready(function(){
 
@@ -86,7 +90,7 @@ $(document).ready(function(){
     } );
  
     // DataTable
-    	// Inititialise DataTable
+    // Inititialise DataTable
 	var table = $('#classifications').DataTable({
 		"paging":   true,
 		"ordering": true,
