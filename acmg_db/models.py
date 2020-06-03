@@ -173,6 +173,7 @@ class TranscriptVariant(models.Model):
 	hgvs_p = models.TextField(null=True, blank=True)
 	exon = models.CharField(max_length=10,null=True, blank=True)
 	consequence = models.CharField(max_length=100, null=True, blank=True)
+	vep_version = models.CharField(max_length=20)
 
 	def __str__(self):
 		return f'{self.transcript}'
@@ -262,6 +263,7 @@ class Classification(models.Model):
 	is_trio_de_novo = models.BooleanField()
 	genotype = models.IntegerField(null=True, blank=True)
 	guideline_version = models.CharField(max_length=20)
+	vep_version = models.CharField(max_length=20)
 
 	def __str__(self):
 		return f'{self.id}'

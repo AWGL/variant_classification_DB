@@ -169,8 +169,13 @@ def auto_input(request):
 						hgvs_p = transcript_hgvsp,
 						exon = exon,
 						consequence = impact
-
 						)
+
+					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+					if created:
+						transcript_variant_obj.vep_version = settings.VEP_VERSION
+						transcript_variant_obj.save()
+
 					# Find the transcript that VEP has picked
 					if 'pick' in consequence:
 
@@ -222,7 +227,8 @@ def auto_input(request):
 					second_final_class = '7',
 					selected_transcript_variant = selected,
 					genotype=genotype,
-					guideline_version=guideline_version
+					guideline_version=guideline_version,
+					vep_version=settings.VEP_VERSION
 					)
 
 				new_classification_obj.save()
@@ -442,8 +448,13 @@ def manual_input(request):
 						hgvs_p = transcript_hgvsp,
 						exon = exon,
 						consequence = impact
-
 						)
+
+					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+					if created:
+						transcript_variant_obj.vep_version = settings.VEP_VERSION
+						transcript_variant_obj.save()
+
 					# Find the transcript that VEP has picked
 					if 'pick' in consequence:
 
@@ -460,7 +471,8 @@ def manual_input(request):
 					second_final_class = '7',
 					selected_transcript_variant = selected,
 					genotype = genotype,
-					guideline_version=guideline_version
+					guideline_version=guideline_version,
+					vep_version=settings.VEP_VERSION
 					)
 
 				new_classification_obj.save()
