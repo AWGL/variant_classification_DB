@@ -114,7 +114,6 @@ def first_check(request, pk):
 				transcript_form = TranscriptForm(request.POST, classification_pk=classification.pk, options=fixed_refseq_options)
 				if transcript_form.is_valid():
 					cleaned_data = transcript_form.cleaned_data
-					print(cleaned_data)
 					select_transcript = cleaned_data['select_transcript']
 					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
 					classification.selected_transcript_variant = selected_transcript_variant
@@ -133,7 +132,6 @@ def first_check(request, pk):
 
 					cleaned_data = variant_form.cleaned_data
 
-					# transcript section
 					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
 
 					genotype = cleaned_data['genotype']
