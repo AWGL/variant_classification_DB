@@ -2,7 +2,7 @@ import json
 import base64
 import re
 
-from ..forms import SampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm
+from ..forms import SampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm
 from ..models import *
 
 from django.core.exceptions import PermissionDenied
@@ -65,6 +65,7 @@ def first_check(request, pk):
 
 		# make empty instances of forms
 		sample_form = SampleInfoForm(classification_pk=classification.pk, options=PANEL_OPTIONS)
+		transcript_form = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
 		finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
@@ -79,6 +80,7 @@ def first_check(request, pk):
 			'comments': comments,
 			'result': result,
 			'sample_form': sample_form,
+			'transcript_form': transcript_form,
 			'variant_form': variant_form,
 			'genuine_form': genuine_form,
 			'finalise_form': finalise_form,
@@ -107,6 +109,21 @@ def first_check(request, pk):
 				context['classification'] = get_object_or_404(Classification, pk=pk)
 				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk, options=PANEL_OPTIONS)
 
+			# TranscriptForm
+			if 'select_transcript' in request.POST:
+				transcript_form = TranscriptForm(request.POST, classification_pk=classification.pk, options=fixed_refseq_options)
+				if transcript_form.is_valid():
+					cleaned_data = transcript_form.cleaned_data
+					print(cleaned_data)
+					select_transcript = cleaned_data['select_transcript']
+					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
+					classification.selected_transcript_variant = selected_transcript_variant
+					classification.save()
+				# reload dict variables for rendering
+				context['classification'] = classification
+				context['transcript_form'] = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
+				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
+
 			# VariantInfoForm
 			if 'inheritance_pattern' in request.POST:
 
@@ -117,9 +134,6 @@ def first_check(request, pk):
 					cleaned_data = variant_form.cleaned_data
 
 					# transcript section
-					select_transcript = cleaned_data['select_transcript']
-					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
-					classification.selected_transcript_variant = selected_transcript_variant
 					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
 
 					genotype = cleaned_data['genotype']
