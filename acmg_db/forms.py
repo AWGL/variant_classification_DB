@@ -120,6 +120,36 @@ class SampleInfoForm(forms.Form):
 		)
 
 
+class TranscriptForm(forms.Form):
+	"""
+	Form for changing the transcript assocaited with a variant
+	"""
+	select_transcript = forms.ChoiceField()
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.options = kwargs.pop('options')
+
+		super(TranscriptForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['select_transcript'].choices = self.options
+		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
+		self.helper.form_id = 'transcript-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('first_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			HTML('<h5>Edit transcript</h5>'),
+			Field('select_transcript'),
+		)
+
+
 class VariantInfoForm(forms.Form):
 	"""
 	Form for storing variant Information.
@@ -127,7 +157,6 @@ class VariantInfoForm(forms.Form):
 	"""
 	inheritance_choices = Gene.INHERITANCE_CHOICES
 
-	select_transcript = forms.ChoiceField()
 	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
@@ -165,8 +194,6 @@ class VariantInfoForm(forms.Form):
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['select_transcript'].choices = self.options
-		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
 		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.get_inheritance_choices_as_list()
 		self.fields['inheritance_pattern'].widget.attrs['size'] = 9
 		self.fields['inheritance_pattern'].help_text = 'Hold shift ctrl to select multiple.'
@@ -182,15 +209,13 @@ class VariantInfoForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			HTML('<h5>Edit transcript</h5>'),
-			Field('select_transcript'),
-			HTML('<hr><h5>Edit gene info</h5>'),
+			HTML(f'<hr><div class="row"><div class="col-md-2"><h5>Edit gene info</h5></div><div class="col-md-8"><h5>Gene name - {self.classification.selected_transcript_variant.transcript.gene}</h5></div></div>'),
 			Field('inheritance_pattern'),
 			Field('conditions'),
-			HTML('<hr><h5>Is the variant de novo?</h5>'),
-			Field('is_trio_de_novo'),
-			HTML('<hr><h5>Variant Genotype?</h5>'),
+			HTML('<h5>Edit variant info</h5>'),
 			Field('genotype'),
+			HTML('Is the variant de novo?'),
+			Field('is_trio_de_novo'),
 		)
 
 
@@ -292,6 +317,36 @@ class SampleInfoFormSecondCheck(forms.Form):
 		)
 
 
+class TranscriptFormSecondCheck(forms.Form):
+	"""
+	Form for changing the transcript assocaited with a variant
+	"""
+	select_transcript = forms.ChoiceField()
+
+	def __init__(self, *args, **kwargs):
+
+		self.classification_pk = kwargs.pop('classification_pk')
+		self.classification = Classification.objects.get(pk = self.classification_pk)
+		self.options = kwargs.pop('options')
+
+		super(TranscriptFormSecondCheck, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['select_transcript'].choices = self.options
+		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
+		self.helper.form_id = 'transcript-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('second_check',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			HTML('<h5>Edit transcript</h5>'),
+			Field('select_transcript'),
+		)
+
+
 class VariantInfoFormSecondCheck(forms.Form):
 	"""
 	Form for storing variant Information.
@@ -299,7 +354,6 @@ class VariantInfoFormSecondCheck(forms.Form):
 	"""
 	inheritance_choices = Gene.INHERITANCE_CHOICES
 
-	select_transcript = forms.ChoiceField()
 	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
@@ -337,10 +391,8 @@ class VariantInfoFormSecondCheck(forms.Form):
 		super(VariantInfoFormSecondCheck, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['select_transcript'].choices = self.options
-		self.fields['select_transcript'].initial = self.classification.selected_transcript_variant.pk
 		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.get_inheritance_choices_as_list()
-		self.fields['inheritance_pattern'].widget.attrs['size'] = 7
+		self.fields['inheritance_pattern'].widget.attrs['size'] = 9
 		self.fields['inheritance_pattern'].help_text = 'Hold shift ctrl to select multiple.'
 		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
@@ -354,15 +406,13 @@ class VariantInfoFormSecondCheck(forms.Form):
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			HTML('<h5>Edit transcript</h5>'),
-			Field('select_transcript'),
-			HTML('<hr><h5>Edit gene info</h5>'),
+			HTML(f'<hr><div class="row"><div class="col-md-2"><h5>Edit gene info</h5></div><div class="col-md-8"><h5>Gene name - {self.classification.selected_transcript_variant.transcript.gene}</h5></div></div>'),
 			Field('inheritance_pattern'),
 			Field('conditions'),
-			HTML('<hr><h5>Is the variant de novo?</h5>'),
-			Field('is_trio_de_novo'),
-			HTML('<hr><h5>Variant Genotype?</h5>'),
+			HTML('<h5>Edit variant info</h5>'),
 			Field('genotype'),
+			HTML('Is the variant de novo?'),
+			Field('is_trio_de_novo'),
 		)
 
 
