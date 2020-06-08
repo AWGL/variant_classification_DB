@@ -38,7 +38,7 @@ First install Conda/Miniconda from [2]. Then type the following commands in your
 ### Other Resources
 
 * Reference Genome
-* VEP Cache - ftp://ftp.ensembl.org/pub/release-94/variation/VEP/homo\_sapiens\_refseq\_vep\_94\_GRCh37.tar.gz
+* VEP Cache - http://ftp.ensembl.org/pub/release-100/variation/indexed_vep_cache/homo_sapiens_refseq_vep_100_GRCh37.tar.gz
 
 ### Settings
 

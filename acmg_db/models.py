@@ -62,6 +62,10 @@ class Variant(models.Model):
 	ref = models.TextField()
 	alt = models.TextField()
 
+	def __str__(self):
+		return f'{self.chromosome}:{self.position}{self.ref}>{self.alt}'
+
+
 	def most_recent_classification(self):
 		"""
 		Return the most recent classification that is either complete or archived
@@ -98,6 +102,8 @@ class Gene(models.Model):
 		('Unknown', 'Unknown'), 
 		('Autosomal dominant', 'Autosomal dominant'), 
 		('Autosomal recessive', 'Autosomal recessive'),
+		('Digenic dominant', 'Digenic dominant'),
+		('Digenic recessive', 'Digenic recessive'),
 		('X linked dominant', 'X linked dominant'),
 		('X linked recessive', 'X linked recessive'),
 		('Imprinting centre', 'Imprinting centre'),
@@ -107,6 +113,10 @@ class Gene(models.Model):
 	name = models.CharField(max_length=25, primary_key=True)
 	inheritance_pattern = models.CharField(max_length=255, null=True, blank=True)
 	conditions = models.TextField(null=True, blank=True)
+
+	def __str__(self):
+		return self.name
+
 
 	def all_inheritance_patterns(self):
 		'''
@@ -143,6 +153,9 @@ class Transcript(models.Model):
 	name = models.CharField(max_length=40, primary_key=True)
 	gene = models.ForeignKey(Gene, on_delete=models.CASCADE, null=True,blank=True)
 
+	def __str__(self):
+		return f'{self.name} ({self.gene})'
+
 
 class TranscriptVariant(models.Model):
 	"""
@@ -160,6 +173,11 @@ class TranscriptVariant(models.Model):
 	hgvs_p = models.TextField(null=True, blank=True)
 	exon = models.CharField(max_length=10,null=True, blank=True)
 	consequence = models.CharField(max_length=100, null=True, blank=True)
+	vep_version = models.CharField(max_length=20)
+
+	def __str__(self):
+		return f'{self.transcript}'
+
 
 	def display_hgvsc(self):
 		"""
@@ -245,6 +263,10 @@ class Classification(models.Model):
 	is_trio_de_novo = models.BooleanField()
 	genotype = models.IntegerField(null=True, blank=True)
 	guideline_version = models.CharField(max_length=20)
+	vep_version = models.CharField(max_length=20)
+
+	def __str__(self):
+		return f'{self.id}'
 
 	def display_status(self):
 		"""
@@ -465,20 +487,23 @@ class ClassificationQuestion(models.Model):
 		Used to create a choice field in the relevant forms.
 
 		"""
+		# list of codes that can be applied at pathogenic very strong and benign standalone
+		allowed_pvs = ['PVS1', 'PS2', 'PM3', 'PM6']
+		allowed_ba = ['BA1', 'BS1']
 
 		if self.allowed_strength_change == False:
 
 			return default_strength
 
-		elif self.pathogenic_question == True and self.acmg_code != 'PVS1':
+		elif self.pathogenic_question == True and self.acmg_code not in allowed_pvs:
 
 			return ['PS', 'PM', 'PP']
 
-		elif self.pathogenic_question == True and self.acmg_code == 'PVS1':
+		elif self.pathogenic_question == True and self.acmg_code in allowed_pvs:
 
 			return ['PV','PS', 'PM', 'PP']
 
-		elif self.pathogenic_question == False and self.acmg_code == 'BA1':
+		elif self.pathogenic_question == False and self.acmg_code in allowed_ba:
 
 			return ['BA', 'BS', 'BP']
 
@@ -508,6 +533,9 @@ class ClassificationAnswer(models.Model):
 	strength_second = models.CharField(max_length=2, choices=STRENGTH_CHOICES)
 	comment = models.TextField()
 
+	def __str__(self):
+		return f'{self.id}'
+
 
 class UserComment(models.Model):
 	"""
@@ -520,6 +548,13 @@ class UserComment(models.Model):
 	text = models.TextField()
 	time = models.DateTimeField()
 	visible = models.BooleanField(default=True)
+
+	def __str__(self):
+		if len(self.text) > 50:
+			return f'{self.text[:50]}...'
+		else:
+			return f'{self.text}'
+
 
 	def get_evidence(self):
 		"""
