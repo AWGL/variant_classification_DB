@@ -14,10 +14,10 @@ import os
 
 # Is the instance of the database being run on a local development computer or on the cluster
 # options are 'local' or 'cluster'
-DB_INSTANCE = 'local'
+DB_INSTANCE = 'cluster'
 
 # path to file containing database password
-PASSWORD_FILE = '/Users/erik/database_testing/password.txt'
+PASSWORD_FILE = '/export/home/webapps/password.txt'
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -41,7 +41,7 @@ ALLOWED_HOSTS = ['127.0.0.1', '10.59.210.245', '10.59.210.247', '10.59.210.197']
 DEBUG_TOOLBAR = True      # Set this to True to show debug toolbar
 
 if DEBUG_TOOLBAR == True:
-    INTERNAL_IPS = ['127.0.0.1',]
+    INTERNAL_IPS = ['127.0.0.1', '10.59.210.245']
 
 
 # Application definition
@@ -166,7 +166,7 @@ REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
 # the value that will be added to the database to record VEP version
 VEP_VERSION = '100'
 # Which VEP Cache to use
-VEP_CACHE = '/export/home/webapps/vep_100_cache/'
+VEP_CACHE = '/data/db/human/vep_cache/refseq37_v100/'
 # Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
 
