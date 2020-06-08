@@ -45,7 +45,7 @@ def view_variants(request):
 			if most_recent_obj.selected_transcript_variant.hgvs_p:
 				hgvs_p = most_recent_obj.selected_transcript_variant.hgvs_p.split(':')[1]
 			else:
-				hgvs_c = None
+				hgvs_p = None
 			transcript = most_recent_obj.selected_transcript_variant.transcript.name
 			gene = most_recent_obj.selected_transcript_variant.transcript.gene.name
 
