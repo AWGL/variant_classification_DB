@@ -13,9 +13,20 @@ def pending_classifications(request):
 	"""
 	Page to view classifications that havent yet been completed
 
+	Use select_related to perform SQL join for all data we need, so that we only hit the database 
+	once - https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-related
 	"""
 
-	classifications = Classification.objects.filter(status__in=['0', '1']).order_by('-creation_date')
+	classifications = Classification.objects.filter(
+			status__in=['0', '1']
+		).select_related(
+			'sample__analysis_performed', 'sample__worklist', 
+			'selected_transcript_variant__transcript',
+			'selected_transcript_variant__transcript__gene',
+			'variant', 'user_first_checker', 'user_second_checker'
+		).order_by(
+			'-creation_date'
+		)
 
 	return render(request, 'acmg_db/pending_classifications.html', {'classifications': classifications})
 

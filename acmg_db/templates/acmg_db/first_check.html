@@ -249,6 +249,7 @@
 	<br>
 	<div class="collapse" id="edit-variant-info">
 		<div class="card card-body bg-light col-10">
+			{% crispy transcript_form %}
 			{% crispy variant_form %}
 		</div>
 	</div>
@@ -261,11 +262,11 @@
 
 		{% if previous_classifications|length  > 0 %}
 		<p>This variant has been seen <b>{{ previous_classifications|length }} times</b> before.</p>
-		<table class="table col-10">
+		<table class="table">
 			<tr>
-				<td class="col-2"><b>Last seen:</b></td>
-				<td class="col-1">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
-				<td class="col-3">
+				<td style="width: 20%"><b>Last seen:</b></td>
+				<td style="width: 20%">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td style="width: 20%">
 					{% if 'Pathogenic' in previous_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-danger btn-sm">
 					{% elif 'Benign' in previous_classifications.0.display_final_classification %}
@@ -282,16 +283,16 @@
 						{{ previous_classifications.0.display_final_classification }}
 					</button>
 				</td>
-				<td class="col-2">{{ previous_classifications.0.guideline_version}}</td>
-				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
+				<td style="width: 20%">{{ previous_classifications.0.guideline_version}}</td>
+				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
 			</tr>
 
 			{% if previous_full_classifications|length  > 0 %}
 			<tr>
-				<td class="col-2"><b>Last full classification:</b></td>
+				<td style="width: 20%"><b>Last full classification:</b></td>
 
-				<td class="col-1">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
-				<td class="col-3">
+				<td style="width: 20%">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td style="width: 20%">
 					{% if 'Pathogenic' in previous_full_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-danger btn-sm">
 					{% elif 'Benign' in previous_full_classifications.0.display_final_classification %}
@@ -308,18 +309,18 @@
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>
 				</td>
-				<td class="col-2">{{ previous_full_classifications.0.guideline_version}}</td>
-				<td class="col-1"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
+				<td style="width: 20%">{{ previous_full_classifications.0.guideline_version}}</td>
+				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 				
 			</tr>
 			{% endif %}
 
 			<tr>
-				<td class="col-2"></td>
-				<td class="col-1"></td>
-				<td class="col-3"></td>
-				<td class="col-2"></td>
-				<td class="col-1">
+				<td style="width: 20%"></td>
+				<td style="width: 20%"></td>
+				<td style="width: 20%"></td>
+				<td style="width: 20%"></td>
+				<td style="width: 20%">
 					<a class="btn btn-light btn-sm" href="{% url 'view_variant' pk=variant.variant_hash %}" role="button">View all</a>
 				</td>
 			</tr>
@@ -604,6 +605,14 @@
 
 <!------------------------------------- END OF HTML ------------------------------------->
 
+
+<script>
+$(document).ready(function(){
+
+</script>
+
+
+
 <!-- JAVASCRIPT -->
 <script>
 $(document).ready(function(){
@@ -686,6 +695,12 @@ $(document).ready(function(){
 	}
 
 
+	});
+
+
+
+	$("#genuine-artefact-form").on("submit", function () {
+    $(this).find(":submit").prop("disabled", true);
 	});
 
 
