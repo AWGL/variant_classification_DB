@@ -38,8 +38,14 @@ def view_variants(request):
 			# parse info
 			most_recent_obj = variant.variant_classification_cache[0]
 			most_recent_class = most_recent_obj.get_second_final_class_display()
-			hgvs_c = most_recent_obj.selected_transcript_variant.hgvs_c.split(':')[1]
-			hgvs_p = most_recent_obj.selected_transcript_variant.hgvs_p.split(':')[1]
+			if most_recent_obj.selected_transcript_variant.hgvs_c:
+				hgvs_c = most_recent_obj.selected_transcript_variant.hgvs_c.split(':')[1]
+			else:
+				hgvs_c = None
+			if most_recent_obj.selected_transcript_variant.hgvs_p:
+				hgvs_p = most_recent_obj.selected_transcript_variant.hgvs_p.split(':')[1]
+			else:
+				hgvs_c = None
 			transcript = most_recent_obj.selected_transcript_variant.transcript.name
 			gene = most_recent_obj.selected_transcript_variant.transcript.gene.name
 
