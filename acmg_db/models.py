@@ -489,7 +489,7 @@ class ClassificationQuestion(models.Model):
 		"""
 		# list of codes that can be applied at pathogenic very strong and benign standalone
 		allowed_pvs = ['PVS1', 'PS2', 'PM3', 'PM6']
-		allowed_ba = ['BA1', 'BS1']
+		allowed_ba = ['BA1']
 
 		if self.allowed_strength_change == False:
 
