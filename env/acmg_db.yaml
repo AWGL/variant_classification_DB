@@ -1,4 +1,8 @@
 name: acmg_db
+channels:
+- conda-forge
+- bioconda
+- defaults
 dependencies:
 - python = 3.6
 - sqlite = 3.25.3

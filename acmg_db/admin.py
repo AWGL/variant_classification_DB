@@ -14,6 +14,7 @@ admin.site.register(ClassificationQuestion, ClassificationQuestionAdmin)
 class ClassificationAdmin(admin.ModelAdmin):
     list_display = ('id', 'variant', 'selected_transcript_variant', 'user_first_checker', 'user_second_checker', 'status',)
     search_fields = ('id',) # cant add variant as its split into chr,pos,ref,alt in model
+    readonly_fields = ('variant', 'sample', 'selected_transcript_variant')
 admin.site.register(Classification, ClassificationAdmin)
 
 class EvidenceAdmin(admin.ModelAdmin):
