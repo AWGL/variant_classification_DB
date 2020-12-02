@@ -49,6 +49,10 @@ class TestACMGRatings(unittest.TestCase):
 		test_path_2019_3 = [('PS2', 'PS'), ('PS2', 'PS'), ('PP1', 'PP'), ('PP2', 'PP')]
 		test_path_2019_4 = [('PS2', 'PS'), ('PS2', 'PS'), ('PP1', 'PP'), ('PP2', 'PP'), ('PP3', 'PP')]
 
+		test_path_2020_1 = [('PVS1', 'PV'), ('PS2', 'PV'), ('PS1', 'PS')]
+		test_path_2020_1 = [('PVS1', 'PV'), ('PS2', 'PV'), ('PP1', 'PP'), ('PP2', 'PP')]
+
+
 		self.assertEqual(classify(test_path_1a_1), '5')
 		self.assertEqual(classify(test_path_1a_2), '5')
 		self.assertEqual(classify(test_path_1a_3), '5')
@@ -88,6 +92,8 @@ class TestACMGRatings(unittest.TestCase):
 		self.assertEqual(classify(test_path_2019_2), '5')
 		self.assertEqual(classify(test_path_2019_3), '5')
 		self.assertEqual(classify(test_path_2019_4), '5')
+
+		self.assertEqual(classify(test_path_2020_1), '5')
 
 
 	def test_likely_pathogenic(self):

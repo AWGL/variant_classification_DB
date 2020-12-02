@@ -14,7 +14,7 @@ import os
 
 # Is the instance of the database being run on a local development computer or on the cluster
 # options are 'local' or 'cluster'
-DB_INSTANCE = 'cluster'
+DB_INSTANCE = 'local'
 
 # path to file containing database password
 PASSWORD_FILE = '/export/home/webapps/password.txt'
@@ -41,51 +41,54 @@ ALLOWED_HOSTS = ['127.0.0.1', '10.59.210.245', '10.59.210.247', '10.59.210.197']
 DEBUG_TOOLBAR = True      # Set this to True to show debug toolbar
 
 if DEBUG_TOOLBAR == True:
-    INTERNAL_IPS = ['127.0.0.1', '10.59.210.245']
+	INTERNAL_IPS = ['127.0.0.1', '10.59.210.245']
 
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'debug_toolbar',
-    'acmg_db',
-    'crispy_forms',
-    'auditlog',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'rest_framework',
+	'rest_framework.authtoken',
+	'debug_toolbar',
+	'acmg_db',
+	'crispy_forms',
+	'auditlog',
+
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'auditlog.middleware.AuditlogMiddleware'
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
+	'auditlog.middleware.AuditlogMiddleware'
 ]
 
 ROOT_URLCONF = 'mysite.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
@@ -94,31 +97,60 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-with open(PASSWORD_FILE) as f:
-    password = f.readline().strip()
+if DB_INSTANCE == 'cluster':
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'variant_classification_db',
-	'USER': 'variant_classification_db_user',
-	'PASSWORD': password,
-	'HOST': 'localhost',
-	'PORT': '',
-    }
-}
+	with open(PASSWORD_FILE) as f:
+		password = f.readline().strip()
+
+
+	DATABASES = {
+		'default': {
+			'ENGINE': 'django.db.backends.postgresql_psycopg2',
+			'NAME': 'variant_classification_db',
+		'USER': 'variant_classification_db_user',
+		'PASSWORD': password,
+		'HOST': 'localhost',
+		'PORT': '',
+		}
+	}
+
+else:
+
+		DATABASES = {
+		'default': {
+			'ENGINE': 'django.db.backends.sqlite3',
+			'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+		}
+	}
 
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+	{ 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+	{ 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+	{ 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+	{ 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+
+
+
+
+
+
+
 
 
 # Internationalization
@@ -138,14 +170,12 @@ STATIC_URL = '/static/'
 
 # different static file settings for cluster and local
 if DB_INSTANCE == 'cluster':
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+	STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 elif DB_INSTANCE == 'local':
-    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-    ADMIN_MEDIA_PREFIX = '/static/admin/'
+	STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+	ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-
 
 ENV_PATH = os.path.abspath(os.path.dirname(__file__))
 MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
@@ -156,17 +186,12 @@ LOGIN_URL = '/login/'
 
 
 # Enternal resources 
-
-# Url to the Mutalyzer wsdl api
-MUTALYZER_URL = 'https://mutalyzer.nl/services/?wsdl'
-# Which Mutalyzer build to use
-MUTALYZER_BUILD = 'hg19' 
 # Which Reference genome for VEP to use
-REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
+REFERENCE_GENOME = '/media/joseph/Storage/genomic_resources/bwa/human_g1k_v37.fasta'
 # the value that will be added to the database to record VEP version
-VEP_VERSION = '100'
+VEP_VERSION = '94'
 # Which VEP Cache to use
-VEP_CACHE = '/data/db/human/vep_cache/refseq37_v100/'
+VEP_CACHE = '/media/joseph/Storage/genomic_resources/vep_caches/vep/'
 # Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
 

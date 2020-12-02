@@ -1,5 +1,5 @@
-from ..forms import ArchiveClassificationForm, ResetClassificationForm, AssignSecondCheckToMeForm, SendBackToFirstCheckForm
-from ..models import *
+from acmg_db.forms import ArchiveClassificationForm, ResetClassificationForm, AssignSecondCheckToMeForm, SendBackToFirstCheckForm
+from acmg_db.models import *
 
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
