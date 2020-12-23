@@ -8,10 +8,11 @@ dependencies:
 - sqlite = 3.33.0
 - psycopg2 = 2.8.6
 - ensembl-vep = 100
+- pandas = 1.1.4
+- httpie = 2.1.0
 - pip:
   - django == 2.2
   - django-crispy-forms == 1.10.0
   - django-auditlog == 0.4.7
   - djangorestframework == 3.12.2
-  - pandas == 1.1.4
   - django-debug-toolbar == 3.1.1
