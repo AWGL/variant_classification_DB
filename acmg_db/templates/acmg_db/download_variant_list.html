@@ -5,6 +5,17 @@
 
 <br>
 
+<!-- BOX TO SHOW ERRORS -->
+{% if errors %}
+  {% for e in errors %}
+    <div class="alert alert-danger" role="alert">
+	  {{ e }}
+	</div>
+  {% endfor %}
+{% endif %}
+
+
+
 {% crispy form %}
 
 

@@ -56,7 +56,6 @@ def download_variant_list(request):
 
 					# parse info
 					most_recent_obj = variant.variant_classification_cache[0]
-					most_recent_class = most_recent_obj.get_second_final_class_display()
 					if most_recent_obj.selected_transcript_variant.hgvs_c:
 						hgvs_c = most_recent_obj.selected_transcript_variant.hgvs_c.split(':')[1]
 					else:
@@ -96,7 +95,7 @@ def download_variant_list(request):
 
 				if variant_annotation in whitelist_classes and variant_annotation in blacklist_classes:
 
-					errors = ['Cannot be in both!']
+					errors = ['Cannot have the same class in the whitelist and the blacklist!']
 
 					return render(request, 'acmg_db/download_variant_list.html', {'form': form, 'errors': errors}) 
 
@@ -116,8 +115,6 @@ def download_variant_list(request):
 
 				variant_list.append([variant_id, keep_or_discard, variant_annotation])
 
-			print (variant_list)
-
 			file_name = f'variant_list_{request.user}_{random.randint(1,100000)}.csv'
 			file_path = f'{settings.VEP_TEMP_DIR}/{file_name}'
 			
@@ -135,18 +132,6 @@ def download_variant_list(request):
 			os.remove(file_path)
 
 			return response
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	return render(request, 'acmg_db/download_variant_list.html', {'form': form})
