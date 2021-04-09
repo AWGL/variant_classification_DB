@@ -2,9 +2,6 @@ import json
 import base64
 import re
 
-from ..forms import SampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm
-from ..models import *
-
 from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
@@ -13,6 +10,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+
+from acmg_db.forms import SampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm
+from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

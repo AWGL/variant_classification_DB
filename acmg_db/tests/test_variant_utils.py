@@ -24,21 +24,6 @@ class TestVariantUtils(unittest.TestCase):
 		self.assertEqual(process_variant_input(input6), ['e95a1742404bcc3c3c8f2ee44696b792a0cb634688a4349fa65195f5871ca027', 'Y', '41197732', 'G', 'A', 'Y-41197732-G-A'])
 		self.assertEqual(process_variant_input(input7), ['cb5a43b1cc81e1ca7aaf6765ed8f3b76de40c83c81923399779f56086ba31303', '13', '4', 'GTGAC', 'ATGC', '13-4-GTGAC-ATGC'])
 
-	
-	def test_get_variant_info_mutalzer(self):
-
-		input1 = 'hello'
-		input2 = 'chr17:41197732GT>A' #should be 17:41197732GT>A i.e no chr
-		input3 = '17:41197732GT>A' # valid
-		input4 = 'X:32536115C>T' # valid
-
-
-		self.assertEqual(get_variant_info_mutalzer(input1, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)[0], False)
-		self.assertEqual(get_variant_info_mutalzer(input2, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)[0], False)
-		self.assertEqual(get_variant_info_mutalzer(input3, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)[0], True)
-		self.assertEqual(get_variant_info_mutalzer(input4, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)[0], True)
-	
-
 
 
 if __name__ == '__main__':

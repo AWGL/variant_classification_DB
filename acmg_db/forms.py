@@ -1,5 +1,5 @@
 from django import forms
-from .models import  *
+from acmg_db.models import  *
 from django.urls import reverse
 from crispy_forms.bootstrap import Field
 from crispy_forms.helper import FormHelper
@@ -587,4 +587,42 @@ class SearchForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('search_input', placeholder='Search for a variant, gene or sample.', title=False),
+		)
+
+
+
+# Download Variant List Form -----------------------------------------------------------
+
+class DownloadVariantListForm(forms.Form):
+	"""
+	Form for downloading variant lists.
+	"""
+
+	CLASSIFICATION_CHOICES = (('Benign', 'Benign'),
+	 ('Likely Benign', 'Likely Benign'),
+	 ('Artefact', 'Artefact'),
+	 ('VUS - Criteria Not Met', 'VUS - Criteria Not Met'),
+	 ('Contradictory Evidence Provided','Contradictory Evidence Provided' ),
+	 ('Likely Pathogenic','Likely Pathogenic' ),
+	 ('Pathogenic', 'Pathogenic'), )
+
+
+	black_list = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={'size':'7'}), choices=CLASSIFICATION_CHOICES, required=False)
+	white_list = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={'size':'7'}), choices=CLASSIFICATION_CHOICES, required=False)
+
+
+	def __init__(self, *args, **kwargs):
+		
+		super(DownloadVariantListForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'download-variant-list-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('download_variant_list')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('black_list', placeholder='Variant classifications to blacklist', title=False),
+			Field('white_list', placeholder='Variant classifications to whitelist.', title=False),
 		)

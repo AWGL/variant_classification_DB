@@ -1,11 +1,14 @@
-from ..models import *
-from ..forms import SearchForm
-from ..utils.variant_utils import get_variant_hash
+import re
+
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound
-import re
+
+from acmg_db.models import *
+from acmg_db.forms import SearchForm
+from acmg_db.utils.variant_utils import get_variant_hash
+
 
 @transaction.atomic
 @login_required

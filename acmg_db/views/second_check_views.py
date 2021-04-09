@@ -1,8 +1,5 @@
 import json
 
-from ..forms import SampleInfoFormSecondCheck, VariantInfoFormSecondCheck, FinaliseClassificationSecondCheckForm, TranscriptFormSecondCheck
-from ..models import *
-
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -10,6 +7,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+
+from acmg_db.forms import SampleInfoFormSecondCheck, VariantInfoFormSecondCheck, FinaliseClassificationSecondCheckForm, TranscriptFormSecondCheck
+from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

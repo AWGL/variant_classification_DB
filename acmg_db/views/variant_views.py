@@ -1,9 +1,9 @@
-from ..models import *
-
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Prefetch
+
+from acmg_db.models import *
 
 
 #--------------------------------------------------------------------------------------------------

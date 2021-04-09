@@ -1,16 +1,16 @@
 from io import TextIOWrapper
 
-from ..forms import VariantFileUploadForm, ManualUploadForm
-from ..models import *
-from .first_check_views import first_check
-from ..utils.variant_utils import load_worksheet, get_vep_info_local, get_variant_info_mutalzer, process_variant_input
-from ..utils.acmg_classifier import guideline_version
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+
+from acmg_db.forms import VariantFileUploadForm, ManualUploadForm
+from acmg_db.models import *
+from acmg_db.utils.variant_utils import load_worksheet, get_vep_info_local, process_variant_input
+from acmg_db.utils.acmg_classifier import guideline_version
+
 
 
 #--------------------------------------------------------------------------------------------------
@@ -308,16 +308,6 @@ def manual_input(request):
 					}
 					return render(request, 'acmg_db/manual_input.html', context)
 
-			# check whether entered variant is valid
-			variant_info = get_variant_info_mutalzer(variants, settings.MUTALYZER_URL, settings.MUTALYZER_BUILD)
-
-			if variant_info[0] == False:
-				context = {
-					'form': form,
-					'error': variant_info[1][0],
-				}
-				return render(request, 'acmg_db/manual_input.html', context)
-
 			# put variant into list - just so we can reuse code from above
 
 			unique_variants = [variants]
@@ -377,7 +367,16 @@ def manual_input(request):
 				'temp_dir': settings.VEP_TEMP_DIR
 			}
 
-			variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
+			try:
+				variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
+			except:
+
+				context = {
+					'form': form,
+					'error': 'VEP annotation failed. Are you sure this a correct variant?',
+				}
+				return render(request, 'acmg_db/manual_input.html', context)
+
 
 			# Loop through each variant and add to the database
 			for variant in variant_annotations:

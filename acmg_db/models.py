@@ -1,9 +1,9 @@
 from django.db import models
-from .utils import acmg_classifier
 from auditlog.registry import auditlog
 from auditlog.models import LogEntry
 from auditlog.models import AuditlogHistoryField
 
+from acmg_db.utils import acmg_classifier
 
 class Worklist(models.Model):
 	"""
@@ -264,6 +264,7 @@ class Classification(models.Model):
 	genotype = models.IntegerField(null=True, blank=True)
 	guideline_version = models.CharField(max_length=20)
 	vep_version = models.CharField(max_length=20)
+	analysis_id = models.IntegerField(null=True, blank=True)
 
 	def __str__(self):
 		return f'{self.id}'

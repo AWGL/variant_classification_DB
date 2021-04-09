@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from rest_framework.authtoken import views as rest_views
 
-from . import views
+from acmg_db import views
 
 
 urlpatterns = [
@@ -31,11 +32,17 @@ urlpatterns = [
 
     path('panels/', views.panels, name='panels'),
 
+    path('download_variant_list/', views.download_variant_list, name='download_variant_list'),
+
+
     path('search/', views.search, name='search'),
     path('view_gene/<str:pk>/', views.view_gene, name='view_gene'),
     path('view_sample/<str:pk>/', views.view_sample, name='view_sample'),
 
     path('ajax/delete_comment/', views.ajax_delete_comment, name='ajax_delete_comment'),
 
-]
 
+    path('api-token-auth/', rest_views.obtain_auth_token),
+    path('api-add-variants/', views.AddVariantsForAnalysis.as_view(), name='add-variants'),
+
+]

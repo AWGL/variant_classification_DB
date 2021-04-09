@@ -1,5 +1,3 @@
-from ..models import *
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -8,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
+from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

@@ -1,5 +1,5 @@
-from ..forms import NewPanelForm
-from ..models import *
+from acmg_db.forms import NewPanelForm
+from acmg_db.models import *
 
 from django.contrib.auth.decorators import login_required
 from django.db import transaction

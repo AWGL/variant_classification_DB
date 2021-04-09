@@ -10,3 +10,4 @@ static/
 sqlite3.db
 .ipynb_checkpoints/
 gunicorn.sh
+temp/*

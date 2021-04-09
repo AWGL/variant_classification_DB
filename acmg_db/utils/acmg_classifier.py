@@ -130,13 +130,13 @@ def classify(user_classification):
 		return '1'
 
 	# pathogenic
-	elif PVS1_count == 1 and PS_count >= 1:
+	elif PVS1_count >= 1 and PS_count >= 1:
 		return '5'
 
-	elif PVS1_count == 1 and PM_count >= 1:
+	elif PVS1_count >= 1 and PM_count >= 1:
 		return '5'
 
-	elif PVS1_count == 1 and PP_count >= 2:
+	elif PVS1_count >= 1 and PP_count >= 2:
 		return '5'
 
 	elif PS_count >= 3:

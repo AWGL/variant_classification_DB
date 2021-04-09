@@ -4,14 +4,15 @@ channels:
 - bioconda
 - defaults
 dependencies:
-- python = 3.6
-- sqlite = 3.25.3
-- psycopg2 = 2.8.2
+- python = 3.7
+- sqlite = 3.33.0
+- psycopg2 = 2.8.6
 - ensembl-vep = 100
+- pandas = 1.1.4
+- httpie = 2.1.0
 - pip:
-  - suds-py3==1.3.3.0
-  - django-crispy-forms==1.7.2 
-  - django-auditlog==0.4.5
-  - django==2.1.3
-  - pandas== 0.23.4
-  - django-debug-toolbar==2.2
+  - django == 2.2
+  - django-crispy-forms == 1.10.0
+  - django-auditlog == 0.4.7
+  - djangorestframework == 3.12.2
+  - django-debug-toolbar == 3.1.1
