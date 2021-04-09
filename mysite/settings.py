@@ -14,7 +14,7 @@ import os
 
 # Is the instance of the database being run on a local development computer or on the cluster
 # options are 'local' or 'cluster'
-DB_INSTANCE = 'local'
+DB_INSTANCE = 'cluster'
 
 # path to file containing database password
 PASSWORD_FILE = '/export/home/webapps/password.txt'
@@ -184,15 +184,19 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = '/login/'
 
+# Enternal resources
 
-# Enternal resources 
 # Which Reference genome for VEP to use
-REFERENCE_GENOME = '/media/joseph/Storage/genomic_resources/bwa/human_g1k_v37.fasta'
+REFERENCE_GENOME = '/data/db/human/mappers/b37/bwa/human_g1k_v37.fasta'
 # the value that will be added to the database to record VEP version
-VEP_VERSION = '94'
+VEP_VERSION = '100'
 # Which VEP Cache to use
-VEP_CACHE = '/media/joseph/Storage/genomic_resources/vep_caches/vep/'
+VEP_CACHE = '/data/db/human/vep_cache/refseq37_v100/'
 # Which temp directory to use for storing vcfs
 VEP_TEMP_DIR = 'temp/'
+
+
+
+
 
 
