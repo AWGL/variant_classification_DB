@@ -423,6 +423,8 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('8', 'Use classification (don\'t override)'),)
 	final_classification = forms.ChoiceField(choices=final_class_choices)
 	confirm = forms.BooleanField(required=True)
+	confirm_second_check = forms.BooleanField(required=True)
+
 
 	def __init__(self, *args, **kwargs):
 
@@ -436,6 +438,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 		self.fields['final_classification'].label = 'Final classification'
 		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
 		self.fields['confirm'].label = 'Confirm that the classification is complete'
+		self.fields['confirm_second_check'].label = 'Manual upload checked against worksheet'
 		self.helper.form_id = 'finalise-classification-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -446,6 +449,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('final_classification'),
 			Field('confirm'),
+			Field('confirm_second_check'),
 		)
 
 
