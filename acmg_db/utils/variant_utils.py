@@ -118,6 +118,8 @@ def get_vep_info_local(variant_list, vep_info, sample):
 	temp_dir = vep_info['temp_dir']
 	reference_genome = vep_info['reference_genome']
 	vep_cache = vep_info['vep_cache']
+	assembly = vep_info['assembly']
+	vep_version = vep_info['version']
 	random_int = random.randint(1,10000)
 
 	vcf_file_name = f'{temp_dir}/{sample}_{random_int}.vcf'
@@ -140,7 +142,7 @@ def get_vep_info_local(variant_list, vep_info, sample):
 
 	# Run vep
 
-	command = f'source  ~/miniconda3/bin/activate acmg_db && vep --input_file {vcf_file_name} --format vcf -o stdout --cache --offline --no_check_variants_order --assembly GRCh37 --fasta {reference_genome} --refseq --dir {vep_cache} --flag_pick --species homo_sapiens --check_ref --cache_version {settings.VEP_VERSION} --json --numbers  --symbol --hgvs --no_stats --exclude_predicted'
+	command = f'source  ~/miniconda3/bin/activate acmg_db && vep --input_file {vcf_file_name} --format vcf -o stdout --cache --offline --no_check_variants_order --assembly {assembly} --fasta {reference_genome} --refseq --dir {vep_cache} --flag_pick --species homo_sapiens --check_ref --cache_version {vep_version} --json --numbers  --symbol --hgvs --no_stats --exclude_predicted'
 	result = subprocess.check_output(command, shell=True, executable='/bin/bash')
 
 	# Collect output and put into json

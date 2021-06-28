@@ -46,6 +46,9 @@ def auto_input(request):
 
 			# get affected with
 			affected_with = form.cleaned_data['affected_with']
+			
+			# get reference genome
+			genome = form.cleaned_data['genome']
 
 			# process tsv file
 			raw_file = request.FILES['variant_file']
@@ -92,11 +95,23 @@ def auto_input(request):
 				sample_obj.save()
 
 			# Get VEP annotations
-			vep_info_dict = {
-				'reference_genome' : settings.REFERENCE_GENOME,
-				'vep_cache': settings.VEP_CACHE,
-				'temp_dir': settings.VEP_TEMP_DIR
-			}
+			# Set dictionary depending on Reference genome input from form
+			if genome == "GRCh37":
+				vep_info_dict = {
+					'reference_genome' : settings.REFERENCE_GENOME_37,
+					'vep_cache': settings.VEP_CACHE_37,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_37,
+					'version': settings.VEP_VERSION_37
+				}
+			elif genome == "GRCh38":
+				vep_info_dict = {
+					'reference_genome': settings.REFERENCE_GENOME_38,
+					'vep_cache': settings.VEP_CACHE_38,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_38,
+					'version': settings.VEP_VERSION_38
+				}
 
 			variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
 
@@ -172,8 +187,13 @@ def auto_input(request):
 						)
 
 					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+					if genome == "GRCh37":
+						vep_version = settings.VEP_VERSION_37
+					elif genome == "GRCh38":
+						vep_version = settings.VEP_VERSION_38
+						
 					if created:
-						transcript_variant_obj.vep_version = settings.VEP_VERSION
+						transcript_variant_obj.vep_version = vep_version
 						transcript_variant_obj.save()
 
 					# Find the transcript that VEP has picked
@@ -228,7 +248,7 @@ def auto_input(request):
 					selected_transcript_variant = selected,
 					genotype=genotype,
 					guideline_version=guideline_version,
-					vep_version=settings.VEP_VERSION
+					vep_version=vep_version
 					)
 
 				new_classification_obj.save()
@@ -277,6 +297,9 @@ def manual_input(request):
 
 			# get affected with
 			affected_with = form.cleaned_data['affected_with'].strip()
+			
+			# get reference genome
+			genome = form.cleaned_data['genome']
 
 			# get genotype
 
@@ -361,11 +384,22 @@ def manual_input(request):
 				sample_obj.save()
 
 			# Get VEP annotations
-			vep_info_dict = {
-				'reference_genome' : settings.REFERENCE_GENOME,
-				'vep_cache': settings.VEP_CACHE,
-				'temp_dir': settings.VEP_TEMP_DIR
-			}
+			if genome == "GRCh37":
+				vep_info_dict = {
+					'reference_genome' : settings.REFERENCE_GENOME_37,
+					'vep_cache': settings.VEP_CACHE_37,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_37,
+					'version': settings.VEP_VERSION_37
+				}
+			elif genome == "GRCh38":
+				vep_info_dict = {
+					'reference_genome': settings.REFERENCE_GENOME_38,
+					'vep_cache': settings.VEP_CACHE_38,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_38,
+					'version': settings.VEP_VERSION_38
+				}
 
 			try:
 				variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
@@ -450,8 +484,13 @@ def manual_input(request):
 						)
 
 					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+					if genome == "GRCh37":
+						vep_version = settings.VEP_VERSION_37
+					elif genome == "GRCh38":
+						vep_version = settings.VEP_VERSION_38
+					
 					if created:
-						transcript_variant_obj.vep_version = settings.VEP_VERSION
+						transcript_variant_obj.vep_version = vep_version
 						transcript_variant_obj.save()
 
 					# Find the transcript that VEP has picked
@@ -471,7 +510,7 @@ def manual_input(request):
 					selected_transcript_variant = selected,
 					genotype = genotype,
 					guideline_version=guideline_version,
-					vep_version=settings.VEP_VERSION
+					vep_version=vep_version
 					)
 
 				new_classification_obj.save()
