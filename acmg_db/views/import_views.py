@@ -47,8 +47,6 @@ def auto_input(request):
 			# get affected with
 			affected_with = form.cleaned_data['affected_with']
 			
-			# get reference genome
-			genome = form.cleaned_data['genome']
 
 			# process tsv file
 			raw_file = request.FILES['variant_file']
@@ -60,6 +58,7 @@ def auto_input(request):
 			unique_variants =  df['Variant'].unique()
 			worksheet_id = df['WorklistId'].unique()[0]
 			sample_id = df['#SampleId'].unique()[0]
+			genome = df['Reference'].unique()[0]		
 
 			# create dict of links between variant and genotype
 			variant_genotype_dict = {}

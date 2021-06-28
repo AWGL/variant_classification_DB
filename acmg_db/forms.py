@@ -20,7 +20,6 @@ class VariantFileUploadForm(forms.Form):
 	variant_file = forms.FileField()
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
-	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
 	
 	def __init__(self, *args, **kwargs):
 		
@@ -40,8 +39,7 @@ class VariantFileUploadForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('variant_file', placeholder='Select a file to upload', title=False),
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
-			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
-			Field('genome', placeholder='Select the version of the reference genome which was used for analysis', title=False),
+			Field('affected_with', placeholder='Enter what the patient is affected with', title=False)
 		)
 
 
