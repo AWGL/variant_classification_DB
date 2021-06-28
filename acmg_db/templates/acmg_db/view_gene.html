@@ -19,6 +19,7 @@
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
+	  <th>Reference Genome</th>
 	  <th>Last Classification (Click to view)</th>
 	  <th>Last Classification Date</th>
 	  <th>All Classifications</th>
@@ -34,7 +35,8 @@
 		<td> {{variant.1.0.selected_transcript_variant.transcript.name}} </td>
 		<td> {{variant.1.0.selected_transcript_variant.display_hgvsc|truncatechars:25}}</td>
 		<td> {{variant.1.0.selected_transcript_variant.display_hgvsp|truncatechars:25}}</td>
-
+		<td> {{variant.1.0.sample.genome}}</td>
+		
 		<td>
 		{% if 'Benign' in variant.1.0.display_classification %}
 		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
@@ -67,7 +69,8 @@
 	  <th></th>
 	  <th></th>
 	  <th></th>
-	  <th> </th>
+	  <th></th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>
