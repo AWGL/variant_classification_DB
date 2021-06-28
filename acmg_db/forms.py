@@ -6,6 +6,11 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML
 from django.contrib.auth.models import User
 
+# Genome Version List
+GENOME_BUILD=[
+	('GRCh37','GRCh37'),
+	('GRCh38','GRCh38'),
+	]
 
 # File upload forms ---------------------------------------------------
 class VariantFileUploadForm(forms.Form):
@@ -15,7 +20,8 @@ class VariantFileUploadForm(forms.Form):
 	variant_file = forms.FileField()
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
-
+	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
+	
 	def __init__(self, *args, **kwargs):
 		
 		self.panel_options = kwargs.pop('options')
@@ -35,6 +41,7 @@ class VariantFileUploadForm(forms.Form):
 			Field('variant_file', placeholder='Select a file to upload', title=False),
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
 			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
+			Field('genome', placeholder='Select the version of the reference genome which was used for analysis', title=False),
 		)
 
 
@@ -57,6 +64,7 @@ class ManualUploadForm(forms.Form):
 			('NA', 'NA')
 		)
 	)
+	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
 
 	def __init__(self, *args, **kwargs):
 
@@ -81,6 +89,7 @@ class ManualUploadForm(forms.Form):
 			Field('panel_applied', title=False),
 			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),
 			Field('genotype', placeholder='Enter the genotype of the variant', title=False),
+			Field('genome', placeholder='Select the version of the reference genome which was used for analysis', title=False),
 		)
 
 
