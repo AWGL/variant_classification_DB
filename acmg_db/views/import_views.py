@@ -90,7 +90,8 @@ def auto_input(request):
 						affected_with = affected_with,
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						other_changes = ''
+						other_changes = '',
+						genome = genome
 						)
 				sample_obj.save()
 
@@ -132,7 +133,7 @@ def auto_input(request):
 						chromosome = chromosome,
 						position = position,
 						ref = ref,
-						alt = alt
+						alt = alt,
 						)
 
 				if 'transcript_consequences' in variant[0]:
@@ -248,7 +249,7 @@ def auto_input(request):
 					selected_transcript_variant = selected,
 					genotype=genotype,
 					guideline_version=guideline_version,
-					vep_version=vep_version
+					vep_version=vep_version,
 					)
 
 				new_classification_obj.save()
@@ -379,7 +380,8 @@ def manual_input(request):
 						affected_with = affected_with,
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						other_changes = ''
+						other_changes = '',
+						genome = genome
 						)
 				sample_obj.save()
 
@@ -429,7 +431,7 @@ def manual_input(request):
 						chromosome = chromosome,
 						position = position,
 						ref = ref,
-						alt = alt
+						alt = alt,
 						)
 
 				if 'transcript_consequences' in variant[0]:
@@ -510,7 +512,7 @@ def manual_input(request):
 					selected_transcript_variant = selected,
 					genotype = genotype,
 					guideline_version=guideline_version,
-					vep_version=vep_version
+					vep_version=vep_version,
 					)
 
 				new_classification_obj.save()

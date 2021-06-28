@@ -157,7 +157,7 @@ def get_vep_info_local(variant_list, vep_info, sample):
 
 	if len(vep_anno_list) != len(variant_list):
 
-		raise Exception('VEP annotation failed - annotated variant list is not the same length as original list.')
+		raise Exception('VEP annotation failed - annotated variant list is not the same length as original list. Did you select the correct reference genome?')
 
 	os.remove(vcf_file_name)
 
