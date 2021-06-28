@@ -58,10 +58,11 @@ class Variant(models.Model):
 	"""
 
 	variant_hash = models.CharField(max_length=64, primary_key =True)
-	chromosome  = models.CharField(max_length=25)
+	chromosome  = models.CharField(max_length=25, default='')
 	position  = models.IntegerField()
 	ref = models.TextField()
 	alt = models.TextField()
+	genome = models.TextField()
 
 	def __str__(self):
 		return f'{self.chromosome}:{self.position}{self.ref}>{self.alt}'

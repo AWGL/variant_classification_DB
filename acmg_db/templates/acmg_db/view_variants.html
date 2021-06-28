@@ -16,6 +16,7 @@
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
+	  <th>Reference Genome</th>
 	  <th>Last Classification<br>(Click to view)</th>
 	  <th>Last Classification Date</th>
 	  <th>All Classifications</th>
@@ -31,6 +32,7 @@
 	  <td>{{ variant.transcript }}</td>
 	  <td>{{ variant.hgvs_c | truncatechars:25 }}</td>
 	  <td>{{ variant.hgvs_p | truncatechars:25 }}</td>
+	  <td>{{ variant.genome }}</td>
 	  <td>
 		<!-- change button colour based on class -->
 		<a class=
