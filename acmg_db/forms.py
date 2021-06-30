@@ -99,7 +99,6 @@ class SampleInfoForm(forms.Form):
 
 	affected_with = forms.CharField(widget=forms.Textarea)
 	other_changes = forms.CharField(widget=forms.Textarea, required=False)
-	genome = forms.CharField(widget=forms.Textarea)
 
 	def __init__(self, *args, **kwargs):
 
@@ -115,8 +114,6 @@ class SampleInfoForm(forms.Form):
 		self.fields['affected_with'].widget.attrs['rows'] = 2
 		self.fields['other_changes'].initial = self.sample.other_changes
 		self.fields['other_changes'].widget.attrs['rows'] = 2
-		self.fields['genome'].initial = self.sample.genome
-		self.fields['genome'].widget.attrs['rows'] = 2
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -127,7 +124,6 @@ class SampleInfoForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('affected_with'),
 			Field('other_changes'),
-			Field('genome'),
 		)
 
 
@@ -300,7 +296,6 @@ class SampleInfoFormSecondCheck(forms.Form):
 
 	affected_with = forms.CharField(widget=forms.Textarea)
 	other_changes = forms.CharField(widget=forms.Textarea, required=False)
-	genome = forms.CharField(widget=forms.Textarea)
 
 	def __init__(self, *args, **kwargs):
 
@@ -316,8 +311,6 @@ class SampleInfoFormSecondCheck(forms.Form):
 		self.fields['affected_with'].widget.attrs['rows'] = 2
 		self.fields['other_changes'].initial = self.sample.other_changes
 		self.fields['other_changes'].widget.attrs['rows'] = 2
-		self.fields['genome'].initial = self.sample.genome
-		self.fields['genome'].widget.attrs['rows'] = 2
 		self.helper.form_id = 'sample-information-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -328,7 +321,6 @@ class SampleInfoFormSecondCheck(forms.Form):
 		self.helper.layout = Layout(
 			Field('affected_with'),
 			Field('other_changes'),
-			Field('genome'),
 		)
 
 
