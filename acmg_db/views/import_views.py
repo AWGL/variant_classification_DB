@@ -250,7 +250,7 @@ def auto_input(request):
 					genotype=genotype,
 					guideline_version=guideline_version,
 					vep_version=vep_version,
-					genome = sample_obj.genome,
+					genome = genome,
 					)
 
 				new_classification_obj.save()
@@ -382,7 +382,7 @@ def manual_input(request):
 						analysis_performed = panel_obj,
 						analysis_complete = False,
 						other_changes = '',
-						genome = genome
+						genome = genome,
 						)
 				sample_obj.save()
 
@@ -515,7 +515,7 @@ def manual_input(request):
 					genotype = genotype,
 					guideline_version=guideline_version,
 					vep_version=vep_version,
-					genome=sample_obj.genome,
+					genome=genome,
 					)
 
 				new_classification_obj.save()
