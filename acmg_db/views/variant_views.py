@@ -67,7 +67,7 @@ def view_variants(request):
 				'most_recent_date': most_recent_obj.second_check_date, 
 				'most_recent_class': most_recent_obj.get_second_final_class_display(), 
 				'all_classes': '|'.join(all_classes_set),
-				'genome': classification.sample.genome
+				'genome': most_recent_obj.genome,
 			})
 
 	return render(request, 'acmg_db/view_variants.html', {'all_variants': variant_data})
