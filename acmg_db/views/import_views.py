@@ -133,6 +133,7 @@ def auto_input(request):
 						position = position,
 						ref = ref,
 						alt = alt,
+						genome = genome
 						)
 
 				if 'transcript_consequences' in variant[0]:
@@ -432,6 +433,7 @@ def manual_input(request):
 						position = position,
 						ref = ref,
 						alt = alt,
+						genome = genome,
 						)
 
 				if 'transcript_consequences' in variant[0]:
