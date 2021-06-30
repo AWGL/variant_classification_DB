@@ -46,7 +46,7 @@ class Sample(models.Model):
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
-	genome = models.TextField()
+	genome = models.TextField(default='GRCh37')
 
 	def __str__(self):
 		return self.name
@@ -62,7 +62,7 @@ class Variant(models.Model):
 	position  = models.IntegerField()
 	ref = models.TextField()
 	alt = models.TextField()
-	genome = models.TextField()
+	genome = models.TextField(default='GRCh37')
 
 	def __str__(self):
 		return f'{self.chromosome}:{self.position}{self.ref}>{self.alt}'
@@ -267,7 +267,7 @@ class Classification(models.Model):
 	guideline_version = models.CharField(max_length=20)
 	vep_version = models.CharField(max_length=20)
 	analysis_id = models.IntegerField(null=True, blank=True)
-	genome = models.TextField()
+	genome = models.TextField(default='GRCh37')
 
 	def __str__(self):
 		return f'{self.id}'
