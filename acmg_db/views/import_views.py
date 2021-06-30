@@ -410,7 +410,7 @@ def manual_input(request):
 
 				context = {
 					'form': form,
-					'error': 'VEP annotation failed. Are you sure this a correct variant?',
+					'error': 'VEP annotation failed. Are you sure this a correct variant? Are you sure the correct reference genome has been selected?',
 				}
 				return render(request, 'acmg_db/manual_input.html', context)
 
