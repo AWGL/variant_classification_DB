@@ -120,10 +120,6 @@
 				<td>Affected With</td>
 				<td>{{ classification.sample.affected_with|linebreaksbr }}</td>
 			</tr> 
-      			<tr>
-				<td>Reference Genome</td>
-				<td>{{ classification.sample.genome|linebreaksbr }}</td>
-			</tr>
       <tr>
         <td>Other Changes</td>
         <td>{{ classification.sample.other_changes|linebreaksbr }}</td>
@@ -166,7 +162,11 @@
 			<tbody>
 				<tr>
 					<td  style="width: 25.00%" class="col-2">Variant</td>
-					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}}</td>
+					{% if classification.genome == 'GRCh37' %}
+					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-info badge-pill">{{ classification.genome }}</td>
+					{% elif classification.genome == 'GRCh38' %}
+					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-success badge-pill">{{ classification.genome }}</td>
+					{% endif %}
 				</tr>
 				<tr>
 					<td> Transcript</td>

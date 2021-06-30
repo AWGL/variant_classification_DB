@@ -65,7 +65,6 @@
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
-	  <th>Reference Genome</th>
 	  <th>Classification</th>
 	  <th>Version</th>
 	</tr>
@@ -94,11 +93,16 @@
 	  <td>{{ classification.sample.sample_name_only }}</td>
 	  <td>{{ classification.display_genotype }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
-	  <td>{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}</td>
+	  <td>
+	  {% if classification.genome == 'GRCh37' %}
+	  {{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-info badge-pill">{{ classification.genome }}
+	  {% elif classification.genome == 'GRCh38' %}
+	  {{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-success badge-pill">{{ classification.genome }}
+	  {% endif %}
+	  </td>
 	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>
 	  <td>{{ classification.selected_transcript_variant.display_hgvsc|truncatechars:25 }}</td>
 	  <td>{{ classification.selected_transcript_variant.display_hgvsp|truncatechars:25 }}</td>
-	  <td>{{ classification.sample.genome }}</td>
 	  <td>
 		{% if 'Benign' in classification.display_classification %}
 		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 

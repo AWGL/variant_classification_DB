@@ -16,7 +16,6 @@
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
-	  <th>Reference Genome</th>
 	  <th>Last Classification<br>(Click to view)</th>
 	  <th>Last Classification Date</th>
 	  <th>All Classifications</th>
@@ -27,12 +26,15 @@
   <tbody>
 	{% for variant in all_variants %}
 	<tr>
-	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</td>
+	  {% if variant.genome == 'GRCh37' %}
+	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</a><br><span class="badge badge-info badge-pill">{{ variant.genome }}</td>
+	  {% elif variant.genome == 'GRCh38' %}
+	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</a><br><span class="badge badge-success badge-pill">{{ variant.genome }}</td>
+	  {% endif %}
 	  <td>{{ variant.gene }}</td>
 	  <td>{{ variant.transcript }}</td>
 	  <td>{{ variant.hgvs_c | truncatechars:25 }}</td>
 	  <td>{{ variant.hgvs_p | truncatechars:25 }}</td>
-	  <td>{{ variant.genome }}</td>
 	  <td>
 		<!-- change button colour based on class -->
 		<a class=
@@ -64,7 +66,6 @@
 
   <tfoot>
 	<tr>
-	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>

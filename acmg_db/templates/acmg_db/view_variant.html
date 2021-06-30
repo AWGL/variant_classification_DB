@@ -3,7 +3,11 @@
 {% block content %}
 
 <br>
-<h4>All classifications for {{ variant.chromosome }}:{{ variant.position }}{{ variant.ref }}>{{ variant.alt }}</h4>
+{% if variant.genome == 'GRCh37' %}
+<h4>All classifications for {{ variant.chromosome }}:{{ variant.position }}{{ variant.ref }}>{{ variant.alt }} <span class="badge badge-info badge-pill">{{ variant.genome }}</h4>
+{% elif variant.genome == 'GRCh38' %}
+<h4>All classifications for {{ variant.chromosome }}:{{ variant.position }}{{ variant.ref }}>{{ variant.alt }} <span class="badge badge-success badge-pill">{{ variant.genome }}</h4>
+{% endif %}
 <br>
 
 <table id="classifications" class = "table table-hover table-bordered" style="width:100%">
@@ -18,7 +22,6 @@
 	  <th>Transcript</th>
 	  <th>HGVSc</th>
 	  <th>HGVSp</th>
-	  <th>Reference Genome</th>
 	  <th>Classification<br>(Click to view)</th>
 	  <th>Guideline version</th>
 	  <th>Genuine</th>
@@ -38,7 +41,6 @@
 		<td> {{classification.selected_transcript_variant.transcript.name}} </td>
 		<td> {{classification.selected_transcript_variant.display_hgvsc}} </td>
 		<td> {{classification.selected_transcript_variant.display_hgvsp}} </td>
-		<td> {{classification.sample.genome}}</td>
 	    <td>
 		{% if 'Benign' in classification.display_classification %}
 		<a class="btn btn-sm btn-info" href="{% url 'view_classification' pk=classification.pk %}" role="button"> 
