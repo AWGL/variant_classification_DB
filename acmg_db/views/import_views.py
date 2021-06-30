@@ -58,7 +58,10 @@ def auto_input(request):
 			unique_variants =  df['Variant'].unique()
 			worksheet_id = df['WorklistId'].unique()[0]
 			sample_id = df['#SampleId'].unique()[0]
-			genome = df['Reference'].unique()[0]		
+			if 'Reference' in df:
+				genome = df['Reference'].unique()[0]
+			else:
+				genome = 'GRCh37'		
 
 			# create dict of links between variant and genotype
 			variant_genotype_dict = {}
