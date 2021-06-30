@@ -267,6 +267,7 @@ class Classification(models.Model):
 	guideline_version = models.CharField(max_length=20)
 	vep_version = models.CharField(max_length=20)
 	analysis_id = models.IntegerField(null=True, blank=True)
+	genome = models.TextField()
 
 	def __str__(self):
 		return f'{self.id}'
