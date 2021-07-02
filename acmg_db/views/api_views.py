@@ -49,7 +49,7 @@ class AddVariantsForAnalysis(APIView):
 			sample_id = request.data['sample_id']
 			worksheet_id = request.data['worksheet_id']
 			analysis_id = request.data['analysis_id']
-			genome = request.data['Reference']
+			genome = request.data['reference']
 
 		except KeyError:
 
@@ -231,7 +231,7 @@ class AddVariantsForAnalysis(APIView):
 						vep_version = settings.VEP_VERSION_38
 						
 					if created:
-						transcript_variant_obj.vep_version = settings.VEP_VERSION
+						transcript_variant_obj.vep_version = vep_version
 						transcript_variant_obj.save()
 
 					# Find the transcript that VEP has picked
