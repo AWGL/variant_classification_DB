@@ -44,5 +44,8 @@ urlpatterns = [
 
     path('api-token-auth/', rest_views.obtain_auth_token),
     path('api-add-variants/', views.AddVariantsForAnalysis.as_view(), name='add-variants'),
-
+    
+    path('cnv_home/', views.cnv_home, name = 'cnv_home'),
+    path('cnv_pending/', views.cnv_pending, name = 'cnv_pending'),
+    
 ]
