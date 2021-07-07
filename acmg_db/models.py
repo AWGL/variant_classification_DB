@@ -587,6 +587,13 @@ class CNV(models.Model):
 	"""
 	Model to hold CNV information upon upload
 	"""
+	sample_name = models.CharField(max_length=150, default='')  # sample_id only
+	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
+	affected_with = models.TextField()
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
+	analysis_complete = models.BooleanField()
+	genome = models.TextField(default='GRCh37')
+	
 	def __str__(self):
 		return self.name
 
