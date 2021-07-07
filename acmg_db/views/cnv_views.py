@@ -1,4 +1,5 @@
 from io import TextIOWrapper
+import re
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -53,7 +54,7 @@ def cnv_home(request):
 			df, meta_dict = load_cnv(utf_file)
 
 			# Get key information from the dataframe
-			cnvs =  df['ISCN Notation'].unique()
+			cnvs =  df['ISCN Notation'].unique()			
 			
 			worksheet_id = meta_dict.get('worksheet_id')
 			sample_id = meta_dict.get('sample_id')
@@ -64,26 +65,40 @@ def cnv_home(request):
 			worksheet_obj, created = Worklist.objects.get_or_create(
 					name = worksheet_id
 					)
-
 			
-			# add cnv sample
-			try:
-				CNV_obj = CNV.objects.get(sample_name=sample_id,worklist = worksheet_id)
+			# add cnv sample - one for each CNV
+			for cnv in cnvs:
+				
+				#Take anything before p/q as chromosome
+				cnv = cnv.split(" ")
+				pattern = re.compile(r".+(?=p)|.+(?=q)")
+				chrom = pattern.search(cnv[1]).group()
+				
+				#Take numbers in brackets as start/stop
+				start = re.search(r'\((.*?)_', cnv[1]).group(1)
+				stop = re.search(r'_(.*?)\)', cnv[1]).group(1)
+			
+				#Put together to make final CNV
+				final_cnv = chrom+":"+start+"-"+stop
+				
+				try:
+					CNV_obj = CNV.objects.get(sample_name=sample_id,worklist = worksheet_id,cnv=final_cnv)
 
-				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
-				context['error'] = [f'ERROR: {CNV_obj.sample_name_only} has already been uploaded from {worksheet_id}.']
-				return render(request, 'acmg_db/cnv_home.html', context)
+					# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
+					context['error'] = [f'ERROR: {final_cnv} in {CNV_obj.sample_name} has already been uploaded from {worksheet_id}.']
+					return render(request, 'acmg_db/cnv_home.html', context)
 
-			except CNV.DoesNotExist:
-				CNV_obj = CNV.objects.create(
-						sample_name = sample_id,
-						worklist = worksheet_obj,
-						affected_with = affected_with,
-						analysis_performed = panel_obj,
-						analysis_complete = False,
-						genome = genome
-						)
-				CNV_obj.save()
+				except CNV.DoesNotExist:
+					CNV_obj = CNV.objects.create(
+							sample_name = sample_id,
+							worklist = worksheet_obj,
+							affected_with = affected_with,
+							analysis_performed = panel_obj,
+							analysis_complete = False,
+							genome = genome,
+							cnv = final_cnv
+							)
+					CNV_obj.save()
 
 			# Get VEP annotations
 			# Set dictionary depending on Reference genome input from form
@@ -263,4 +278,14 @@ def cnv_home(request):
 @transaction.atomic
 @login_required
 def cnv_pending(request):
-	return render(request, 'acmg_db/cnv_pending.html', {})
+	"""
+	Page to view CNV classifications that havent yet been completed
+
+	Use select_related to perform SQL join for all data we need, so that we only hit the database 
+	once - https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-related
+	"""
+
+	cnvs = CNV.objects.filter(analysis_complete=False)
+
+	return render(request, 'acmg_db/cnv_pending.html', {'cnvs': cnvs})
+

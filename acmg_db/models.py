@@ -593,9 +593,9 @@ class CNV(models.Model):
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	genome = models.TextField(default='GRCh37')
+	cnv = models.TextField()
+	#ADD STATUS
 	
-	def __str__(self):
-		return self.name
 
 
 # register audit logs

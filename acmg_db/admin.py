@@ -61,3 +61,8 @@ class PanelAdmin(admin.ModelAdmin):
     list_display = ('panel', 'added_by',)
     search_fields = ('panel', 'added_by',)
 admin.site.register(Panel, PanelAdmin)
+
+class CNVAdmin(admin.ModelAdmin):
+	list_display = ('id','sample_name','worklist',)
+	search_fields = ('id','sample_name','worklist',)
+admin.site.register(CNV, CNVAdmin)
