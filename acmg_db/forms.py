@@ -90,6 +90,34 @@ class ManualUploadForm(forms.Form):
 			Field('genome', placeholder='Select the version of the reference genome which was used for analysis', title=False),
 		)
 
+class CNVFileUploadForm(forms.Form):
+	"""
+	Form for inputting a CNV file of CNVs from the Cytosure Interpret Software Aberration Report, and adding them to the database
+	"""
+	CNV_file = forms.FileField()
+	panel_applied = forms.ChoiceField()
+	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
+	
+	def __init__(self, *args, **kwargs):
+		
+		self.panel_options = kwargs.pop('options')
+
+		super(CNVFileUploadForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.fields['panel_applied'].choices = self.panel_options
+		self.fields['panel_applied'].help_text = 'Click on Panels in the top bar to add new panels'
+		self.helper.form_id = 'file-upload-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_home')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('CNV_file', placeholder='Select a file to upload', title=False),
+			Field('panel_applied', placeholder='Enter analysis performed', title=False),
+			Field('affected_with', placeholder='Enter what the patient is affected with', title=False)
+		)
 
 # New classification - first check forms ---------------------------------------------------------------
 class SampleInfoForm(forms.Form):

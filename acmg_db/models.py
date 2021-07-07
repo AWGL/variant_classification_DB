@@ -582,6 +582,13 @@ class Evidence(models.Model):
 
 	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
+	
+class CNV(models.Model):
+	"""
+	Model to hold CNV information upon upload
+	"""
+	def __str__(self):
+		return self.name
 
 
 # register audit logs
