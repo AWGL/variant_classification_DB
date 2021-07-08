@@ -583,9 +583,9 @@ class Evidence(models.Model):
 	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
 	
-class CNV(models.Model):
+class CNVSample(models.Model):
 	"""
-	Model to hold CNV information upon upload
+	Model to hold CNV Sample information upon upload
 	"""
 	sample_name = models.CharField(max_length=150, default='')  # sample_id only
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
@@ -593,7 +593,14 @@ class CNV(models.Model):
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	genome = models.TextField(default='GRCh37')
+	
+class CNV(models.Model):	
+	"""
+	Model to hold CNV variant information 
+	"""	
+	sample = models.ForeignKey(CNVSample, on_delete=models.CASCADE)
 	cnv = models.TextField()
+	gain_loss = models.TextField()
 	#ADD STATUS
 	
 

@@ -53,9 +53,7 @@ def cnv_home(request):
 			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
 			df, meta_dict = load_cnv(utf_file)
 
-			# Get key information from the dataframe
-			cnvs =  df['ISCN Notation'].unique()			
-			
+			# Get key information from the metadata
 			worksheet_id = meta_dict.get('worksheet_id')
 			sample_id = meta_dict.get('sample_id')
 			genome = meta_dict.get('genome')		
@@ -66,9 +64,31 @@ def cnv_home(request):
 					name = worksheet_id
 					)
 			
-			# add cnv sample - one for each CNV
-			for cnv in cnvs:
+			# add cnv sample
 				
+			try:
+				CNVSample_obj = CNVSample.objects.get(sample_name=sample_id,worklist = worksheet_id)
+
+				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
+				context['error'] = [f'ERROR: {CNVSample_obj.sample_name} has already been uploaded from {worksheet_id}.']
+				return render(request, 'acmg_db/cnv_home.html', context)
+
+			except CNVSample.DoesNotExist:
+				CNVSample_obj = CNVSample.objects.create(
+						sample_name = sample_id,
+						worklist = worksheet_obj,
+						affected_with = affected_with,
+						analysis_performed = panel_obj,
+						analysis_complete = False,
+						genome = genome
+						)
+				CNVSample_obj.save()
+			
+			# add cnv variant, taking information from dataframe	
+			for index, row in df.iterrows():
+				
+				#Set CNV
+				cnv = row['ISCN Notation']
 				#Take anything before p/q as chromosome
 				cnv = cnv.split(" ")
 				pattern = re.compile(r".+(?=p)|.+(?=q)")
@@ -81,24 +101,15 @@ def cnv_home(request):
 				#Put together to make final CNV
 				final_cnv = chrom+":"+start+"-"+stop
 				
-				try:
-					CNV_obj = CNV.objects.get(sample_name=sample_id,worklist = worksheet_id,cnv=final_cnv)
-
-					# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
-					context['error'] = [f'ERROR: {final_cnv} in {CNV_obj.sample_name} has already been uploaded from {worksheet_id}.']
-					return render(request, 'acmg_db/cnv_home.html', context)
-
-				except CNV.DoesNotExist:
-					CNV_obj = CNV.objects.create(
-							sample_name = sample_id,
-							worklist = worksheet_obj,
-							affected_with = affected_with,
-							analysis_performed = panel_obj,
-							analysis_complete = False,
-							genome = genome,
-							cnv = final_cnv
-							)
-					CNV_obj.save()
+				#Set Gain/Loss
+				gain_loss = row['Gain/Loss']
+				
+				CNV_obj = CNV.objects.create(
+						sample = CNVSample_obj,
+						cnv = final_cnv,
+						gain_loss = gain_loss,
+						)
+				CNV_obj.save()
 
 			# Get VEP annotations
 			# Set dictionary depending on Reference genome input from form
@@ -285,7 +296,7 @@ def cnv_pending(request):
 	once - https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-related
 	"""
 
-	cnvs = CNV.objects.filter(analysis_complete=False)
+	cnvs = CNV.objects.filter(sample__analysis_complete=False)
 
 	return render(request, 'acmg_db/cnv_pending.html', {'cnvs': cnvs})
 

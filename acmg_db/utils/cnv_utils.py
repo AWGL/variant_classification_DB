@@ -49,7 +49,7 @@ def load_cnv(input_file):
 			
 			meta_dict['worksheet_id'] = line[1] 
 		
-		elif line[0].startswith('Sample ID'):
+		elif line[0].startswith('Molecular Number'):
 			
 			meta_dict['sample_id'] = line[1]
 		
@@ -65,11 +65,9 @@ def load_cnv(input_file):
 			
 			continue
 	
-	# reverse data because variant database output is in reverse order
-	data_values = list(reversed(data_values))
-	data_headers = headers[-1]
-	
+	# Set up headers
 	#Add extra column header as data_values has extra blank column at end
+	data_headers = headers[-1]
 	data_headers.append('blank')
 
 	# pull out metadata
