@@ -66,3 +66,8 @@ class CNVSampleAdmin(admin.ModelAdmin):
 	list_display = ('id','sample_name','worklist',)
 	search_fields = ('id','sample_name','worklist',)
 admin.site.register(CNVSample, CNVSampleAdmin)
+
+class CNVAdmin(admin.ModelAdmin):
+	list_display = ('cnv',)
+	search_fields = ('cnv',)
+admin.site.register(CNV, CNVAdmin)

@@ -118,6 +118,50 @@ class CNVFileUploadForm(forms.Form):
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
 			Field('affected_with', placeholder='Enter what the patient is affected with', title=False)
 		)
+		
+class CNVManualUpload(forms.Form):
+	"""
+	Used for inputting individual CNVs into the database
+	"""
+
+	CNV = forms.CharField(max_length=20000)
+	sample_name = forms.CharField(max_length=50)
+	worklist = forms.CharField(max_length=50)
+	panel_applied = forms.ChoiceField()
+	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
+	gain_loss = forms.ChoiceField(
+		choices = (
+			('Gain', 'Gain'),
+			('Loss', 'Loss')
+		)
+	)
+	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
+
+	def __init__(self, *args, **kwargs):
+
+		self.panel_options = kwargs.pop('options')
+
+		super(CNVManualUpload, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'search-data-form'
+		self.fields['panel_applied'].choices = self.panel_options
+		self.fields['panel_applied'].help_text = 'Enter the analysis performed or panel applied. Click on Panels in the top bar to add new analyses/ panels.'
+		self.fields['worklist'].label = 'Worksheet'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_manual')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('CNV', placeholder='Enter the CNV in the format Chr:Start-Stop, e.g. 8:8494182-8753293', title=False),
+			Field('sample_name', placeholder='Enter the Molecular Number, e.g. 19M12345', title=False),
+			Field('worklist', placeholder='Enter a unique identifer for the analysis, such as worksheet ID or Array Barcode', title=False),
+			Field('panel_applied', title=False),
+			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),
+			Field('gain_loss', placeholder='Enter whether the CNV is a gain or loss', title=False),
+			Field('genome', placeholder='Select the version of the reference genome which was used for analysis', title=False),
+		)
 
 # New classification - first check forms ---------------------------------------------------------------
 class SampleInfoForm(forms.Form):

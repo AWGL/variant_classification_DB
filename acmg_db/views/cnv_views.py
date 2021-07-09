@@ -7,7 +7,7 @@ from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-from acmg_db.forms import ManualUploadForm, CNVFileUploadForm
+from acmg_db.forms import CNVFileUploadForm, CNVManualUpload
 from acmg_db.models import *
 from acmg_db.utils.variant_utils import load_worksheet, get_vep_info_local, process_variant_input
 from acmg_db.utils.cnv_utils import load_cnv
@@ -299,4 +299,249 @@ def cnv_pending(request):
 	cnvs = CNV.objects.filter(sample__analysis_complete=False)
 
 	return render(request, 'acmg_db/cnv_pending.html', {'cnvs': cnvs})
+	
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def cnv_manual(request):
+	"""
+	The view for the manual CNV input page.
+
+	Allows users to create a new classification for a CNV.
+	"""
+
+	PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
+
+	form = CNVManualUpload(options=PANEL_OPTIONS)
+	context = {
+		'form': form,
+		'error': [], 
+	}
+
+	
+	if request.POST:
+
+		form = CNVManualUpload(request.POST, options=PANEL_OPTIONS)
+
+		if form.is_valid():
+
+			# get panel
+			analysis_performed_pk = form.cleaned_data['panel_applied'].lower()
+			panel_obj = get_object_or_404(Panel, panel = analysis_performed_pk)
+
+			# get affected with
+			affected_with = form.cleaned_data['affected_with'].strip()
+			
+			#get worksheet
+			worksheet_id = form.cleaned_data['worklist'].strip()
+			
+			#get sample
+			sample_id = form.cleaned_data['sample_name'].strip().upper().replace(' ', '_')
+			# sanitise input
+			for character in list(sample_id):
+				if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_':
+					context = {
+						'form': form,
+						'error': f'Invalid character in sample name field: {character}',
+					}
+					return render(request, 'acmg_db/cnv_manual.html', context)
+					
+			#get gain/loss
+			gain_loss = form.cleaned_data['gain_loss']
+			
+			# get reference genome
+			genome = form.cleaned_data['genome']
+
+			# get CNV
+			final_cnv = form.cleaned_data['CNV'].strip()
+			# sanitise input
+			for character in list(final_cnv):
+				if character not in 'ACGT0123456789XYM-:':
+					context = {
+						'form': form,
+						'error': f'Invalid character in CNV field: {character}',
+					}
+					return render(request, 'acmg_db/cnv_manual.html', context)
+			
+			# add worksheet
+			worksheet_obj, created = Worklist.objects.get_or_create(
+					name = worksheet_id
+					)
+			
+			# add cnv sample
+				
+			try:
+				CNVSample_obj = CNVSample.objects.get(sample_name=sample_id,worklist = worksheet_id)
+
+				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
+				context['error'] = [f'ERROR: {CNVSample_obj.sample_name} has already been uploaded from {worksheet_id}.']
+				return render(request, 'acmg_db/cnv_home.html', context)
+
+			except CNVSample.DoesNotExist:
+				CNVSample_obj = CNVSample.objects.create(
+						sample_name = sample_id,
+						worklist = worksheet_obj,
+						affected_with = affected_with,
+						analysis_performed = panel_obj,
+						analysis_complete = False,
+						genome = genome
+						)
+				CNVSample_obj.save()
+			
+			# add cnv variant object	
+			CNV_obj = CNV.objects.create(
+					sample = CNVSample_obj,
+					cnv = final_cnv,
+					gain_loss = gain_loss,
+					)
+			CNV_obj.save()
+
+			"""
+			# Get VEP annotations
+			if genome == "GRCh37":
+				vep_info_dict = {
+					'reference_genome' : settings.REFERENCE_GENOME_37,
+					'vep_cache': settings.VEP_CACHE_37,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_37,
+					'version': settings.VEP_VERSION_37
+				}
+			elif genome == "GRCh38":
+				vep_info_dict = {
+					'reference_genome': settings.REFERENCE_GENOME_38,
+					'vep_cache': settings.VEP_CACHE_38,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_38,
+					'version': settings.VEP_VERSION_38
+				}
+
+			try:
+				variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
+			except:
+
+				context = {
+					'form': form,
+					'error': 'VEP annotation failed. Are you sure this a correct variant? Are you sure the correct reference genome has been selected?',
+				}
+				return render(request, 'acmg_db/manual_input.html', context)
+
+
+			# Loop through each variant and add to the database
+			for variant in variant_annotations:
+
+				var = variant[1]
+				variant_data = process_variant_input(var)
+
+				variant_hash = variant_data[0]
+				chromosome = variant_data[1]
+				position = variant_data[2]
+				ref = variant_data[3]
+				alt = variant_data[4]
+					
+				variant_obj, created = Variant.objects.get_or_create(
+						variant_hash = variant_hash,
+						chromosome = chromosome,
+						position = position,
+						ref = ref,
+						alt = alt,
+						genome = genome,
+						)
+
+				if 'transcript_consequences' in variant[0]:
+
+					consequences = variant[0]['transcript_consequences']
+
+				elif 'intergenic_consequences' in variant[0]:
+
+					consequences = variant[0]['intergenic_consequences']
+
+				else:
+
+					raise Exception(f'Could not get the consequences for variant {variant}')
+
+				selected = None
+
+				# Loop through each consequence/transcript
+				for consequence in consequences:
+
+					if 'transcript_id' in consequence:
+
+						transcript_id = consequence['transcript_id']
+
+					else:
+
+						transcript_id = 'None'
+
+					transcript_hgvsc = consequence.get('hgvsc')
+					transcript_hgvsp = consequence.get('hgvsp')
+					gene_symbol = consequence.get('gene_symbol', 'None')
+					exon = consequence.get('exon', 'NA')
+					impact = consequence.get('consequence_terms')
+					impact = '|'.join(impact)
+
+
+					gene_obj, created = Gene.objects.get_or_create(
+						name = gene_symbol
+						)
+
+					transcript_obj, created = Transcript.objects.get_or_create(
+							name = transcript_id,
+							gene = gene_obj
+						)
+
+					transcript_variant_obj, created = TranscriptVariant.objects.get_or_create(
+						variant = variant_obj,
+						transcript = transcript_obj,
+						hgvs_c = transcript_hgvsc,
+						hgvs_p = transcript_hgvsp,
+						exon = exon,
+						consequence = impact
+						)
+
+					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+					if genome == "GRCh37":
+						vep_version = settings.VEP_VERSION_37
+					elif genome == "GRCh38":
+						vep_version = settings.VEP_VERSION_38
+					
+					if created:
+						transcript_variant_obj.vep_version = vep_version
+						transcript_variant_obj.save()
+
+					# Find the transcript that VEP has picked
+					if 'pick' in consequence:
+
+						selected = transcript_variant_obj
+
+				new_classification_obj = Classification.objects.create(
+					variant= variant_obj,
+					sample = sample_obj,
+					creation_date = timezone.now(),
+					user_creator = request.user,
+					status = '0',
+					is_trio_de_novo = False,
+					first_final_class = '7',
+					second_final_class = '7',
+					selected_transcript_variant = selected,
+					genotype = genotype,
+					guideline_version=guideline_version,
+					vep_version=vep_version,
+					genome=genome,
+					)
+
+				new_classification_obj.save()
+			"""
+			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
+			params = '?worksheet={}&sample={}&panel={}'.format(worksheet_id, sample_id, analysis_performed_pk)
+
+			context = {
+					'form': form, 
+					'success': success,
+					'params': params
+					}
+	
+	
+
+	return render(request, 'acmg_db/cnv_manual.html', context)
+
 
