@@ -100,28 +100,25 @@
 	<tr>
 	  <td style="display:none;">{{ cnv.sample.pk }}</td>
 	  <td>
-		STATUS
-		<!---	  
-		{% if classification.status == '0' %}
-		<a href="{% url 'first_check' pk=classification.pk %}">First Check</a>
-		{% elif classification.status == '1' %}
-		<a href="{% url 'second_check' pk=classification.pk %}">Second Check</a>
-		{% elif classification.status == '2' %}
+		{% if cnv.status == '0' %}
+		<a href="{% url 'cnv_first_check' pk=cnv.pk %}">First Check</a>
+		{% elif cnv.status == '1' %}
+		<a href="{% url 'cnv_second_check' pk=cnv.pk %}">Second Check</a>
+		{% elif cnv.status == '2' %}
 		Completed
-		{% elif classification.status == '3' %}
+		{% elif cnv.status == '3' %}
 		Archived
 		{% else %}
 		Unknown
 		{% endif %}
-		-->
 	  </td>
 	  <td>{{ cnv.sample.worklist }}</td>
 	  <td>{{ cnv.sample.sample_name }}</td>
 	  <td>
 	  {% if cnv.sample.genome == 'GRCh37' %}
-	  {{ cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+	  	{{ cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
 	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  {{ cnv.cnv }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  	{{ cnv.cnv }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
 	  {% endif %}
 	  </td>
 	  <td>{{ cnv.gain_loss }}</td>
@@ -133,7 +130,15 @@
 	  <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
 	  </td>
 	  <td>CLASSIFICATION</td>
-	  <td>ASSIGNED</td>
+	  <td>
+	  {% if cnv.status == '0' %}
+	  	{{ cnv.user_first_checker}}
+	  {% elif cnv.status == '1' %}
+		{{ cnv.user_second_checker}}
+	  {% else %}
+		None
+	  {% endif %}
+	  </td>
 	</tr>
 	{% endfor %}
   </tbody>

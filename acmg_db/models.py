@@ -598,11 +598,14 @@ class CNV(models.Model):
 	"""
 	Model to hold CNV variant information 
 	"""	
+	STATUS_CHOICES = (('0', 'First Check'), ('1', 'Second Check'), ('2', 'Complete'), ('3', 'Archived'))
+	
 	sample = models.ForeignKey(CNVSample, on_delete=models.CASCADE)
 	cnv = models.TextField()
 	gain_loss = models.TextField()
-	#ADD STATUS
-	
+	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
+	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_first_checker')
+	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_second_checker')
 
 
 # register audit logs

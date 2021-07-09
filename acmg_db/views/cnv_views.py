@@ -91,13 +91,20 @@ def cnv_home(request):
 				cnv = row['ISCN Notation']
 				#Take anything before p/q as chromosome
 				cnv = cnv.split(" ")
-				pattern = re.compile(r".+(?=p)|.+(?=q)")
-				chrom = pattern.search(cnv[1]).group()
+				#Had a case where chromosome arm appeared twice so need to handle that. 
+				if cnv[1].count('p') != 1 or cnv[1].count('q') != 1:
+					r = re.search(".+(?=p)|.+(?=q)", cnv[1])
+					chrom = r.group(0)
+				else:
+					pattern = re.compile(r".+(?=p)|.+(?=q)")
+					chrom = pattern.search(cnv[1]).group()
 				
 				#Take numbers in brackets as start/stop
 				start = re.search(r'\((.*?)_', cnv[1]).group(1)
 				stop = re.search(r'_(.*?)\)', cnv[1]).group(1)
-			
+				
+				
+				
 				#Put together to make final CNV
 				final_cnv = chrom+":"+start+"-"+stop
 				
@@ -393,6 +400,7 @@ def cnv_manual(request):
 					sample = CNVSample_obj,
 					cnv = final_cnv,
 					gain_loss = gain_loss,
+					status = 0
 					)
 			CNV_obj.save()
 

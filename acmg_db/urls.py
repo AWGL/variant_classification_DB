@@ -48,5 +48,7 @@ urlpatterns = [
     path('cnv_home/', views.cnv_home, name = 'cnv_home'),
     path('cnv_pending/', views.cnv_pending, name = 'cnv_pending'),
     path('cnv_manual/', views.cnv_manual, name = 'cnv_manual'),
+    path('cnv_first_check/<int:pk>', views.cnv_first_check, name = 'cnv_first_check'),
+    path('cnv_second_check/<int:pk>', views.cnv_second_check, name = 'cnv_second_check'),
     
 ]
