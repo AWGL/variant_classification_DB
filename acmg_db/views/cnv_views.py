@@ -92,9 +92,14 @@ def cnv_home(request):
 				#Take anything before p/q as chromosome
 				cnv = cnv.split(" ")
 				#Had a case where chromosome arm appeared twice so need to handle that. 
+				#Unable to get regular expression matching to work, so instead will split based on p/q
 				if cnv[1].count('p') != 1 or cnv[1].count('q') != 1:
-					r = re.search(".+(?=p)|.+(?=q)", cnv[1])
-					chrom = r.group(0)
+					if 'p' in cnv[1]:
+						r  = cnv[1].split("p")
+						chrom = r[0]
+					elif 'q' in cnv[1]:
+						r = cnv[1].split("q")
+						chrom = r[0]	
 				else:
 					pattern = re.compile(r".+(?=p)|.+(?=q)")
 					chrom = pattern.search(cnv[1]).group()
