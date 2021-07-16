@@ -14,7 +14,7 @@ from acmg_db.models import *
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
-def ajax_acmg_classification_second(request):
+def ajax_acmg_cnv_classification_second(request):
 	"""
 	Gets the ajax results from the new_classifcations.html page \
 	and stores them in the database - also returns the calculated result.

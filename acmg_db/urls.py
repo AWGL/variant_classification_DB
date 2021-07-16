@@ -50,5 +50,7 @@ urlpatterns = [
     path('cnv_manual/', views.cnv_manual, name = 'cnv_manual'),
     path('cnv_first_check/<int:pk>', views.cnv_first_check, name = 'cnv_first_check'),
     path('cnv_second_check/<int:pk>', views.cnv_second_check, name = 'cnv_second_check'),
+    path('ajax/acmg_cnv_classification_first/', views.ajax_acmg_cnv_classification_first, name='ajax_acmg_cnv_classification_first'),
+    path('ajax/acmg_cnv_classification_second/', views.ajax_acmg_cnv_classification_second, name='ajax_acmg_cnv_classification_second'),
     
 ]

@@ -618,6 +618,8 @@ class CNV(models.Model):
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
 	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_first_checker')
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_second_checker')
+	first_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
+	second_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
 	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '7')
 	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '7')  # The actual one we want to display.
 	
@@ -705,7 +707,50 @@ class CNV(models.Model):
 				return HttpResponseForbidden()
 	
 			return None
+	
+	def calculate_acmg_score_first(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+		Calculates based on the first user's input.
+		Output:
+		integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
+		"""
+		
+		if self.gain_loss == 'Gain':
+			# pull out all classification questions and answers
+			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return '7'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score
+
+			return final_score
+		
+		elif self.gain_loss == 'Loss':
 			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return '7'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score
+
+			return final_score
 			
 class CNVLossClassificationQuestion(models.Model):
 	"""
@@ -716,9 +761,9 @@ class CNVLossClassificationQuestion(models.Model):
 	"""
 
 	CATEGORY_CHOICES = (('Section 1: Initial assessment of genomics content', '1'), 
-						('Section 2: Overlap with established/predicted haploinsufficiency (HI) or established benign genes/genomic regions (Skip to Section 3 if your copy-number loss DOES NOT overlap these types of genes/regions', '2'),
+						('Section 2: Overlap with established/predicted haploinsufficiency (HI) or established benign genes/genomic regions (Skip to Section 3 if your copy-number loss DOES NOT overlap these types of genes/regions)', '2'),
 						('Section 3: Evaluation of Gene Number', '3'),
-						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if either your CNV overlapped with an established HI gene/region in section 2, OR there have been no reports associating either the CNV or any genes within the CNV with human phenotypes caused by loss of function [LOF] or copy-number loss', '4'),
+						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if either your CNV overlapped with an established HI gene/region in section 2, OR there have been no reports associating either the CNV or any genes within the CNV with human phenotypes caused by loss of function [LOF] or copy-number loss)', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
 						)
 		

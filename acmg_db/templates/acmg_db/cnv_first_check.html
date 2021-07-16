@@ -233,13 +233,13 @@
 		<br>
 		<br>	
 		
-		<!-- Table listing all ACMG codes and option to apply them -->
 		{% if cnv.gain_loss == 'Gain' %}
 			<h5>Copy Number Gain</h5>
 		{% elif cnv.gain_loss == 'Loss' %}
 			<h5>Copy Number Loss</h5>
 		{% endif %}
 		
+		<!-- Table listing all ACMG codes and option to apply them -->
 		<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
 
                 <thead>
@@ -262,20 +262,20 @@
 		  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
 		  <td class='cat' style="display:none;"> {{ answer.cnv_classification_question.category}}</td>
 		  
-		  <!-- Visibile columns -->
+		  <!-- Visible columns -->
 		  <td class='question' style="width: 15.00%"> {{ answer.cnv_classification_question.evidence_type }}</td>
 		  <td class='description' style="width: 24.00%"> {{ answer.cnv_classification_question.evidence | safe }}</td>
 		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
-		  <td class='description' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score}}"> </td>
+		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score}}"> </td>
 		  <!-- Comments box -->
 			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment}}"></td>
 		</tr>	
+	  	{% endfor %}
 	  	</tbody>
-		{% endfor %}
 		</table>
 		
-		<p>TOTAL SCORE {{ score }}</p>
+		<p>TOTAL SCORE {{ result }}</p>
 		
 	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
 
@@ -398,30 +398,18 @@ $(document).ready(function(){
 				if ($(rows[i]).hasClass('dtrg-group') == false){
 
 				var pk = $(rows[i]).children('td.answer_pk').text();
-				// allow either select drop downs or plain text
-				var type = $(rows[i]).children('td.strength').children().is("select")
-				if (type == true){
-
-					var strength = $(rows[i]).children('td.strength').children().val()
-
-				} else {
-
-					var strength = $.trim($(rows[i]).children('td.strength').text());
-				}
-
-				var question  = $(rows[i]).children('td.question').text().trim();
-				var selected = $(rows[i]).children('td.selected_first').children().val();
+				var score = $(rows[i]).children('td.score').children().val();
 				var comment = $(rows[i]).children('td.comment').children().val();
-				console.log(pk, question, strength, selected, comment)
-				classification_dict[pk] = [question, strength, selected, comment];
+				console.log(pk, score, comment)
+				classification_dict[pk] = [score, comment];
 			}}
 
 		var formData = new FormData();
 		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
-		formData.append('classifications', JSON.stringify(classification_dict));
-		formData.append('classification_pk', "{{classification.pk}}" );
+		formData.append('cnvs', JSON.stringify(classification_dict));
+		formData.append('cnv_pk', "{{cnv.pk}}" );
 		$.ajax({
-			url: '/ajax/acmg_classification_first/',
+			url: '/ajax/acmg_cnv_classification_first/',
 			type: 'POST',
 			data: formData,
 			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
