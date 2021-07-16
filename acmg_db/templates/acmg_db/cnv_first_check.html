@@ -57,11 +57,10 @@
 				<td>{{ cnv.cnv}} <br> 
 				{% if cnv.sample.genome == 'GRCh37' %}
 					<span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
-				{% elif classification.genome == 'GRCh38' %}
+				{% elif cnv.sample.genome == 'GRCh38' %}
 					<span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
 					{% endif %}
-				<td>CLASSIFICATION
-					<!---
+				<td>
 					<div id="class_box">
 					{% if 'Pathogenic' in result %}
 						<button type="button" class="btn btn-danger" style="width: 100%;">{{result}}</span></button>
@@ -77,9 +76,8 @@
 						<button type="button" class="btn btn-light" style="width: 100%;">{{result}}</button>
 					{% endif %}
 					</div>
-					-->
 				</td>
-				<td>CLASSIFICATION DISPLAY STATUS</td>
+				<td>{{ cnv.display_status }}</td>
 			</tr>
 		</tbody>
 
@@ -87,13 +85,209 @@
 	<hr>
 </div>
 
+<!-- TABS FOR CLASSIFICATION SECTIONS -->
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+	<a class="nav-item nav-link active" id="nav-sample-tab" data-toggle="tab" href="#nav-sample" role="tab" aria-controls="nav-sample" aria-selected="true">Sample Information</a>
+	<a class="nav-item nav-link" id="nav-cnv-tab" data-toggle="tab" href="#nav-cnv" role="tab" aria-controls="nav-cnv" aria-selected="true">CNV Information</a>
+	<a class="nav-item nav-link" id="nav-acmg-tab" data-toggle="tab" href="#nav-acmg" role="tab" aria-controls="nav-acmg" aria-selected="false">ACMG Criteria</a>
+	<a class="nav-item nav-link" id="nav-evidence-tab" data-toggle="tab" href="#nav-evidence" role="tab" aria-controls="nav-evidence" aria-selected="false">Evidence/Comments</a>
+	<a class="nav-item nav-link" id="nav-audit-tab" data-toggle="tab" href="#nav-audit" role="tab" aria-controls="nav-audit" aria-selected="false">Finalise</a>	
+</div>
+</nav>
+
+<!-- START OF CLASSIFICATION SECTIONS -->
+<div class="tab-content" id="nav-tabContent">
+
+  <!-- SAMPLE INFORMATION SECTION -->
+  <div class="tab-pane fade show active" id="nav-sample" role="tabpanel" aria-labelledby="nav-sample-tab">
+  <br>
+
+	<!-- Summary table for classification-->
+	<h5>Sample information</h5>
+  	<table id="classification_info" class="table table-hover table-bordered table-sm col-10">
+	
+	<thead>
+	</thead>
+	
+	<tbody>
+      		<tr>
+        		<td style="width: 25.00%" class="col-2">Sample ID</td>
+        		<td style="width: 75.00%" class="col-8">{{ cnv.sample.sample_name }}</td>
+      		</tr>
+      		<tr>
+        		<td>Worksheet</td>
+        		<td>{{ cnv.sample.worklist }}</td>
+		</tr>
+      		<tr>
+        		<td>Panel Applied</td>
+        		<td>{{ cnv.sample.analysis_performed|linebreaksbr }}</td>
+		</tr>
+		<tr>
+			<td>Affected With</td>
+			<td>{{ cnv.sample.affected_with|linebreaksbr }}</td>
+		</tr> 
+ 
+	</tbody>
+	
+	</table>
+	
+	<!-- Expandable box containing preset filters -->
+	<!-- Button to expand/hide the filter table -->
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-sample-info" role="button" aria-expanded="false" aria-controls="edit-sample-info">
+		Edit
+	</button>
+	<br>
+	<div class="collapse" id="edit-sample-info">
+		<br>
+		<div class="card card-body bg-light col-10">
+			<!--SAMPLE EDIT FORM NOT WORKING! UPDATE LATER -->
+		</div>
+	</div>
+	
+	<br>
+	</div>
+
+	<!-- CNV INFORMATION SECTION -->
+	<div class="tab-pane fade" id="nav-cnv" role="tabpanel" aria-labelledby="nav-cnv-tab">
+	<br>
+
+
+	<!-- CNV information table -->
+	<h5>CNV information</h5>
+	<table class="table table-hover table-bordered table-sm col-10">
+	
+			<thead>
+			</thead>
+		
+			<tbody>
+				<tr>
+					<td  style="width: 25.00%" class="col-2">CNV</td>
+					{% if cnv.sample.genome == 'GRCh37' %}
+					<td style="width: 75.00%" class="col-8">{{ cnv.cnv }} <span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
+					{% elif cnv.sample.genome == 'GRCh38' %}
+					<td style="width: 75.00%" class="col-8">{{ cnv.cnv }} <span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
+					{% endif %}
+				</tr>
+				<tr>
+					<td>Gain/Loss</td>
+					<td>{{ cnv.gain_loss }}</td>
+				</tr>
+				<tr>
+					<td>Genes</td>
+					<td>GENES</td>
+				</tr>
+				<tr>
+					<td>Gene inheritence pattern</td>
+					<td>Inheritance
+					<!--
+					{% if classification.selected_transcript_variant.transcript.gene.inheritance_pattern %}
+						{{ classification.selected_transcript_variant.transcript.gene.all_inheritance_patterns}}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					-->
+					</td>
+				</tr> 
+				<tr>
+					<td>Conditions associated with gene</td>
+					<td>
+					<!--
+					{% if classification.selected_transcript_variant.transcript.gene.conditions %}
+						{{ classification.selected_transcript_variant.transcript.gene.conditions }}
+					{% else %}
+						<span class="badge badge-danger">Empty - edit below</span>
+					{% endif %}
+					-->
+					</td>
+				</tr>  
+			</tbody>
+		
+		</table>
+		
+		<!-- NEED TO ADD FORM FOR UPDATING INFORMATION -->
+		<!-- NEED TO ADD PREVIOUS CLASSIFICATIONS BOX -->
+
+		<!-- Genuine/ artefact sections section-->
+		{% if cnv.display_classification == '0' %}
+			<h5>Is this a genuine variant?</h5>
+			<!-- {% crispy genuine_form %} -->
+			<br>
+	
+		{% else %}
+			<div class="alert alert-warning col-10" role="alert">
+			This Classification has been set as DISPLAY CLASSIFICATION. To change this you will need to reset the classification.
+			</div>
+
+	{% endif %}
+
+	</div>
+	
+	<!-- ACMG RULES SECTION -->
+  	<div class="tab-pane fade" id="nav-acmg" role="tabpanel" aria-labelledby="nav-acmg-tab">
+	<br>
+	
+		<!-- Button to recalculate the classification -->
+		<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
+	
+		<br>
+		<br>	
+		
+		<!-- Table listing all ACMG codes and option to apply them -->
+		{% if cnv.gain_loss == 'Gain' %}
+			<h5>Copy Number Gain</h5>
+		{% elif cnv.gain_loss == 'Loss' %}
+			<h5>Copy Number Loss</h5>
+		{% endif %}
+		
+		<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+
+                <thead>
+		<tr>
+		  <th style="display:none;" class='answer_pk'> Answer PK </th>
+		  <th style="display:none;" class='cat'> Category </th>
+		  <th style="width: 15.00%" class='question'> Evidence type  </th>
+		  <th style="width: 24.00%" class='description'> Evidence Description </th>
+		  <th style="width: 15.00%" class='strength'> Suggested points/case </th>
+		  <th style="width: 5.00%" class='selected_first'> Max score </th>
+		  <th style="width: 5.00%" class='comment'> Allocated score </th>
+		  <th style="width: 36.00%" class='comment'> Comment </th>
+		</tr>
+	  	</thead>
+
+	  	<tbody>
+	  	<tr>
+	  	  {% for answer in answers %}
+	  	  <!-- Hidden columns for rendering table sections properly -->
+		  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+		  <td class='cat' style="display:none;"> {{ answer.cnv_classification_question.category}}</td>
+		  
+		  <!-- Visibile columns -->
+		  <td class='question' style="width: 15.00%"> {{ answer.cnv_classification_question.evidence_type }}</td>
+		  <td class='description' style="width: 24.00%"> {{ answer.cnv_classification_question.evidence | safe }}</td>
+		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
+		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
+		  <td class='description' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score}}"> </td>
+		  <!-- Comments box -->
+			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+		</tr>	
+	  	</tbody>
+		{% endfor %}
+		</table>
+		
+		<p>TOTAL SCORE {{ score }}</p>
+		
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
+
+	<br>
+	<br>
+
+	</div>
+		
+<!-- END OF CLASSIFICATION SECTIONS -->
+</div>
+	
 <!------------------------------------- END OF HTML ------------------------------------->
-
-
-<script>
-$(document).ready(function(){
-
-</script>
 
 
 

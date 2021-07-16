@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import SampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm
+from acmg_db.forms import CNVSampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -51,16 +51,26 @@ def cnv_first_check(request, pk):
 		# Get data to render form
 		#previous_classifications = Classification.objects.filter(variant=variant,genome=classification.sample.genome, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
 		#previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
-		#answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
+		if cnv.gain_loss == "Gain":
+			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+			if len(answers) == 0:
+				cnv.initiate_classification()
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+		elif cnv.gain_loss == "Loss":
+			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+			if len(answers) == 0:
+				cnv.initiate_classification()
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 		#comments = UserComment.objects.filter(classification=classification, visible=True)
-		#result = classification.display_first_classification()  # current class to display
+		result = cnv.display_classification()  # current class to display
 
 		# make empty instances of forms
-		#sample_form = SampleInfoForm(classification_pk=classification.pk, options=PANEL_OPTIONS)
+		#sample_form = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
 		#transcript_form = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		#variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		#genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
 		#finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
+		score = 0
 
 		# dict of data to pass to view
 		context = {
@@ -68,38 +78,41 @@ def cnv_first_check(request, pk):
 			'cnv': cnv,
 			#'previous_classifications': previous_classifications,
 			#'previous_full_classifications': previous_full_classifications,
-			#'answers': answers,
+			'answers': answers,
 			#'comments': comments,
-			#'result': result,
+			'result': result,
 			#'sample_form': sample_form,
 			#'transcript_form': transcript_form,
 			#'variant_form': variant_form,
 			#'genuine_form': genuine_form,
 			#'finalise_form': finalise_form,
+			'score': score,
 			'warn': []
 		}
-	"""	
-		#-----------------------------------------------
+		#-------
+		
+		"""
 		# if a form is submitted
 		if request.method == 'POST':
 
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 
-				sample_form = SampleInfoForm(request.POST, classification_pk=classification.pk, options=PANEL_OPTIONS)
+				sample_form = CNVSampleInfoForm(request.POST, cnv_pk=cnv.pk, options=PANEL_OPTIONS)
 
 				# load in data
 				if sample_form.is_valid():
 
 					cleaned_data = sample_form.cleaned_data
-					sample = classification.sample
+					sample = cnv.sample
 					sample.affected_with =  cleaned_data['affected_with']
 					sample.other_changes = cleaned_data['other_changes']
 					sample.save()
 					
 				# reload dict variables for rendering
-				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['sample_form'] = SampleInfoForm(classification_pk=classification.pk, options=PANEL_OPTIONS)
+				context['cnv'] = get_object_or_404(CNV, pk=pk)
+				context['sample_form'] = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
+				
 
 			# TranscriptForm
 			if 'select_transcript' in request.POST:

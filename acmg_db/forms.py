@@ -198,6 +198,35 @@ class SampleInfoForm(forms.Form):
 			Field('other_changes'),
 		)
 
+class CNVSampleInfoForm(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient for the first check
+	"""
+
+	affected_with = forms.CharField(widget=forms.Textarea)
+
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+		self.sample = self.CNV.sample
+		self.options = kwargs.pop('options')
+
+		super(CNVSampleInfoForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['affected_with'].initial = self.sample.affected_with
+		self.fields['affected_with'].widget.attrs['rows'] = 2
+		self.helper.form_id = 'cnvsample-information-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('first_check',kwargs={'pk':self.cnv_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('affected_with'),
+		)
 
 class TranscriptForm(forms.Form):
 	"""

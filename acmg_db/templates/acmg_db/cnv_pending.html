@@ -129,7 +129,34 @@
 	  <br>
 	  <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
 	  </td>
-	  <td>CLASSIFICATION</td>
+	  <td>
+		{% if 'Benign' in cnv.display_classification %}
+		<a class="btn btn-info btn-sm" href="{}" role="button"> 
+		{% elif 'Pathogenic' in cnv.display_classification %}
+		<a class="btn btn-danger btn-sm" href="{}" role="button"> 
+		{% elif 'VUS' in cnv.display_classification %}
+		<a class="btn btn-warning btn-sm" href="{}" role="button"> 
+		{% elif 'Artefact' in cnv.display_classification %}
+		<a class="btn btn-secondary btn-sm" href="{}" role="button"> 
+		{% elif 'Contradictory' in cnv.display_classification %}
+         	<a class="btn btn-primary btn-sm" href="{}" role="button"> 
+        	{% elif 'Pending' in cnv.display_classification %}
+
+        		{% if cnv.status == '1' %}
+		        <a class="btn btn-light btn-sm" data-toggle="tooltip" data-placement="top" title="First Analysis: {{classification.display_first_classification}}" href="{% url 'view_classification' pk=classification.pk %}" role="button">
+
+	        	{% else %}
+
+		        <a class="btn btn-light btn-sm" href="{}" role="button">
+
+	        	{% endif %}
+
+		{% else %}
+                <a class="btn btn-light btn-sm" href="{}" role="button">
+		{% endif %}
+		<span class="fa fa-binoculars" ></span>  {{ cnv.display_classification}}
+		</a>
+	  </td>
 	  <td>
 	  {% if cnv.status == '0' %}
 	  	{{ cnv.user_first_checker}}

@@ -71,3 +71,18 @@ class CNVAdmin(admin.ModelAdmin):
 	list_display = ('cnv',)
 	search_fields = ('cnv',)
 admin.site.register(CNV, CNVAdmin)
+
+class CNVLossClassificationQuestionAdmin(admin.ModelAdmin):
+	list_display = ('category','evidence_type','evidence',)
+	search_fields = ('category','evidence_type','evidence',)
+admin.site.register(CNVLossClassificationQuestion, CNVLossClassificationQuestionAdmin)
+
+class CNVGainClassificationQuestionAdmin(admin.ModelAdmin):
+	list_display = ('category','evidence_type','evidence',)
+	search_fields = ('category','evidence_type','evidence',)
+admin.site.register(CNVGainClassificationQuestion, CNVGainClassificationQuestionAdmin)
+
+class CNVLossClassificationAnswerAdmin(admin.ModelAdmin):
+	list_display = ('cnv','cnv_classification_question',)
+	search_fields = ('cnv','cnv_classification_question',)
+admin.site.register(CNVLossClassificationAnswer, CNVLossClassificationAnswerAdmin)
