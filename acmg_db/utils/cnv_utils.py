@@ -86,3 +86,82 @@ def load_cnv(input_file):
 
 
 	return df, meta_dict
+
+#------------------------------------------------
+def process_cnv_input(cnv_input):
+	"""
+	Split the inputted cnv e.g. 8:8494182-8753293 into it's components.
+
+	"""
+
+	chromosome = cnv_input.split(':')[0]
+
+	start = (cnv_input.split(':')[1]).split('-')[0]
+
+	end = (cnv_input.split(':')[1]).split('-')[1]
+
+	return ([chromosome, start, end])
+
+	
+#------------------------------------------------
+def get_vep_info_local_cnv(cnv_list, vep_info, sample):
+	"""
+	Annotate the CNVs in cnv_list with a local installation of vep.
+
+	Input:
+
+	CNV_list = A list of variants e.g ['8:8494182-8753293', '8:61591393-61592346' ]
+	vep_info = A dictionary containing information about vep. For example executable location
+	sample = The sample ID
+
+	"""
+
+	# Make a vcf for input into vep
+
+	vcf_list = []
+	temp_dir = vep_info['temp_dir']
+	reference_genome = vep_info['reference_genome']
+	vep_cache = vep_info['vep_cache']
+	assembly = vep_info['assembly']
+	vep_version = vep_info['version']
+	random_int = random.randint(1,10000)
+
+	vcf_file_name = f'{temp_dir}/{sample}_{random_int}.vcf'
+
+	# For each variant process it and append to list
+	for cnv in cnv_list:
+
+		variant_info = process_cnv_input(cnv)
+
+		vcf_list.append(variant_info)
+		
+	# Write a temporary vcf for later vep annotation
+	with open(vcf_file_name, 'w') as csvfile:
+
+		for row in vcf_list:
+			
+			csvfile.write("%s\t%s\t.\t.\t<CNV>\t.\t.\tSNVTYPE=CNV;END=%s\t.\n" % (row[0],row[1],row[2]))
+
+	# Run vep
+
+	command = f'source  ~/miniconda3/bin/activate acmg_db && vep --input_file {vcf_file_name} --format vcf -o stdout --cache --offline --no_check_variants_order --assembly {assembly} --fasta {reference_genome} --refseq --dir {vep_cache} --flag_pick --species homo_sapiens --check_ref --cache_version {vep_version} --json --numbers  --symbol --hgvs --no_stats --exclude_predicted --max_sv_size 1000000000000'
+	result = subprocess.check_output(command, shell=True, executable='/bin/bash')
+
+	# Collect output and put into json
+	result = result.decode("utf-8") 
+	file = io.StringIO(result)
+
+	vep_anno_list = []
+
+	for variant, original in zip(file,cnv_list):
+
+		vep_anno_list.append([json.loads(variant), original])
+
+	if len(vep_anno_list) != len(cnv_list):
+
+		raise Exception('VEP annotation failed - annotated variant list is not the same length as original list. Did you select the correct reference genome?')
+
+	os.remove(vcf_file_name)
+
+	return vep_anno_list
+

@@ -9,8 +9,8 @@ from django.utils import timezone
 
 from acmg_db.forms import CNVFileUploadForm, CNVManualUpload
 from acmg_db.models import *
-from acmg_db.utils.variant_utils import load_worksheet, get_vep_info_local, process_variant_input
-from acmg_db.utils.cnv_utils import load_cnv
+from acmg_db.utils.variant_utils import load_worksheet,  process_variant_input
+from acmg_db.utils.cnv_utils import load_cnv, get_vep_info_local_cnv
 from acmg_db.utils.acmg_classifier import guideline_version
 
 #--------------------------------------------------------------------------------------------------
@@ -84,6 +84,7 @@ def cnv_home(request):
 						)
 				CNVSample_obj.save()
 			
+			unique_cnvs = []
 			# add cnv variant, taking information from dataframe	
 			for index, row in df.iterrows():
 				
@@ -122,31 +123,37 @@ def cnv_home(request):
 						gain_loss = gain_loss,
 						)
 				CNV_obj.save()
-
+				
+				if final_cnv not in unique_cnvs:
+					unique_cnvs.append(final_cnv)
+					
 			# Get VEP annotations
 			# Set dictionary depending on Reference genome input from form
-			#if genome == "GRCh37":
-			#	vep_info_dict = {
-			#		'reference_genome' : settings.REFERENCE_GENOME_37,
-			#		'vep_cache': settings.VEP_CACHE_37,
-			#		'temp_dir': settings.VEP_TEMP_DIR,
-			#		'assembly': settings.ASSEMBLY_37,
-			#		'version': settings.VEP_VERSION_37
-			#	}
-			#elif genome == "GRCh38":
-			#	vep_info_dict = {
-			#		'reference_genome': settings.REFERENCE_GENOME_38,
-			#		'vep_cache': settings.VEP_CACHE_38,
-		#			'temp_dir': settings.VEP_TEMP_DIR,
-		#			'assembly': settings.ASSEMBLY_38,
-		#			'version': settings.VEP_VERSION_38
-		#		}
-#
-#			variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
-#
-#			# Loop through each variant and add to the database
-#			for variant in variant_annotations:
-#
+			if genome == "GRCh37":
+				vep_info_dict = {
+					'reference_genome' : settings.REFERENCE_GENOME_37,
+					'vep_cache': settings.VEP_CACHE_37,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_37,
+					'version': settings.VEP_VERSION_37
+				}
+			elif genome == "GRCh38":
+				vep_info_dict = {
+					'reference_genome': settings.REFERENCE_GENOME_38,
+					'vep_cache': settings.VEP_CACHE_38,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_38,
+					'version': settings.VEP_VERSION_38
+				}
+
+			variant_annotations = get_vep_info_local_cnv(unique_cnvs, vep_info_dict, sample_id)
+
+			# Loop through each variant and add to the database
+			for variant in variant_annotations:
+					
+					print(variant)
+					#gene_symbol=variant[0].get('gene_symbol','None')
+				
 #				var = variant[1]
 #				variant_data = process_variant_input(var)
 #
@@ -409,7 +416,6 @@ def cnv_manual(request):
 					)
 			CNV_obj.save()
 
-			"""
 			# Get VEP annotations
 			if genome == "GRCh37":
 				vep_info_dict = {
@@ -427,7 +433,7 @@ def cnv_manual(request):
 					'assembly': settings.ASSEMBLY_38,
 					'version': settings.VEP_VERSION_38
 				}
-
+			
 			try:
 				variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
 			except:
@@ -438,7 +444,7 @@ def cnv_manual(request):
 				}
 				return render(request, 'acmg_db/manual_input.html', context)
 
-
+			"""
 			# Loop through each variant and add to the database
 			for variant in variant_annotations:
 
@@ -556,5 +562,60 @@ def cnv_manual(request):
 	
 
 	return render(request, 'acmg_db/cnv_manual.html', context)
+
+#------------
+@transaction.atomic
+@login_required
+def view_cnvs(request):
+	"""
+	Page to view all unique variants classified in the lab
+
+	"""
+	# query all variants, prefetch related classification objects and associated transcript/ gene objects
+	all_cnvs_query = CNV.objects.all()
+	
+	# loop through each variant to parse data
+	variant_data = []
+	for cnvs in all_cnvs_query:
+
+		# skip if there are no linked classifications
+		if len(variant.variant_classification_cache) > 0:
+
+			# parse info
+			most_recent_obj = variant.variant_classification_cache[0]
+			most_recent_class = most_recent_obj.get_second_final_class_display()
+			if most_recent_obj.selected_transcript_variant.hgvs_c:
+				hgvs_c = most_recent_obj.selected_transcript_variant.hgvs_c.split(':')[1]
+			else:
+				hgvs_c = None
+			if most_recent_obj.selected_transcript_variant.hgvs_p:
+				hgvs_p = most_recent_obj.selected_transcript_variant.hgvs_p.split(':')[1]
+			else:
+				hgvs_p = None
+			transcript = most_recent_obj.selected_transcript_variant.transcript.name
+			gene = most_recent_obj.selected_transcript_variant.transcript.gene.name
+
+			# get list of all unique classifications
+			all_classes_set = set()
+			for classification in variant.variant_classification_cache:
+				all_classes_set.add(classification.get_second_final_class_display())
+
+			# add dict containing variant info to list
+			variant_data.append({
+				'variant_id': str(variant),
+				'variant_hash': variant.variant_hash,
+				'gene': gene,
+				'transcript': transcript,
+				'hgvs_c': hgvs_c,
+				'hgvs_p': hgvs_p,
+				'num_classifications': len(variant.variant_classification_cache), 
+				'most_recent_obj': most_recent_obj, 
+				'most_recent_date': most_recent_obj.second_check_date, 
+				'most_recent_class': most_recent_obj.get_second_final_class_display(), 
+				'all_classes': '|'.join(all_classes_set),
+				'genome': most_recent_obj.genome,
+			})
+
+	return render(request, 'acmg_db/view_cnvs.html', {'all_variants': variant_data})
 
 
