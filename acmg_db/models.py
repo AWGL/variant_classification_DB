@@ -603,11 +603,9 @@ class CNV(models.Model):
 		('0', 'Benign'), 
 		('1', 'Likely Benign'), 
 		('2', 'VUS - Criteria Not Met'),
-		('3', 'Contradictory Evidence Provided'), 
-		('4', 'Likely Pathogenic'), 
-		('5', 'Pathogenic'),
-		('6', 'Artefact'), 
-		('7', 'Not analysed')
+		('3', 'Likely Pathogenic'), 
+		('4', 'Pathogenic'),
+		('5', 'Not analysed')
 	)
 	
 	history = AuditlogHistoryField()
@@ -620,8 +618,8 @@ class CNV(models.Model):
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_second_checker')
 	first_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
 	second_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
-	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '7')
-	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '7')  # The actual one we want to display.
+	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')
+	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')  # The actual one we want to display.
 	
 	def __str__(self):
 		return f'{self.id}'
@@ -827,7 +825,46 @@ class CNVLossClassificationAnswer(models.Model):
 	def __str__(self):
 		return f'{self.id}'
 
+class CNVUserComment(models.Model):
+	"""
+	Model to hold a comment by a user against a CNV Classification object.
 
+	"""
+
+	classification = models.ForeignKey(CNV, on_delete=models.CASCADE)
+	user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+	text = models.TextField()
+	time = models.DateTimeField()
+	visible = models.BooleanField(default=True)
+
+	def __str__(self):
+		if len(self.text) > 50:
+			return f'{self.text[:50]}...'
+		else:
+			return f'{self.text}'
+
+
+	def get_evidence(self):
+		"""
+		Return the evidence associated with a comment.
+
+		"""
+		evidence = CNVEvidence.objects.filter(comment=self)
+
+		if len(evidence) == 0:
+
+			return None
+
+		return evidence
+		
+class CNVEvidence(models.Model):
+	"""
+	Model to hold files that relate to CNV evidence e.g. pdfs, screenshots.
+	Must be associated with a comment.
+	"""
+
+	file = models.FileField(upload_to='uploads/', null=True, blank=True)
+	comment = models.ForeignKey(CNVUserComment, on_delete=models.CASCADE)
 
 # register audit logs
 auditlog.register(Worklist)

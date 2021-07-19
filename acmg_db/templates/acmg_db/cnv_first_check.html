@@ -76,6 +76,7 @@
 						<button type="button" class="btn btn-light" style="width: 100%;">{{result}}</button>
 					{% endif %}
 					</div>
+					<br> Score = {{score}}
 				</td>
 				<td>{{ cnv.display_status }}</td>
 			</tr>
@@ -283,6 +284,163 @@
 	<br>
 
 	</div>
+	
+	<!-- COMMENTS AND ATTACHMENTS SECTION -->
+  	<div class="tab-pane fade" id="nav-evidence" role="tabpanel" aria-labelledby="nav-evidence-tab">
+	<br>
+	  
+	<!-- Comment box holds the comments and files for the variant - updated via ajax -->
+	<div id='comment_box'>
+	{% for comment in comments %}
+		<div class="card">
+		<h7 class="card-header">
+
+		{{comment.user}} on {{comment.time}} 
+	        {% if user == comment.user %}
+
+		  	<button id={{comment.pk}} type="button" class="close comment_destroy" aria-label="Close">
+  				<span aria-hidden="true">&times;</span>
+			</button>
+
+		{% endif %}
+		 </h7> 
+		  <div class="card-body">
+			{{comment.text|linebreaks}}
+			{% if comment.get_evidence == None %}
+			{% else %}
+			  <hr>
+			  {% for evidence in comment.get_evidence %}
+
+			  {% if evidence.file|make_list|slice:"-4:"|join:"" == ".png" %}
+
+
+			  	<a href="/media/{{ evidence.file }}" target="_blank"> <img class="evidence_images" src=/media/{{ evidence.file }} style="width:100%;max-width:300px"></a>
+
+			  	{% else %}
+
+			  	<a href="/media/{{ evidence.file }}" target="_blank">{{evidence.file }} </a>
+
+
+			  {% endif %}
+
+			  {% endfor %}
+			{% endif %}
+		  </div>
+		</div>
+		<hr>
+	  {% endfor %}
+	</div>
+
+
+	<!-- Form to add comments/ attach files or screenshots -->
+	<form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
+	  <div class="form-group">
+		<label for="comment">Comment:</label>
+		<textarea class="form-control" rows="5" id="comment_text" style="resize:none;"></textarea>
+	  </div>
+	  <button type="button" class="btn btn-success btn-sm" id='comment_button'>Add Comment/File</button>
+	  <div class="btn btn-default btn-sm">
+		Attach File <input type="file"  id='file_upload' name='file'>
+	  </div>
+	  <hr>
+	  <div class="alert alert-info" id='file_name' style="display: none;"></div>
+	  <input type="hidden" id='hidden_image_field'>
+	</form>
+	<canvas style="border:1px solid grey;" id="my_canvas" width="300" height="300"></canvas>
+	<div class="form-check">
+	  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+	  <label class="form-check-label" for="defaultCheck1">
+		Allow Image Pasting
+	  </label>
+	</div>
+	<br><br>
+		
+  	</div>
+  	
+  	<!-- AUDIT SECTION -->
+  	<div class="tab-pane fade" id="nav-audit" role="tabpanel" aria-labelledby="nav-audit-tab">
+	<br>
+
+		<!-- Finalise classification form -->
+		<h5>Finalise Classification</h5>
+		
+		<!-- display a 'reclassify' button to make sure the user hasnt made any changes that alter the class-->
+		<!-- {% if classification.genuine == '1' %} 
+
+
+		<div class="row">
+			<div class="col-2">Reclassify</div>
+			<div class="col-8">
+				<button type="button" class="btn btn-danger acmg_submit" id='submit_acmg'>Calculate classification</button>
+				<br>
+				<br>
+				<p><strong>Make sure that the classification currently displayed is up-to-date before submitting</strong></p>
+			</div>
+		</div>
+		<br>
+		{% endif %}
+		-->
+		
+		<!-- display the finalise form -->
+		<!--
+		ADD IN CRISPY FINALISE FORM
+		<br>
+		<br>
+		-->
+
+		<!-- diplay the audit trail for the variant -->
+		<hr>
+		<h5>Classification history</h5>
+		<table class="table table-hover table-bordered table-sm col-10">
+
+			<thead>
+			</thead>
+			
+			<tbody>
+				<tr>
+					<td style="width: 25.00%" class="col-2">CNV</td>
+					<td style="width: 75.00%" class="col-8">{{ cnv.cnv }}</td>
+				</tr>
+				<tr>
+					<td>Status</td>
+					<td>{{ cnv.display_status }}</td>
+				</tr>
+				<tr>
+				<!--
+					<td>Guideline version</td>
+					<td>{{ classification.guideline_version }}</td>
+				-->
+				</tr>
+				<tr>
+					<td>Created Date </td>
+					<td>{{ cnv.creation_date }}</td>
+				</tr>
+				<tr>
+					<td>Creation User</td>
+					<td>{{ cnv.user_creator }}</td>
+				</tr>
+				<tr>
+					<td>First Check Date</td>
+					<td>{{ cnv.first_check_date }}</td>
+				</tr>
+				<tr>
+					<td>First Check User</td>
+					<td>{{ cnv.user_first_checker }}</td>
+				</tr>
+				<tr>
+					<td>Second Check Date</td>
+					<td>{{ cnv.second_check_date }}</td>
+				</tr>
+				<tr>
+					<td>Second Check User</td>
+					<td>{{ cnv.user_second_checker }}</td>
+				</tr>
+
+			</tbody>
+				
+		</table>
+
+	</div>
 		
 <!-- END OF CLASSIFICATION SECTIONS -->
 </div>
@@ -436,7 +594,7 @@ $(document).ready(function(){
 		var comment_text = $("#comment_text").val();
 		var formData = new FormData(); //create empty form data
 		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
-		formData.append('classification_pk', "{{classification.pk}}"); //add sample primary key
+		formData.append('cnv_pk', "{{cnv.pk}}"); //add sample primary key
 		formData.append('comment_text', comment_text); //add comment text
 		var file = $('#file_upload')[0].files[0];
 		var canvas = document.getElementById('my_canvas');
@@ -459,7 +617,7 @@ $(document).ready(function(){
 
 
 		$.ajax({
-			url: '/ajax/comments/',
+			url: '/ajax/cnv_comments/',
 			type: 'POST',
 			data: formData,
 			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)

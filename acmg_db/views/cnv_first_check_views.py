@@ -61,8 +61,9 @@ def cnv_first_check(request, pk):
 			if len(answers) == 0:
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-		#comments = UserComment.objects.filter(classification=classification, visible=True)
-		result = cnv.first_final_score  # current class to display
+		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
+		result = cnv.first_final_class  # current class to display
+		score = cnv.first_final_score
 
 		# make empty instances of forms
 		#sample_form = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
@@ -78,8 +79,9 @@ def cnv_first_check(request, pk):
 			#'previous_classifications': previous_classifications,
 			#'previous_full_classifications': previous_full_classifications,
 			'answers': answers,
-			#'comments': comments,
+			'comments': comments,
 			'result': result,
+			'score': score,
 			#'sample_form': sample_form,
 			#'transcript_form': transcript_form,
 			#'variant_form': variant_form,
@@ -360,9 +362,19 @@ def ajax_acmg_cnv_classification_first(request):
 
 		# update the score in the database
 		cnv.first_final_score = cnv.calculate_acmg_score_first()
+		if cnv.first_final_score >= 0.99:
+			cnv.first_final_class = "Pathogenic"
+		elif 0.90 <= cnv.first_final_score <= 0.98:
+			cnv.first_final_class = "Likely Pathogenic"
+		elif -(0.89) <= cnv.first_final_score <= 0.89:
+			cnv.first_final_class = "VUS"
+		elif -(0.98) <= cnv.first_final_score <= -(0.90):
+			cnv.first_final_class = "Likely Benign"
+		elif cnv.first_final_score <= -(0.99):
+			cnv.first_final_class = "Benign"
 		cnv.save()
 
-		html = render_to_string('acmg_db/acmg_results_first.html', {'result': cnv.first_final_score})
+		html = render_to_string('acmg_db/acmg_results_first.html', {'result': cnv.first_final_class,'score': cnv.first_final_score})
 
 	return HttpResponse(html)
 
@@ -370,7 +382,7 @@ def ajax_acmg_cnv_classification_first(request):
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
-def ajax_comments(request):
+def ajax_cnv_comments(request):
 	"""
 	Ajax View - when the user clicks the upload comment/file button \
 	this updates the comment section of the page. 
@@ -379,20 +391,20 @@ def ajax_comments(request):
 
 	if request.is_ajax():
 
-		classification_pk = request.POST.get('classification_pk')
+		cnv_pk = request.POST.get('cnv_pk')
 		comment_text = request.POST.get('comment_text')
 
-		classification_pk = classification_pk.strip()
+		cnv_pk = cnv_pk.strip()
 		comment_text = comment_text.strip()
 
-		classification = get_object_or_404(Classification, pk =classification_pk)
+		cnv = get_object_or_404(CNV, pk =cnv_pk)
 
 		if len(comment_text) >1: #Check user has entered a comment
 
-			new_comment = UserComment(user=request.user,
+			new_comment = CNVUserComment(user=request.user,
 								text=comment_text,
 								time=timezone.now(),
-								classification=classification)
+								classification=cnv)
 
 			new_comment.save()
 
@@ -429,12 +441,12 @@ def ajax_comments(request):
 				new_evidence.comment= new_comment
 
 				#save image
-				img_file_string = '{}_{}_clip_image.png'.format(classification.pk,new_comment.pk)
+				img_file_string = '{}_{}_clip_image.png'.format(cnv.pk,new_comment.pk)
 				new_evidence.file.save(img_file_string, ContentFile(ImageData)) 
 
 				new_evidence.save()
 
-		comments = UserComment.objects.filter(classification=classification, visible=True)
+		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 
 		html = render_to_string('acmg_db/ajax_comments.html',
 								{'comments': comments, 'user': request.user})
