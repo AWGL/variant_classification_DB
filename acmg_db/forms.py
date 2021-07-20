@@ -149,6 +149,7 @@ class CNVManualUpload(forms.Form):
 	)
 	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
 	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
+	cyto = forms.CharField()
 
 	def __init__(self, *args, **kwargs):
 
@@ -159,7 +160,9 @@ class CNVManualUpload(forms.Form):
 		self.helper.form_id = 'search-data-form'
 		self.fields['panel_applied'].choices = self.panel_options
 		self.fields['panel_applied'].help_text = 'Enter the analysis performed or panel applied. Click on Panels in the top bar to add new analyses/ panels.'
+		self.fields['CNV'].label = 'CNV'
 		self.fields['worklist'].label = 'Worksheet'
+		self.fields['cyto'].label = 'Cyto ID'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
@@ -169,6 +172,7 @@ class CNVManualUpload(forms.Form):
 		self.helper.layout = Layout(
 			Field('CNV', placeholder='Enter the CNV in the format Chr:Start-Stop, e.g. 8:8494182-8753293', title=False),
 			Field('sample_name', placeholder='Enter the Molecular Number, e.g. 19M12345', title=False),
+			Field('cyto', placeholder='Enter the Cyto ID', title=False),
 			Field('worklist', placeholder='Enter the worksheet', title=False),
 			Field('panel_applied', title=False),
 			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),

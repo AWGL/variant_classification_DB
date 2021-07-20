@@ -62,7 +62,8 @@ def cnv_home(request):
 			# Get key information from the metadata
 			#worksheet_id = meta_dict.get('worksheet_id') ARRAY BARCODE IDENTIFIER - NOT CURRENTLY USED
 			sample_id = meta_dict.get('sample_id')
-			genome = meta_dict.get('genome')		
+			genome = meta_dict.get('genome')
+			cyto_id = meta_dict.get('cyto_id')		
 
 
 			# add worksheet
@@ -87,7 +88,8 @@ def cnv_home(request):
 						analysis_performed = panel_obj,
 						analysis_complete = False,
 						genome = genome,
-						platform = platform
+						platform = platform,
+						cyto=cyto_id
 						)
 				CNVSample_obj.save()
 			
@@ -254,6 +256,10 @@ def cnv_manual(request):
 			
 			#get sample
 			sample_id = form.cleaned_data['sample_name'].strip().upper().replace(' ', '_')
+			
+			#get cyto ID
+			cyto_id = form.cleaned_data['cyto'].strip()
+			
 			# sanitise input
 			for character in list(sample_id):
 				if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_':
@@ -302,7 +308,8 @@ def cnv_manual(request):
 						analysis_performed = panel_obj,
 						analysis_complete = False,
 						genome = genome,
-						platform = platform
+						platform = platform,
+						cyto = cyto_id
 						)
 				CNVSample_obj.save()
 			

@@ -594,6 +594,7 @@ class CNVSample(models.Model):
 	analysis_complete = models.BooleanField()
 	genome = models.TextField(default='GRCh37')
 	platform = models.TextField()
+	cyto = models.TextField(null=True)
 	
 class CNV(models.Model):	
 	"""

@@ -85,7 +85,8 @@
 	  <th style="display:none;">PK</th>
 	  <th>Status</th>
 	  <th>Worksheet</th>
-	  <th>Sample ID</th>
+	  <th>Molecular Number</th>
+	  <th>Cyto ID</th>
 	  <th>CNV</th>
 	  <th>Gain/Loss</th>
 	  <th>Gene(s)</th>
@@ -114,6 +115,7 @@
 	  </td>
 	  <td>{{ cnv.sample.worklist }}</td>
 	  <td>{{ cnv.sample.sample_name }}</td>
+	  <td>{{ cnv.sample.cyto }}</td>
 	  <td>
 	  {% if cnv.sample.genome == 'GRCh37' %}
 	  	{{ cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}

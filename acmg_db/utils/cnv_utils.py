@@ -52,6 +52,9 @@ def load_cnv(input_file):
 		elif line[0].startswith('Molecular Number'):
 			
 			meta_dict['sample_id'] = line[1]
+			
+		elif line[0].startswith('Sample ID'):
+			meta_dict['cyto_id'] = line[1]
 		
 		elif any("GRCh37" in field for field in line):
 		
