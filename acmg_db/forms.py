@@ -12,6 +12,13 @@ GENOME_BUILD=[
 	('GRCh38','GRCh38'),
 	]
 
+platform_choices = [
+			('SNP Array','SNP Array'),
+			('Oligo Array','Oligo Array'),
+			('MLPA','MLPA'),
+			('NGS','NGS'),
+			]
+			
 # File upload forms ---------------------------------------------------
 class VariantFileUploadForm(forms.Form):
 	"""
@@ -94,9 +101,11 @@ class CNVFileUploadForm(forms.Form):
 	"""
 	Form for inputting a CNV file of CNVs from the Cytosure Interpret Software Aberration Report, and adding them to the database
 	"""
+	
 	CNV_file = forms.FileField()
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
+	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
 	
 	def __init__(self, *args, **kwargs):
 		
@@ -116,7 +125,8 @@ class CNVFileUploadForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('CNV_file', placeholder='Select a file to upload', title=False),
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
-			Field('affected_with', placeholder='Enter what the patient is affected with', title=False)
+			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
+			Field('platform', placeholder='Select platform used', title=False)
 		)
 		
 class CNVManualUpload(forms.Form):
@@ -136,6 +146,7 @@ class CNVManualUpload(forms.Form):
 		)
 	)
 	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
+	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
 
 	def __init__(self, *args, **kwargs):
 
@@ -161,6 +172,7 @@ class CNVManualUpload(forms.Form):
 			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),
 			Field('gain_loss', placeholder='Enter whether the CNV is a gain or loss', title=False),
 			Field('genome', placeholder='Select the version of the reference genome which was used for analysis', title=False),
+			Field('platform', placeholder='Select platform used', title=False)
 		)
 
 # New classification - first check forms ---------------------------------------------------------------

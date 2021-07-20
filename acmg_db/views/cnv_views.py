@@ -48,6 +48,9 @@ def cnv_home(request):
 			# get affected with
 			affected_with = form.cleaned_data['affected_with']
 			
+			# get platform
+			platform = form.cleaned_data['platform']
+			
 
 			# process tsv file
 			raw_file = request.FILES['CNV_file']
@@ -81,7 +84,8 @@ def cnv_home(request):
 						affected_with = affected_with,
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						genome = genome
+						genome = genome,
+						platform = platform
 						)
 				CNVSample_obj.save()
 			
@@ -243,6 +247,9 @@ def cnv_manual(request):
 			#get worksheet
 			worksheet_id = form.cleaned_data['worklist'].strip()
 			
+			#get platform
+			platform = form.cleaned_data['platform'].strip()
+			
 			#get sample
 			sample_id = form.cleaned_data['sample_name'].strip().upper().replace(' ', '_')
 			# sanitise input
@@ -292,7 +299,8 @@ def cnv_manual(request):
 						affected_with = affected_with,
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						genome = genome
+						genome = genome,
+						platform = platform
 						)
 				CNVSample_obj.save()
 			
@@ -323,15 +331,15 @@ def cnv_manual(request):
 					'version': settings.VEP_VERSION_38
 				}
 			
-			try:
-				variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
-			except:
+			#try:
+			#	variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
+			#except:
 
-				context = {
-					'form': form,
-					'error': 'VEP annotation failed. Are you sure this a correct variant? Are you sure the correct reference genome has been selected?',
-				}
-				return render(request, 'acmg_db/manual_input.html', context)
+			#	context = {
+			#		'form': form,
+			#		'error': 'VEP annotation failed. Are you sure this a correct variant? Are you sure the correct reference genome has been selected?',
+			#	}
+			#	return render(request, 'acmg_db/manual_input.html', context)
 
 			"""
 			# Loop through each variant and add to the database

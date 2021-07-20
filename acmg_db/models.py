@@ -593,6 +593,7 @@ class CNVSample(models.Model):
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	genome = models.TextField(default='GRCh37')
+	platform = models.TextField()
 	
 class CNV(models.Model):	
 	"""
