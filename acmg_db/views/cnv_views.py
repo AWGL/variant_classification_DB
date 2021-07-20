@@ -51,14 +51,16 @@ def cnv_home(request):
 			# get platform
 			platform = form.cleaned_data['platform']
 			
-
+			# get worksheet
+			worksheet_id = form.cleaned_data['worksheet']
+			
 			# process tsv file
 			raw_file = request.FILES['CNV_file']
 			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
 			df, meta_dict = load_cnv(utf_file)
 
 			# Get key information from the metadata
-			worksheet_id = meta_dict.get('worksheet_id')
+			#worksheet_id = meta_dict.get('worksheet_id') ARRAY BARCODE IDENTIFIER - NOT CURRENTLY USED
 			sample_id = meta_dict.get('sample_id')
 			genome = meta_dict.get('genome')		
 

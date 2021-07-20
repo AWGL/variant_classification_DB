@@ -106,6 +106,7 @@ class CNVFileUploadForm(forms.Form):
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
 	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
+	worksheet = forms.CharField()
 	
 	def __init__(self, *args, **kwargs):
 		
@@ -124,6 +125,7 @@ class CNVFileUploadForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('CNV_file', placeholder='Select a file to upload', title=False),
+			Field('worksheet', placeholder='Enter worksheet', title=False),
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
 			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
 			Field('platform', placeholder='Select platform used', title=False)
@@ -167,7 +169,7 @@ class CNVManualUpload(forms.Form):
 		self.helper.layout = Layout(
 			Field('CNV', placeholder='Enter the CNV in the format Chr:Start-Stop, e.g. 8:8494182-8753293', title=False),
 			Field('sample_name', placeholder='Enter the Molecular Number, e.g. 19M12345', title=False),
-			Field('worklist', placeholder='Enter a unique identifer for the analysis, such as worksheet ID or Array Barcode', title=False),
+			Field('worklist', placeholder='Enter the worksheet', title=False),
 			Field('panel_applied', title=False),
 			Field('affected_with', placeholder='Enter the referral reasons for the patient', title=False),
 			Field('gain_loss', placeholder='Enter whether the CNV is a gain or loss', title=False),
