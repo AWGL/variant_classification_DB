@@ -332,39 +332,22 @@ def cnv_manual(request):
 					'assembly': settings.ASSEMBLY_38,
 					'version': settings.VEP_VERSION_38
 				}
-			
-			#try:
-			#	variant_annotations = get_vep_info_local(unique_variants, vep_info_dict, sample_id)
-			#except:
+			unique_cnvs = [final_cnv]
+			try:
+				variant_annotations = get_vep_info_local_cnv(unique_cnvs, vep_info_dict, sample_id)
+			except:
 
-			#	context = {
-			#		'form': form,
-			#		'error': 'VEP annotation failed. Are you sure this a correct variant? Are you sure the correct reference genome has been selected?',
-			#	}
-			#	return render(request, 'acmg_db/manual_input.html', context)
+				context = {
+					'form': form,
+					'error': 'VEP annotation failed. Are you sure this a correct variant? Are you sure the correct reference genome has been selected?',
+				}
+				return render(request, 'acmg_db/manual_input.html', context)
 
-			"""
-			# Loop through each variant and add to the database
+			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
-
-				var = variant[1]
-				variant_data = process_variant_input(var)
-
-				variant_hash = variant_data[0]
-				chromosome = variant_data[1]
-				position = variant_data[2]
-				ref = variant_data[3]
-				alt = variant_data[4]
-					
-				variant_obj, created = Variant.objects.get_or_create(
-						variant_hash = variant_hash,
-						chromosome = chromosome,
-						position = position,
-						ref = ref,
-						alt = alt,
-						genome = genome,
-						)
-
+				
+				cnv_obj = CNV.objects.get(cnv=variant[1],sample__sample_name=sample_id)
+				
 				if 'transcript_consequences' in variant[0]:
 
 					consequences = variant[0]['transcript_consequences']
@@ -377,78 +360,18 @@ def cnv_manual(request):
 
 					raise Exception(f'Could not get the consequences for variant {variant}')
 
-				selected = None
-
-				# Loop through each consequence/transcript
+				# Loop through each consequence/transcript and get gene identifiers
 				for consequence in consequences:
-
-					if 'transcript_id' in consequence:
-
-						transcript_id = consequence['transcript_id']
-
-					else:
-
-						transcript_id = 'None'
-
-					transcript_hgvsc = consequence.get('hgvsc')
-					transcript_hgvsp = consequence.get('hgvsp')
 					gene_symbol = consequence.get('gene_symbol', 'None')
-					exon = consequence.get('exon', 'NA')
-					impact = consequence.get('consequence_terms')
-					impact = '|'.join(impact)
-
-
-					gene_obj, created = Gene.objects.get_or_create(
-						name = gene_symbol
-						)
-
-					transcript_obj, created = Transcript.objects.get_or_create(
-							name = transcript_id,
-							gene = gene_obj
-						)
-
-					transcript_variant_obj, created = TranscriptVariant.objects.get_or_create(
-						variant = variant_obj,
-						transcript = transcript_obj,
-						hgvs_c = transcript_hgvsc,
-						hgvs_p = transcript_hgvsp,
-						exon = exon,
-						consequence = impact
-						)
-
-					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
-					if genome == "GRCh37":
-						vep_version = settings.VEP_VERSION_37
-					elif genome == "GRCh38":
-						vep_version = settings.VEP_VERSION_38
 					
-					if created:
-						transcript_variant_obj.vep_version = vep_version
-						transcript_variant_obj.save()
-
-					# Find the transcript that VEP has picked
-					if 'pick' in consequence:
-
-						selected = transcript_variant_obj
-
-				new_classification_obj = Classification.objects.create(
-					variant= variant_obj,
-					sample = sample_obj,
-					creation_date = timezone.now(),
-					user_creator = request.user,
-					status = '0',
-					is_trio_de_novo = False,
-					first_final_class = '7',
-					second_final_class = '7',
-					selected_transcript_variant = selected,
-					genotype = genotype,
-					guideline_version=guideline_version,
-					vep_version=vep_version,
-					genome=genome,
-					)
-
-				new_classification_obj.save()
-			"""
+					# if statement to prevent multiple identical genes being added. 
+					if not CNVGene.objects.filter(cnv=cnv_obj,gene=gene_symbol).exists():
+						cnvgene_obj = CNVGene.objects.create(
+							gene = gene_symbol,
+							cnv = cnv_obj
+							)
+						cnvgene_obj.save()
+						
 			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
 			params = '?worksheet={}&sample={}&panel={}'.format(worksheet_id, sample_id, analysis_performed_pk)
 
