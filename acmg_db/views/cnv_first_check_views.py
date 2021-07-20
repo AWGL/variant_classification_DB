@@ -373,8 +373,15 @@ def ajax_acmg_cnv_classification_first(request):
 		elif cnv.first_final_score <= -(0.99):
 			cnv.first_final_class = "Benign"
 		cnv.save()
-
-		html = render_to_string('acmg_db/acmg_results_first.html', {'result': cnv.first_final_class,'score': cnv.first_final_score})
+		
+		score = cnv.first_final_score
+		
+		context = {
+			'result': cnv.first_final_class,
+			'score': score,
+		}
+		
+		html = render_to_string('acmg_db/acmg_results_first.html', context)
 
 	return HttpResponse(html)
 
