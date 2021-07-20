@@ -122,7 +122,11 @@
 	  {% endif %}
 	  </td>
 	  <td>{{ cnv.gain_loss }}</td>
-	  <td>GENES</td>
+	  <td>
+	  {% for gene in cnv.genes_as_list %}
+	  	{{ gene.gene }}<br>
+	  {% endfor %}
+	  </td>
 	  <td>
 	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv }}>GENES</a>
 	  <br>

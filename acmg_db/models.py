@@ -620,9 +620,12 @@ class CNV(models.Model):
 	second_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
 	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')
 	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')  # The actual one we want to display.
-	
+		
 	def __str__(self):
 		return f'{self.id}'
+	
+	def genes_as_list(self):
+		return CNVGene.objects.filter(cnv=self)
 		
 	def display_status(self):
 		"""
@@ -750,6 +753,13 @@ class CNV(models.Model):
 
 			return final_score
 			
+class CNVGene(models.Model):
+	""" 
+	Model to hold all of the CNV genes 
+	"""
+	gene = models.TextField()
+	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
+
 class CNVLossClassificationQuestion(models.Model):
 	"""
 	Model to hold the possible questions that a user may be asked for CNV Classification.
