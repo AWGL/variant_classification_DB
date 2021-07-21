@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, FinaliseClassificationForm, CNVDetailsForm
+from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, FinaliseClassificationForm, CNVDetailsForm, CNVMethodForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -51,16 +51,22 @@ def cnv_first_check(request, pk):
 		# Get data to render form
 		previous_classifications = CNV.objects.filter(cnv=cnv, status__in=['2', '3']).exclude(pk=cnv.pk).order_by('-second_check_date')
 		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
-		if cnv.gain_loss == "Gain":
+		print(cnv.method)
+		if cnv.method == "Gain":
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 			if len(answers) == 0:
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-		elif cnv.gain_loss == "Loss":
+		elif cnv.method == "Loss":
 			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
 			if len(answers) == 0:
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+		#elif cnv.method == "SNV":
+		#	answers = ClassificationAnswer.objects.filter(classification=cnv)
+		#	if len(answers) == 0:
+		#		#cnv.initiate_classification() 
+		#		answers = ClassificationAnswer.objects.filter(classification=cnv).order_by('classification_question__order')
 		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 		result = cnv.first_final_class  # current class to display
 		score = cnv.first_final_score
@@ -69,6 +75,7 @@ def cnv_first_check(request, pk):
 		details_form = CNVDetailsForm(request.POST)
 		sample_form = CNVSampleInfoForm(request.POST)
 		genuine_form = CNVGenuineArtefactForm(cnv_pk=pk)
+		method_form = CNVMethodForm(request.POST)
 		#finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
@@ -84,6 +91,7 @@ def cnv_first_check(request, pk):
 			'details_form': details_form,
 			'sample_form': sample_form,
 			'genuine_form': genuine_form,
+			'method_form': method_form,
 			#'finalise_form': finalise_form,
 			'warn': []
 		}
@@ -197,7 +205,34 @@ def cnv_first_check(request, pk):
 					context['answers'] = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
 				context['cnv'] = get_object_or_404(CNV, pk=pk)
 				context['genuine_form'] = CNVGenuineArtefactForm(cnv_pk=cnv.pk)
+		
+			# Changing ACMG Method Form
+			if 'method' in request.POST:
+
+				method_form = CNVMethodForm(request.POST)
+
+				if method_form.is_valid():
 					
+					method = method_form.cleaned_data['method']
+					
+					# if method on form doesn't equal method saved in object, update method and re-calculate answers
+					if method != cnv.method:
+						cnv.method = method
+						cnv.save()
+					
+					if cnv.method == "Gain":
+						answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+						if len(answers) == 0:
+							cnv.initiate_classification()
+							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+					elif cnv.method == "Loss":
+						answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+						if len(answers) == 0:
+							cnv.initiate_classification()
+							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+					
+					context['answers'] = answers
+					context['method_form'] = CNVMethodForm(request.POST)			
 		"""		
 
 
@@ -298,7 +333,7 @@ def ajax_acmg_cnv_classification_first(request):
 
 			raise PermissionDenied('You do not have permission to start this classification.')
 		
-		if cnv.gain_loss == "Gain":
+		if cnv.method == "Gain":
 			correct_number_of_questions = CNVGainClassificationQuestion.objects.all().count()
 			if len(classification_answers) != correct_number_of_questions:
 				raise Exception('Wrong number of questions')
@@ -317,7 +352,7 @@ def ajax_acmg_cnv_classification_first(request):
 				classification_answer_obj.save()
 			
 			
-		elif cnv.gain_loss == "Loss":
+		elif cnv.method == "Loss":
 			correct_number_of_questions = CNVLossClassificationQuestion.objects.all().count()
 			if len(classification_answers) != correct_number_of_questions:
 				raise Exception('Wrong number of questions')

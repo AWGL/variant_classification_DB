@@ -130,6 +130,7 @@ def cnv_home(request):
 						sample = CNVSample_obj,
 						cnv = final_cnv,
 						gain_loss = gain_loss,
+						method = gain_loss
 						)
 				CNV_obj.save()
 				
@@ -270,7 +271,7 @@ def cnv_manual(request):
 					return render(request, 'acmg_db/cnv_manual.html', context)
 					
 			#get gain/loss
-			gain_loss = form.cleaned_data['gain_loss']
+			gain_loss_info = form.cleaned_data['gain_loss']
 			
 			# get reference genome
 			genome = form.cleaned_data['genome']
@@ -317,7 +318,8 @@ def cnv_manual(request):
 			CNV_obj = CNV.objects.create(
 					sample = CNVSample_obj,
 					cnv = final_cnv,
-					gain_loss = gain_loss,
+					gain_loss = gain_loss_info,
+					method = gain_loss_info,
 					status = 0
 					)
 			CNV_obj.save()

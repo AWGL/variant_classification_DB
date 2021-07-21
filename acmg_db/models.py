@@ -634,6 +634,7 @@ class CNV(models.Model):
 	copy = models.TextField(null=True)
 	genotype = models.TextField(null=True)
 	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
+	method = models.TextField() #this allows us to change the ACMG guidelines being used whilst retaining the information on actual gain/loss
 		
 	def __str__(self):
 		return f'{self.id}'
@@ -693,7 +694,7 @@ class CNV(models.Model):
 		"""
 		Creates the needed CNVClassificationAnswer objects for a new CNV classification.
 		"""
-		if self.gain_loss == 'Gain':
+		if self.method == 'Gain':
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
 			#Check we're not running the function twice
 			if len(answers) == 0:
@@ -713,7 +714,7 @@ class CNV(models.Model):
 				return HttpResponseForbidden()
 
 			return None
-		elif self.gain_loss == 'Loss':
+		elif self.method == 'Loss':
 			answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
 			#Check we're not running the function twice
 			if len(answers) == 0:

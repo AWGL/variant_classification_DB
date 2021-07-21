@@ -226,6 +226,13 @@
 		
 		<!-- NEED TO ADD PREVIOUS CLASSIFICATIONS BOX -->
 		
+		<h5>Change ACMG Guidelines</h5>
+		
+		Only fill out this box if you have justification for changing the ACMG Guidelines used from the default. Please evidence this in the comments. 
+
+		{% crispy method_form %}		
+		
+		
 		<h5> Is this CNV Genuine? </h5>
 		<!-- Genuine/ artefact sections section-->
 		{% if cnv.genuine == '0' %}
@@ -251,10 +258,16 @@
 		<br>
 		<br>	
 		
-		{% if cnv.gain_loss == 'Gain' %}
+		{% if cnv.method == 'Gain' %}
 			<h5>Copy Number Gain</h5>
-		{% elif cnv.gain_loss == 'Loss' %}
+			{% if cnv.method != cnv.gain_loss %}
+			NOTE! THIS IS NOT THE DEFAULT ACMG CLASSIFICATION GUIDELINES? DID YOU MEAN TO CHANGE THIS?!
+			{% endif %}
+		{% elif cnv.method == 'Loss' %}
 			<h5>Copy Number Loss</h5>
+			{% if cnv.method != cnv.gain_loss %}
+			NOTE! THIS IS NOT THE DEFAULT ACMG CLASSIFICATION GUIDELINES? DID YOU MEAN TO CHANGE THIS?!
+			{% endif %}
 		{% endif %}
 		
 		<!-- Table listing all ACMG codes and option to apply them -->
