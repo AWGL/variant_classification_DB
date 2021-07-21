@@ -326,7 +326,7 @@
   	<div class="tab-pane fade" id="nav-evidence" role="tabpanel" aria-labelledby="nav-evidence-tab">
 	<br>
 	  
-	<!-- Comment box holds the comments and files for the variant - updated via ajax -->
+	<!-- Comment box holds the comments and files for the CNV - updated via ajax -->
 	<div id='comment_box'>
 	{% for comment in comments %}
 		<div class="card">
@@ -544,10 +544,10 @@ $(document).ready(function(){
 		var formData = new FormData();
 		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
 		formData.append('comment_pk', comment_pk); //add comment primary key
-		formData.append('classification_pk', "{{classification.pk}}")
+		formData.append('cnv_pk', "{{cnv.pk}}")
 
 		$.ajax({
-			url: '/ajax/delete_comment/',
+			url: '/ajax/cnv_delete_comment/',
 			type: 'POST',
 			data: formData,
 			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)

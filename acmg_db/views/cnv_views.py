@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 from acmg_db.forms import CNVFileUploadForm, CNVManualUpload
 from acmg_db.models import *
@@ -448,5 +450,52 @@ def view_cnvs(request):
 			})
 
 	return render(request, 'acmg_db/view_cnvs.html', {'all_variants': variant_data})
+	
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def ajax_cnv_delete_comment(request):
+	"""
+	View to allow users to delete comments.
+
+	"""
+
+	if request.is_ajax():
+
+		comment_pk = request.POST.get('comment_pk').strip()
+		comment = get_object_or_404(CNVUserComment, pk=comment_pk)
+
+		cnv_pk = request.POST.get('cnv_pk').strip()
+		cnv = get_object_or_404(CNV, pk=cnv_pk)
+
+		# only the user who created the comment can delete
+		if request.user == comment.user:
+
+			# only allow if classification is not complete
+			if cnv.status == '0' or cnv.status == '1':
+
+				comment.delete()
+
+				comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
+
+				html = render_to_string('acmg_db/ajax_comments.html',
+										{'comments': comments, 'user': request.user})
+
+				return HttpResponse(html)
+
+		else:
+
+				comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
+
+				html = render_to_string('acmg_db/ajax_comments.html',
+										{'comments': comments, 'user': request.user})
+
+				return HttpResponse(html)
+
+
+
+	else:
+
+			raise PermissionDenied('You do not have permission to delete this comment.')
 
 
