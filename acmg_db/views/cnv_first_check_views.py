@@ -67,7 +67,7 @@ def cnv_first_check(request, pk):
 
 		# make empty instances of forms
 		details_form = CNVDetailsForm(request.POST)
-		#sample_form = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
+		sample_form = CNVSampleInfoForm(request.POST)
 		#transcript_form = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		#variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		#genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
@@ -84,7 +84,7 @@ def cnv_first_check(request, pk):
 			'result': result,
 			'score': score,
 			'details_form': details_form,
-			#'sample_form': sample_form,
+			'sample_form': sample_form,
 			#'transcript_form': transcript_form,
 			#'variant_form': variant_form,
 			#'genuine_form': genuine_form,
@@ -96,6 +96,25 @@ def cnv_first_check(request, pk):
 		# if a form is submitted
 		if request.method == 'POST':
 			
+			# SampleInfoForm
+			if 'affected_with' in request.POST:
+
+				sample_form = CNVSampleInfoForm(request.POST)
+
+				# load in data
+				if sample_form.is_valid():
+
+					cleaned_data = sample_form.cleaned_data
+					sample = cnv.sample
+					sample.affected_with =  cleaned_data['affected_with']
+					sample.cyto = cleaned_data['cyto_ID']
+					sample.platform = cleaned_data['platform']
+					sample.save()
+					
+				# reload dict variables for rendering
+				context['cnv'] = get_object_or_404(CNV, pk=pk)
+				context['sample_form'] = CNVSampleInfoForm(request.POST)
+				
 			#Details Form
 			if 'inheritance' in request.POST:
 				
@@ -129,23 +148,7 @@ def cnv_first_check(request, pk):
 					
 		
 		"""
-			# SampleInfoForm
-			if 'affected_with' in request.POST:
-
-				sample_form = CNVSampleInfoForm(request.POST, cnv_pk=cnv.pk, options=PANEL_OPTIONS)
-
-				# load in data
-				if sample_form.is_valid():
-
-					cleaned_data = sample_form.cleaned_data
-					sample = cnv.sample
-					sample.affected_with =  cleaned_data['affected_with']
-					sample.other_changes = cleaned_data['other_changes']
-					sample.save()
-					
-				# reload dict variables for rendering
-				context['cnv'] = get_object_or_404(CNV, pk=pk)
-				context['sample_form'] = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
+			
 				
 
 			# TranscriptForm
