@@ -62,11 +62,6 @@ def cnv_first_check(request, pk):
 			if len(answers) == 0:
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-		#elif cnv.method == "SNV":
-		#	answers = ClassificationAnswer.objects.filter(classification=cnv)
-		#	if len(answers) == 0:
-		#		#cnv.initiate_classification() 
-		#		answers = ClassificationAnswer.objects.filter(classification=cnv).order_by('classification_question__order')
 		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 		result = cnv.first_final_class  # current class to display
 		score = cnv.first_final_score

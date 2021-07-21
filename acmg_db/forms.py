@@ -477,8 +477,7 @@ class CNVMethodForm(forms.Form):
 	"""
 	method = forms.CharField(required=False, widget=forms.Select(choices=(
 								('Gain','Gain'),
-								('Loss','Loss'),
-								('SNV','SNV')
+								('Loss','Loss')
 							)))
 	
 	def __init__(self, *args, **kwargs):
