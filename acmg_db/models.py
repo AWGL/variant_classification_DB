@@ -607,7 +607,15 @@ class CNV(models.Model):
 		('2', 'VUS - Criteria Not Met'),
 		('3', 'Likely Pathogenic'), 
 		('4', 'Pathogenic'),
-		('5', 'Not analysed')
+		('5', 'Not analysed'),
+		('6', 'Artefact')
+	)
+	GENUINE_ARTEFACT_CHOICES = (
+		('0', 'Pending'), 
+		('1', 'Genuine - New Classification'), 
+		('2', 'Genuine - Use Previous Classification'),
+		('3', 'Genuine - Not Analysed'),
+		('4', 'Artefact')
 	)
 	
 	history = AuditlogHistoryField()
@@ -625,6 +633,7 @@ class CNV(models.Model):
 	inheritance = models.TextField(null=True)
 	copy = models.TextField(null=True)
 	genotype = models.TextField(null=True)
+	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
 		
 	def __str__(self):
 		return f'{self.id}'
@@ -642,7 +651,12 @@ class CNV(models.Model):
 		"""
 		return self.STATUS_CHOICES[int(self.status)][1]
 
-
+	def display_genuine(self):
+		"""
+		Display the genuine status attribute.
+		"""
+		return self.GENUINE_ARTEFACT_CHOICES[int(self.genuine)][1]
+	
 	def display_first_classification(self):
 		"""
 		Take the classification in the database e.g. 0 and return the string \

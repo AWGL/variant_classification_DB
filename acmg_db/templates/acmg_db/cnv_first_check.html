@@ -224,28 +224,27 @@
 		
 		{% crispy details_form %}
 		
-		<!-- NEED TO ADD FORM FOR UPDATING INFORMATION -->
 		<!-- NEED TO ADD PREVIOUS CLASSIFICATIONS BOX -->
-
+		
+		<h5> Is this CNV Genuine? </h5>
 		<!-- Genuine/ artefact sections section-->
-		{% if cnv.display_classification == '0' %}
-			<h5>Is this a genuine variant?</h5>
-			<!-- {% crispy genuine_form %} -->
+		{% if cnv.genuine == '0' %}
+			{% crispy genuine_form %}
 			<br>
 	
 		{% else %}
 			<div class="alert alert-warning col-10" role="alert">
-			This Classification has been set as DISPLAY CLASSIFICATION. To change this you will need to reset the classification.
+			This Classification has been set as {{ cnv.display_genuine }}. To change this you will need to reset the classification.
 			</div>
 
-	{% endif %}
+		{% endif %}
 
 	</div>
 	
 	<!-- ACMG RULES SECTION -->
   	<div class="tab-pane fade" id="nav-acmg" role="tabpanel" aria-labelledby="nav-acmg-tab">
 	<br>
-	
+		{% if cnv.genuine == '1' %}
 		<!-- Button to recalculate the classification -->
 		<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
 	
@@ -294,9 +293,15 @@
 	  	</tbody>
 		</table>
 		
-		<p>TOTAL SCORE {{ result }}</p>
-		
 	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
+	
+	{% else %}
+	<div class="alert alert-warning" role="alert">
+		<p>This CNV is not set for a new ACMG classification to be carried out.</p>
+		<p>To carry out a new classification, change the settings in the 'Is this CNV genuine?' section under the 'CNV information' tab.</p>
+	</div>
+
+	{% endif %}
 
 	<br>
 	<br>

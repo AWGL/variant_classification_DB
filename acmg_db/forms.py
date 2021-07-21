@@ -370,6 +370,33 @@ class GenuineArtefactForm(forms.Form):
 			Field('genuine', id='genuine_field'),
 		)
 
+class CNVGenuineArtefactForm(forms.Form):
+	"""
+	Form to select whether a variant is genuine or an artefact, and whether to start a new classification or use a previous one.
+	"""
+	genuine_artefact_choices = CNV.GENUINE_ARTEFACT_CHOICES
+	genuine = forms.ChoiceField(choices=genuine_artefact_choices)
+
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+
+		super(CNVGenuineArtefactForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.helper.form_id = 'genuine-artefact-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.fields['genuine'].initial = self.cnv.genuine
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_first_check',kwargs={'pk':self.cnv_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('genuine', id='genuine_field'),
+		)
+
 
 class FinaliseClassificationForm(forms.Form):
 	"""

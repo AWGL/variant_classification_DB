@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm, CNVDetailsForm
+from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, FinaliseClassificationForm, CNVDetailsForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -49,8 +49,8 @@ def cnv_first_check(request, pk):
 	else:
 
 		# Get data to render form
-		#previous_classifications = Classification.objects.filter(variant=variant,genome=classification.sample.genome, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
-		#previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
+		previous_classifications = CNV.objects.filter(cnv=cnv, status__in=['2', '3']).exclude(pk=cnv.pk).order_by('-second_check_date')
+		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
 		if cnv.gain_loss == "Gain":
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 			if len(answers) == 0:
@@ -68,26 +68,22 @@ def cnv_first_check(request, pk):
 		# make empty instances of forms
 		details_form = CNVDetailsForm(request.POST)
 		sample_form = CNVSampleInfoForm(request.POST)
-		#transcript_form = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
-		#variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
-		#genuine_form = GenuineArtefactForm(classification_pk=classification.pk)
+		genuine_form = CNVGenuineArtefactForm(cnv_pk=pk)
 		#finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
 		context = {
 			#'classification': classification,
 			'cnv': cnv,
-			#'previous_classifications': previous_classifications,
-			#'previous_full_classifications': previous_full_classifications,
+			'previous_classifications': previous_classifications,
+			'previous_full_classifications': previous_full_classifications,
 			'answers': answers,
 			'comments': comments,
 			'result': result,
 			'score': score,
 			'details_form': details_form,
 			'sample_form': sample_form,
-			#'transcript_form': transcript_form,
-			#'variant_form': variant_form,
-			#'genuine_form': genuine_form,
+			'genuine_form': genuine_form,
 			#'finalise_form': finalise_form,
 			'warn': []
 		}
@@ -143,33 +139,11 @@ def cnv_first_check(request, pk):
 					cnv.copy = copy
 					cnv.genotype = genotype
 					cnv.save()
-					
-					
-					
-		
-		"""
 			
-				
-
-			# TranscriptForm
-			if 'select_transcript' in request.POST:
-				transcript_form = TranscriptForm(request.POST, classification_pk=classification.pk, options=fixed_refseq_options)
-				if transcript_form.is_valid():
-					cleaned_data = transcript_form.cleaned_data
-					select_transcript = cleaned_data['select_transcript']
-					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
-					classification.selected_transcript_variant = selected_transcript_variant
-					classification.save()
-				# reload dict variables for rendering
-				context['classification'] = classification
-				context['transcript_form'] = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
-				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
-
-
 			# GenuineArtefactForm
 			if 'genuine' in request.POST:
 
-				genuine_form = GenuineArtefactForm(request.POST, classification_pk=classification.pk)
+				genuine_form = CNVGenuineArtefactForm(request.POST, cnv_pk=cnv.pk)
 
 				if genuine_form.is_valid():
 					cleaned_data = genuine_form.cleaned_data
@@ -177,14 +151,14 @@ def cnv_first_check(request, pk):
 					# genuine - new classification
 					if cleaned_data['genuine'] == '1':
 
-						classification.genuine = '1'
+						cnv.genuine = '1'
 
 						# if not already initiated, make new classification answers
 						if len(answers) == 0:
-							classification.initiate_classification()
+							cnv.initiate_classification()
 
 						# save final_class as output of calculate_acmg_score_first
-						classification.first_final_class = classification.calculate_acmg_score_first()
+						cnv.first_final_class = cnv.calculate_acmg_score_first()
 
 					# genuine - use previous classification
 					elif cleaned_data['genuine'] == '2':
@@ -197,29 +171,34 @@ def cnv_first_check(request, pk):
 						# if there is, update final class to whatever it was previously
 						else:
 
-							classification.genuine = '2'
-							classification.first_final_class = previous_full_classifications[0].second_final_class
+							cnv.genuine = '2'
+							cnv.first_final_class = previous_full_classifications[0].second_final_class
 
 					# genuine - not analysed - update final_class to 'not analysed'
 					elif cleaned_data['genuine'] == '3':
 
-						classification.genuine = '3'
-						classification.first_final_class = '7'
+						cnv.genuine = '3'
+						cnv.first_final_class = '5'
 
 					# artefact - set final_class to artefact
 					elif cleaned_data['genuine'] == '4':
 
-						classification.genuine = '4'
-						classification.first_final_class = '6'
+						cnv.genuine = '4'
+						cnv.first_final_class = '6'
 						
-					classification.save()
+					cnv.save()
 
 				# reload dict variables for rendering
-				result = classification.display_first_classification()
+				result = cnv.display_first_classification()
 				context['result'] = result
-				context['answers'] = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
-				context['classification'] = get_object_or_404(Classification, pk=pk)
-				context['genuine_form'] = GenuineArtefactForm(classification_pk=classification.pk)
+				if cnv.gain_loss == "Gain":
+					context['answers'] = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+				elif cnv.gain_loss == "Loss":
+					context['answers'] = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+				context['cnv'] = get_object_or_404(CNV, pk=pk)
+				context['genuine_form'] = CNVGenuineArtefactForm(cnv_pk=cnv.pk)
+					
+		"""		
 
 
 			# FinaliseClassificationForm
