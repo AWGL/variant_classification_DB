@@ -417,7 +417,7 @@ def ajax_cnv_comments(request):
 
 				file = request.FILES.get('file')
 
-				new_evidence = Evidence()
+				new_evidence = CNVEvidence()
 
 				new_evidence.file = file
 
@@ -440,7 +440,7 @@ def ajax_cnv_comments(request):
 
 				ImageData = base64.b64decode(ImageData) #to binary
 
-				new_evidence = Evidence()
+				new_evidence = CNVEvidence()
 
 				new_evidence.comment= new_comment
 
