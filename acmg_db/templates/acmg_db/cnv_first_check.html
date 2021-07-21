@@ -198,16 +198,20 @@
 					<td>Decipher Links</td>
 					<td>
 					<a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv }}>GENES</a><br>
-					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
+					{% if cnv.sample.genome == 'GRCh37' %}
+	  					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
+	  				{% elif cnv.sample.genome == 'GRCh38' %}
+	  					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv }}>BROWSER</a>
+	  				{% endif %}
 					</td>
 				</tr>
 				<tr>
 					<td>ClinGen Dosage Link</td>
 					<td>
 					{% if cnv.sample.genome == "GRCh37" %}
-					<a href=https://dosage.clinicalgenome.org/region_search.cgi?loc=chr{{ cnv.cnv }}>DOSAGE LINK</a>
+						<a href=https://dosage.clinicalgenome.org/region_search.cgi?loc=chr{{ cnv.cnv }}>DOSAGE LINK</a>
 					{% elif cnv.sample.genome == "GRCh38" %}
-					<a href=https://dosage.clinicalgenome.org/region_search_38.cgi?loc=chr{{ cnv.cnv }}>DOSAGE LINK</a>
+						<a href=https://dosage.clinicalgenome.org/region_search_38.cgi?loc=chr{{ cnv.cnv }}>DOSAGE LINK</a>
 					{% endif %}
 					</td>
 					

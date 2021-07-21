@@ -133,7 +133,11 @@
 	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv }}>GENES</a>
 	  <br>
 	  <br>
-	  <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
+	  {% if cnv.sample.genome == 'GRCh37' %}
+	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
+	  {% elif cnv.sample.genome == 'GRCh38' %}
+	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv }}>BROWSER</a>
+	  {% endif %}
 	  </td>
 	  <td>
 		{% if 'Benign' in cnv.display_classification %}
