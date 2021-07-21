@@ -197,33 +197,13 @@
 					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
 					</td>
 				</tr>
-				<tr>
-					<td>Gene inheritence pattern</td>
-					<td>Inheritance
-					<!--
-					{% if classification.selected_transcript_variant.transcript.gene.inheritance_pattern %}
-						{{ classification.selected_transcript_variant.transcript.gene.all_inheritance_patterns}}
-					{% else %}
-						<span class="badge badge-danger">Empty - edit below</span>
-					{% endif %}
-					-->
-					</td>
-				</tr> 
-				<tr>
-					<td>Conditions associated with gene</td>
-					<td>
-					<!--
-					{% if classification.selected_transcript_variant.transcript.gene.conditions %}
-						{{ classification.selected_transcript_variant.transcript.gene.conditions }}
-					{% else %}
-						<span class="badge badge-danger">Empty - edit below</span>
-					{% endif %}
-					-->
-					</td>
-				</tr>  
 			</tbody>
 		
 		</table>
+		
+		<h5>CNV Further Details</h5>
+		
+		{% crispy inheritance_form %}
 		
 		<!-- NEED TO ADD FORM FOR UPDATING INFORMATION -->
 		<!-- NEED TO ADD PREVIOUS CLASSIFICATIONS BOX -->

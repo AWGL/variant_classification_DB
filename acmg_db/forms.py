@@ -405,6 +405,32 @@ class FinaliseClassificationForm(forms.Form):
 			Field('confirm'),
 		)
 
+class CNVInheritanceForm(forms.Form):
+	"""
+	Form for specifying CNV inheritance pattern
+	"""
+	inheritance_options = [
+				('Trio De Novo','Trio De Novo'),
+				('Maternal','Maternal'),
+				('Paternal','Paternal'),
+				('Mosaic','Mosaic')
+				]
+	inheritance = forms.MultipleChoiceField(choices=inheritance_options, widget=forms.CheckboxSelectMultiple())
+	
+	def __init__(self, *args, **kwargs):
+
+		super(CNVInheritanceForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('inheritance', placeholder='Select a file to upload', title=False)
+		)
+		
+
 
 # Second check forms ---------------------------------------------------------------
 class SampleInfoFormSecondCheck(forms.Form):

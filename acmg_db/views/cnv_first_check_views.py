@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm
+from acmg_db.forms import CNVSampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm, CNVInheritanceForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ def cnv_first_check(request, pk):
 		score = cnv.first_final_score
 
 		# make empty instances of forms
+		inheritance_form = CNVInheritanceForm(request.POST)
 		#sample_form = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
 		#transcript_form = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		#variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
@@ -82,6 +83,7 @@ def cnv_first_check(request, pk):
 			'comments': comments,
 			'result': result,
 			'score': score,
+			'inheritance_form': inheritance_form,
 			#'sample_form': sample_form,
 			#'transcript_form': transcript_form,
 			#'variant_form': variant_form,
@@ -91,10 +93,33 @@ def cnv_first_check(request, pk):
 		}
 		#-------
 		
-		"""
 		# if a form is submitted
 		if request.method == 'POST':
-
+			
+			#InheritanceForm
+			if 'inheritance' in request.POST:
+				
+				inheritance_form = CNVInheritanceForm(request.POST)
+				
+				if inheritance_form.is_valid():
+					
+					#makes list based on the inheritance check box
+					inheritance = inheritance_form.cleaned_data['inheritance']
+					
+					#convert list to string to save in model
+					inheritance_str = ""
+					for entry in inheritance:
+						inheritance_str += entry+','
+					
+					#Remove comma from end of string
+					inheritance_str = inheritance_str[:-1]
+					
+					#Add to cnv model
+					cnv.inheritance = inheritance_str
+					cnv.save()
+					
+		
+		"""
 			# SampleInfoForm
 			if 'affected_with' in request.POST:
 

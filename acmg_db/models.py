@@ -622,6 +622,7 @@ class CNV(models.Model):
 	second_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
 	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = 'Not analysed')
 	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = 'Not analysed')  # The actual one we want to display.
+	inheritance = models.TextField(null=True)
 		
 	def __str__(self):
 		return f'{self.id}'
