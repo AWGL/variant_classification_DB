@@ -508,12 +508,13 @@ def ajax_cnv_delete_comment(request):
 @login_required
 def cnv_view_classification(request, pk):
 	"""
-	View a read only version of a classification of a variant
+	View a read only version of a classification of a CNV
 
 	"""
 
-	classification = get_object_or_404(Classification, pk=pk)
-
+	cnv = get_object_or_404(CNV, pk=pk)
+	
+	"""
 	# Allow users to archive the classification
 	if request.method == 'POST':
 
@@ -725,20 +726,21 @@ def cnv_view_classification(request, pk):
 		reset_form = ResetClassificationForm(classification_pk = classification.pk)
 		assign_form = AssignSecondCheckToMeForm(classification_pk = classification.pk)
 		sendback_form = SendBackToFirstCheckForm(classification_pk = classification.pk)
-
-		return render(request, 'acmg_db/view_classification.html', 
+		"""
+	comments = CNVUserComment.objects.filter(classification=cnv, visible=True)	
+	return render(request, 'acmg_db/cnv_view_classification.html', 
 			{	
-				'classification': classification,
-				'classification_answers': classification_answers,
-				'classes_full_strength': full_strength_dict,
-				'classes_altered_strength': altered_strength_dict,
-				'classes_count': strength_count_dict,
+				'cnv': cnv,
+#				'classification_answers': classification_answers,
+#				'classes_full_strength': full_strength_dict,
+#				'classes_altered_strength': altered_strength_dict,
+#				'classes_count': strength_count_dict,
 				'comments': comments,
-				'archive_form': archive_form,
-				'reset_form': reset_form,
-				'assign_form': assign_form,
-				'sendback_form': sendback_form,
-				'history': history
+#				'archive_form': archive_form,
+#				'reset_form': reset_form,
+#				'assign_form': assign_form,
+#				'sendback_form': sendback_form,
+#				'history': history
 			}
 		)
 
