@@ -132,7 +132,10 @@ def cnv_home(request):
 						sample = CNVSample_obj,
 						cnv = final_cnv,
 						gain_loss = gain_loss,
-						method = gain_loss
+						method = gain_loss,
+						status = 0,
+						creation_date = timezone.now(),
+						user_creator = request.user,
 						)
 				CNV_obj.save()
 				
@@ -322,7 +325,9 @@ def cnv_manual(request):
 					cnv = final_cnv,
 					gain_loss = gain_loss_info,
 					method = gain_loss_info,
-					status = 0
+					status = 0,
+					creation_date = timezone.now(),
+					user_creator = request.user,
 					)
 			CNV_obj.save()
 

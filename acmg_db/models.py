@@ -637,6 +637,8 @@ class CNV(models.Model):
 	method = models.TextField() #this allows us to change the ACMG guidelines being used whilst retaining the information on actual gain/loss
 	first_check_date = models.DateTimeField(null=True, blank=True)
 	second_check_date = models.DateTimeField(null=True, blank=True)
+	creation_date = models.DateTimeField(null=True)
+	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='cnv_user_creator')
 		
 	def __str__(self):
 		return f'{self.id}'
