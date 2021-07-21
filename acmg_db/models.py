@@ -631,6 +631,9 @@ class CNV(models.Model):
 	
 	def genes_as_list(self):
 		return CNVGene.objects.filter(cnv=self)
+	
+	def count_genes(self):
+		return len(CNVGene.objects.filter(cnv=self))
 		
 	def display_status(self):
 		"""
