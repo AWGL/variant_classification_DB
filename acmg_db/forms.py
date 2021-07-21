@@ -405,9 +405,9 @@ class FinaliseClassificationForm(forms.Form):
 			Field('confirm'),
 		)
 
-class CNVInheritanceForm(forms.Form):
+class CNVDetailsForm(forms.Form):
 	"""
-	Form for specifying CNV inheritance pattern
+	Form for specifying CNV further details
 	"""
 	inheritance_options = [
 				('Trio De Novo','Trio De Novo'),
@@ -415,11 +415,25 @@ class CNVInheritanceForm(forms.Form):
 				('Paternal','Paternal'),
 				('Mosaic','Mosaic')
 				]
+	copy_options = [
+			('Nullisomic','Nullisomic'),
+			('Deletion','Deletion'),
+			('Duplication','Duplication'),
+			('Triplication','Triplication'),
+			('Amplification (>Trip)', 'Amplification (>Trip)')
+			]
+	geno_options = [
+			('Heterozygous','Heterozygous'),
+			('Homozygous','Homozygous'),
+			('Hemizygous','Hemizygous')
+			]
 	inheritance = forms.MultipleChoiceField(choices=inheritance_options, widget=forms.CheckboxSelectMultiple())
+	copy_number = forms.CharField(widget=forms.Select(choices=copy_options))
+	genotype = forms.CharField(widget=forms.Select(choices=geno_options))
 	
 	def __init__(self, *args, **kwargs):
 
-		super(CNVInheritanceForm, self).__init__(*args, **kwargs)
+		super(CNVDetailsForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -427,7 +441,9 @@ class CNVInheritanceForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			Field('inheritance', placeholder='Select a file to upload', title=False)
+			Field('inheritance', placeholder='Select inheritance pattern', title=False),
+			Field('copy_number', placeholder='Select CNV copy number', title=False),
+			Field('genotype', placeholder='Select CNV genotype', title=False) 
 		)
 		
 

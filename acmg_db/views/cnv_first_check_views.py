@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm, CNVInheritanceForm
+from acmg_db.forms import CNVSampleInfoForm, VariantInfoForm, GenuineArtefactForm, FinaliseClassificationForm, TranscriptForm, CNVDetailsForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ def cnv_first_check(request, pk):
 		score = cnv.first_final_score
 
 		# make empty instances of forms
-		inheritance_form = CNVInheritanceForm(request.POST)
+		details_form = CNVDetailsForm(request.POST)
 		#sample_form = CNVSampleInfoForm(cnv_pk=cnv.pk, options=PANEL_OPTIONS)
 		#transcript_form = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 		#variant_form = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
@@ -83,7 +83,7 @@ def cnv_first_check(request, pk):
 			'comments': comments,
 			'result': result,
 			'score': score,
-			'inheritance_form': inheritance_form,
+			'details_form': details_form,
 			#'sample_form': sample_form,
 			#'transcript_form': transcript_form,
 			#'variant_form': variant_form,
@@ -96,27 +96,36 @@ def cnv_first_check(request, pk):
 		# if a form is submitted
 		if request.method == 'POST':
 			
-			#InheritanceForm
+			#Details Form
 			if 'inheritance' in request.POST:
 				
-				inheritance_form = CNVInheritanceForm(request.POST)
+				details_form = CNVDetailsForm(request.POST)
 				
-				if inheritance_form.is_valid():
+				if details_form.is_valid():
 					
+					#Inheritance
 					#makes list based on the inheritance check box
-					inheritance = inheritance_form.cleaned_data['inheritance']
-					
+					inheritance = details_form.cleaned_data['inheritance']					
 					#convert list to string to save in model
 					inheritance_str = ""
 					for entry in inheritance:
 						inheritance_str += entry+','
-					
 					#Remove comma from end of string
 					inheritance_str = inheritance_str[:-1]
 					
+					#Copy Number
+					copy = details_form.cleaned_data['copy_number']
+					
+					#Genotype
+					genotype = details_form.cleaned_data['genotype']
+					
 					#Add to cnv model
 					cnv.inheritance = inheritance_str
+					cnv.copy = copy
+					cnv.genotype = genotype
 					cnv.save()
+					
+					
 					
 		
 		"""
@@ -153,47 +162,6 @@ def cnv_first_check(request, pk):
 				context['transcript_form'] = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 
-			# VariantInfoForm
-			if 'inheritance_pattern' in request.POST:
-
-				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=fixed_refseq_options)
-
-				if variant_form.is_valid():
-
-					cleaned_data = variant_form.cleaned_data
-
-					classification.is_trio_de_novo = cleaned_data['is_trio_de_novo']
-
-					genotype = cleaned_data['genotype']
-
-					if genotype == 'Het':
-						genotype = 1
-
-					elif genotype == 'Hom':
-						genotype = 2
-
-					elif genotype == 'Hemi':
-						genotype = 3
-
-					elif genotype == 'Mosaic':
-						genotype = 4
-
-					else:
-						genotype = None
-
-					classification.genotype = genotype
-
-					classification.save()
-
-					# genes section
-					gene = classification.selected_transcript_variant.transcript.gene
-					gene.inheritance_pattern = cleaned_data['inheritance_pattern']
-					gene.conditions = cleaned_data['conditions']
-					gene.save()
-
-				# reload dict variables for rendering
-				context['classification'] = classification
-				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 
 			# GenuineArtefactForm
 			if 'genuine' in request.POST:
