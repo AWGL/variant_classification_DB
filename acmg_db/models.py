@@ -635,6 +635,8 @@ class CNV(models.Model):
 	genotype = models.TextField(null=True)
 	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
 	method = models.TextField() #this allows us to change the ACMG guidelines being used whilst retaining the information on actual gain/loss
+	first_check_date = models.DateTimeField(null=True, blank=True)
+	second_check_date = models.DateTimeField(null=True, blank=True)
 		
 	def __str__(self):
 		return f'{self.id}'

@@ -493,7 +493,38 @@ class CNVMethodForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('method', placeholder='Select ACMG Guidelines to use', title=False),
 		)
-		
+
+class CNVFinaliseClassificationForm(forms.Form):
+	"""
+	Form for submitting the first check page.
+	"""
+	final_class_choices = CNV.FINAL_CLASS_CHOICES + (('8', 'Use classification (don\'t override)'),)
+	final_classification = forms.ChoiceField(choices=final_class_choices)
+	confirm = forms.BooleanField(required=True)
+
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+
+		super(CNVFinaliseClassificationForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.fields['final_classification'].initial = '8'
+		self.fields['final_classification'].label = 'Final classification'
+		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
+		self.fields['confirm'].label = 'Confirm that the classification is complete'
+		self.helper.form_id = 'finalise-classification-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_first_check',kwargs={'pk':self.cnv_pk})
+		self.helper.add_input(Submit('submit', 'Submit for second check', css_class='btn-danger'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('final_classification'),
+			Field('confirm'),
+		)
 
 
 # Second check forms ---------------------------------------------------------------

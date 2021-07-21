@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, FinaliseClassificationForm, CNVDetailsForm, CNVMethodForm
+from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, CNVFinaliseClassificationForm, CNVDetailsForm, CNVMethodForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ def cnv_first_check(request, pk):
 		sample_form = CNVSampleInfoForm(request.POST)
 		genuine_form = CNVGenuineArtefactForm(cnv_pk=pk)
 		method_form = CNVMethodForm(request.POST)
-		#finalise_form = FinaliseClassificationForm(classification_pk=classification.pk)
+		finalise_form = CNVFinaliseClassificationForm(cnv_pk=cnv.pk)
 
 		# dict of data to pass to view
 		context = {
@@ -86,7 +86,7 @@ def cnv_first_check(request, pk):
 			'sample_form': sample_form,
 			'genuine_form': genuine_form,
 			'method_form': method_form,
-			#'finalise_form': finalise_form,
+			'finalise_form': finalise_form,
 			'warn': []
 		}
 		#-------
@@ -219,77 +219,62 @@ def cnv_first_check(request, pk):
 							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 					
 					context['answers'] = answers
-					context['method_form'] = CNVMethodForm(request.POST)			
-		"""		
-
+					context['method_form'] = CNVMethodForm(request.POST)				
 
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
 
 				# Don't let anyone except the assigned first checker submit the form
-				if classification.status != '0' or request.user != classification.user_first_checker:
+				if cnv.status != '0' or request.user != cnv.user_first_checker:
 
 					raise PermissionDenied('You do not have permission to finalise the classification.')
 
-				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
+				finalise_form = CNVFinaliseClassificationForm(request.POST, cnv_pk=cnv.pk)
 
 				if finalise_form.is_valid():
 
 					cleaned_data = finalise_form.cleaned_data
 
 					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
-					if classification.genuine == '0':
+					if cnv.genuine == '0':
 
-						context['warn'] += ['Select whether the variant is genuine or artefact']
+						context['warn'] += ['Select whether the CNV is genuine or artefact']
 
-					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None or classification.selected_transcript_variant.transcript.gene.inheritance_pattern == '':
+					if cnv.inheritance == None or cnv.inheritance == '':
 
 						context['warn'] += ['Inheritence pattern has not been set']
 
-					if classification.selected_transcript_variant.transcript.gene.conditions == None or classification.selected_transcript_variant.transcript.gene.conditions == '':
-
-						context['warn'] += ['Gene associated conditions have not been set']
-
-					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
+					if cnv.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
 
 						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
 
-					if classification.genuine  == '3' and (cleaned_data['final_classification'] != '7' ):
+					if cnv.genuine  == '3' and (cleaned_data['final_classification'] != '7' ):
 
-						context['warn'] += ['This classification was selected as Not Analysed - therefore the only valid option is NA']
+						context['warn'] += ['This classification was selected as Not Analysed - therefore the only valid option is Not Analysed']
 
-					if classification.genuine  == '4' and (cleaned_data['final_classification'] != '6' ):
+					if cnv.genuine  == '4' and (cleaned_data['final_classification'] != '6' ):
 
 						context['warn'] += ['This classification was selected as Artefect - therefore the only valid option is Artefect']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:
-						
-						# if new classification, pull score from the acmg section and save to final class
-						if classification.genuine == '1':
-
-							classification.first_final_class = classification.calculate_acmg_score_first()
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
 
-							classification.first_final_class = cleaned_data['final_classification']
+							cnv.first_final_class = cleaned_data['final_classification']
 
 						# update status and save
-						classification.status = '1'
-						classification.first_check_date = timezone.now()
-						classification.user_first_checker = request.user
-						classification.save()
+						cnv.status = '1'
+						cnv.first_check_date = timezone.now()
+						cnv.user_first_checker = request.user
+						cnv.save()
 
 						#return redirect('home')
-						return redirect('/pending_classifications?sample={}&worksheet={}&panel={}'.format(
-							classification.sample.sample_name_only,
-							classification.sample.worklist.name,
-							classification.sample.analysis_performed.panel
-						))
+						return redirect('/cnv_pending')
 			
-			return render(request, 'acmg_db/first_check.html', context)
-	"""	
+			return render(request, 'acmg_db/cnv_first_check.html', context)
+	
 	return render(request, 'acmg_db/cnv_first_check.html', context)
 
 
@@ -360,21 +345,21 @@ def ajax_acmg_cnv_classification_first(request):
 		# update the score in the database
 		cnv.first_final_score = cnv.calculate_acmg_score_first()
 		if cnv.first_final_score >= 0.99:
-			cnv.first_final_class = "Pathogenic"
+			cnv.first_final_class = "4"
 		elif 0.90 <= cnv.first_final_score <= 0.98:
-			cnv.first_final_class = "Likely Pathogenic"
+			cnv.first_final_class = "3"
 		elif -(0.89) <= cnv.first_final_score <= 0.89:
-			cnv.first_final_class = "VUS"
+			cnv.first_final_class = "2"
 		elif -(0.98) <= cnv.first_final_score <= -(0.90):
-			cnv.first_final_class = "Likely Benign"
+			cnv.first_final_class = "1"
 		elif cnv.first_final_score <= -(0.99):
-			cnv.first_final_class = "Benign"
+			cnv.first_final_class = "0"
 		cnv.save()
 		
 		score = cnv.first_final_score
 		
 		context = {
-			'result': cnv.first_final_class,
+			'result': cnv.display_first_classification(),
 			'score': score,
 		}
 		

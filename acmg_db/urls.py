@@ -55,5 +55,6 @@ urlpatterns = [
     path('ajax/cnv_comments/', views.ajax_cnv_comments, name='ajax_cnv_comments'),
     path('ajax/cnv_delete_comment/', views.ajax_cnv_delete_comment, name='ajax_cnv_delete_comment'),
     path('view_cnvs/', views.view_cnvs, name='view_cnvs'),
+    path('cnv_view_classification/<int:pk>/', views.cnv_view_classification, name='cnv_view_classification'),
     
 ]
