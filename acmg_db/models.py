@@ -628,8 +628,8 @@ class CNV(models.Model):
 	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_second_checker')
 	first_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
 	second_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
-	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = 'Not analysed')
-	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = 'Not analysed')  # The actual one we want to display.
+	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')
+	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')  # The actual one we want to display.
 	inheritance = models.TextField(null=True)
 	copy = models.TextField(null=True)
 	genotype = models.TextField(null=True)

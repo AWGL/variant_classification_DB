@@ -51,7 +51,6 @@ def cnv_first_check(request, pk):
 		# Get data to render form
 		previous_classifications = CNV.objects.filter(cnv=cnv, status__in=['2', '3']).exclude(pk=cnv.pk).order_by('-second_check_date')
 		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
-		print(cnv.method)
 		if cnv.method == "Gain":
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 			if len(answers) == 0:
@@ -63,7 +62,7 @@ def cnv_first_check(request, pk):
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
-		result = cnv.first_final_class  # current class to display
+		result = cnv.display_first_classification()  # current class to display
 		score = cnv.first_final_score
 
 		# make empty instances of forms
@@ -160,9 +159,6 @@ def cnv_first_check(request, pk):
 						if len(answers) == 0:
 							cnv.initiate_classification()
 
-						# save final_class as output of calculate_acmg_score_first
-						cnv.first_final_class = cnv.calculate_acmg_score_first()
-
 					# genuine - use previous classification
 					elif cleaned_data['genuine'] == '2':
 
@@ -194,10 +190,6 @@ def cnv_first_check(request, pk):
 				# reload dict variables for rendering
 				result = cnv.display_first_classification()
 				context['result'] = result
-				if cnv.gain_loss == "Gain":
-					context['answers'] = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-				elif cnv.gain_loss == "Loss":
-					context['answers'] = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
 				context['cnv'] = get_object_or_404(CNV, pk=pk)
 				context['genuine_form'] = CNVGenuineArtefactForm(cnv_pk=cnv.pk)
 		
