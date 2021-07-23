@@ -1,0 +1,778 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+<style>
+.evidence_images {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.evidence_images:hover {opacity: 0.7;}
+
+</style>
+
+<br>
+
+<br>
+	<p> 
+	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
+	</p>
+<br>
+
+<br>
+<h4>CNV Second Check</h4>
+<br>
+
+<!-- BOX TO SHOW ERRORS -->
+{% if warn %}
+  {% for w in warn %}
+    <div class="alert alert-danger" role="alert">
+	    Error: {{ w }}
+	  </div>
+  {% endfor %}
+{% endif %}
+
+<!-- CNV SUMMARY BOX -->
+<div>
+	<table class="table table-bordered">
+		
+		<thead>
+			<tr>
+				<td style="width: 10.00%">Worksheet</td>
+				<td style="width: 10.00%">Sample</td>
+				<td style="width: 20.00%">CNV</td>
+				<td style="width: 40.00%">Current Classification</td>
+				<td style="width: 20.00%">Status</td>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+				<td>{{ cnv.sample.worklist }}</td>
+				<td>{{ cnv.sample.sample_name }}</td>
+				<td>{{ cnv.cnv}} <br> 
+				{% if cnv.sample.genome == 'GRCh37' %}
+					<span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
+				{% elif cnv.sample.genome == 'GRCh38' %}
+					<span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
+					{% endif %}
+				<td>
+					<div id="class_box">
+					{% if 'Pathogenic' in result_first %}
+						<button type="button" class="btn btn-danger" style="width: 100%;">{{result_first}}</span></button>
+					{% elif 'Benign' in result_first %}
+						<button type="button" class="btn btn-info" style="width: 100%;">{{result_first}}</button>
+					{% elif 'VUS' in result_first %}
+						<button type="button" class="btn btn-warning" style="width: 100%;">{{result_first}}</button>
+					{% elif 'Artefact' in result_first %}
+						<button type="button" class="btn btn-secondary" style="width: 100%;">{{result_first}}</button>
+					{% elif 'Contradictory' in result_first %}
+                       			 <button type="button" class="btn btn-primary" style="width: 100%;">{{result_first}}</button>
+					{% else %}
+						<button type="button" class="btn btn-light" style="width: 100%;">{{result_first}}</button>
+					{% endif %}
+					
+					<hr>
+
+					{% if 'Pathogenic' in result_second %}
+						<button type="button" class="btn btn-danger" style="width: 100%;">Second Analysis: {{result_second}}</button>
+					{% elif 'Benign' in result_second %}
+						<button type="button" class="btn btn-info" style="width: 100%;">Second Analysis: {{result_second}}</button>
+					{% elif 'VUS' in result_second %}
+						<button type="button" class="btn btn-warning" style="width: 100%;">Second Analysis: {{result_second}}</button>
+					{% elif 'Artefact' in result_second %}
+						<button type="button" class="btn btn-secondary" style="width: 100%;">Second Analysis: {{result_second}}</button>
+					{% elif 'Contradictory' in result_second %}
+                  				<button type="button" class="btn btn-primary" style="width: 100%;">Second Analysis: {{result_second}}</button>
+					{% else %}
+						<button type="button" class="btn btn-light" style="width: 100%">Second Analysis: {{result_second}}</button>
+					{% endif %}
+					
+					</div>
+				</td>
+				<td>{{ cnv.display_status }}</td>
+			</tr>
+		</tbody>
+
+	</table>
+	<hr>
+</div>
+
+<!-- TABS FOR CLASSIFICATION SECTIONS -->
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+	<a class="nav-item nav-link active" id="nav-sample-tab" data-toggle="tab" href="#nav-sample" role="tab" aria-controls="nav-sample" aria-selected="true">Sample Information</a>
+	<a class="nav-item nav-link" id="nav-cnv-tab" data-toggle="tab" href="#nav-cnv" role="tab" aria-controls="nav-cnv" aria-selected="true">CNV Information</a>
+	<a class="nav-item nav-link" id="nav-acmg-tab" data-toggle="tab" href="#nav-acmg" role="tab" aria-controls="nav-acmg" aria-selected="false">ACMG Criteria</a>
+	<a class="nav-item nav-link" id="nav-evidence-tab" data-toggle="tab" href="#nav-evidence" role="tab" aria-controls="nav-evidence" aria-selected="false">Evidence/Comments</a>
+	<a class="nav-item nav-link" id="nav-audit-tab" data-toggle="tab" href="#nav-audit" role="tab" aria-controls="nav-audit" aria-selected="false">Finalise</a>	
+</div>
+</nav>
+
+<!-- START OF CLASSIFICATION SECTIONS -->
+<div class="tab-content" id="nav-tabContent">
+
+  <!-- SAMPLE INFORMATION SECTION -->
+  <div class="tab-pane fade show active" id="nav-sample" role="tabpanel" aria-labelledby="nav-sample-tab">
+  <br>
+
+	<!-- Summary table for classification-->
+	<h5>Sample information</h5>
+  	<table id="classification_info" class="table table-hover table-bordered table-sm col-10">
+	
+	<thead>
+	</thead>
+	
+	<tbody>
+      		<tr>
+        		<td style="width: 25.00%" class="col-2">Sample ID</td>
+        		<td style="width: 75.00%" class="col-8">{{ cnv.sample.sample_name }}</td>
+      		</tr>
+      		<tr>
+      			<td>Cyto ID</td>
+      			<td>{{ cnv.sample.cyto }}</td>
+      		</tr>
+      		<tr>
+        		<td>Worksheet</td>
+        		<td>{{ cnv.sample.worklist }}</td>
+		</tr>
+      		<tr>
+        		<td>Panel Applied</td>
+        		<td>{{ cnv.sample.analysis_performed|linebreaksbr }}</td>
+		</tr>
+		<tr>
+			<td>Affected With</td>
+			<td>{{ cnv.sample.affected_with|linebreaksbr }}</td>
+		</tr> 
+		<tr>
+			<td>Platform</td>
+			<td>{{ cnv.sample.platform }}</td>
+		</tr>
+ 
+	</tbody>
+	
+	</table>
+	
+	<!-- Expandable box containing preset filters -->
+	<!-- Button to expand/hide the filter table -->
+	<button class="btn btn-success" type="button" data-toggle="collapse" href="#edit-sample-info" role="button" aria-expanded="false" aria-controls="edit-sample-info">
+		Edit
+	</button>
+	<br>
+	<div class="collapse" id="edit-sample-info">
+		<br>
+		<div class="card card-body bg-light col-10">
+			
+			{% crispy sample_form %}
+			
+		</div>
+	</div>
+	
+	<br>
+	</div>
+
+	<!-- CNV INFORMATION SECTION -->
+	<div class="tab-pane fade" id="nav-cnv" role="tabpanel" aria-labelledby="nav-cnv-tab">
+	<br>
+
+
+	<!-- CNV information table -->
+	<h5>CNV information</h5>
+	<table class="table table-hover table-bordered table-sm col-10">
+	
+			<thead>
+			</thead>
+		
+			<tbody>
+				<tr>
+					<td  style="width: 25.00%" class="col-2">CNV</td>
+					{% if cnv.sample.genome == 'GRCh37' %}
+					<td style="width: 75.00%" class="col-8">{{ cnv.cnv }} <span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
+					{% elif cnv.sample.genome == 'GRCh38' %}
+					<td style="width: 75.00%" class="col-8">{{ cnv.cnv }} <span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
+					{% endif %}
+				</tr>
+				<tr>
+					<td>Gain/Loss</td>
+					<td>{{ cnv.gain_loss }}</td>
+				</tr>
+				<tr>
+					<td>Gene(s)</td>
+					<td>
+					{% for gene in cnv.genes_as_list %}
+	  					{{ gene.gene }}<br>
+	  				{% endfor %}
+					</td>
+				</tr>
+				<tr>
+					<td>Number of Genes</td>
+					<td>{{ cnv.count_genes }}</td>
+				</tr>
+				<tr>
+					<td>Decipher Links</td>
+					<td>
+					<a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv }}>GENES</a><br>
+					{% if cnv.sample.genome == 'GRCh37' %}
+	  					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
+	  				{% elif cnv.sample.genome == 'GRCh38' %}
+	  					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv }}>BROWSER</a>
+	  				{% endif %}
+					</td>
+				</tr>
+				<tr>
+					<td>ClinGen Dosage Link</td>
+					<td>
+					{% if cnv.sample.genome == "GRCh37" %}
+						<a href=https://dosage.clinicalgenome.org/region_search.cgi?loc=chr{{ cnv.cnv }}>DOSAGE LINK</a>
+					{% elif cnv.sample.genome == "GRCh38" %}
+						<a href=https://dosage.clinicalgenome.org/region_search_38.cgi?loc=chr{{ cnv.cnv }}>DOSAGE LINK</a>
+					{% endif %}
+					</td>
+					
+				</tr>
+			</tbody>
+		
+		</table>
+		
+		<h5>CNV Further Details</h5>
+		<!--
+		DETAILS FORM
+		-->
+		<!-- NEED TO ADD PREVIOUS CLASSIFICATIONS BOX -->
+		
+		<h5>Change ACMG Guidelines</h5>
+		
+		Only fill out this box if you have justification for changing the ACMG Guidelines used from the default. Please evidence this in the comments. 
+		<br>If you require ACMG SNV Guidelines, please re-upload this CNV to the main ACMG Variant Database and classify from there. 
+		<br>
+		<!--
+		METHOD FORM	
+		-->
+		
+		<h5> Is this CNV Genuine? </h5>
+		<!-- Genuine/ artefact sections section-->
+		{% if cnv.genuine == '0' %}
+		<!--
+			GENUINE FORM 
+		-->
+			<br>
+	
+		{% else %}
+			<div class="alert alert-warning col-10" role="alert">
+			This Classification has been set as {{ cnv.display_genuine }}. To change this you will need to reset the classification.
+			</div>
+
+		{% endif %}
+
+	</div>
+	
+	<!-- ACMG RULES SECTION -->
+  	<div class="tab-pane fade" id="nav-acmg" role="tabpanel" aria-labelledby="nav-acmg-tab">
+	<br>
+		{% if cnv.genuine == '1' %}
+		<!-- Button to recalculate the classification -->
+		<button type="button" class="btn btn-success acmg_submit" id='submit_acmg'>Calculate classification</button>
+	
+		<br>
+		<br>	
+		
+		{% if cnv.method == 'Gain' %}
+			<h5>Copy Number Gain</h5>
+			{% if cnv.method != cnv.gain_loss %}
+			NOTE! THIS IS NOT THE DEFAULT ACMG CLASSIFICATION GUIDELINES? DID YOU MEAN TO CHANGE THIS?!
+			{% endif %}
+		{% elif cnv.method == 'Loss' %}
+			<h5>Copy Number Loss</h5>
+			{% if cnv.method != cnv.gain_loss %}
+			NOTE! THIS IS NOT THE DEFAULT ACMG CLASSIFICATION GUIDELINES? DID YOU MEAN TO CHANGE THIS?!
+			{% endif %}
+		{% endif %}
+		
+		<!-- Table listing all ACMG codes and option to apply them -->
+		<table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+
+                <thead>
+		<tr>
+		  <th style="display:none;" class='answer_pk'> Answer PK </th>
+		  <th style="display:none;" class='cat'> Category </th>
+		  <th style="width: 15.00%" class='question'> Evidence type  </th>
+		  <th style="width: 24.00%" class='description'> Evidence Description </th>
+		  <th style="width: 15.00%" class='strength'> Suggested points/case </th>
+		  <th style="width: 5.00%" class='selected_first'> Max score </th>
+		  <th style="width: 5.00%" class='comment'> Allocated score </th>
+		  <th style="width: 36.00%" class='comment'> Comment </th>
+		</tr>
+	  	</thead>
+
+	  	<tbody>
+	  	<tr>
+	  	  {% for answer in answers %}
+	  	  <!-- Hidden columns for rendering table sections properly -->
+		  <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+		  <td class='cat' style="display:none;"> {{ answer.cnv_classification_question.category}}</td>
+		  
+		  <!-- Visible columns -->
+		  <td class='question' style="width: 15.00%"> {{ answer.cnv_classification_question.evidence_type }}</td>
+		  <td class='description' style="width: 24.00%"> {{ answer.cnv_classification_question.evidence | safe }}</td>
+		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
+		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
+		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score}}"> </td>
+		  <!-- Comments box -->
+			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+		</tr>	
+	  	{% endfor %}
+	  	</tbody>
+		</table>
+		
+	<button type="button" class="btn btn-success acmg_submit" id='submit_acmg' >Calculate classification</button>
+	
+	{% else %}
+	<div class="alert alert-warning" role="alert">
+		<p>This CNV is not set for a new ACMG classification to be carried out.</p>
+		<p>To carry out a new classification, change the settings in the 'Is this CNV genuine?' section under the 'CNV information' tab.</p>
+	</div>
+
+	{% endif %}
+
+	<br>
+	<br>
+
+	</div>
+	
+	<!-- COMMENTS AND ATTACHMENTS SECTION -->
+  	<div class="tab-pane fade" id="nav-evidence" role="tabpanel" aria-labelledby="nav-evidence-tab">
+	<br>
+	  
+	<!-- Comment box holds the comments and files for the CNV - updated via ajax -->
+	<div id='comment_box'>
+	{% for comment in comments %}
+		<div class="card">
+		<h7 class="card-header">
+
+		{{comment.user}} on {{comment.time}} 
+	        {% if user == comment.user %}
+
+		  	<button id={{comment.pk}} type="button" class="close comment_destroy" aria-label="Close">
+  				<span aria-hidden="true">&times;</span>
+			</button>
+
+		{% endif %}
+		 </h7> 
+		  <div class="card-body">
+			{{comment.text|linebreaks}}
+			{% if comment.get_evidence == None %}
+			{% else %}
+			  <hr>
+			  {% for evidence in comment.get_evidence %}
+
+			  {% if evidence.file|make_list|slice:"-4:"|join:"" == ".png" %}
+
+
+			  	<a href="/media/{{ evidence.file }}" target="_blank"> <img class="evidence_images" src=/media/{{ evidence.file }} style="width:100%;max-width:300px"></a>
+
+			  	{% else %}
+
+			  	<a href="/media/{{ evidence.file }}" target="_blank">{{evidence.file }} </a>
+
+
+			  {% endif %}
+
+			  {% endfor %}
+			{% endif %}
+		  </div>
+		</div>
+		<hr>
+	  {% endfor %}
+	</div>
+
+
+	<!-- Form to add comments/ attach files or screenshots -->
+	<form enctype="multipart/form-data" class="col-lg-6"> {% csrf_token %}
+	  <div class="form-group">
+		<label for="comment">Comment:</label>
+		<textarea class="form-control" rows="5" id="comment_text" style="resize:none;"></textarea>
+	  </div>
+	  <button type="button" class="btn btn-success btn-sm" id='comment_button'>Add Comment/File</button>
+	  <div class="btn btn-default btn-sm">
+		Attach File <input type="file"  id='file_upload' name='file'>
+	  </div>
+	  <hr>
+	  <div class="alert alert-info" id='file_name' style="display: none;"></div>
+	  <input type="hidden" id='hidden_image_field'>
+	</form>
+	<canvas style="border:1px solid grey;" id="my_canvas" width="300" height="300"></canvas>
+	<div class="form-check">
+	  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+	  <label class="form-check-label" for="defaultCheck1">
+		Allow Image Pasting
+	  </label>
+	</div>
+	<br><br>
+		
+  	</div>
+  	
+  	<!-- AUDIT SECTION -->
+  	<div class="tab-pane fade" id="nav-audit" role="tabpanel" aria-labelledby="nav-audit-tab">
+	<br>
+
+		<!-- Finalise classification form -->
+		<h5>Finalise Classification</h5>
+		
+		<!-- display a 'reclassify' button to make sure the user hasnt made any changes that alter the class-->
+		{% if cnv.genuine == '1' %} 
+		<div class="row">
+			<div class="col-2">Reclassify</div>
+			<div class="col-8">
+				<button type="button" class="btn btn-danger acmg_submit" id='submit_acmg'>Calculate classification</button>
+				<br>
+				<br>
+				<p><strong>Make sure that the classification currently displayed is up-to-date before submitting</strong></p>
+			</div>
+		</div>
+		<br>
+		{% endif %}
+
+		
+		<!-- display the finalise form -->
+		<!--
+		FINALISE FORM
+		-->
+		<br>
+		<br>
+		
+
+		<!-- diplay the audit trail for the variant -->
+		<hr>
+		<h5>Classification history</h5>
+		<table class="table table-hover table-bordered table-sm col-10">
+
+			<thead>
+			</thead>
+			
+			<tbody>
+				<tr>
+					<td style="width: 25.00%" class="col-2">CNV</td>
+					<td style="width: 75.00%" class="col-8">{{ cnv.cnv }}</td>
+				</tr>
+				<tr>
+					<td>Status</td>
+					<td>{{ cnv.display_status }}</td>
+				</tr>
+				<tr>
+				<!--
+					<td>Guideline version</td>
+					<td>{{ classification.guideline_version }}</td>
+				-->
+				</tr>
+				<tr>
+					<td>Created Date </td>
+					<td>{{ cnv.creation_date }}</td>
+				</tr>
+				<tr>
+					<td>Creation User</td>
+					<td>{{ cnv.user_creator }}</td>
+				</tr>
+				<tr>
+					<td>First Check Date</td>
+					<td>{{ cnv.first_check_date }}</td>
+				</tr>
+				<tr>
+					<td>First Check User</td>
+					<td>{{ cnv.user_first_checker }}</td>
+				</tr>
+				<tr>
+					<td>Second Check Date</td>
+					<td>{{ cnv.second_check_date }}</td>
+				</tr>
+				<tr>
+					<td>Second Check User</td>
+					<td>{{ cnv.user_second_checker }}</td>
+				</tr>
+
+			</tbody>
+				
+		</table>
+
+	</div>
+		
+<!-- END OF CLASSIFICATION SECTIONS -->
+</div>
+	
+<!------------------------------------- END OF HTML ------------------------------------->
+
+
+
+<!-- JAVASCRIPT -->
+<script>
+$(document).ready(function(){
+
+	var canvas_entered =false;
+
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip()
+	})
+
+	// Inititialise DataTable
+	var table = $('#acmg_question_table').DataTable({
+		"paging":   false,
+		"ordering": false,
+		"info":     false,
+		"searching": false,
+		"rowGroup": {
+        dataSrc: 1
+    }
+		});
+
+	//Colour row when clicked
+	$(".answer-selected").change(function(){
+		// what is the value of the drop down
+		value = $(this).val()
+		// if true set the value to red or green depending on whether it is a P or B question
+		if (value == 'True'){
+			question = $(this).parent().siblings('td.question').text();
+			path = question.trim().substring(0, 1);
+			if (path == 'P'){
+				$(this).parent().parent().addClass("table-danger")
+			} else {
+				$(this).parent().parent().addClass("table-info")
+			}
+			
+		} else {
+			// remove classes when moving to false
+			$(this).parent().parent().removeClass("table-danger");
+			$(this).parent().parent().removeClass("table-info");
+		}
+	});
+
+
+	// When we destroy a comment
+	$('body').on('click', '.comment_destroy', function(e){
+
+		var r = confirm("Are you sure you want to delete this comment?");
+
+		if ( r ==true ){
+
+
+		comment_pk = this.id;
+
+		console.log(comment_pk);
+
+		var formData = new FormData();
+		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
+		formData.append('comment_pk', comment_pk); //add comment primary key
+		formData.append('cnv_pk', "{{cnv.pk}}")
+
+		$.ajax({
+			url: '/ajax/cnv_delete_comment/',
+			type: 'POST',
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+			processData: false, // NEEDED, DON'T OMIT THIS
+			success: function(data) {
+			$("#comment_box").html(data);
+			},
+			failure: function(data) {
+			alert('Got an error');
+			}
+			});
+	}
+
+	else {
+
+		console.log('didnt bother');
+
+	}
+
+
+	});
+
+
+
+	$("#genuine-artefact-form").on("submit", function () {
+    $(this).find(":submit").prop("disabled", true);
+	});
+
+
+
+	
+	// When we click the submit ACMG
+	$(".acmg_submit").click(function(){
+
+		// construct a dictionary of objects to submit to server
+		var rows = $("#acmg_question_table").children('tbody').children();
+		var classification_dict = {}
+
+		// Loop though each row
+		for (var i =0; i<rows.length; i++){
+
+				// skip group rows in table
+				if ($(rows[i]).hasClass('dtrg-group') == false){
+
+				var pk = $(rows[i]).children('td.answer_pk').text();
+				var score = $(rows[i]).children('td.score').children().val();
+				var comment = $(rows[i]).children('td.comment').children().val();
+				console.log(pk, score, comment)
+				classification_dict[pk] = [score, comment];
+			}}
+
+		var formData = new FormData();
+		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
+		formData.append('cnvs', JSON.stringify(classification_dict));
+		formData.append('cnv_pk', "{{cnv.pk}}" );
+		$.ajax({
+			url: '/ajax/acmg_cnv_classification_first/',
+			type: 'POST',
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+			processData: false, // NEEDED, DON'T OMIT THIS
+			success: function(data) {
+			$("#class_box").html(data);
+			},
+			failure: function(data) {
+			alert('Got an error');
+			}
+			});
+	});
+
+
+	$('#file_upload').on('change', function() { //runs when a file is selected
+		var file = this.files[0];
+		$('#file_name').text(file.name + " has been selected. Click Add Comment/File to upload.");
+		$('#file_name').show();
+	});
+
+
+	$("#comment_button").click(function(){
+
+		var comment_text = $("#comment_text").val();
+		var formData = new FormData(); //create empty form data
+		formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value ); //add csfr token
+		formData.append('cnv_pk', "{{cnv.pk}}"); //add sample primary key
+		formData.append('comment_text', comment_text); //add comment text
+		var file = $('#file_upload')[0].files[0];
+		var canvas = document.getElementById('my_canvas');
+		var dataURL = canvas.toDataURL("image/png");
+		document.getElementById('hidden_image_field').value = dataURL;
+		formData.append('file', file); //add file
+
+		if (canvas_entered ==true){
+			formData.append('image_data', $("#hidden_image_field").val()); //add image file
+			canvas_entered =false;
+		}
+
+		console.log(comment_text.length);
+
+		if (comment_text == ''){
+
+			alert('You need to enter a comment to submit.')
+		} else{
+
+
+
+		$.ajax({
+			url: '/ajax/cnv_comments/',
+			type: 'POST',
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+			processData: false, // NEEDED, DON'T OMIT THIS
+			success: function(data) {
+				$("#comment_box").html(data);
+				$("#comment_text").val('');
+				$('#file_name').hide();
+				$('#file_upload').val('');
+					var c = document.getElementById("my_canvas");
+					var ctx = c.getContext("2d");
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					c.width = 300;
+					c.height = 300;
+
+			},
+
+			failure: function(data) {
+				alert('Got an error');
+			}
+		});
+		}
+	});
+
+
+
+$("#defaultCheck1").click(function() {
+
+	if (this.checked) {
+        var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);
+		var canvas_entered =false;
+    } 
+});
+
+//copy and paste from clipboard
+//Taken from https://stackoverflow.com/questions/18377891/how-can-i-let-user-paste-image-data-from-the-clipboard-into-a-canvas-element-in
+
+/**
+ * image pasting into canvas
+ * 
+ * @param {string} canvas_id - canvas id
+ * @param {boolean} autoresize - if canvas will be resized
+ */
+function CLIPBOARD_CLASS(canvas_id, autoresize) {
+	var _self = this;
+	var canvas = document.getElementById(canvas_id);
+	var ctx = document.getElementById(canvas_id).getContext("2d");
+
+	//handlers
+	document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
+
+	//on paste
+	this.paste_auto = function (e) {
+
+		if (e.clipboardData) {
+			var items = e.clipboardData.items;
+			if (!items) return;
+			
+			//access data directly
+			for (var i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf("image") !== -1) {
+					//image
+					var blob = items[i].getAsFile();
+					var URLObj = window.URL || window.webkitURL;
+					var source = URLObj.createObjectURL(blob);
+					this.paste_createImage(source);
+				}
+			}
+			e.preventDefault();
+		}
+	};
+	//draw pasted image to canvas
+	this.paste_createImage = function (source) {
+		var pastedImage = new Image();
+		canvas_entered =true;
+		pastedImage.onload = function () {
+			if(autoresize == true){
+				//resize
+				canvas.width = pastedImage.width;
+				canvas.height = pastedImage.height;
+			}
+			else{
+				//clear canvas
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+			}
+			ctx.drawImage(pastedImage, 0, 0);
+		};
+		pastedImage.src = source;
+	};
+}
+
+
+
+});
+
+</script>
+
+
+
+{% csrf_token %}
+{% endblock %}
