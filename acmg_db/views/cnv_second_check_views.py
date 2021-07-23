@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, VariantInfoFormSecondCheck, FinaliseClassificationSecondCheckForm, TranscriptFormSecondCheck
+from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, CNVMethodForm, FinaliseClassificationSecondCheckForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -117,6 +117,8 @@ def cnv_second_check(request, pk):
 
 		# make empty instances of forms
 		sample_form = CNVSampleInfoForm(request.POST)
+		details_form = CNVDetailsForm(request.POST)
+		method_form = CNVMethodForm(request.POST)
 #		finalise_form = FinaliseClassificationSecondCheckForm(classification_pk=classification.pk)
 
 		# dict of data to pass to view
@@ -129,6 +131,8 @@ def cnv_second_check(request, pk):
 			'result_first': result_first,
 			'result_second': result_second,
 			'sample_form': sample_form,
+			'details_form': details_form,
+			'method_form' : method_form,
 #			'finalise_form': finalise_form,
 			'warn': []
 		}
@@ -156,6 +160,63 @@ def cnv_second_check(request, pk):
 				# reload dict variables for rendering
 				context['cnv'] = get_object_or_404(CNV, pk=pk)
 				context['sample_form'] = CNVSampleInfoForm(request.POST)
+			
+			#Details Form
+			if 'inheritance' in request.POST:
+				
+				details_form = CNVDetailsForm(request.POST)
+				
+				if details_form.is_valid():
+					
+					#Inheritance
+					#makes list based on the inheritance check box
+					inheritance = details_form.cleaned_data['inheritance']					
+					#convert list to string to save in model
+					inheritance_str = ""
+					for entry in inheritance:
+						inheritance_str += entry+','
+					#Remove comma from end of string
+					inheritance_str = inheritance_str[:-1]
+					
+					#Copy Number
+					copy = details_form.cleaned_data['copy_number']
+					
+					#Genotype
+					genotype = details_form.cleaned_data['genotype']
+					
+					#Add to cnv model
+					cnv.inheritance = inheritance_str
+					cnv.copy = copy
+					cnv.genotype = genotype
+					cnv.save()
+			
+			# Changing ACMG Method Form
+			if 'method' in request.POST:
+
+				method_form = CNVMethodForm(request.POST)
+
+				if method_form.is_valid():
+					
+					method = method_form.cleaned_data['method']
+					
+					# if method on form doesn't equal method saved in object, update method and re-calculate answers
+					if method != cnv.method:
+						cnv.method = method
+						cnv.save()
+					
+					if cnv.method == "Gain":
+						answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+						if len(answers) == 0:
+							cnv.initiate_classification()
+							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+					elif cnv.method == "Loss":
+						answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+						if len(answers) == 0:
+							cnv.initiate_classification()
+							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+					
+					context['answers'] = answers
+					context['method_form'] = CNVMethodForm(request.POST)	
 		"""
 			
 			# FinaliseClassificationForm

@@ -239,9 +239,9 @@
 		</table>
 		
 		<h5>CNV Further Details</h5>
-		<!--
-		DETAILS FORM
-		-->
+		
+		{% crispy details_form %}
+		
 		<!-- NEED TO ADD PREVIOUS CLASSIFICATIONS BOX -->
 		
 		<h5>Change ACMG Guidelines</h5>
@@ -249,9 +249,9 @@
 		Only fill out this box if you have justification for changing the ACMG Guidelines used from the default. Please evidence this in the comments. 
 		<br>If you require ACMG SNV Guidelines, please re-upload this CNV to the main ACMG Variant Database and classify from there. 
 		<br>
-		<!--
-		METHOD FORM	
-		-->
+		
+		{% crispy method_form %}	
+		
 		
 		<h5> Is this CNV Genuine? </h5>
 		<!-- Genuine/ artefact sections section-->
