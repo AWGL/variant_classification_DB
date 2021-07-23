@@ -781,6 +781,52 @@ class CNV(models.Model):
 				final_score+=answer.score
 
 			return final_score
+	
+	def calculate_acmg_score_second(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+		Calculates based on the second user's input.
+		Output:
+		integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
+		"""
+		
+		if self.gain_loss == 'Gain':
+			# pull out all classification questions and answers
+			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return '7'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score_second
+
+			return final_score
+		
+		elif self.gain_loss == 'Loss':
+			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return '7'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score_second
+
+			return final_score
+	
+	
 			
 class CNVGene(models.Model):
 	""" 
@@ -844,7 +890,7 @@ class CNVGainClassificationAnswer(models.Model):
 	cnv_classification_question = models.ForeignKey(CNVGainClassificationQuestion, on_delete=models.CASCADE)
 	score = models.DecimalField(max_digits=10, decimal_places=2)
 	comment = models.TextField()
-	score_second = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+	score_second = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
 	comment_second = models.TextField(null=True)
 
 	def __str__(self):
@@ -862,7 +908,7 @@ class CNVLossClassificationAnswer(models.Model):
 	cnv_classification_question = models.ForeignKey(CNVLossClassificationQuestion, on_delete=models.CASCADE)
 	score = models.DecimalField(max_digits=10, decimal_places=2)
 	comment = models.TextField()
-	score_second = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+	score_second = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
 	comment_second = models.TextField(null=True)
 
 	def __str__(self):

@@ -234,6 +234,18 @@
 					</td>
 					
 				</tr>
+				<tr>
+					<td>Inheritance</td>
+					<td>{{ cnv.inheritance}}</td>
+				</tr>
+				<tr>
+					<td>Copy Number</td>
+					<td>{{ cnv.copy }}</td>
+				</tr>
+				<tr>
+					<td>Genotype</td>
+					<td>{{ cnv.genotype}}</td>
+				
 			</tbody>
 		
 		</table>
@@ -255,19 +267,9 @@
 		
 		<h5> Is this CNV Genuine? </h5>
 		<!-- Genuine/ artefact sections section-->
-		{% if cnv.genuine == '0' %}
-		<!--
-			GENUINE FORM 
-		-->
-			<br>
-	
-		{% else %}
 			<div class="alert alert-warning col-10" role="alert">
 			This Classification has been set as {{ cnv.display_genuine }}. To change this you will need to reset the classification.
 			</div>
-
-		{% endif %}
-
 	</div>
 	
 	<!-- ACMG RULES SECTION -->
@@ -303,7 +305,8 @@
 		  <th style="width: 24.00%" class='description'> Evidence Description </th>
 		  <th style="width: 15.00%" class='strength'> Suggested points/case </th>
 		  <th style="width: 5.00%" class='selected_first'> Max score </th>
-		  <th style="width: 5.00%" class='comment'> Allocated score </th>
+		  <th style="width: 5.00%" class='comment'> First Check Allocated score </th>
+		  <th style="width: 5.00%" class='selected_second'> Second Check Allocated score </th>
 		  <th style="width: 36.00%" class='comment'> Comment </th>
 		</tr>
 	  	</thead>
@@ -320,9 +323,10 @@
 		  <td class='description' style="width: 24.00%"> {{ answer.cnv_classification_question.evidence | safe }}</td>
 		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
-		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score}}"> </td>
+		  <td class='description' style="width: 5.00%"> {{ answer.score }}
+		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score_second}}"> </td>
 		  <!-- Comments box -->
-			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment}}"></td>
+			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment_second}}"></td>
 		</tr>	
 	  	{% endfor %}
 	  	</tbody>
@@ -624,7 +628,7 @@ $(document).ready(function(){
 		formData.append('cnvs', JSON.stringify(classification_dict));
 		formData.append('cnv_pk', "{{cnv.pk}}" );
 		$.ajax({
-			url: '/ajax/acmg_cnv_classification_first/',
+			url: '/ajax/acmg_cnv_classification_second/',
 			type: 'POST',
 			data: formData,
 			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)

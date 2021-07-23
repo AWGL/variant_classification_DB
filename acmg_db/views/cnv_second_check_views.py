@@ -25,50 +25,75 @@ def ajax_acmg_cnv_classification_second(request):
 	if request.is_ajax():
 
 		# Get the submitted answers and convert to python object
-		classification_answers = request.POST.get('classifications')
+		classification_answers = request.POST.get('cnvs')
 		classification_answers = json.loads(classification_answers)
 
 		# Get the classification pk and load the classification
-		classification_pk = request.POST.get('classification_pk').strip()
-		classification = get_object_or_404(Classification, pk =classification_pk)
+		cnv_pk = request.POST.get('cnv_pk').strip()
+		cnv = get_object_or_404(CNV, pk=cnv_pk)
 
 		# Ensure correct user and status
-		if classification.status != '1' or request.user != classification.user_second_checker:
+		if cnv.status != '1' or request.user != cnv.user_second_checker:
 
 			raise PermissionDenied('You do not have permission to start this classification.')
+		
+		if cnv.method == "Gain":
+			correct_number_of_questions = CNVGainClassificationQuestion.objects.all().count()
+			if len(classification_answers) != correct_number_of_questions:
+				raise Exception('Wrong number of questions')
 
-		# Check we have every question
-		correct_number_of_questions = ClassificationQuestion.objects.all().count()
+			# Update the classification answers
+			for classification_answer in classification_answers:
+				
+				pk = classification_answer.strip()
 
-		if len(classification_answers) != correct_number_of_questions:
+				classification_answer_obj = get_object_or_404(CNVGainClassificationAnswer, pk=pk)
 
-			raise Exception('Wrong number of questions')
+				classification_answer_obj.score_second = classification_answers[classification_answer][0].strip()
 
+				classification_answer_obj.comment_second = classification_answers[classification_answer][1].strip()
 
-		# Update the classification answers
-		for classification_answer in classification_answers:
+				classification_answer_obj.save()
+			
+			
+		elif cnv.method == "Loss":
+			correct_number_of_questions = CNVLossClassificationQuestion.objects.all().count()
+			if len(classification_answers) != correct_number_of_questions:
+				raise Exception('Wrong number of questions')
+			
+			# Update the classification answers
+			for classification_answer in classification_answers:
+				
+				pk = classification_answer.strip()
 
-			pk = classification_answer.strip()
+				classification_answer_obj = get_object_or_404(CNVLossClassificationAnswer, pk=pk)
 
-			classification_answer_obj = get_object_or_404(ClassificationAnswer, pk=pk)
+				classification_answer_obj.score_second = classification_answers[classification_answer][0].strip()
 
-			classification_answer_obj.strength_second= classification_answers[classification_answer][1].strip()
+				classification_answer_obj.comment_second = classification_answers[classification_answer][1].strip()
 
-			classification_answer_obj.selected_second = classification_answers[classification_answer][2].strip()
-
-			classification_answer_obj.comment = classification_answers[classification_answer][3].strip()
-
-			classification_answer_obj.save()
-
-		acmg_result_first = classification.display_first_classification()
+				classification_answer_obj.save()
 
 		# update the score in the database
-		classification.second_final_class = classification.calculate_acmg_score_second()
-		classification.save()
+		cnv.second_final_score = cnv.calculate_acmg_score_second()
+		if cnv.second_final_score >= 0.99:
+			cnv.second_final_class = "4"
+		elif 0.90 <= cnv.second_final_score <= 0.98:
+			cnv.second_final_class = "3"
+		elif -(0.89) <= cnv.second_final_score <= 0.89:
+			cnv.second_final_class = "2"
+		elif -(0.98) <= cnv.second_final_score <= -(0.90):
+			cnv.second_final_class = "1"
+		elif cnv.second_final_score <= -(0.99):
+			cnv.second_final_class = "0"
+		cnv.save()
+		
+		context = {
+			'result_first': cnv.display_first_classification(),
+			'result_second': cnv.display_final_classification(),
+		}
 
-		acmg_result_second = classification.display_final_classification()
-
-		html = render_to_string('acmg_db/acmg_results_second.html', {'result_first': acmg_result_first, 'result_second': acmg_result_second})
+		html = render_to_string('acmg_db/acmg_results_second.html', context)
 
 	return HttpResponse(html)
 
@@ -103,7 +128,17 @@ def cnv_second_check(request, pk):
 #		previous_classifications = Classification.objects.filter(variant=variant,genome=classification.sample.genome, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
 #		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
 
-#		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
+		if cnv.method == "Gain":
+			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+			if len(answers) == 0:
+				cnv.initiate_classification()
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+		elif cnv.method == "Loss":
+			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+			if len(answers) == 0:
+				cnv.initiate_classification()
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+
 #		comments = UserComment.objects.filter(classification=classification, visible=True)
 
 		result_first = cnv.display_first_classification()
@@ -126,7 +161,7 @@ def cnv_second_check(request, pk):
 			'cnv': cnv,
 #			'previous_classifications': previous_classifications,
 #			'previous_full_classifications': previous_full_classifications,
-#			'answers': answers,
+			'answers': answers,
 #			'comments': comments,
 			'result_first': result_first,
 			'result_second': result_second,
