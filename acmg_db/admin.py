@@ -68,8 +68,8 @@ class CNVSampleAdmin(admin.ModelAdmin):
 admin.site.register(CNVSample, CNVSampleAdmin)
 
 class CNVAdmin(admin.ModelAdmin):
-	list_display = ('cnv',)
-	search_fields = ('cnv',)
+	list_display = ('pk','cnv',)
+	search_fields = ('pk','cnv',)
 admin.site.register(CNV, CNVAdmin)
 
 class CNVLossClassificationQuestionAdmin(admin.ModelAdmin):
