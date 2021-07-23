@@ -139,7 +139,7 @@ def cnv_second_check(request, pk):
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 
-#		comments = UserComment.objects.filter(classification=classification, visible=True)
+		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 
 		result_first = cnv.display_first_classification()
 		result_second = cnv.display_final_classification()
@@ -162,7 +162,7 @@ def cnv_second_check(request, pk):
 #			'previous_classifications': previous_classifications,
 #			'previous_full_classifications': previous_full_classifications,
 			'answers': answers,
-#			'comments': comments,
+			'comments': comments,
 			'result_first': result_first,
 			'result_second': result_second,
 			'sample_form': sample_form,
