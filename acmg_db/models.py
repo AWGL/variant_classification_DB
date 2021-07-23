@@ -587,6 +587,8 @@ class CNVSample(models.Model):
 	"""
 	Model to hold CNV Sample information upon upload
 	"""
+	history = AuditlogHistoryField()
+	
 	sample_name = models.CharField(max_length=150, default='')  # sample_id only
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
@@ -842,6 +844,8 @@ class CNVGainClassificationAnswer(models.Model):
 	cnv_classification_question = models.ForeignKey(CNVGainClassificationQuestion, on_delete=models.CASCADE)
 	score = models.DecimalField(max_digits=10, decimal_places=2)
 	comment = models.TextField()
+	score_second = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+	comment_second = models.TextField(null=True)
 
 	def __str__(self):
 		return f'{self.id}'
@@ -858,6 +862,8 @@ class CNVLossClassificationAnswer(models.Model):
 	cnv_classification_question = models.ForeignKey(CNVLossClassificationQuestion, on_delete=models.CASCADE)
 	score = models.DecimalField(max_digits=10, decimal_places=2)
 	comment = models.TextField()
+	score_second = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+	comment_second = models.TextField(null=True)
 
 	def __str__(self):
 		return f'{self.id}'

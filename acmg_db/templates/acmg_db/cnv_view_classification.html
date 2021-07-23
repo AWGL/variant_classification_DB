@@ -159,88 +159,16 @@
 
 <!-- Summary table -->
 {% if cnv.genuine == '1' %}
-
-  {% if cnv.status == '0' %}
-  <p>Summary of codes applied in the <b>first check</b>.</p>
-  {% else %}
-  <p>Summary of codes applied in the <b>second check</b>.</p>
-  {% endif %}
-
-  <table class="table table-bordered" style="width:100%">
-    <thead>
-      <tr>
-        <th rowspan="2" style="width: 12.50%"></th>
-        <th colspan="4">Pathogenic</th>
-        <th colspan="3">Benign</th>
-      </tr>
-      <tr>
-        <th style="width: 12.50%">Very strong</th>
-        <th style="width: 12.50%">Strong</th>
-        <th style="width: 12.50%">Moderate</th>
-        <th style="width: 12.50%">Supporting</th>
-        <th style="width: 12.50%">Supporting</th>
-        <th style="width: 12.50%">Strong</th>
-        <th style="width: 12.50%">Standalone</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Codes</td>
-      <!-- make column for each class strength -->
-      {% for strength, class in classes_full_strength.items %}
-        <td>
-        <!-- make row for each code and set colour based on type and whether the code is applied-->
-        {% for key, value in class.items %}
-
-          {% if value == 'not applied' %}
-          <p>{{ key }}</p>
-
-          {% elif value == 'applied' %}
-            {% if key.0 == 'P' %}
-            <p class="text-danger"><b>{{ key }}</b>  <span class="fa fa-check" style="color:#d9534f"></span></p>
-            {% else %}
-            <p class="text-info"><b>{{ key }}</b>  <span class="fa fa-check" style="color:#5bc0de"></span></p>
-            {% endif %}
-
-          {% else %}
-          <p class="text-muted"><b><s>{{ key }}</s></b>  <span class="fa fa-times"></span></p>
-          {% endif %}
-        
-        {% endfor %}
-        </td>
-      {% endfor %}
-      </tr>
-
-      <!-- add any codes with altered strengths to the next row -->
-      <tr>
-        <td>Altered codes</td>
-          {% for key, value in classes_altered_strength.items %}
-          <td>
-          {% for code in value %}
-            {% if key.0 == 'P' %}
-            <p class="text-danger"><b>{{ code }}</b>  <span class="fa fa-check" style="color:#d9534f"></span></p>
-            {% else %}
-            <p class="text-info"><b>{{ code }}</b>  <span class="fa fa-check" style="color:#5bc0de"></span></p>
-            {% endif %}
-          {% endfor %}
-          </td>
-          {% endfor %}
-      </tr>
-
-      <!-- counts of each type of code -->
-      <tr>
-        <td>Count</td>
-          {% for c in classes_count.items %}
-          <td>
-          {{ c.1 }}
-          </td>
-          {% endfor %}
-      </tr>
-    </tbody>
-  </table>
-  <br/><br/>
-
-
+	
+	First Check Classification = {{ cnv.display_first_classification }}
+	<br> First Check Score = {{ cnv.first_final_score }}
+	<br>
+	<br>Second Check Classification = {{ cnv.display_final_classification }}
+	<br>Second Check Score = {{ cnv.second_final_score }}
+	<br>  
+	<br>
+	<br><h5> Table of all scores assigned DIFFERING FROM 0</h5>
+	<br>
 
   <!-- Full list of codes -->
   <table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
@@ -248,40 +176,28 @@
       <tr>
         <th style="display:none;" class='answer_pk'> Answer PK </th>
         <th style="display:none;" class='cat'> Category </th>
-        <th> Evidence Category </th>
-        <th> Description </th>
-        <th> First Strength </th>
-        <th> First Decision </th>
-        <th> Second Strength </th>
-        <th> Second Decision </th>
-        <th> Comment </th>
+        <th> Evidence Type </th>
+        <th> Evidence Description </th>
+        <th> First Allocated Score </th>
+        <th> First Comment </th>
+        <th> Second Allocated Score </th>
+        <th> Second Comment </th>
       </tr>
     </thead>
     <tbody>
-    {% for answer in classification_answers %}
+    {% for answer in cnv_answers %}
 
-      {% if answer.classification_question.pathogenic_question == True and answer.selected_first == True %}
-      <tr class='answer table-danger'>
-      {% elif answer.classification_question.pathogenic_question == True and answer.selected_second == True %}
-      <tr class='answer table-danger'>
-      {% elif answer.classification_question.pathogenic_question == False and  answer.selected_first == True %}
-      <tr class='answer table-info'>
-      {% elif answer.classification_question.pathogenic_question == False and  answer.selected_second == True %}
-      <tr class='answer table-info'>
-      {% else %}
-      <tr class='answer'>
-      {% endif %}
-
+      {% if answer.score != 0 %}
         <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
-        <td class='cat' style="display:none;"> {{ answer.classification_question.category}}</td>
-        <td> {{ answer.classification_question.acmg_code  }} </td>
-        <td> {{ answer.classification_question.text  }} </td>
-        <td>{{answer.strength_first}}</td>
-        <td>{{answer.selected_first}}</td>
-        <td>{{answer.strength_second}}</td>
-        <td>{{answer.selected_second}}</td>
-        <td>{{answer.comment}}</td>
+        <td class='cat' style="display:none;"> {{ answer.cnv_classification_question.category}}</td>
+        <td> {{ answer.cnv_classification_question.evidence_type  }} </td>
+        <td> {{ answer.cnv_classification_question.evidence  }} </td>
+        <td>{{ answer.score }}</td>
+        <td>{{ answer.comment }}</td>
+        <td>{{ answer.score_second }}</td>
+        <td>{{ answer.comment_second }}</td>
       </tr>
+      {% endif %}
           
     {% endfor %}
     </tbody>
@@ -359,7 +275,7 @@
     </table>
 
 
-{% if classification.status == '2' %}
+{% if cnv.status == '2' %}
 
 <hr>
 <h3> Archive Classification </h3>
@@ -371,7 +287,7 @@
 {% endif %}
 
 
-{% if classification.status == '0' or classification.status == '1' %}
+{% if cnv.status == '0' or cnv.status == '1' %}
 
 <hr>
 
@@ -402,7 +318,7 @@
 
 {% endif %}
 
-{% if classification.status == '1' and classification.user_second_checker != request.user %}
+{% if cnv.status == '1' and cnv.user_second_checker != request.user %}
 
 <hr>
 
@@ -410,16 +326,16 @@
 
 {% endif %}
 
-{% if classification.status == '1'  %}
+{% if cnv.status == '1'  %}
 
-  {% if classification.user_second_checker == request.user %}
+  {% if cnv.user_second_checker == request.user %}
 
     <hr>
 
     {% crispy sendback_form %}
 
 
-  {% elif classification.user_first_checker == request.user %}
+  {% elif cnv.user_first_checker == request.user %}
 
     <hr>
 

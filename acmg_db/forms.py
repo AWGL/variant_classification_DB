@@ -712,6 +712,21 @@ class ArchiveClassificationForm(forms.Form):
 		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
 		self.helper.add_input(Submit('submit-archive', 'Archive Classification', css_class='btn-danger'))
 
+class ArchiveCNVClassificationForm(forms.Form):
+	"""
+	Form to archive a cnv classification.
+	"""
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+
+		super(ArchiveCNVClassificationForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_view_classification',kwargs={'pk':self.cnv_pk})
+		self.helper.add_input(Submit('submit-archive', 'Archive Classification', css_class='btn-danger'))
+
 
 class ResetClassificationForm(forms.Form):
 	"""
@@ -726,6 +741,21 @@ class ResetClassificationForm(forms.Form):
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit-reset', 'Reset Classification', css_class='btn-danger'))
+		
+class CNVResetClassificationForm(forms.Form):
+	"""
+	Form to reset a CNV classification
+	"""
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+
+		super(CNVResetClassificationForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_view_classification',kwargs={'pk':self.cnv_pk})
 		self.helper.add_input(Submit('submit-reset', 'Reset Classification', css_class='btn-danger'))
 
 
@@ -743,6 +773,21 @@ class AssignSecondCheckToMeForm(forms.Form):
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
 		self.helper.add_input(Submit('submit-assign', 'Assign Second Check to Me', css_class='btn-danger'))
+		
+class CNVAssignSecondCheckToMeForm(forms.Form):
+	"""
+	Allow users to assign a CNV second check to themselves in the History tab
+	"""
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+
+		super(CNVAssignSecondCheckToMeForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_view_classification',kwargs={'pk':self.cnv_pk})
+		self.helper.add_input(Submit('submit-assign', 'Assign Second Check to Me', css_class='btn-danger'))
 
 
 class SendBackToFirstCheckForm(forms.Form):
@@ -758,6 +803,21 @@ class SendBackToFirstCheckForm(forms.Form):
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.form_action = reverse('view_classification',kwargs={'pk':self.classification_pk})
+		self.helper.add_input(Submit('submit-sendback', 'Send Back To First Check', css_class='btn-danger'))
+		
+class CNVSendBackToFirstCheckForm(forms.Form):
+	"""
+	Allow users to send back a CNV classification to first check.
+	"""
+	def __init__(self, *args, **kwargs):
+
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+
+		super(CNVSendBackToFirstCheckForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_view_classification',kwargs={'pk':self.cnv_pk})
 		self.helper.add_input(Submit('submit-sendback', 'Send Back To First Check', css_class='btn-danger'))
 
 
