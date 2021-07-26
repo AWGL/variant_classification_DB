@@ -141,15 +141,15 @@
 	  </td>
 	  <td>
 		{% if 'Benign' in cnv.display_classification %}
-		<a class="btn btn-info btn-sm" href="{}" role="button"> 
+		<a class="btn btn-info btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
 		{% elif 'Pathogenic' in cnv.display_classification %}
-		<a class="btn btn-danger btn-sm" href="{}" role="button"> 
+		<a class="btn btn-danger btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
 		{% elif 'VUS' in cnv.display_classification %}
-		<a class="btn btn-warning btn-sm" href="{}" role="button"> 
+		<a class="btn btn-warning btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
 		{% elif 'Artefact' in cnv.display_classification %}
-		<a class="btn btn-secondary btn-sm" href="{}" role="button"> 
+		<a class="btn btn-secondary btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
 		{% elif 'Contradictory' in cnv.display_classification %}
-         	<a class="btn btn-primary btn-sm" href="{}" role="button"> 
+         	<a class="btn btn-primary btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
         	{% elif 'Pending' in cnv.display_classification %}
 
         		{% if cnv.status == '1' %}
@@ -157,12 +157,12 @@
 
 	        	{% else %}
 
-		        <a class="btn btn-light btn-sm" href="{}" role="button">
+		        <a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button">
 
 	        	{% endif %}
 
 		{% else %}
-                <a class="btn btn-light btn-sm" href="{}" role="button">
+                <a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button">
 		{% endif %}
 		<span class="fa fa-binoculars" ></span>  {{ cnv.display_classification }}
 		</a>

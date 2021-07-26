@@ -519,7 +519,7 @@ def cnv_view_classification(request, pk):
 
 		if 'submit-archive' in request.POST:
 
-			if classification.status == '2':
+			if cnv.status == '2':
 
 				form = ArchiveCNVClassificationForm(request.POST, cnv_pk = cnv.pk)
 

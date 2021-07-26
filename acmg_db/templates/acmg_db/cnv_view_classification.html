@@ -187,7 +187,7 @@
     <tbody>
     {% for answer in cnv_answers %}
 
-      {% if answer.score != 0 %}
+      {% if answer.score != 0 or answer.score_second != 0 %}
         <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
         <td class='cat' style="display:none;"> {{ answer.cnv_classification_question.category}}</td>
         <td> {{ answer.cnv_classification_question.evidence_type  }} </td>
