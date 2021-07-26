@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, CNVMethodForm, FinaliseClassificationSecondCheckForm
+from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, CNVMethodForm, FinaliseCNVClassificationSecondCheckForm
 from acmg_db.models import *
 
 #--------------------------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ def cnv_second_check(request, pk):
 		sample_form = CNVSampleInfoForm(request.POST)
 		details_form = CNVDetailsForm(request.POST)
 		method_form = CNVMethodForm(request.POST)
-#		finalise_form = FinaliseClassificationSecondCheckForm(classification_pk=classification.pk)
+		finalise_form = FinaliseCNVClassificationSecondCheckForm(cnv_pk=cnv.pk)
 
 		# dict of data to pass to view
 		context = {
@@ -168,7 +168,7 @@ def cnv_second_check(request, pk):
 			'sample_form': sample_form,
 			'details_form': details_form,
 			'method_form' : method_form,
-#			'finalise_form': finalise_form,
+			'finalise_form': finalise_form,
 			'warn': []
 		}
 			
@@ -252,17 +252,17 @@ def cnv_second_check(request, pk):
 					
 					context['answers'] = answers
 					context['method_form'] = CNVMethodForm(request.POST)	
-		"""
+		
 			
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
 
 				# Don't let anyone except the assigned second checker submit the form
-				if classification.status != '1' or request.user != classification.user_second_checker:
+				if cnv.status != '1' or request.user != cnv.user_second_checker:
 
 					raise PermissionDenied('You do not have permission to finalise the classification.')
 
-				finalise_form = FinaliseClassificationSecondCheckForm(request.POST, classification_pk=classification.pk)
+				finalise_form = FinaliseCNVClassificationSecondCheckForm(request.POST, cnv_pk=cnv.pk)
 
 				if finalise_form.is_valid():
 
@@ -270,57 +270,42 @@ def cnv_second_check(request, pk):
 
 					# validation that everything has been completed - make sure all fields are completed, genuine/artefact is set
 
-					if classification.genuine == '0':
+					if cnv.genuine == '0':
 
 						context['warn'] += ['Select whether the variant is genuine or artefact']
 
-					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None or classification.selected_transcript_variant.transcript.gene.inheritance_pattern == '':
 
-						context['warn'] += ['Inheritence pattern has not been set']
-
-					if classification.selected_transcript_variant.transcript.gene.conditions == None or classification.selected_transcript_variant.transcript.gene.conditions == '':
-
-						context['warn'] += ['Gene associated conditions have not been set']
-
-					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
+					if cnv.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
 
 						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
 
-					if classification.genuine  == '3' and cleaned_data['final_classification'] != '7':
+					if cnv.genuine  == '3' and cleaned_data['final_classification'] != '7':
 
 						context['warn'] += ['This classification was selected as Not Analysed - therefore the only option is NA']
 
-					if classification.genuine  == '4' and cleaned_data['final_classification'] != '6' :
+					if cnv.genuine  == '4' and cleaned_data['final_classification'] != '6' :
 
 						context['warn'] += ['This classification was selected as Artefect - therefore the only valid option is Artefect']
 
 					# if validation has been passed, finalise first check
 					if len(context['warn']) == 0:
 
-						# if new classification, pull score from the acmg section and save to final class
-						if classification.genuine == '1':
-
-							classification.second_final_class = classification.calculate_acmg_score_second()
 
 						# if anything other than 'dont override' selected, then change the classification
 						if cleaned_data['final_classification'] != '8':
 
-							classification.second_final_class = cleaned_data['final_classification']
+							cnv.second_final_class = cleaned_data['final_classification']
 
 						# update status and save
-						classification.status = '2'
-						classification.second_check_date = timezone.now()
-						classification.user_second_checker = request.user
-						classification.save()
+						cnv.status = '2'
+						cnv.second_check_date = timezone.now()
+						cnv.user_second_checker = request.user
+						cnv.save()
 
 						#return redirect('home')
-						return redirect('/pending_classifications?sample={}&worksheet={}&panel={}'.format(
-							classification.sample.sample_name_only,
-							classification.sample.worklist.name,
-							classification.sample.analysis_performed.panel
-						))
+						return redirect('/cnv_pending')
 
 			return render(request, 'acmg_db/second_check.html', context)
-			"""
+			
 			
 		return render(request, 'acmg_db/cnv_second_check.html', context)
