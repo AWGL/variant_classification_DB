@@ -121,6 +121,8 @@ def cnv_home(request):
 				start = re.search(r'\((.*?)_', cnv[1]).group(1)
 				stop = re.search(r'_(.*?)\)', cnv[1]).group(1)
 				
+				#Calculate length
+				length = int(stop)-int(start)
 				
 				
 				#Put together to make final CNV
@@ -137,6 +139,9 @@ def cnv_home(request):
 						status = 0,
 						creation_date = timezone.now(),
 						user_creator = request.user,
+						start = start,
+						stop = stop,
+						length = length,
 						)
 				CNV_obj.save()
 				
@@ -292,6 +297,12 @@ def cnv_manual(request):
 						'error': f'Invalid character in CNV field: {character}',
 					}
 					return render(request, 'acmg_db/cnv_manual.html', context)
+					
+			#Break up CNV to get start/stop and length
+			final_locs = final_cnv.split(":")[1]
+			start = final_locs.split("-")[0]
+			stop = final_locs.split("-")[1]
+			length = int(stop)-int(start)
 			
 			# add worksheet
 			worksheet_obj, created = Worklist.objects.get_or_create(
@@ -329,6 +340,9 @@ def cnv_manual(request):
 					status = 0,
 					creation_date = timezone.now(),
 					user_creator = request.user,
+					start = start,
+					stop = stop,
+					length = length,
 					)
 			CNV_obj.save()
 

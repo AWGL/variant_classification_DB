@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q, F
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
@@ -49,8 +50,68 @@ def cnv_first_check(request, pk):
 	else:
 
 		# Get data to render form
-		previous_classifications = CNV.objects.filter(cnv=cnv, status__in=['2', '3']).exclude(pk=cnv.pk).order_by('-second_check_date')
-		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
+		
+		# previous classifications
+		# set 50% of length of new CNV
+		length_50 = (cnv.length/100)*50
+		
+		# Initial filter based on start/stop coordinate overlap
+		# Q(start__lte=cnv.start, stop__gte=cnv.stop, status__in=['2','3']) = New CNV contained entirely within existing CNV, also covers instances where CNV is identical
+		# Q(start__gte=cnv.start, stop__lte=cnv.stop, status__in=['2','3']) = Existing CNV contained entirely within new CNV
+		# Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3']) = New CNV starts after existing start, stops after existing stop, but start is before existing stop 
+		# Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3']) = New CNV starts before existing start, stops before existing stop, but stop is after existing start
+		
+		filter_classifications = CNV.objects.filter(Q(start__gte=cnv.start, stop__lte=cnv.stop, status__in=['2','3']) | 
+								Q(start__lte=cnv.start, stop__gte=cnv.stop, status__in=['2','3']) |
+								Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3']) |
+								Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3'])).exclude(pk=cnv.pk).order_by('-second_check_date')
+		
+		#make empty lists for classifications
+		previous_classifications = []
+		previous_full_classifications = []
+		
+		#Loop over initial filter
+		for classification in filter_classifications:
+			
+			#if new CNV is entirely contained within existing CNV, add to list (with a second add if genuine)
+			if (classification.start<=cnv.start) & (classification.stop>=cnv.stop):
+				previous_classifications.append(classification)
+				if classification.genuine is '1':
+					previous_full_classifications.append(classification)
+				
+			#if new CNV entirely contains an existing CNV, add to list (with a second add if genuine)
+			elif (classification.start>=cnv.start) & (classification.stop<=cnv.stop):
+				previous_classifications.append(classification)
+				if classification.genuine is '1':
+					previous_full_classifications.append(classification)
+				
+			#For all other overlap cases, check there is 50% reciprocal overlap
+			# Where start of new CNV > start of existing CNV	
+			# calculate overlap and 50% of length of existing CNV
+			elif (classification.start<=cnv.start):
+				overlap = classification.stop-cnv.start
+				exist_length_50 = (classification.length/100)*50
+				# if overlap is > 50% length of both new CNV and existing CNV, add to list (with a second add if genuine)
+				if (overlap > length_50) & (overlap > exist_length_50):
+					previous_classifications.append(classification)
+					if classification.genuine is '1':
+						previous_full_classifications.append(classification)
+					
+			# Where start of new CNV < start of existing CNV	
+			# calculate overlap and 50% of length of existing CNV
+			elif (classification.start>=cnv.start):
+				overlap = cnv.stop-classification.start
+				exist_length_50 = (classification.length/100)*50
+				# if overlap is > 50% length of both new CNV and existing CNV, add to list (with a second add if genuine)
+				if (overlap > length_50) & (overlap > exist_length_50):
+					previous_classifications.append(classification)
+					if classification.genuine is '1':
+						previous_full_classifications.append(classification)
+		
+		# Sort by second checker date so that the most recent is the first object in the list
+		previous_classifications.sort(key=lambda x: x.second_check_date, reverse = True)
+		previous_full_classifications.sort(key=lambda x: x.second_check_date, reverse = True)
+		
 		if cnv.method == "Gain":
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 			if len(answers) == 0:

@@ -641,6 +641,10 @@ class CNV(models.Model):
 	second_check_date = models.DateTimeField(null=True, blank=True)
 	creation_date = models.DateTimeField(null=True)
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='cnv_user_creator')
+	#model elements to allow for searching for overlapping CNVs
+	start = models.IntegerField()
+	stop = models.IntegerField()
+	length = models.IntegerField()
 		
 	def __str__(self):
 		return f'{self.id}'
