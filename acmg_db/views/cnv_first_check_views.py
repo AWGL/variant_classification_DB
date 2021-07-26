@@ -55,16 +55,16 @@ def cnv_first_check(request, pk):
 		# set 50% of length of new CNV
 		length_50 = (cnv.length/100)*50
 		
-		# Initial filter based on start/stop coordinate overlap
+		# Initial filter based on start/stop coordinate overlap + same reference genome
 		# Q(start__lte=cnv.start, stop__gte=cnv.stop, status__in=['2','3']) = New CNV contained entirely within existing CNV, also covers instances where CNV is identical
 		# Q(start__gte=cnv.start, stop__lte=cnv.stop, status__in=['2','3']) = Existing CNV contained entirely within new CNV
 		# Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3']) = New CNV starts after existing start, stops after existing stop, but start is before existing stop 
 		# Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3']) = New CNV starts before existing start, stops before existing stop, but stop is after existing start
 		
-		filter_classifications = CNV.objects.filter(Q(start__gte=cnv.start, stop__lte=cnv.stop, status__in=['2','3']) | 
-								Q(start__lte=cnv.start, stop__gte=cnv.stop, status__in=['2','3']) |
-								Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3']) |
-								Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3'])).exclude(pk=cnv.pk).order_by('-second_check_date')
+		filter_classifications = CNV.objects.filter(Q(start__gte=cnv.start, stop__lte=cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome) | 
+								Q(start__lte=cnv.start, stop__gte=cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome) |
+								Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3'], sample__genome=cnv.sample.genome) |
+								Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome)).exclude(pk=cnv.pk).order_by('-second_check_date')
 		
 		#make empty lists for classifications
 		previous_classifications = []
