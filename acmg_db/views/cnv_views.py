@@ -9,6 +9,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+from django.db.models import Q
 
 from acmg_db.forms import CNVFileUploadForm, CNVManualUpload, ArchiveCNVClassificationForm, CNVAssignSecondCheckToMeForm, CNVSendBackToFirstCheckForm, CNVResetClassificationForm
 from acmg_db.models import *
@@ -218,7 +219,7 @@ def cnv_pending(request):
 	once - https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-related
 	"""
 
-	cnvs = CNV.objects.filter(sample__analysis_complete=False)
+	cnvs = CNV.objects.filter(Q(status='0') | Q(status='1'))
 
 	return render(request, 'acmg_db/cnv_pending.html', {'cnvs': cnvs})
 	
