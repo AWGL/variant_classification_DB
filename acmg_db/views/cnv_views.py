@@ -421,55 +421,14 @@ def cnv_manual(request):
 @login_required
 def view_cnvs(request):
 	"""
-	Page to view all unique variants classified in the lab
+	Page to view all CNVs classified in the lab
 
 	"""
-	# query all variants, prefetch related classification objects and associated transcript/ gene objects
-	all_cnvs_query = CNV.objects.all()
+	# Get all CNVs which are complete or archived, ordered by second check date
+	all_cnvs_query = CNV.objects.filter(status__in=['2','3']).order_by('-second_check_date')
+
 	
-	# loop through each variant to parse data
-	variant_data = []
-	for cnvs in all_cnvs_query:
-
-		# skip if there are no linked classifications
-		if len(variant.variant_classification_cache) > 0:
-
-			# parse info
-			most_recent_obj = variant.variant_classification_cache[0]
-			most_recent_class = most_recent_obj.get_second_final_class_display()
-			if most_recent_obj.selected_transcript_variant.hgvs_c:
-				hgvs_c = most_recent_obj.selected_transcript_variant.hgvs_c.split(':')[1]
-			else:
-				hgvs_c = None
-			if most_recent_obj.selected_transcript_variant.hgvs_p:
-				hgvs_p = most_recent_obj.selected_transcript_variant.hgvs_p.split(':')[1]
-			else:
-				hgvs_p = None
-			transcript = most_recent_obj.selected_transcript_variant.transcript.name
-			gene = most_recent_obj.selected_transcript_variant.transcript.gene.name
-
-			# get list of all unique classifications
-			all_classes_set = set()
-			for classification in variant.variant_classification_cache:
-				all_classes_set.add(classification.get_second_final_class_display())
-
-			# add dict containing variant info to list
-			variant_data.append({
-				'variant_id': str(variant),
-				'variant_hash': variant.variant_hash,
-				'gene': gene,
-				'transcript': transcript,
-				'hgvs_c': hgvs_c,
-				'hgvs_p': hgvs_p,
-				'num_classifications': len(variant.variant_classification_cache), 
-				'most_recent_obj': most_recent_obj, 
-				'most_recent_date': most_recent_obj.second_check_date, 
-				'most_recent_class': most_recent_obj.get_second_final_class_display(), 
-				'all_classes': '|'.join(all_classes_set),
-				'genome': most_recent_obj.genome,
-			})
-
-	return render(request, 'acmg_db/view_cnvs.html', {'all_variants': variant_data})
+	return render(request, 'acmg_db/view_cnvs.html', {'cnv_data': all_cnvs_query})
 	
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

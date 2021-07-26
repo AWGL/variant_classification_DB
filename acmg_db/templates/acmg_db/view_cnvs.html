@@ -1,0 +1,121 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+	<p> 
+	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
+	</p>
+<br>
+
+<br>
+<h4>All CNVs</h4>
+<br>
+
+<!------------ table of unique variants ------------>
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>CNV</th>
+	  <th>Gain/Loss</th>
+	  <th>Gene(s)</th>
+	  <th>Classification<br>(Click to view)</th>
+	  <th>Classification Date</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for cnv in cnv_data %}
+	<tr>
+	  {% if cnv.sample.genome == 'GRCh37' %}
+	  <td>{{ cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
+	  {% elif cnv.sample.genome == 'GRCh38' %}
+	  <td>{{ cnv.cnv }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
+	  {% endif %}
+	  <td>{{ cnv.gain_loss }}</td>
+	 <td>
+	  {% for gene in cnv.genes_as_list %}
+	  	{{ gene.gene }}<br>
+	  {% endfor %}
+	  </td>
+	  <td>
+		<!-- change button colour based on class -->
+		<a class=
+
+			{% if 'Benign' in cnv.display_final_classification %}
+			  "btn btn-info btn-sm"
+			{% elif 'Pathogenic' in cnv.display_final_classification %}
+			  "btn btn-danger btn-sm"
+			{% elif 'VUS' in cnv.display_final_classification %}
+			  "btn btn-warning btn-sm"
+			{% elif 'Artefact' in cnv.display_final_classification %}
+			  "btn btn-secondary btn-sm"
+			{% elif 'Contradictory' in cnv.display_final_classification %}
+			  "btn btn-primary btn-sm"
+			{% else %}
+			  "btn btn-light btn-sm"
+			{% endif %}
+
+		  href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"><span class="fa fa-binoculars"></span> {{ cnv.display_final_classification }}
+		</a>
+	  </td>
+	  <td>{{ cnv.second_check_date | date:"Y/m/d" }}</td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+  <tfoot>
+	<tr>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	</tr>
+  </tfoot>
+
+</table>
+<br>
+<br>
+
+
+<!------------ Javascript ------------>
+<script>
+$(document).ready(function(){
+
+ // Setup - add a text input to each footer cell
+    $('#classifications tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" class="form-control" placeholder="Search '+title+'" />' );
+    } );
+ 
+    // DataTable
+    // Inititialise DataTable
+	var table = $('#classifications').DataTable({
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"pageLength": 25,
+		"searching": true,
+		"aaSorting": [],
+	});
+ 
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+
+
+});
+</script>
+
+{% endblock %}
