@@ -2,7 +2,7 @@ import csv
 import random
 import os
 
-from acmg_db.forms import DownloadVariantListForm
+from acmg_db.forms import DownloadVariantListForm, DownloadCNVListForm
 from acmg_db.models import *
 
 from django.contrib.auth.decorators import login_required
@@ -135,3 +135,77 @@ def download_variant_list(request):
 
 
 	return render(request, 'acmg_db/download_variant_list.html', {'form': form})
+	
+#---------------------------------------------------------
+@transaction.atomic
+@login_required
+def download_cnv_list(request):
+	"""
+	Page to download variant lists
+	"""
+
+	# make empty form
+	form = DownloadCNVListForm()
+
+	# if form submitted
+	if request.method == 'POST':
+		form = DownloadCNVListForm(request.POST)
+
+		if form.is_valid():
+
+
+			whitelist_classes = form.cleaned_data['white_list']
+			blacklist_classes = form.cleaned_data['black_list']
+
+			print (whitelist_classes, blacklist_classes)
+
+			all_cnvs_query = CNV.objects.filter(status__in=['2', '3']).order_by('-second_check_date')
+			
+			# loop through each variant to parse data
+			cnv_list = []
+			for cnv in all_cnvs_query:
+
+				cnv_id = cnv.cnv
+				cnv_classification = cnv.display_classification()
+				if cnv_classification in whitelist_classes and cnv_classification in blacklist_classes:
+
+					errors = ['Cannot have the same class in the whitelist and the blacklist!']
+
+					return render(request, 'acmg_db/download_cnv_list.html', {'form': form, 'errors': errors}) 
+
+				if cnv_classification in whitelist_classes:
+
+					keep_or_discard = 'white'
+
+				elif cnv_classification in blacklist_classes:
+
+					keep_or_discard = 'black'
+
+
+				else:
+
+					keep_or_discard = 'none'
+
+
+				cnv_list.append([cnv_id, keep_or_discard, cnv_classification])	
+
+			file_name = f'cnv_list_{request.user}_{random.randint(1,100000)}.csv'
+			file_path = f'{settings.VEP_TEMP_DIR}/{file_name}'
+			
+			with open(file_path, mode='w') as cnv_list_file:
+				cnv_list_writer = csv.writer(cnv_list_file , delimiter=',')
+
+				for row in cnv_list:
+					cnv_list_writer.writerow(row)
+
+
+			response = HttpResponse(open(file_path, 'rb').read())
+			response['Content-Type'] = 'text/plain'
+			response['Content-Disposition'] = f'attachment; filename={file_name}'
+
+			os.remove(file_path)
+
+			return response
+
+
+	return render(request, 'acmg_db/download_cnv_list.html', {'form': form})

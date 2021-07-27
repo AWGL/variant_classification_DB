@@ -1,0 +1,33 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br>
+<br>
+	<p> 
+	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
+	</p>
+<br>
+<br>
+<h4>Download CNV Classification Lists</h4>
+<br>
+
+
+<!-- BOX TO SHOW ERRORS -->
+{% if errors %}
+  {% for e in errors %}
+    <div class="alert alert-danger" role="alert">
+	  {{ e }}
+	</div>
+  {% endfor %}
+{% endif %}
+
+
+
+{% crispy form %}
+
+
+
+
+{% endblock %}

@@ -61,5 +61,6 @@ urlpatterns = [
     path('cnv_view_sample/<str:pk>',views.cnv_view_sample, name='cnv_view_sample'),
     path('view_cnv/<str:pk>/', views.view_cnv, name='view_cnv'),
     path('cnv_view_gene/<str:pk>/', views.cnv_view_gene, name='cnv_view_gene'),
+    path('download_cnv_list/', views.download_cnv_list, name='download_cnv_list'),
     
 ]
