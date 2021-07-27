@@ -438,7 +438,8 @@ class CNVDetailsForm(forms.Form):
 				('Trio De Novo','Trio De Novo'),
 				('Maternal','Maternal'),
 				('Paternal','Paternal'),
-				('Mosaic','Mosaic')
+				('Mosaic','Mosaic'),
+				('Unknown','Unknown')
 				]
 	copy_options = [
 			('Nullisomic','Nullisomic'),
