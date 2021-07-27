@@ -142,15 +142,15 @@ def cnv_search(request):
 			# otherwise assume we tried to search for a gene
 			try:
 
-				gene = Gene.objects.get(name=search_input)
+				gene = CNVGene.objects.get(gene=search_input)
 
 			except:
 
 				message = f'Cannot find a gene with name {search_input}'
 
-				return render(request, 'acmg_db/search.html', {'form': form, 'message': message})
+				return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
 
-			return redirect('view_gene', pk = gene.name)
+			return redirect('cnv_view_gene', pk = gene.gene)
 
 
 	return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
@@ -177,6 +177,24 @@ def view_gene(request, pk):
 	all_variants = list(filter(lambda x: x[1][0] != None, most_recent_classifications))
 
 	return render(request, 'acmg_db/view_gene.html', {'gene': gene, 'all_variants': all_variants})
+
+#-----------
+@transaction.atomic
+@login_required
+def cnv_view_gene(request, pk):
+	"""
+	Show all completed CNV classifications for a gene.
+
+	"""
+
+	gene = get_object_or_404(CNVGene, gene=pk)
+
+	genes = CNVGene.objects.filter(gene=pk)
+	
+	print(gene)
+	print(genes)
+
+	return render(request, 'acmg_db/cnv_view_gene.html', {'gene': gene, 'genes': genes})
 
 #--------
 @transaction.atomic

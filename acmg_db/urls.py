@@ -60,5 +60,6 @@ urlpatterns = [
     path('cnv_search',views.cnv_search, name='cnv_search'),
     path('cnv_view_sample/<str:pk>',views.cnv_view_sample, name='cnv_view_sample'),
     path('view_cnv/<str:pk>/', views.view_cnv, name='view_cnv'),
+    path('cnv_view_gene/<str:pk>/', views.cnv_view_gene, name='cnv_view_gene'),
     
 ]
