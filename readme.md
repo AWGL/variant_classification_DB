@@ -35,10 +35,15 @@ First install Conda/Miniconda from [2]. Then type the following commands in your
 
 `python manage.py loaddata acmg_questions.json`
 
+`python manage.py loaddata CNV_Gain_ACMG_questions.json`
+
+`python manage.py loaddata CNV_Loss_ACMG_questions.json`
+
 ### Other Resources
 
-* Reference Genome
-* VEP Cache - http://ftp.ensembl.org/pub/release-100/variation/indexed_vep_cache/homo_sapiens_refseq_vep_100_GRCh37.tar.gz
+* Reference Genome - either Human Reference GRCh37 or Human Reference GRCh38
+* VEP Cache for GRCh37 - http://ftp.ensembl.org/pub/release-100/variation/indexed_vep_cache/homo_sapiens_refseq_vep_100_GRCh37.tar.gz
+* VEP Cache for GRCh38 - http://ftp.ensembl.org/pub/release-104/variation/indexed_vep_cache/homo_sapiens_refseq_vep_104_GRCh38.tar.gz 
 
 ### Settings
 
