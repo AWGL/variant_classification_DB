@@ -904,6 +904,36 @@ class ReportingSearchForm(forms.Form):
 			Field('worksheet'),
 			Field('panel_name'),
 		)
+		
+class ReportingCNVSearchForm(forms.Form):
+	"""
+	A form to collect data specific to a sample/patient for the first check - from CNV - only difference to above is reverse action
+	"""
+	sample = forms.CharField()
+	worksheet = forms.CharField()
+	panel_name = forms.ChoiceField()
+
+	def __init__(self, *args, **kwargs):
+
+		self.panel_options = kwargs.pop('options')
+
+		super(ReportingCNVSearchForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'reporting-search-form'
+		self.fields['panel_name'].choices = self.panel_options
+		self.fields['sample'].label = 'Molecular Number'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_reporting')
+		self.helper.add_input(Submit('submit', 'Search', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('sample'),
+			Field('worksheet'),
+			Field('panel_name'),
+		)
+
 
 # search forms -----------------------------------------------------------
 class SearchForm(forms.Form):
