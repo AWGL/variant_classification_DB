@@ -123,31 +123,21 @@ def cnv_search(request):
 
 					return redirect('cnv_view_sample', pk=search_input)
 
-			# check if we've searched for a variant.
-			x = re.search("^(X|Y|\d+):\d+(A|T|G|C)+>(A|T|G|C)+", search_input)
-
+			# check if we've searched for a CNV.
+			x = re.search("^(X|Y|\d+):\d+-\d+", search_input)
+			
 			if x != None:
-
-				chromosome = search_input.split(':')[0]
-
-				position = re.findall('\d+',search_input.split(':')[1])[0]
-
-				ref = re.sub('[0-9]', '', search_input.split(':')[1].split('>')[0])
-
-				alt = re.sub('[0-9]', '', search_input.split(':')[1].split('>')[1])
-
-				var_hash = get_variant_hash(chromosome, position,ref, alt)
 
 				try:
 
-					variant = Variant.objects.get(variant_hash=var_hash)
+					cnv = CNV.objects.get(cnv=search_input)
 
 				except:
 
-					message = f'Cannot find a variant with id {search_input}'
-					return render(request, 'acmg_db/search.html', {'form': form, 'message': message})
+					message = f'Cannot find a CNV with id {search_input}'
+					return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
 
-				return redirect('view_variant', pk=var_hash)
+				return redirect('view_cnv', pk=cnv.cnv)
 
 			# otherwise assume we tried to search for a gene
 			try:
@@ -237,3 +227,17 @@ def cnv_view_sample(request, pk):
 		all_cnvs = all_cnvs + cnv
 
 	return render(request, 'acmg_db/cnv_view_sample.html', {'samples': samples, 'all_cnvs': all_cnvs, 'sample_name': pk})
+	
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def view_cnv(request, pk):
+	"""
+	Page to view information about a specific CNV.
+
+	"""
+	cnv = get_object_or_404(CNV, cnv=pk)
+	
+	cnvs = CNV.objects.filter(cnv = pk).order_by('-second_check_date')
+
+	return render (request, 'acmg_db/view_cnv.html', {'cnv': cnv, 'cnvs': cnvs})
