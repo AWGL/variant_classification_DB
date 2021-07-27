@@ -86,3 +86,8 @@ class CNVLossClassificationAnswerAdmin(admin.ModelAdmin):
 	list_display = ('cnv','cnv_classification_question',)
 	search_fields = ('cnv','cnv_classification_question',)
 admin.site.register(CNVLossClassificationAnswer, CNVLossClassificationAnswerAdmin)
+
+class CNVGeneAdmin(admin.ModelAdmin):
+	list_display = ('gene','cnv',)
+	search_fields = ('gene','cnv',)
+admin.site.register(CNVGene, CNVGeneAdmin)

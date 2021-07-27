@@ -127,30 +127,29 @@ def cnv_search(request):
 			x = re.search("^(X|Y|\d+):\d+-\d+", search_input)
 			
 			if x != None:
-
-				try:
-
-					cnv = CNV.objects.get(cnv=search_input)
-
-				except:
+				
+				cnv = CNV.objects.filter(cnv=search_input)
+				
+				if len(cnv) == 0:
 
 					message = f'Cannot find a CNV with id {search_input}'
 					return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
-
-				return redirect('view_cnv', pk=cnv.cnv)
+				else:
+					return redirect('view_cnv', pk=search_input)
 
 			# otherwise assume we tried to search for a gene
-			try:
+			else:
 
-				gene = CNVGene.objects.get(gene=search_input)
+				gene = CNVGene.objects.filter(gene=search_input)
 
-			except:
+				if len(gene) == 0:
 
-				message = f'Cannot find a gene with name {search_input}'
+					message = f'Cannot find a gene with name {search_input}'
 
-				return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
-
-			return redirect('cnv_view_gene', pk = gene.gene)
+					return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
+				
+				else:
+					return redirect('cnv_view_gene', pk = search_input)
 
 
 	return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
@@ -186,15 +185,9 @@ def cnv_view_gene(request, pk):
 	Show all completed CNV classifications for a gene.
 
 	"""
+	genes = CNVGene.objects.filter(gene=pk).order_by('cnv__second_check_date')
 
-	gene = get_object_or_404(CNVGene, gene=pk)
-
-	genes = CNVGene.objects.filter(gene=pk)
-	
-	print(gene)
-	print(genes)
-
-	return render(request, 'acmg_db/cnv_view_gene.html', {'gene': gene, 'genes': genes})
+	return render(request, 'acmg_db/cnv_view_gene.html', {'genes': genes})
 
 #--------
 @transaction.atomic
@@ -254,8 +247,7 @@ def view_cnv(request, pk):
 	Page to view information about a specific CNV.
 
 	"""
-	cnv = get_object_or_404(CNV, cnv=pk)
 	
 	cnvs = CNV.objects.filter(cnv = pk).order_by('-second_check_date')
 
-	return render (request, 'acmg_db/view_cnv.html', {'cnv': cnv, 'cnvs': cnvs})
+	return render (request, 'acmg_db/view_cnv.html', {'cnvs': cnvs})
