@@ -57,5 +57,7 @@ urlpatterns = [
     path('view_cnvs/', views.view_cnvs, name='view_cnvs'),
     path('cnv_view_classification/<int:pk>/', views.cnv_view_classification, name='cnv_view_classification'),
     path('cnv_reporting', views.cnv_reporting, name='cnv_reporting'),
+    path('cnv_search',views.cnv_search, name='cnv_search'),
+    path('cnv_view_sample/<str:pk>',views.cnv_view_sample, name='cnv_view_sample'),
     
 ]

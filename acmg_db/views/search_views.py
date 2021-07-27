@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound
 
 from acmg_db.models import *
-from acmg_db.forms import SearchForm
+from acmg_db.forms import SearchForm, CNVSearchForm
 from acmg_db.utils.variant_utils import get_variant_hash
 
 
@@ -87,8 +87,85 @@ def search(request):
 
 
 	return render(request, 'acmg_db/search.html', {'form': form, 'message': message})
+	
+#----------
+def cnv_search(request):
+	"""
+	Page to allow user to search for CNVs, samples, and genes.
+	"""
+
+	# make empty form
+	form = CNVSearchForm()
+
+	message = None
+
+	# if form submitted
+	if request.method == 'POST':
+		form = CNVSearchForm(request.POST)
+
+		if form.is_valid():
+			
+			search_input = form.cleaned_data['search_input'].upper().strip()
+
+			# check if we've searched for sample
+			x = re.search("^\d{2}M\d{5}", search_input)
+
+			if x != None:
+
+				samples = CNVSample.objects.filter(sample_name= search_input)
+
+				if len(samples) == 0:
+
+					message = f'Cannot find a sample with id {search_input}'
+					return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})	
+
+				else:	
+
+					return redirect('cnv_view_sample', pk=search_input)
+
+			# check if we've searched for a variant.
+			x = re.search("^(X|Y|\d+):\d+(A|T|G|C)+>(A|T|G|C)+", search_input)
+
+			if x != None:
+
+				chromosome = search_input.split(':')[0]
+
+				position = re.findall('\d+',search_input.split(':')[1])[0]
+
+				ref = re.sub('[0-9]', '', search_input.split(':')[1].split('>')[0])
+
+				alt = re.sub('[0-9]', '', search_input.split(':')[1].split('>')[1])
+
+				var_hash = get_variant_hash(chromosome, position,ref, alt)
+
+				try:
+
+					variant = Variant.objects.get(variant_hash=var_hash)
+
+				except:
+
+					message = f'Cannot find a variant with id {search_input}'
+					return render(request, 'acmg_db/search.html', {'form': form, 'message': message})
+
+				return redirect('view_variant', pk=var_hash)
+
+			# otherwise assume we tried to search for a gene
+			try:
+
+				gene = Gene.objects.get(name=search_input)
+
+			except:
+
+				message = f'Cannot find a gene with name {search_input}'
+
+				return render(request, 'acmg_db/search.html', {'form': form, 'message': message})
+
+			return redirect('view_gene', pk = gene.name)
 
 
+	return render(request, 'acmg_db/cnv_search.html', {'form': form, 'message': message})
+	
+#-----------
 @transaction.atomic
 @login_required
 def view_gene(request, pk):
@@ -111,6 +188,7 @@ def view_gene(request, pk):
 
 	return render(request, 'acmg_db/view_gene.html', {'gene': gene, 'all_variants': all_variants})
 
+#--------
 @transaction.atomic
 @login_required
 def view_sample(request, pk):
@@ -134,3 +212,28 @@ def view_sample(request, pk):
 		all_classifications = all_classifications + classifications
 
 	return render(request, 'acmg_db/view_sample.html', {'samples': samples, 'all_classifications': all_classifications, 'sample_name': pk})
+
+#--------
+@transaction.atomic
+@login_required
+def cnv_view_sample(request, pk):
+	"""
+	Show all completed classifications for a sample.
+	"""
+	samples = CNVSample.objects.filter(sample_name = pk)
+
+	if len(samples) == 0:
+
+		return HttpResponseNotFound(f'No sample found for this id: {pk}')
+
+	all_cnvs = []
+
+	# A sample pk is worksheet_id + '-' + sample_id + '-' + analysis performed
+	# so loop through and get all classifications which match just the sample id bit
+	for sample in samples:
+
+		cnv = list(CNV.objects.filter(sample = sample))
+
+		all_cnvs = all_cnvs + cnv
+
+	return render(request, 'acmg_db/cnv_view_sample.html', {'samples': samples, 'all_cnvs': all_cnvs, 'sample_name': pk})
