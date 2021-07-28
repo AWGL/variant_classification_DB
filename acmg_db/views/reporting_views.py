@@ -195,13 +195,16 @@ def ajax_cnv_decipher_download(request):
 	Gets the ajax results from the cnv_reporting.html page and produces a decipher upload file. 
 
 	"""
-	if request.is_ajax():
-
+	if request.method == "POST":
+		
 		# Get the submitted answers and convert to python object
-		cnv_selected = request.POST.get('cnvs')
-		cnv_selected = json.loads(cnv_selected)
+		cnv_selected = json.loads(request.body)
 		
 		print(cnv_selected)
+		
+		cnvs = cnv_selected['cnvs']
+		
+		print(cnvs)
 		
 		cnv_list=[]
 		
@@ -209,7 +212,7 @@ def ajax_cnv_decipher_download(request):
 		cnv_list.append(["Patient internal reference number or ID", "Variant class", "Shared", "Assembly", "Chromosome", "Genomic start", "Genomic end", "Mean ratio", "Genotype", "Inheritance", "Heteroplasmy/Mosaicism by tissue", "Pathogenicity", "Pathogenicity evidence", "Evidence framework", "Pathogenicity note", "Contribution", "Genotype groups"])
 		
 		#Get elements needed for decipher file, changing them where decipher is specific about wording
-		for i in cnv_selected:
+		for i in cnvs:
 			
 			cnv = CNV.objects.get(pk=i)
 			
@@ -260,6 +263,8 @@ def ajax_cnv_decipher_download(request):
 			group = ""
 				
 			cnv_list.append([ID, cnv_class, shared, assembly, chromosome, start, end, ratio, genotype, inheritance, tissue, pathogenicity, evidence, framework, note, contribution, group])
+		
+		#response = HttpResponse(cnv_list, content_type="text/plain")
 			
 		file_name = f'cnv_decipher_{request.user}_{random.randint(1,100000)}.csv'
 		file_path = f'{settings.VEP_TEMP_DIR}/{file_name}'
@@ -269,11 +274,12 @@ def ajax_cnv_decipher_download(request):
 
 			for row in cnv_list:
 				cnv_list_writer.writerow(row)
+		
 		response = HttpResponse(open(file_path, 'rb').read())
-		response['Content-Type'] = 'text/plain'
+		response['Content-Type'] = 'text/csv'
 		response['Content-Disposition'] = f'attachment; filename={file_name}'
 
-		#os.remove(file_path)
+		os.remove(file_path)
 
 		return response
 	

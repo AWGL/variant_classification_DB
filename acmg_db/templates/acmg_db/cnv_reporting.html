@@ -182,35 +182,47 @@ $(document).ready(function(){
 
 		// get selected rows and download file
 		$(".submit-selected").click(function(){
+	
+				var processed_array = [];
 				// pull out entire dataset for each selected row
 				var selected_rows = table.rows( { selected: true } ).data();
 				if (selected_rows['length'] > 0) {
 					// add the primary key for each selected variant into a new array
-					var processed_array = [];
+					
 					for (var i = 0; i < selected_rows['length']; i++) {
 							processed_array.push(selected_rows[i][1]);
 					};
 					//TODO - pass list of primary keys to python function to make XML
 					console.log(JSON.stringify(processed_array))
-				} 
-				
-				var formData = new FormData();
-				formData.append('csrfmiddlewaretoken',document.getElementsByName('csrfmiddlewaretoken')[0].value );
-				formData.append('cnvs', JSON.stringify(processed_array));
-				$.ajax({
-				url: '/ajax/cnv_decipher_download/',
-				type: 'POST',
-				data: formData,
-				contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-				processData: false, // NEEDED, DON'T OMIT THIS
-				success: function(data) {
-				$("#class_box").html(data);
-				},
-				failure: function(data) {
-				alert('Got an error');
 				}
-			});
-		} );
+				var data = {"cnvs": processed_array};
+				
+				var downloadURL = "cnv_decipher_download_{{request.user}}.csv";
+				// Use XMLHttpRequest instead of Jquery $ajax
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+    					var a;
+    					if (xhttp.readyState === 4 && xhttp.status === 200) {
+        					// Trick for making downloadable link
+        					a = document.createElement('a');
+        					a.href = window.URL.createObjectURL(xhttp.response);
+        					// Give filename you wish to download
+       					a.download = downloadURL;
+       					a.style.display = 'none';
+        					document.body.appendChild(a);
+       					a.click();
+    					}
+				};
+				
+				// Post data to URL which handles post request
+				xhttp.open("POST", "/ajax/cnv_decipher_download/");
+				xhttp.setRequestHeader("X-CSRFToken", document.getElementsByName('csrfmiddlewaretoken')[0].value) 
+				xhttp.setRequestHeader("Content-Type", "application/json");
+				// You should set responseType as blob for binary responses
+				xhttp.responseType = 'blob';
+				xhttp.send(JSON.stringify(data));
+				});
+				
 
 });
 </script>
