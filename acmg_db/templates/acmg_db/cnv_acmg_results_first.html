@@ -1,0 +1,15 @@
+{% if 'Pathogenic' in result %}
+	<button type="button" class="btn btn-danger" style="width: 40rem;">{{result}}</button>
+{% elif 'Benign' in result %}
+	<button type="button" class="btn btn-info" style="width: 40rem;">{{result}}</button>
+{% elif 'VUS' in result %}
+	<button type="button" class="btn btn-warning" style="width: 40rem;">{{result}}</button>
+{% elif 'Artefact' in result %}
+	<button type="button" class="btn btn-secondary" style="width: 40rem;">{{result}}</button>
+{% elif 'Contradictory' in result %}
+    <button type="button" class="btn btn-primary" style="width: 40rem;">{{result}}</button>
+{% else %}
+	<button type="button" class="btn btn-light" style="width: 40rem;">{{result}}</button>
+{% endif %}
+<br>
+<br>Score = {{ score }}

@@ -280,7 +280,9 @@ def cnv_first_check(request, pk):
 							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
 					
 					context['answers'] = answers
-					context['method_form'] = CNVMethodForm(request.POST)				
+					context['method_form'] = CNVMethodForm(request.POST)	
+					
+					return render(request, 'acmg_db/cnv_first_check.html', context)		
 
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
@@ -424,7 +426,7 @@ def ajax_acmg_cnv_classification_first(request):
 			'score': score,
 		}
 		
-		html = render_to_string('acmg_db/acmg_results_first.html', context)
+		html = render_to_string('acmg_db/cnv_acmg_results_first.html', context)
 
 	return HttpResponse(html)
 

@@ -92,9 +92,11 @@ def ajax_acmg_cnv_classification_second(request):
 		context = {
 			'result_first': cnv.display_first_classification(),
 			'result_second': cnv.display_final_classification(),
+			'score_first': cnv.first_final_score,
+			'score_second': cnv.second_final_score
 		}
 
-		html = render_to_string('acmg_db/acmg_results_second.html', context)
+		html = render_to_string('acmg_db/cnv_acmg_results_second.html', context)
 
 	return HttpResponse(html)
 
@@ -208,7 +210,8 @@ def cnv_second_check(request, pk):
 
 			result_second = 'Contradictory evidence provided'
 
-		
+		score_first = cnv.first_final_score
+		score_second = cnv.second_final_score
 
 		# make empty instances of forms
 		sample_form = CNVSampleInfoForm(request.POST)
@@ -225,6 +228,8 @@ def cnv_second_check(request, pk):
 			'comments': comments,
 			'result_first': result_first,
 			'result_second': result_second,
+			'score_first': score_first,
+			'score_second': score_second,
 			'sample_form': sample_form,
 			'details_form': details_form,
 			'method_form' : method_form,
@@ -312,6 +317,8 @@ def cnv_second_check(request, pk):
 					
 					context['answers'] = answers
 					context['method_form'] = CNVMethodForm(request.POST)	
+					
+					return render(request, 'acmg_db/cnv_second_check.html', context)
 		
 			
 			# FinaliseClassificationForm

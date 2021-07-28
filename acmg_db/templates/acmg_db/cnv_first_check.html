@@ -60,7 +60,7 @@
 				{% elif cnv.sample.genome == 'GRCh38' %}
 					<span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
 					{% endif %}
-				<td>
+				<td style="text-align:center">
 					<div id="class_box">
 					{% if 'Pathogenic' in result %}
 						<button type="button" class="btn btn-danger" style="width: 100%;">{{result}}</span></button>
@@ -75,8 +75,9 @@
 					{% else %}
 						<button type="button" class="btn btn-light" style="width: 100%;">{{result}}</button>
 					{% endif %}
-					</div>
+					<br>
 					<br> Score = {{ score }}
+					</div>
 				</td>
 				<td>{{ cnv.display_status }}</td>
 			</tr>
