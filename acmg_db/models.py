@@ -598,9 +598,19 @@ class CNVSample(models.Model):
 	platform = models.TextField()
 	cyto = models.TextField(null=True)
 	
+class CNVVariant(models.Model):
+	"""
+	Model to hold CNV variant information
+	"""
+	full = models.TextField() #full CNV variant in format CHR:START-STOP
+	chromosome = models.TextField()
+	start = models.IntegerField()
+	stop = models.IntegerField()
+	length = models.IntegerField()
+
 class CNV(models.Model):	
 	"""
-	Model to hold CNV variant information 
+	Model to hold CNV classification information 
 	"""	
 	STATUS_CHOICES = (('0', 'First Check'), ('1', 'Second Check'), ('2', 'Complete'), ('3', 'Archived'))
 	FINAL_CLASS_CHOICES = (
@@ -623,7 +633,7 @@ class CNV(models.Model):
 	history = AuditlogHistoryField()
 	
 	sample = models.ForeignKey(CNVSample, on_delete=models.CASCADE)
-	cnv = models.TextField()
+	cnv = models.ForeignKey(CNVVariant, on_delete=models.CASCADE)
 	gain_loss = models.TextField()
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
 	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_first_checker')
@@ -641,10 +651,6 @@ class CNV(models.Model):
 	second_check_date = models.DateTimeField(null=True, blank=True)
 	creation_date = models.DateTimeField(null=True)
 	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='cnv_user_creator')
-	#model elements to allow for searching for overlapping CNVs
-	start = models.IntegerField()
-	stop = models.IntegerField()
-	length = models.IntegerField()
 		
 	def __str__(self):
 		return f'{self.id}'

@@ -131,23 +131,29 @@ def cnv_home(request):
 				#Set Gain/Loss
 				gain_loss = row['Gain/Loss']
 				
+				if final_cnv not in unique_cnvs:
+					unique_cnvs.append(final_cnv)
+				
+				
+				CNVVariant_obj, created = CNVVariant.objects.get_or_create(
+							full = final_cnv,
+							chromosome = chrom,
+							start = start,
+							stop = stop,
+							length = length,
+							)
+								
+							
 				CNV_obj = CNV.objects.create(
 						sample = CNVSample_obj,
-						cnv = final_cnv,
+						cnv = CNVVariant_obj,
 						gain_loss = gain_loss,
 						method = gain_loss,
 						status = 0,
 						creation_date = timezone.now(),
 						user_creator = request.user,
-						start = start,
-						stop = stop,
-						length = length,
 						)
 				CNV_obj.save()
-				
-				if final_cnv not in unique_cnvs:
-					unique_cnvs.append(final_cnv)
-			
 			
 					
 			# Get VEP annotations
@@ -174,7 +180,7 @@ def cnv_home(request):
 			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
 				
-				cnv_obj = CNV.objects.get(cnv=variant[1],sample__sample_name=sample_id)
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id)
 				
 				if 'transcript_consequences' in variant[0]:
 
@@ -298,7 +304,8 @@ def cnv_manual(request):
 					}
 					return render(request, 'acmg_db/cnv_manual.html', context)
 					
-			#Break up CNV to get start/stop and length
+			#Break up CNV to get chromosome, start/stop and length
+			chrom = final_cnv.split(":")[0]
 			final_locs = final_cnv.split(":")[1]
 			start = final_locs.split("-")[0]
 			stop = final_locs.split("-")[1]
@@ -332,17 +339,23 @@ def cnv_manual(request):
 				CNVSample_obj.save()
 			
 			# add cnv variant object	
+			CNVVariant_obj, created = CNVVariant.objects.get_or_create(
+							full = final_cnv,
+							chromosome = chrom,
+							start = start,
+							stop = stop,
+							length = length,
+							)
+							
+			# add CNV classification object
 			CNV_obj = CNV.objects.create(
 					sample = CNVSample_obj,
-					cnv = final_cnv,
+					cnv = CNVVariant_obj,
 					gain_loss = gain_loss_info,
 					method = gain_loss_info,
 					status = 0,
 					creation_date = timezone.now(),
 					user_creator = request.user,
-					start = start,
-					stop = stop,
-					length = length,
 					)
 			CNV_obj.save()
 
@@ -377,7 +390,7 @@ def cnv_manual(request):
 			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
 				
-				cnv_obj = CNV.objects.get(cnv=variant[1],sample__sample_name=sample_id)
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id)
 				
 				if 'transcript_consequences' in variant[0]:
 
