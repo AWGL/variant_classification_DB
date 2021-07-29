@@ -118,9 +118,9 @@
 	  <td>{{ cnv.sample.cyto }}</td>
 	  <td>
 	  {% if cnv.sample.genome == 'GRCh37' %}
-	  	{{ cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+	  	{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
 	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  	{{ cnv.cnv }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  	{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
 	  {% endif %}
 	  </td>
 	  <td>{{ cnv.gain_loss }}</td>
@@ -130,13 +130,13 @@
 	  {% endfor %}
 	  </td>
 	  <td>
-	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv }}>GENES</a>
+	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }}>GENES</a>
 	  <br>
 	  <br>
 	  {% if cnv.sample.genome == 'GRCh37' %}
-	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv }}>BROWSER</a>
+	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }}>BROWSER</a>
 	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv }}>BROWSER</a>
+	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }}>BROWSER</a>
 	  {% endif %}
 	  </td>
 	  <td>
@@ -187,6 +187,7 @@
 	  <th></th>
 	  <th></th>
   	  <th></th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>
