@@ -128,7 +128,7 @@ def cnv_search(request):
 			
 			if x != None:
 				
-				cnv = CNV.objects.filter(cnv=search_input)
+				cnv = CNVVariant.objects.filter(full=search_input)
 				
 				if len(cnv) == 0:
 
@@ -185,7 +185,7 @@ def cnv_view_gene(request, pk):
 	Show all completed CNV classifications for a gene.
 
 	"""
-	genes = CNVGene.objects.filter(gene=pk).order_by('cnv__second_check_date')
+	genes = CNVGene.objects.filter(gene=pk, cnv__status__in=['2','3']).order_by('cnv__second_check_date')
 
 	return render(request, 'acmg_db/cnv_view_gene.html', {'genes': genes})
 
@@ -233,7 +233,7 @@ def cnv_view_sample(request, pk):
 	# so loop through and get all classifications which match just the sample id bit
 	for sample in samples:
 
-		cnv = list(CNV.objects.filter(sample = sample))
+		cnv = list(CNV.objects.filter(sample = sample, status__in=['2','3']))
 
 		all_cnvs = all_cnvs + cnv
 
@@ -248,6 +248,6 @@ def view_cnv(request, pk):
 
 	"""
 	
-	cnvs = CNV.objects.filter(cnv = pk).order_by('-second_check_date')
+	cnvs = CNV.objects.filter(cnv__full = pk).order_by('-second_check_date')
 
 	return render (request, 'acmg_db/view_cnv.html', {'cnvs': cnvs})

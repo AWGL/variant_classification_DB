@@ -10,9 +10,9 @@
 
 <br>
 {% if cnvs.0.sample.genome == 'GRCh37' %}
-	  <h4>All CNV classifications for {{ cnvs.0.cnv }}<br><span class="badge badge-info badge-pill">{{ cnvs.0.sample.genome }}</h4>
+	  <h4>All CNV classifications for {{ cnvs.0.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnvs.0.sample.genome }}</h4>
 {% elif cnvs.0.sample.genome == 'GRCh38' %}
-	  <h4>All CNV classifications for {{ cnvs.0.cnv }}<br><span class="badge badge-success badge-pill">{{ cnvs.0.sample.genome }}</h4>
+	  <h4>All CNV classifications for {{ cnvs.0.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnvs.0.sample.genome }}</h4>
 {% endif %}
 <br>
 

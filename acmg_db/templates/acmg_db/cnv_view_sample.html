@@ -74,9 +74,9 @@
 		<td> {{cnv.sample.analysis_performed.panel}} </td>
 		<td>
 	  	{% if cnv.sample.genome == 'GRCh37' %}
-	  		{{ cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+	  		{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
 	  	{% elif cnv.sample.genome == 'GRCh38' %}
-	  		{{ cnv.cnv }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  		{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
 	  	{% endif %}
 	  	</td>
 		<td> {{cnv.gain_loss}} </td>

@@ -33,9 +33,9 @@
 	<tr>
 		<td>
 	  	{% if gene.cnv.sample.genome == 'GRCh37' %}
-	  	{{ gene.cnv.cnv }}<br><span class="badge badge-info badge-pill">{{ gene.cnv.sample.genome }}
+	  	{{ gene.cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ gene.cnv.sample.genome }}
 	  	{% elif gene.cnv.sample.genome == 'GRCh38' %}
-	  	{{ gene.cnv.cnv }}<br><span class="badge badge-success badge-pill">{{ gene.cnv.sample.genome }}
+	  	{{ gene.cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ gene.cnv.sample.genome }}
 	  	{% endif %}
 	  	</td>
 		<td>

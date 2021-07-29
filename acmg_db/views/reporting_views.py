@@ -230,9 +230,9 @@ def ajax_cnv_decipher_download(request):
 			elif cnv.sample.genome == "GRCh38":
 				assembly = cnv.sample.genome
 				
-			chromosome = cnv.cnv.split(":")[0]
-			start = cnv.start
-			end = cnv.stop
+			chromosome = cnv.cnv.chromosome
+			start = cnv.cnv.start
+			end = cnv.cnv.stop
 			ratio = ""
 			genotype = cnv.genotype
 			

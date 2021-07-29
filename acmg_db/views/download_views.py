@@ -165,7 +165,7 @@ def download_cnv_list(request):
 			cnv_list = []
 			for cnv in all_cnvs_query:
 
-				cnv_id = cnv.cnv
+				cnv_id = cnv.cnv.full
 				cnv_classification = cnv.display_classification()
 				if cnv_classification in whitelist_classes and cnv_classification in blacklist_classes:
 
