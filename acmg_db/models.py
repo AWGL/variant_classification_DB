@@ -898,8 +898,8 @@ class CNVGainClassificationAnswer(models.Model):
 	
 	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
 	cnv_classification_question = models.ForeignKey(CNVGainClassificationQuestion, on_delete=models.CASCADE)
-	score = models.DecimalField(max_digits=10, decimal_places=2)
-	comment = models.TextField()
+	score = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
+	comment = models.TextField(null=True)
 	score_second = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
 	comment_second = models.TextField(null=True)
 
@@ -916,8 +916,8 @@ class CNVLossClassificationAnswer(models.Model):
 	
 	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
 	cnv_classification_question = models.ForeignKey(CNVLossClassificationQuestion, on_delete=models.CASCADE)
-	score = models.DecimalField(max_digits=10, decimal_places=2)
-	comment = models.TextField()
+	score = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
+	comment = models.TextField(null=True)
 	score_second = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
 	comment_second = models.TextField(null=True)
 
