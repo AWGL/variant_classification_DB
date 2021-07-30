@@ -19,6 +19,23 @@
 	{% crispy form %}
 
 </div>
+
+
+<button class="btn btn-success" type="button" data-toggle="collapse" href="#advanced_search" role="button" aria-expanded="false" aria-controls="advanced_search">
+		Advanced Search
+	</button> 
+	<br>
+	<div class="collapse" id="advanced_search">
+		<br>
+		<div class="card card-body bg-light col-10">
+		Use this search form to retrieve all CNVs on a chromosome between a start and stop location.<br>
+			{% crispy adv_form %}
+		</div>
+	</div>
+	
+	<br>
+	</div>	
+	
 </center>
 
 {% if message != None %}
@@ -26,6 +43,8 @@
 <div class="alert alert-danger">
   <div>{{message}} </div>
 </div>
+
+
 
 {% endif %}
 

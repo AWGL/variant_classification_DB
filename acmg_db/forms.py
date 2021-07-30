@@ -980,6 +980,31 @@ class CNVSearchForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('search_input', placeholder='Search for a CNV, gene or molecular number.', title=False),
 		)
+		
+class CNVAdvancedSearchForm(forms.Form):
+	"""
+	Form for collecting user query for searching CNVs, genes, samples
+	"""
+
+	chromosome = forms.CharField()
+	start = forms.CharField()
+	stop = forms.CharField()
+
+	def __init__(self, *args, **kwargs):
+		
+		super(CNVAdvancedSearchForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'search-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('chromosome', placeholder='Chromosome', title=False),
+			Field('start',placeholder='Start location',title=False),
+			Field('stop',placeholder='Stop location',title=False),
+		)
 
 
 
