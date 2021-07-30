@@ -9,7 +9,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 
 from acmg_db.forms import CNVFileUploadForm, CNVManualUpload, ArchiveCNVClassificationForm, CNVAssignSecondCheckToMeForm, CNVSendBackToFirstCheckForm, CNVResetClassificationForm
 from acmg_db.models import *
@@ -434,14 +434,57 @@ def cnv_manual(request):
 @login_required
 def view_cnvs(request):
 	"""
-	Page to view all CNVs classified in the lab
+	Page to view all unique CNVs classified in the lab
 
 	"""
+	
 	# Get all CNVs which are complete or archived, ordered by second check date
-	all_cnvs_query = CNV.objects.filter(status__in=['2','3']).order_by('-second_check_date')
+	#all_cnvs_query = CNV.objects.filter(status__in=['2','3']).order_by('-second_check_date')
 
 	
-	return render(request, 'acmg_db/view_cnvs.html', {'cnv_data': all_cnvs_query})
+	
+	# query all variants, prefetch related classification objects and associated transcript/ gene objects
+	all_cnv_variants_query = CNVVariant.objects.prefetch_related(
+		Prefetch(
+			'cnv_classification', 
+			queryset=CNV.objects.filter(
+					status__in=['2', '3']
+				).order_by('-second_check_date'), 
+			to_attr='cnv_classification_cache'),
+	).order_by('chromosome', 'start')
+	
+	
+	# loop through each variant to parse data
+	cnv_data = []
+	for cnv in all_cnv_variants_query:
+		
+		
+		# skip if there are no linked classifications
+		if len(cnv.cnv_classification_cache) > 0:
+
+			# parse info
+			most_recent_obj = cnv.cnv_classification_cache[0]
+			most_recent_class = most_recent_obj.display_final_classification()
+					
+			cnv_id = most_recent_obj.cnv.full
+			
+			# get list of all unique classifications
+			all_classes_set = set()
+			for classification in cnv.cnv_classification_cache:
+				all_classes_set.add(classification.display_final_classification())
+
+			# add dict containing variant info to list
+			cnv_data.append({
+				'cnv': cnv_id,
+				'num_classifications': len(cnv.cnv_classification_cache), 
+				'most_recent_obj': most_recent_obj, 
+				'most_recent_date': most_recent_obj.second_check_date, 
+				'most_recent_class': most_recent_obj.display_final_classification(), 
+				'all_classes': '|'.join(all_classes_set),
+				'genome': most_recent_obj.sample.genome,
+			})
+	
+	return render(request, 'acmg_db/view_cnvs.html', {'cnv_data': cnv_data})
 	
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

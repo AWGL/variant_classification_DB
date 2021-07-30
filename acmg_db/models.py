@@ -633,7 +633,7 @@ class CNV(models.Model):
 	history = AuditlogHistoryField()
 	
 	sample = models.ForeignKey(CNVSample, on_delete=models.CASCADE)
-	cnv = models.ForeignKey(CNVVariant, on_delete=models.CASCADE)
+	cnv = models.ForeignKey(CNVVariant, on_delete=models.CASCADE, related_name='cnv_classification')
 	gain_loss = models.TextField()
 	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
 	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_first_checker')
