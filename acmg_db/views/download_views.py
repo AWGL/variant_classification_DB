@@ -158,36 +158,48 @@ def download_cnv_list(request):
 			blacklist_classes = form.cleaned_data['black_list']
 
 			print (whitelist_classes, blacklist_classes)
-
-			all_cnvs_query = CNV.objects.filter(status__in=['2', '3']).order_by('-second_check_date')
+			
+			all_cnvs_query = CNVVariant.objects.prefetch_related(
+				Prefetch(
+					'cnv_classification', 
+					queryset=CNV.objects.filter(
+							status__in=['2', '3']
+						).order_by('-second_check_date'), 
+					to_attr='cnv_classification_cache'),
+			).order_by('chromosome', 'start')
 			
 			# loop through each variant to parse data
 			cnv_list = []
 			for cnv in all_cnvs_query:
 
-				cnv_id = cnv.cnv.full
-				cnv_classification = cnv.display_classification()
-				if cnv_classification in whitelist_classes and cnv_classification in blacklist_classes:
+				# skip if there are no linked classifications
+				if len(cnv.cnv_classification_cache) > 0:
+					
+					most_recent_obj = cnv.cnv_classification_cache[0]
+					cnv_id = most_recent_obj.cnv.full
+					
+					cnv_classification = most_recent_obj.display_final_classification()
+					if cnv_classification in whitelist_classes and cnv_classification in blacklist_classes:
 
-					errors = ['Cannot have the same class in the whitelist and the blacklist!']
+						errors = ['Cannot have the same class in the whitelist and the blacklist!']
 
-					return render(request, 'acmg_db/download_cnv_list.html', {'form': form, 'errors': errors}) 
+						return render(request, 'acmg_db/download_cnv_list.html', {'form': form, 'errors': errors}) 
 
-				if cnv_classification in whitelist_classes:
+					if cnv_classification in whitelist_classes:
 
-					keep_or_discard = 'white'
+						keep_or_discard = 'white'
 
-				elif cnv_classification in blacklist_classes:
+					elif cnv_classification in blacklist_classes:
 
-					keep_or_discard = 'black'
-
-
-				else:
-
-					keep_or_discard = 'none'
+						keep_or_discard = 'black'
 
 
-				cnv_list.append([cnv_id, keep_or_discard, cnv_classification])	
+					else:
+
+						keep_or_discard = 'none'
+
+
+					cnv_list.append([cnv_id, keep_or_discard, cnv_classification])	
 
 			file_name = f'cnv_list_{request.user}_{random.randint(1,100000)}.csv'
 			file_path = f'{settings.VEP_TEMP_DIR}/{file_name}'
