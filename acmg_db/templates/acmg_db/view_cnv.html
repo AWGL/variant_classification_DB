@@ -9,11 +9,7 @@
 <br>
 
 <br>
-{% if cnvs.0.sample.genome == 'GRCh37' %}
-	  <h4>All CNV classifications for {{ cnvs.0.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnvs.0.sample.genome }}</h4>
-{% elif cnvs.0.sample.genome == 'GRCh38' %}
-	  <h4>All CNV classifications for {{ cnvs.0.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnvs.0.sample.genome }}</h4>
-{% endif %}
+<h4>All CNV classifications for {{ cnvs.0.cnv.full }}</h4>
 <br>
 
 <table id="classifications" class = "table table-hover table-bordered" style="width:100%">
@@ -21,6 +17,7 @@
   <thead>
 	<tr>
 	  <th>Status</th>
+	  <th>Reference Genome</th>
 	  <th>Worksheet</th>
 	  <th>Molecular Number</th>
 	  <th>Cyto ID</th>
@@ -37,6 +34,12 @@
   	{% for cnv in cnvs %}
 	<tr>
 		<td> {{cnv.display_status}} </td>
+		<td>
+		{% if cnv.sample.genome == "GRCh37" %}
+		<span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+		{% elif cnv.sample.genome == "GRCh38" %}
+		<span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+		{% endif %}
 		<td> {{cnv.sample.worklist}} </td>
 		<td> {{cnv.sample.sample_name}} </td>
 		<td> {{cnv.sample.cyto}}</td>
