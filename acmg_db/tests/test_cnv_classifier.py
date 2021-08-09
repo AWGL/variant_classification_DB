@@ -8,8 +8,9 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from acmg_db.models import *
+from acmg_db.utils.cnv_utils import calculate_acmg_class
 
-class TestCNVClassifierGain(TestCase):
+class TestCNVScoreGain(TestCase):
 
 	# Loading ACMG CNV questions
 	fixtures = ['CNV_Gain_ACMG_questions.json', 'CNV_Loss_ACMG_questions.json']
@@ -66,9 +67,10 @@ class TestCNVClassifierGain(TestCase):
 		cnv_obj = CNV.objects.get(pk=1)
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_first(), 1.00)
+	
 
 #Testing for second checker		
-class TestCNVClassifierGainSecond(TestCase):
+class TestCNVScoreGainSecond(TestCase):
 
 	# Loading ACMG CNV questions
 	fixtures = ['CNV_Gain_ACMG_questions.json', 'CNV_Loss_ACMG_questions.json']
@@ -101,7 +103,7 @@ class TestCNVClassifierGainSecond(TestCase):
 		)
 		
 	
-	def test_acmg_cnv_score_first_gain(self):
+	def test_acmg_cnv_score_second_gain(self):
 		
 		response = self.client.get('/cnv_second_check/1/')
 		
@@ -113,7 +115,7 @@ class TestCNVClassifierGainSecond(TestCase):
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_second(), 0.5)
 		
-class TestCNVClassifierLoss(TestCase):
+class TestCNVScoreLoss(TestCase):
 
 	# Loading ACMG CNV questions
 	fixtures = ['CNV_Gain_ACMG_questions.json', 'CNV_Loss_ACMG_questions.json']
@@ -159,7 +161,7 @@ class TestCNVClassifierLoss(TestCase):
 		self.assertEqual(cnv_obj.calculate_acmg_score_first(), 1.00)
 
 #Testing for second checker		
-class TestCNVClassifierLossSecond(TestCase):
+class TestCNVScoreLossSecond(TestCase):
 
 	# Loading ACMG CNV questions
 	fixtures = ['CNV_Gain_ACMG_questions.json', 'CNV_Loss_ACMG_questions.json']
@@ -192,7 +194,7 @@ class TestCNVClassifierLossSecond(TestCase):
 		)
 		
 	
-	def test_acmg_cnv_score_first_gain(self):
+	def test_acmg_cnv_score_second_loss(self):
 		
 		response = self.client.get('/cnv_second_check/1/')
 		
@@ -203,3 +205,18 @@ class TestCNVClassifierLossSecond(TestCase):
 		cnv_obj = CNV.objects.get(pk=1)
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_second(), 0.5)
+		
+class TestCNVClassifier(TestCase):
+
+	def test_cnv_classifier(self):
+		
+		#Pathogenic
+		self.assertEqual(calculate_acmg_class(1.00),"4")
+		#Likely Pathogenic
+		self.assertEqual(calculate_acmg_class(0.92),"3")
+		#VUS
+		self.assertEqual(calculate_acmg_class(0),"2")
+		#Likely Benign
+		self.assertEqual(calculate_acmg_class(-0.92),"1")
+		#Benign
+		self.assertEqual(calculate_acmg_class(-1.00),"0")
