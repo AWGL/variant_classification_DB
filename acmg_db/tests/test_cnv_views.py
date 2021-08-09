@@ -104,18 +104,6 @@ class TestCNVChecks(TestCase):
 		response = self.client.get('/cnv_second_check/1/')
 		self.assertEqual(response.status_code,403)
 	
-	"""
-	This test isn't working but unclear as to why - getting status 403
-	# Test that we can view second check when set correctly
-	def test_view_cnv_second_check(self):
-		
-		cnv_obj = CNV.objects.get(pk = 1)
-		cnv_obj.status = '1'
-		cnv_obj.save
-		
-		response = self.client.get('/cnv_second_check/1/')
-		self.assertEqual(response.status_code,200)
-	"""	
 	
 	#Testing that we can view the classification summary
 	def test_view_cnv_classification(self):
@@ -135,11 +123,83 @@ class TestCNVChecks(TestCase):
 		response = self.client.get('/cnv_view_gene/TEST/')
 		self.assertEqual(response.status_code, 200)
 		
-	"""
-	FINISH THIS WHEN BACK
 	#Testing that we can view the cnv summary
 	def test_view_cnv(self):
+		
+		response = self.client.get('/view_cnv/1/')
+		self.assertEqual(response.status_code, 200)
+		
+	#Testing that we can view the CNV region summary - with random region
+	def test_view_cnv_region(self):
+	
+		response = self.client.get('/cnv_view_region/X:1-300000/')
+		self.assertEqual(response.status_code, 200)
+		
+	
+class TestCNVPermissionChecks(TestCase):
 	"""
+	Test permissions CNV first and second check pages - complex cases
+	"""
+	
+	# Loading ACMG CNV questions
+	fixtures = ['CNV_Gain_ACMG_questions.json', 'CNV_Loss_ACMG_questions.json']
+	
+	# Setting up basic test models
+	def setUp(self):
+
+		self.user = User.objects.create_user('test', 'admin@test.com', 'hello123')
+		self.user = User.objects.create_user('testuser', 'admin2@test.com', 'hello123!')
+		self.client.login(username='test', password= 'hello123')
+		
+		Worklist.objects.get_or_create(name='12-12345')
+		
+		Panel.objects.get_or_create(panel='Array', added_by = self.user)
+		
+		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', genome = 'GRCh37', platform = 'SNP Array', cyto = 'C11-1111')
+		
+		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111' )
+		
+		CNV.objects.get_or_create(
+					sample = CNVSample.objects.get(sample_name='11M11111'),
+					cnv = CNVVariant.objects.get(pk = 1),
+					gain_loss = 'Gain',
+					method = 'Gain',
+					user_creator = self.user,
+					status = "1",
+		)
+		
+		CNVGene.objects.get_or_create(
+						gene = 'TEST',
+						cnv = CNV.objects.get(pk = 1)
+		)	
+	
+	# Test that we can view second check when set correctly
+	def test_view_cnv_second_check(self):
+		
+		response = self.client.get('/cnv_second_check/1/')
+		self.assertEqual(response.status_code, 200)
+		
+	
+	#Testing that we can't view first check when status is set to second check
+	def test_view_first_when_second(self):
+		
+		
+		response = self.client.get('/cnv_first_check/1/')
+		self.assertEqual(response.status_code, 403)
+		
+	#Test that non-assigned user can't access second check
+	def test_assigned_user(self):
+		
+		
+		self.client.login(username='test', password='hello123')
+		response = self.client.get('/cnv_second_check/1/')
+		
+		self.client.login(username='testuser', password='hello123!')
+		response = self.client.get('/cnv_second_check/1/')
+		self.assertEqual(response.status_code, 403)
+	
+		
+	
 	
 	
 		
