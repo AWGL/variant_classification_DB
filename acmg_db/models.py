@@ -764,7 +764,7 @@ class CNV(models.Model):
 
 			#Check we have all the answers
 			if len(classification_answers) != all_questions_count:
-				return '7'
+				return 'NA'
 
 			final_score = 0
 
@@ -782,7 +782,7 @@ class CNV(models.Model):
 
 			#Check we have all the answers
 			if len(classification_answers) != all_questions_count:
-				return '7'
+				return 'NA'
 
 			final_score = 0
 
@@ -808,7 +808,7 @@ class CNV(models.Model):
 
 			#Check we have all the answers
 			if len(classification_answers) != all_questions_count:
-				return '7'
+				return 'NA'
 
 			final_score = 0
 
@@ -826,7 +826,7 @@ class CNV(models.Model):
 
 			#Check we have all the answers
 			if len(classification_answers) != all_questions_count:
-				return '7'
+				return 'NA'
 
 			final_score = 0
 

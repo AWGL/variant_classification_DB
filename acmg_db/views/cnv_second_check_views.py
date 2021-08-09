@@ -76,17 +76,24 @@ def ajax_acmg_cnv_classification_second(request):
 				classification_answer_obj.save()
 
 		# update the score in the database
-		cnv.second_final_score = cnv.calculate_acmg_score_second()
-		if cnv.second_final_score >= 0.99:
+		score = cnv.calculate_acmg_score_second()
+		if score >= 0.99:
 			cnv.second_final_class = "4"
-		elif 0.90 <= cnv.second_final_score <= 0.98:
+			cnv.second_final_score = score
+		elif 0.90 <= score <= 0.98:
 			cnv.second_final_class = "3"
-		elif -(0.89) <= cnv.second_final_score <= 0.89:
+			cnv.second_final_score = score
+		elif -(0.89) <= score <= 0.89:
 			cnv.second_final_class = "2"
-		elif -(0.98) <= cnv.second_final_score <= -(0.90):
+			cnv.second_final_score = score
+		elif -(0.98) <= score <= -(0.90):
 			cnv.second_final_class = "1"
-		elif cnv.second_final_score <= -(0.99):
+			cnv.second_final_score = score
+		elif score <= -(0.99):
 			cnv.second_final_class = "0"
+			cnv.second_final_score = score
+		elif score == "NA":
+			cnv.second_final_class = "5"
 		cnv.save()
 		
 		context = {

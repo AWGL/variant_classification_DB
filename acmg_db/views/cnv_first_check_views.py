@@ -406,20 +406,27 @@ def ajax_acmg_cnv_classification_first(request):
 				classification_answer_obj.save()
 
 		# update the score in the database
-		cnv.first_final_score = cnv.calculate_acmg_score_first()
-		if cnv.first_final_score >= 0.99:
+		score = cnv.calculate_acmg_score_first()
+		if score >= 0.99:
 			cnv.first_final_class = "4"
-		elif 0.90 <= cnv.first_final_score <= 0.98:
+			cnv.first_final_score = score
+		elif 0.90 <= score <= 0.98:
 			cnv.first_final_class = "3"
-		elif -(0.89) <= cnv.first_final_score <= 0.89:
+			cnv.first_final_score = score
+		elif -(0.89) <= score <= 0.89:
 			cnv.first_final_class = "2"
-		elif -(0.98) <= cnv.first_final_score <= -(0.90):
+			cnv.first_final_score = score
+		elif -(0.98) <= score <= -(0.90):
 			cnv.first_final_class = "1"
-		elif cnv.first_final_score <= -(0.99):
+			cnv.first_final_score = score
+		elif score <= -(0.99):
 			cnv.first_final_class = "0"
+			cnv.first_final_score = score
+		elif score == "NA":
+			cnv.first_final_class = "5"
 		cnv.save()
 		
-		score = cnv.first_final_score
+		cnv.first_final_score = score
 		
 		context = {
 			'result': cnv.display_first_classification(),
