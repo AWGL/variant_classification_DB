@@ -11,6 +11,7 @@ from django.http import HttpResponse
 
 from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, CNVMethodForm, FinaliseCNVClassificationSecondCheckForm
 from acmg_db.models import *
+from acmg_db.utils.cnv_utils import calculate_acmg_class
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
@@ -77,23 +78,10 @@ def ajax_acmg_cnv_classification_second(request):
 
 		# update the score in the database
 		score = cnv.calculate_acmg_score_second()
-		if score >= 0.99:
-			cnv.second_final_class = "4"
+		if score !="NA":
 			cnv.second_final_score = score
-		elif 0.90 <= score <= 0.98:
-			cnv.second_final_class = "3"
-			cnv.second_final_score = score
-		elif -(0.89) <= score <= 0.89:
-			cnv.second_final_class = "2"
-			cnv.second_final_score = score
-		elif -(0.98) <= score <= -(0.90):
-			cnv.second_final_class = "1"
-			cnv.second_final_score = score
-		elif score <= -(0.99):
-			cnv.second_final_class = "0"
-			cnv.second_final_score = score
-		elif score == "NA":
-			cnv.second_final_class = "5"
+		
+		cnv.second_final_class = calculate_acmg_class(score)	
 		cnv.save()
 		
 		context = {

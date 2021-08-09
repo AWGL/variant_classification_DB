@@ -1,5 +1,5 @@
 """
-Various functions for dealing with variants inputted by the user.
+Various functions for dealing with CNVs inputted by the user.
 
 """
 
@@ -167,4 +167,20 @@ def get_vep_info_local_cnv(cnv_list, vep_info, sample):
 	os.remove(vcf_file_name)
 
 	return vep_anno_list
+	
+#--------------------------
+def calculate_acmg_class(score):
+
+	if score >= 0.99:
+		return "4"
+	elif 0.90 <= score <= 0.98:
+		return "3"
+	elif -(0.89) <= score <= 0.89:
+		return "2"
+	elif -(0.98) <= score <= -(0.90):
+		return "1"
+	elif score <= -(0.99):
+		return "0"
+	elif score == "NA":
+		return "5"
 
