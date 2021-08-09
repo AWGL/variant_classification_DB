@@ -32,7 +32,7 @@ def ajax_acmg_cnv_classification_second(request):
 		# Get the classification pk and load the classification
 		cnv_pk = request.POST.get('cnv_pk').strip()
 		cnv = get_object_or_404(CNV, pk=cnv_pk)
-
+		
 		# Ensure correct user and status
 		if cnv.status != '1' or request.user != cnv.user_second_checker:
 
