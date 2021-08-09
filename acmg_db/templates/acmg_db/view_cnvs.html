@@ -28,11 +28,7 @@
   <tbody>
 	{% for cnv in cnv_data %}
 	<tr>
-	  {% if cnv.genome == 'GRCh37' %}
-	  <td><a href="{% url 'view_cnv' pk=cnv.cnv %}">{{ cnv.cnv }}</a><br><span class="badge badge-info badge-pill">{{ cnv.genome }}</td>
-	  {% elif cnv.genome == 'GRCh38' %}
-	  <td><a href="{% url 'view_cnv' pk=cnv.cnv %}">{{ cnv.cnv }}</a><br><span class="badge badge-success badge-pill">{{ cnv.genome }}</td>
-	  {% endif %}
+	  <td><a href="{% url 'view_cnv' pk=cnv.cnv %}">{{ cnv.cnv }}</a>
 	  <td>{{ cnv.most_recent_obj.gain_loss }}</td>
 	 <td>
 	  {% for gene in cnv.most_recent_obj.genes_as_list %}
