@@ -124,61 +124,7 @@ def cnv_second_check(request, pk):
 		# Get data to render form
 
 		# previous classifications
-		# set 50% of length of new CNV
-		length_50 = (cnv.cnv.length/100)*50
-		
-		# Initial filter based on start/stop coordinate overlap
-		# Q(start__lte=cnv.start, stop__gte=cnv.stop, status__in=['2','3']) = New CNV contained entirely within existing CNV, also covers instances where CNV is identical
-		# Q(start__gte=cnv.start, stop__lte=cnv.stop, status__in=['2','3']) = Existing CNV contained entirely within new CNV
-		# Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3']) = New CNV starts after existing start, stops after existing stop, but start is before existing stop 
-		# Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3']) = New CNV starts before existing start, stops before existing stop, but stop is after existing start
-		
-		filter_classifications = CNV.objects.filter(Q(cnv__start__gte=cnv.cnv.start, cnv__stop__lte=cnv.cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome) | 
-								Q(cnv__start__lte=cnv.cnv.start, cnv__stop__gte=cnv.cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome) |
-								Q(cnv__start__lte=cnv.cnv.start, cnv__stop__lte=cnv.cnv.stop, cnv__stop__gte=cnv.cnv.start, status__in=['2','3'], sample__genome=cnv.sample.genome) |
-								Q(cnv__start__gte=cnv.cnv.start, cnv__stop__gte=cnv.cnv.stop, cnv__start__lte=cnv.cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome)).exclude(pk=cnv.pk).order_by('-second_check_date')
-		
-		#make empty lists for classifications
-		previous_classifications = []
-		previous_full_classifications = []
-		
-		#Loop over initial filter
-		for classification in filter_classifications:
-			
-			#if new CNV is entirely contained within existing CNV, add to list (with a second add if genuine)
-			if (classification.cnv.start<=cnv.cnv.start) & (classification.cnv.stop>=cnv.cnv.stop):
-				previous_classifications.append(classification)
-				if classification.genuine is '1':
-					previous_full_classifications.append(classification)
-				
-			#if new CNV entirely contains an existing CNV, add to list (with a second add if genuine)
-			elif (classification.cnv.start>=cnv.cnv.start) & (classification.cnv.stop<=cnv.cnv.stop):
-				previous_classifications.append(classification)
-				if classification.genuine is '1':
-					previous_full_classifications.append(classification)
-				
-			#For all other overlap cases, check there is 50% reciprocal overlap
-			# Where start of new CNV > start of existing CNV	
-			# calculate overlap and 50% of length of existing CNV
-			elif (classification.cnv.start<=cnv.cnv.start):
-				overlap = classification.cnv.stop-cnv.cnv.start
-				exist_length_50 = (classification.cnv.length/100)*50
-				# if overlap is > 50% length of both new CNV and existing CNV, add to list (with a second add if genuine)
-				if (overlap > length_50) & (overlap > exist_length_50):
-					previous_classifications.append(classification)
-					if classification.genuine is '1':
-						previous_full_classifications.append(classification)
-					
-			# Where start of new CNV < start of existing CNV	
-			# calculate overlap and 50% of length of existing CNV
-			elif (classification.cnv.start>=cnv.cnv.start):
-				overlap = cnv.cnv.stop-classification.cnv.start
-				exist_length_50 = (classification.cnv.length/100)*50
-				# if overlap is > 50% length of both new CNV and existing CNV, add to list (with a second add if genuine)
-				if (overlap > length_50) & (overlap > exist_length_50):
-					previous_classifications.append(classification)
-					if classification.genuine is '1':
-						previous_full_classifications.append(classification)
+		previous_classifications,previous_full_classifications = cnv_previous_classifications(cnv)
 		
 		# Sort by second checker date so that the most recent is the first object in the list
 		previous_classifications.sort(key=lambda x: x.second_check_date, reverse = True)
