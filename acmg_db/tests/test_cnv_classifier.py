@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from acmg_db.models import *
-from acmg_db.utils.cnv_utils import calculate_acmg_class
+from acmg_db.utils.cnv_utils import calculate_acmg_class, cnv_previous_classifications
 
 class TestCNVScoreGain(TestCase):
 

@@ -11,7 +11,7 @@ from django.http import HttpResponse
 
 from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, CNVMethodForm, FinaliseCNVClassificationSecondCheckForm
 from acmg_db.models import *
-from acmg_db.utils.cnv_utils import calculate_acmg_class
+from acmg_db.utils.cnv_utils import calculate_acmg_class, cnv_previous_classifications
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
