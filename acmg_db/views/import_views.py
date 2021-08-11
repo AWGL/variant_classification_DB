@@ -58,6 +58,8 @@ def auto_input(request):
 			unique_variants =  df['Variant'].unique()
 			worksheet_id = df['WorklistId'].unique()[0]
 			sample_id = df['#SampleId'].unique()[0]
+
+			# get reference genome
 			if 'Reference' in df:
 				genome = df['Reference'].unique()[0]
 			else:
@@ -122,7 +124,7 @@ def auto_input(request):
 			for variant in variant_annotations:
 
 				var = variant[1]
-				variant_data = process_variant_input(var)
+				variant_data = process_variant_input(var, genome)
 
 				variant_hash = variant_data[0]
 				chromosome = variant_data[1]
@@ -421,7 +423,7 @@ def manual_input(request):
 			for variant in variant_annotations:
 
 				var = variant[1]
-				variant_data = process_variant_input(var)
+				variant_data = process_variant_input(var, genome)
 
 				variant_hash = variant_data[0]
 				chromosome = variant_data[1]
@@ -516,8 +518,7 @@ def manual_input(request):
 					selected_transcript_variant = selected,
 					genotype = genotype,
 					guideline_version=guideline_version,
-					vep_version=vep_version,
-					genome=genome,
+					vep_version=vep_version
 					)
 
 				new_classification_obj.save()

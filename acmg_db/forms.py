@@ -580,6 +580,7 @@ class SearchForm(forms.Form):
 	"""
 
 	search_input = forms.CharField()
+	build = forms.ChoiceField(choices=(('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')))
 
 	def __init__(self, *args, **kwargs):
 		
@@ -594,6 +595,7 @@ class SearchForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('search_input', placeholder='Search for a variant, gene or sample.', title=False),
+			Field('build', title=False),
 		)
 
 
@@ -616,7 +618,7 @@ class DownloadVariantListForm(forms.Form):
 
 	black_list = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={'size':'7'}), choices=CLASSIFICATION_CHOICES, required=False)
 	white_list = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={'size':'7'}), choices=CLASSIFICATION_CHOICES, required=False)
-
+	build = forms.ChoiceField(choices=(('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')))
 
 	def __init__(self, *args, **kwargs):
 		
@@ -632,4 +634,5 @@ class DownloadVariantListForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('black_list', placeholder='Variant classifications to blacklist', title=False),
 			Field('white_list', placeholder='Variant classifications to whitelist.', title=False),
+			Field('build', title=False),
 		)

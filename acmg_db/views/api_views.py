@@ -154,7 +154,7 @@ class AddVariantsForAnalysis(APIView):
 			for variant in variant_annotations:
 
 				var = variant[1]
-				variant_data = process_variant_input(var)
+				variant_data = process_variant_input(var, genome)
 
 				variant_hash = variant_data[0]
 				chromosome = variant_data[1]
