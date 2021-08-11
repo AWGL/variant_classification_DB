@@ -38,8 +38,6 @@ class AddVariantsForAnalysis(APIView):
 
 		"""
 
-		print(request)
-
 		try:
 
 			variant_list = request.data['variant_list']
@@ -118,7 +116,7 @@ class AddVariantsForAnalysis(APIView):
 
 
 			# Get VEP annotations
-			if genome == "GRCh37":
+			if genome == 'GRCh37':
 				vep_info_dict = {
 					'reference_genome' : settings.REFERENCE_GENOME_37,
 					'vep_cache': settings.VEP_CACHE_37,
@@ -126,7 +124,7 @@ class AddVariantsForAnalysis(APIView):
 					'assembly': settings.ASSEMBLY_37,
 					'version': settings.VEP_VERSION_37
 				}
-			elif genome == "GRCh38":
+			elif genome == 'GRCh38':
 				vep_info_dict = {
 					'reference_genome': settings.REFERENCE_GENOME_38,
 					'vep_cache': settings.VEP_CACHE_38,
@@ -267,8 +265,7 @@ class AddVariantsForAnalysis(APIView):
 					genotype=genotype,
 					guideline_version=guideline_version,
 					vep_version=vep_version,
-					analysis_id = analysis_id,
-					genome = genome
+					analysis_id = analysis_id
 					)
 
 				new_classification_obj.save()

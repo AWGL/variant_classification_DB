@@ -94,10 +94,10 @@
 	  <td>{{ classification.display_genotype }}</td>
 	  <td>{{ classification.selected_transcript_variant.transcript.gene.name }}</td>
 	  <td>
-	  {% if classification.genome == 'GRCh37' %}
-	  {{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-info badge-pill">{{ classification.genome }}
+	  {% if classification.variant.genome == 'GRCh37' %}
+	  {{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-info badge-pill">{{ classification.variant.genome }}
 	  {% elif classification.genome == 'GRCh38' %}
-	  {{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-success badge-pill">{{ classification.genome }}
+	  {{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-success badge-pill">{{ classification.variant.genome }}
 	  {% endif %}
 	  </td>
 	  <td>{{ classification.selected_transcript_variant.transcript.name }}</td>

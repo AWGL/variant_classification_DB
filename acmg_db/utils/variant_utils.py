@@ -95,8 +95,6 @@ def load_worksheet(input_file):
 	# make meta dictionary
 	meta_dict = {'report_info': report_info}
 
-	print (df)
-
 	return df, meta_dict
 
 

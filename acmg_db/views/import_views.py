@@ -252,8 +252,7 @@ def auto_input(request):
 					selected_transcript_variant = selected,
 					genotype=genotype,
 					guideline_version=guideline_version,
-					vep_version=vep_version,
-					genome = genome,
+					vep_version=vep_version
 					)
 
 				new_classification_obj.save()
