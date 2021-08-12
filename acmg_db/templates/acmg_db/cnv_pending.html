@@ -1,0 +1,296 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+	<p> 
+	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
+	</p>
+<br>
+
+<br>
+<h4>CNV Pending classifications</h4>
+<br>
+
+<!-- Expandable box containing preset filters -->
+<!-- Button to expand/hide the filter table -->
+<button class="btn btn-success" type="button" data-toggle="collapse" href="#results_filters" role="button" aria-expanded="false" aria-controls="results_filters">
+  Search/ filter
+</button>
+<br>
+
+<!-- Table with filter options -->
+<div class="collapse" id="results_filters">
+	<br>
+  <div class="card card-body bg-light">
+	<table class="table table-responsive">
+	  <tbody>
+
+		<form>
+		<tr>
+			<td><b>Worksheet search</b></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Patient ID</td>
+			<td><input type="text" name="sample"></td>
+		</tr>
+		<tr>
+			<td>Worksheet ID</td>
+			<td><input type="text" name="worksheet"></td>
+		</tr>
+		<tr>
+			<td>Panel</td>
+			<td><input type="text" name="panel">&nbsp;&nbsp;<input class="btn btn-info" type="submit" value="Submit"></td>
+		</tr>
+		</form>
+		<tr>
+			<td><b>Quick filters</b></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+		  <td>Status</td>
+		  <td>
+			<a class="btn btn-info" href="?status=first check" role="button">First check</a>
+			<a class="btn btn-info" href="?status=second check" role="button">Second check</a>
+		  </td>
+		</tr>
+		<tr>
+			<td>Assigned</td>
+			<td>
+				<a class="btn btn-info" href="?assigned={{request.user}}" role="button">Assigned to me</a>
+				<a class="btn btn-info" href="?assigned=None" role="button">Unassigned</a>
+			</td>
+		</tr>
+		<tr>
+		  <td>
+			<a class="btn btn-info" href={% url 'pending_classifications' %} role="button">Remove all filters</a>
+		  </td>
+		  <td></td>
+		</tr>
+	  </tbody>
+	</table>
+  </div>
+</div>
+
+
+<!-- Main table of classifications -->
+<br>
+<table id="classifications" class = "table table-hover table-bordered table-responsive" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th style="display:none;">PK</th>
+	  <th>Status</th>
+	  <th>Worksheet</th>
+	  <th>Molecular Number</th>
+	  <th>Cyto ID</th>
+	  <th>CNV</th>
+	  <th>Gain/Loss</th>
+	  <th>Gene(s)</th>
+	  <th>Decipher Links</th>
+	  <th>Classification<br>(Click to view)</th>
+	  <th>Assigned</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for cnv in cnvs %}
+	<tr>
+	  <td style="display:none;">{{ cnv.sample.pk }}</td>
+	  <td>
+		{% if cnv.status == '0' %}
+		<a href="{% url 'cnv_first_check' pk=cnv.pk %}">First Check</a>
+		{% elif cnv.status == '1' %}
+		<a href="{% url 'cnv_second_check' pk=cnv.pk %}">Second Check</a>
+		{% elif cnv.status == '2' %}
+		Completed
+		{% elif cnv.status == '3' %}
+		Archived
+		{% else %}
+		Unknown
+		{% endif %}
+	  </td>
+	  <td>{{ cnv.sample.worklist }}</td>
+	  <td>{{ cnv.sample.sample_name }}</td>
+	  <td>{{ cnv.sample.cyto }}</td>
+	  <td>
+	  {% if cnv.sample.genome == 'GRCh37' %}
+	  	{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+	  {% elif cnv.sample.genome == 'GRCh38' %}
+	  	{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  {% endif %}
+	  </td>
+	  <td>{{ cnv.gain_loss }}</td>
+	  <td>
+	  {% for gene in cnv.genes_as_list %}
+	  	{{ gene.gene }}<br>
+	  {% endfor %}
+	  </td>
+	  <td>
+	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }}>GENES</a>
+	  <br>
+	  <br>
+	  {% if cnv.sample.genome == 'GRCh37' %}
+	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }}>BROWSER</a>
+	  {% elif cnv.sample.genome == 'GRCh38' %}
+	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }}>BROWSER</a>
+	  {% endif %}
+	  </td>
+	  <td>
+		{% if 'Benign' in cnv.display_classification %}
+		<a class="btn btn-info btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Pathogenic' in cnv.display_classification %}
+		<a class="btn btn-danger btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'VUS' in cnv.display_classification %}
+		<a class="btn btn-warning btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Artefact' in cnv.display_classification %}
+		<a class="btn btn-secondary btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Contradictory' in cnv.display_classification %}
+         	<a class="btn btn-primary btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+        	{% elif 'Pending' in cnv.display_classification %}
+
+        		{% if cnv.status == '1' %}
+		        <a class="btn btn-light btn-sm" data-toggle="tooltip" data-placement="top" title="First Analysis: {{cnv.display_first_classification}}" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button">
+
+	        	{% else %}
+
+		        <a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button">
+
+	        	{% endif %}
+
+		{% else %}
+                <a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button">
+		{% endif %}
+		<span class="fa fa-binoculars" ></span>  {{ cnv.display_classification }}
+		</a>
+	  </td>
+	  <td>
+	  {% if cnv.status == '0' %}
+	  	{{ cnv.user_first_checker}}
+	  {% elif cnv.status == '1' %}
+		{{ cnv.user_second_checker}}
+	  {% else %}
+		None
+	  {% endif %}
+	  </td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+  <tfoot>
+	<tr>
+	  <th style="display:none;"></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+  	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	</tr>
+  </tfoot>
+
+</table>
+<br>
+<br>
+<!------------------------------------- END OF HTML ------------------------------------->
+
+<!-- JAVASCRIPT -->
+<script>
+$(document).ready(function(){
+
+	// set up search bars at the bottom of each column
+ 	$('#classifications tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" class="form-control" placeholder="Search" />' );
+    } );
+
+	// make empty variables for all search options
+	var main_search_params = ""
+	var col_search_params = {
+		pk: null,
+		status: null,
+		worksheet: null,
+		panel: null,
+		sample: null,
+		gene: null,
+		variant: null,
+		transcript: null,
+		hgvs_c: null,
+		hgvs_p: null,
+		classification: null,
+		assigned: null,
+	};
+
+	// get params from url
+	var query = window.location.search.substring(1).split("&");
+	for (var i=0, max=query.length; i < max; i++) { 
+		
+		// if param is in the list above, replace the value in the dict/variable, otherwise ignore it
+		var param = query[i].split("=");
+		// if param is for main search
+		if (param[0] === 'search')
+			main_search_params = decodeURIComponent(param[1] || "").replace("+", " ");
+		// if param is for column searches
+		if (param[0] in col_search_params)
+			col_search_params[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "").replace("+", " ");
+	}
+	
+	// make list from the column dict for column search
+	var col_search = []
+	for (var i in col_search_params) {
+		if (col_search_params[i] === null) {
+			col_search.push(col_search_params[i]);
+		} else {
+			col_search.push( {"sSearch": col_search_params[i]});
+		}
+	}
+
+
+	// Inititialise DataTable
+	var table = $('#classifications').DataTable({
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"pageLength": 25,
+		"searching": true,
+		"aaSorting": [],
+		"oSearch": {"sSearch": main_search_params}, // pre-populate main search bar
+		"aoSearchCols": col_search,                 // pre-populate search bars at bottom of the columns (must be list of equal length to num of columns)
+	});
+
+	// makes search function at the bottom of each column work
+ 	table.columns().every( function () {
+        var that = this;
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        });
+    });
+
+	// make header showing total number of classification and number shown in the table
+	var info = table.page.info();
+	var num_showing = info['recordsDisplay'];
+	var num_total = info['recordsTotal'];
+	console.log(info)
+	document.getElementById("num_showing").innerHTML = 'Showing ' + num_showing + ' of ' + num_total + ' classifications'
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+
+
+});
+</script>
+
+{% endblock %}

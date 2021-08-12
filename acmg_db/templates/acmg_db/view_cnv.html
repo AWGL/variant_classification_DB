@@ -1,0 +1,77 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+	<p> 
+	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
+	</p>
+<br>
+
+<br>
+<h4>All CNV classifications for {{ cnvs.0.cnv.full }}</h4>
+<br>
+
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Status</th>
+	  <th>Reference Genome</th>
+	  <th>Worksheet</th>
+	  <th>Molecular Number</th>
+	  <th>Cyto ID</th>
+	  <th>Gain/Loss</th>
+	  <th>Gene(s)</th>
+	  <th>Classification<br>(Click to view)</th>
+	  <th>Genuine</th>
+	  <th>Completed Date</th>
+	</tr>
+  </thead>
+
+
+  <tbody>
+  	{% for cnv in cnvs %}
+	<tr>
+		<td> {{cnv.display_status}} </td>
+		<td>
+		{% if cnv.sample.genome == "GRCh37" %}
+		<span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+		{% elif cnv.sample.genome == "GRCh38" %}
+		<span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+		{% endif %}
+		<td> {{cnv.sample.worklist}} </td>
+		<td> {{cnv.sample.sample_name}} </td>
+		<td> {{cnv.sample.cyto}}</td>
+		<td> {{cnv.gain_loss}} </td>
+		<td>
+	  	{% for gene in cnv.genes_as_list %}
+	  		{{ gene.gene }}<br>
+	  	{% endfor %}
+	  	</td>
+	    	<td>
+		{% if 'Benign' in cnv.display_classification %}
+		<a class="btn btn-sm btn-info" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Pathogenic' in cnv.display_classification %}
+		<a class="btn btn-sm btn-danger" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'VUS' in cnv.display_classification %}
+		<a class="btn btn-sm btn-warning" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Artefact' in cnv.display_classification %}
+		<a class="btn btn-sm btn-secondary" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Contradictory' in cnv.display_classification %}
+		<a class="btn btn-sm btn-primary" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-sm btn-light" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% endif %}
+			<span class="fa fa-binoculars"></span>  {{ cnv.display_classification}} 
+		</a>
+	  </td>
+	  <td> {{cnv.display_genuine}} </td>
+	  <td> {{cnv.second_check_date}} </td>
+
+	</tr>
+	{% endfor %}
+  </tbody>
+  </</table>
+
+{% endblock %}
