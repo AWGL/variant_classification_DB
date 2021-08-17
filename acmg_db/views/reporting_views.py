@@ -125,7 +125,6 @@ def cnv_reporting(request):
 		form = ReportingCNVSearchForm(request.POST, options=PANEL_OPTIONS)
 		if form.is_valid():
 			cleaned_data = form.cleaned_data
-			print(cleaned_data['sample'])
 			
 			# pull out CNV classifications
 			try:	

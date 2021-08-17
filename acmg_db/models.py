@@ -654,6 +654,27 @@ class CNV(models.Model):
 		
 	def __str__(self):
 		return f'{self.id}'
+
+	def display(self):
+
+		chrom = self.cnv.chromosome
+		start = self.cnv.start
+		end = self.cnv.stop
+		gain_loss = self.gain_loss
+
+		if gain_loss == 'Loss':
+
+			gain_loss = 'del'
+
+		elif gain_loss == 'Gain':
+
+			gain_loss = 'dup'
+
+		else:
+
+			raise Exception('Unknown CNV type')
+
+		return f'{chrom}:{start}-{end}{gain_loss}'
 	
 	def genes_as_list(self):
 		return CNVGene.objects.filter(cnv=self)

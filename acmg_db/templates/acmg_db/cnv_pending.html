@@ -3,12 +3,6 @@
 {% block content %}
 
 <br>
-	<p> 
-	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
-	</p>
-<br>
-
-<br>
 <h4>CNV Pending classifications</h4>
 <br>
 
@@ -88,7 +82,6 @@
 	  <th>Molecular Number</th>
 	  <th>Cyto ID</th>
 	  <th>CNV</th>
-	  <th>Gain/Loss</th>
 	  <th>Gene(s)</th>
 	  <th>Decipher Links</th>
 	  <th>Classification<br>(Click to view)</th>
@@ -118,25 +111,20 @@
 	  <td>{{ cnv.sample.cyto }}</td>
 	  <td>
 	  {% if cnv.sample.genome == 'GRCh37' %}
-	  	{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+	  	{{ cnv.display }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
 	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  	{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  	{{ cnv.display }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
 	  {% endif %}
 	  </td>
-	  <td>{{ cnv.gain_loss }}</td>
 	  <td>
-	  {% for gene in cnv.genes_as_list %}
-	  	{{ gene.gene }}<br>
-	  {% endfor %}
+	  	<a data-toggle="modal" href="#cnv{{cnv.pk}}" class="badge badge-warning badge-pill"> {{cnv.count_genes}} Genes </a>
 	  </td>
 	  <td>
-	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }}>GENES</a>
-	  <br>
-	  <br>
+	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Genes</a>
 	  {% if cnv.sample.genome == 'GRCh37' %}
-	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }}>BROWSER</a>
+	     <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
 	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  	<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }}>BROWSER</a>
+	  	 <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
 	  {% endif %}
 	  </td>
 	  <td>
@@ -192,16 +180,79 @@
 	  <th></th>
 	  <th></th>
 	  <th></th>
-	  <th></th>
 	</tr>
   </tfoot>
 
 </table>
 <br>
 <br>
+
+
+{% for cnv in cnvs %}
+
+<!-- The Modal -->
+<div class="modal" id="cnv{{cnv.pk}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+
+    	      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Genes in {{cnv.display}}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+      {% for gene in cnv.genes_as_list %}
+	  	<span class="badge badge-info"> {{gene.gene}} </span> 
+	  {% endfor %}
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!------------------------------------- END OF HTML ------------------------------------->
 
 <!-- JAVASCRIPT -->
+
+<script>
+$(document).ready(function(){
+  $('[data-toggle="popover"]').popover();
+});
+</script>
+
+
+
 <script>
 $(document).ready(function(){
 
