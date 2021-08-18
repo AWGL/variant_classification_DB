@@ -30,6 +30,7 @@ def search(request):
 		if form.is_valid():
 			
 			search_input = form.cleaned_data['search_input'].upper().strip()
+			genome_build = form.cleaned_data['build'].strip()
 
 			# check if we've searched for sample
 			x = re.search("^\d{2}M\d{5}", search_input)
@@ -60,7 +61,7 @@ def search(request):
 
 				alt = re.sub('[0-9]', '', search_input.split(':')[1].split('>')[1])
 
-				var_hash = get_variant_hash(chromosome, position,ref, alt)
+				var_hash = get_variant_hash(chromosome, position, ref, alt, genome_build)
 
 				try:
 

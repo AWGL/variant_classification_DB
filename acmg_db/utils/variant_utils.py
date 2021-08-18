@@ -15,7 +15,7 @@ import json
 
 from django.conf import settings
 
-def get_variant_hash(chromosome, pos, ref,alt):
+def get_variant_hash(chromosome, pos, ref,alt, genome_build):
 	"""
 	Generates a sha256 hash of the variant. Used as promary key in Variant model.
 	Input: chromosome, pos, ref,alt - self explanatory
@@ -24,14 +24,24 @@ def get_variant_hash(chromosome, pos, ref,alt):
 	Note The space between the 4 inputs. This stops problem of Chr1 12 A G and Chr11 2 A G being same hash e.g. hash(Chr112AG)
 	"""
 
-	hash_string = bytes('{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=pos, ref=ref, alt=alt), 'utf-8')
+	if genome_build == 'GRCh37':
+
+		hash_string = bytes('{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=pos, ref=ref, alt=alt), 'utf-8')
+
+	elif genome_build == 'GRCh38':
+
+		hash_string = bytes('{chr}-{pos}-{ref}-{alt}-{genome_build}'.format(chr =chromosome, pos=pos, ref=ref, alt=alt, genome_build=genome_build), 'utf-8')
+
+	else:
+
+		raise Exception(f'Invalid Genome Build {genome_build}')
 
 	hash_id = hashlib.sha256(hash_string).hexdigest()
 
 	return hash_id
 
 
-def process_variant_input(variant_input):
+def process_variant_input(variant_input, genome_build):
 	"""
 	Split the inputted variant e.g. 17:41197732G>A into it's components.
 
@@ -45,7 +55,7 @@ def process_variant_input(variant_input):
 
 	alt = re.sub('[0-9]', '', variant_input.split(':')[1].split('>')[1])
 
-	var_hash = get_variant_hash(chromosome, position,ref, alt)
+	var_hash = get_variant_hash(chromosome, position,ref, alt, genome_build)
 
 	key = '{chr}-{pos}-{ref}-{alt}'.format(chr =chromosome, pos=position, ref=ref, alt=alt)
 
@@ -95,8 +105,6 @@ def load_worksheet(input_file):
 	# make meta dictionary
 	meta_dict = {'report_info': report_info}
 
-	print (df)
-
 	return df, meta_dict
 
 
@@ -127,7 +135,7 @@ def get_vep_info_local(variant_list, vep_info, sample):
 	# For each variant process it and append to list
 	for variant in variant_list:
 
-		variant_info = process_variant_input(variant)
+		variant_info = process_variant_input(variant, assembly)
 
 		vcf_list.append(variant_info)
 		

@@ -39,7 +39,7 @@ class Sample(models.Model):
 
 	history = AuditlogHistoryField()
 
-	name = models.CharField(max_length=255, unique=True, default='') # worksheet_id + '-' + sample_id + '-' + analysis performed
+	name = models.CharField(max_length=255, unique=True) # worksheet_id + '-' + sample_id + '-' + analysis performed
 	sample_name_only = models.CharField(max_length=150)  # sample_id only
 	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
 	affected_with = models.TextField()
@@ -57,8 +57,8 @@ class Variant(models.Model):
 
 	"""
 
-	variant_hash = models.CharField(max_length=64, primary_key =True)
-	chromosome  = models.CharField(max_length=25, default='')
+	variant_hash = models.CharField(max_length=64, primary_key=True)
+	chromosome  = models.CharField(max_length=25)
 	position  = models.IntegerField()
 	ref = models.TextField()
 	alt = models.TextField()
@@ -267,7 +267,6 @@ class Classification(models.Model):
 	guideline_version = models.CharField(max_length=20)
 	vep_version = models.CharField(max_length=20)
 	analysis_id = models.IntegerField(null=True, blank=True)
-	genome = models.TextField(default='GRCh37')
 
 	def __str__(self):
 		return f'{self.id}'

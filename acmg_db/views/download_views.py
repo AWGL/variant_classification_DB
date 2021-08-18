@@ -31,8 +31,7 @@ def download_variant_list(request):
 
 			whitelist_classes = form.cleaned_data['white_list']
 			blacklist_classes = form.cleaned_data['black_list']
-
-			print (whitelist_classes, blacklist_classes)
+			genome_build = form.cleaned_data['build']
 
 			all_variants_query = Variant.objects.prefetch_related(
 				Prefetch(
@@ -84,7 +83,8 @@ def download_variant_list(request):
 						'most_recent_obj': most_recent_obj, 
 						'most_recent_date': most_recent_obj.second_check_date, 
 						'most_recent_class': most_recent_obj.get_second_final_class_display(), 
-						'all_classes': '|'.join(all_classes_set)
+						'all_classes': '|'.join(all_classes_set),
+						'genome_build': variant.genome
 					})
 
 			variant_list = []
@@ -112,8 +112,9 @@ def download_variant_list(request):
 
 					keep_or_discard = 'none'
 
+				if variant['genome_build'] == genome_build:
 
-				variant_list.append([variant_id, keep_or_discard, variant_annotation])
+					variant_list.append([variant_id, keep_or_discard, variant_annotation])
 
 			file_name = f'variant_list_{request.user}_{random.randint(1,100000)}.csv'
 			file_path = f'{settings.VEP_TEMP_DIR}/{file_name}'

@@ -162,10 +162,10 @@
 			<tbody>
 				<tr>
 					<td  style="width: 25.00%" class="col-2">Variant</td>
-					{% if classification.genome == 'GRCh37' %}
-					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-info badge-pill">{{ classification.genome }}</td>
-					{% elif classification.genome == 'GRCh38' %}
-					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-success badge-pill">{{ classification.genome }}</td>
+					{% if classification.variant.genome == 'GRCh37' %}
+					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-info badge-pill">{{ classification.variant.genome }}</td>
+					{% elif classification.variant.genome == 'GRCh38' %}
+					<td style="width: 75.00%" class="col-8">{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-success badge-pill">{{ classification.variant.genome }}</td>
 					{% endif %}
 				</tr>
 				<tr>
