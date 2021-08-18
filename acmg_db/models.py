@@ -745,7 +745,7 @@ class CNV(models.Model):
 						score = 0,
 						comment = ''
 					)
-				new_answer.save()
+					new_answer.save()
 
 			else:
 				return HttpResponseForbidden()
@@ -778,7 +778,7 @@ class CNV(models.Model):
 		FINAL_CLASS_CHOICES above
 		"""
 		
-		if self.gain_loss == 'Gain':
+		if self.method == 'Gain':
 			# pull out all classification questions and answers
 			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
 			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
@@ -795,7 +795,7 @@ class CNV(models.Model):
 
 			return final_score
 		
-		elif self.gain_loss == 'Loss':
+		elif self.method == 'Loss':
 			
 			# pull out all classification questions and answers
 			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
