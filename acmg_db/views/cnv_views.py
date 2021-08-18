@@ -180,7 +180,7 @@ def cnv_home(request):
 			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
 				
-				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id)
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id, sample__worklist=worksheet_id)
 				
 				if 'transcript_consequences' in variant[0]:
 
@@ -390,7 +390,7 @@ def cnv_manual(request):
 			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
 				
-				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id)
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id,sample__worklist=worksheet_id)
 				
 				if 'transcript_consequences' in variant[0]:
 
