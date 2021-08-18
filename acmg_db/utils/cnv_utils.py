@@ -205,10 +205,10 @@ def cnv_previous_classifications(cnv):
 	# Q(start__lte=cnv.start, stop__lte=cnv.stop, stop__gte=cnv.start, status__in=['2','3']) = New CNV starts after existing start, stops after existing stop, but start is before existing stop 
 	# Q(start__gte=cnv.start, stop__gte=cnv.stop, start__lte=cnv.stop, status__in=['2','3']) = New CNV starts before existing start, stops before existing stop, but stop is after existing start
 		
-	filter_classifications = CNV.objects.filter(Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__gte=cnv.cnv.start, cnv__stop__lte=cnv.cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome) | 
-							Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__lte=cnv.cnv.start, cnv__stop__gte=cnv.cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome) |
-							Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__lte=cnv.cnv.start, cnv__stop__lte=cnv.cnv.stop, cnv__stop__gte=cnv.cnv.start, status__in=['2','3'], sample__genome=cnv.sample.genome) |
-							Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__gte=cnv.cnv.start, cnv__stop__gte=cnv.cnv.stop, cnv__start__lte=cnv.cnv.stop, status__in=['2','3'], sample__genome=cnv.sample.genome)).exclude(pk=cnv.pk).order_by('-second_check_date')
+	filter_classifications = CNV.objects.filter(Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__gte=cnv.cnv.start, cnv__stop__lte=cnv.cnv.stop, status__in=['2','3'], cnv__genome=cnv.cnv.genome) | 
+							Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__lte=cnv.cnv.start, cnv__stop__gte=cnv.cnv.stop, status__in=['2','3'], cnv__genome=cnv.cnv.genome) |
+							Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__lte=cnv.cnv.start, cnv__stop__lte=cnv.cnv.stop, cnv__stop__gte=cnv.cnv.start, status__in=['2','3'], cnv__genome=cnv.cnv.genome) |
+							Q(cnv__chromosome=cnv.cnv.chromosome, cnv__start__gte=cnv.cnv.start, cnv__stop__gte=cnv.cnv.stop, cnv__start__lte=cnv.cnv.stop, status__in=['2','3'], cnv__genome=cnv.cnv.genome)).exclude(pk=cnv.pk).order_by('-second_check_date')
 		
 	#make empty lists for classifications
 	previous_classifications = []

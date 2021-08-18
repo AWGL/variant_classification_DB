@@ -140,7 +140,7 @@ def cnv_search(request):
 						message = f'Cannot find a CNV with id {search_input}'
 						return render(request, 'acmg_db/cnv_search.html', {'form': form, 'adv_form' : adv_form, 'message': message})
 					else:
-						return redirect('view_cnv', pk=search_input)
+						return redirect('view_cnv_search', pk=search_input)
 
 				# otherwise assume we tried to search for a gene
 				else:
@@ -272,7 +272,7 @@ def cnv_view_sample(request, pk):
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
 @login_required
-def view_cnv(request, pk):
+def view_cnv_search(request, pk):
 	"""
 	Page to view information about a specific CNV.
 
@@ -280,7 +280,7 @@ def view_cnv(request, pk):
 	
 	cnvs = CNV.objects.filter(cnv__full = pk).order_by('-second_check_date')
 
-	return render (request, 'acmg_db/view_cnv.html', {'cnvs': cnvs})
+	return render (request, 'acmg_db/view_cnv_search.html', {'cnvs': cnvs})
 	
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
@@ -336,7 +336,7 @@ def cnv_view_region(request, pk):
 				'most_recent_date': most_recent_obj.second_check_date, 
 				'most_recent_class': most_recent_obj.display_final_classification(), 
 				'all_classes': '|'.join(all_classes_set),
-				'genome': most_recent_obj.sample.genome,
+				'genome': most_recent_obj.cnv.genome,
 			})
 
 	return render (request, 'acmg_db/cnv_view_region.html', {'cnvs': cnv_data, 'chromosome' : chromosome, 'start': start, 'stop': stop})

@@ -594,7 +594,6 @@ class CNVSample(models.Model):
 	affected_with = models.TextField()
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
-	genome = models.TextField(default='GRCh37')
 	platform = models.TextField()
 	cyto = models.TextField(null=True)
 	
@@ -607,6 +606,7 @@ class CNVVariant(models.Model):
 	start = models.IntegerField()
 	stop = models.IntegerField()
 	length = models.IntegerField()
+	genome = models.TextField(default='GRCh37')
 
 class CNV(models.Model):	
 	"""

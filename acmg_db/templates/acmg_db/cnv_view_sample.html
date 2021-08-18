@@ -67,16 +67,16 @@
 		<td> {{cnv.sample.worklist}} </td>
 		<td> {{cnv.sample.analysis_performed.panel}} </td>
 		<td>
-	  	{% if cnv.sample.genome == 'GRCh37' %}
-	  		{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
-	  	{% elif cnv.sample.genome == 'GRCh38' %}
-	  		{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  	{% if cnv.cnv.genome == 'GRCh37' %}
+	  		{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}
+	  	{% elif cnv.cnv.genome == 'GRCh38' %}
+	  		{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}
 	  	{% endif %}
 	  	</td>
 		<td> {{cnv.gain_loss}} </td>
 		<td>
 	 	{% for gene in cnv.genes_as_list %}
-	  		{{ gene.gene }}<br>
+	  		<span class="badge badge-warning">{{ gene.gene }}</span>
 	  	{% endfor %}
 	  	</td>
 	 	<td>

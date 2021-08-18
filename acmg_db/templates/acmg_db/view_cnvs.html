@@ -12,6 +12,7 @@
   <thead>
 	<tr>
 	  <th>CNV (Click to View All)</th>
+	  <th>Reference Genome</th>
 	  <th>Gain/Loss Status of Last Classification</th>
 	  <th>Gene(s)</th>
 	  <th>Last Classification<br>(Click to view)</th>
@@ -22,7 +23,14 @@
   <tbody>
 	{% for cnv in cnv_data %}
 	<tr>
-	  <td><a href="{% url 'view_cnv' pk=cnv.cnv %}">{{ cnv.cnv }}</a>
+	  <td><a href="{% url 'view_cnv' pk=cnv.cnv ref=cnv.genome %}">{{ cnv.cnv }}</a></td>
+	  <td>
+	  {% if cnv.genome == "GRCh37" %}
+	  	<span class="badge badge-info badge-pill">{{ cnv.genome }}
+	  {% elif cnv.genome == "GRCh38" %}
+		<span class="badge badge-success badge-pill">{{ cnv.genome }}
+	  {% endif %}
+	  </td>
 	  <td>{{ cnv.most_recent_obj.gain_loss }}</td>
 	 <td>
 	  {% for gene in cnv.most_recent_obj.genes_as_list %}
@@ -57,6 +65,7 @@
 
   <tfoot>
 	<tr>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>

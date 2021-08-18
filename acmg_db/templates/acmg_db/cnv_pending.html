@@ -110,20 +110,20 @@
 	  <td>{{ cnv.sample.sample_name }}</td>
 	  <td>{{ cnv.sample.cyto }}</td>
 	  <td>
-	  {% if cnv.sample.genome == 'GRCh37' %}
-	  	{{ cnv.display }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
-	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  	{{ cnv.display }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+	  {% if cnv.cnv.genome == 'GRCh37' %}
+	  	{{ cnv.display }}<br><span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}
+	  {% elif cnv.cnv.genome == 'GRCh38' %}
+	  	{{ cnv.display }}<br><span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}
 	  {% endif %}
 	  </td>
 	  <td>
 	  	<a data-toggle="modal" href="#cnv{{cnv.pk}}" class="badge badge-warning badge-pill"> {{cnv.count_genes}} Genes </a>
 	  </td>
 	  <td>
-	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Genes</a>
-	  {% if cnv.sample.genome == 'GRCh37' %}
-	     <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
-	  {% elif cnv.sample.genome == 'GRCh38' %}
+	  <a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.cnv.genome|lower }}%3A{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Genes</a>
+	  {% if cnv.cnv.genome == 'GRCh37' %}
+	     <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.genome|lower }}:{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
+	  {% elif cnv.cnv.genome == 'GRCh38' %}
 	  	 <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
 	  {% endif %}
 	  </td>
