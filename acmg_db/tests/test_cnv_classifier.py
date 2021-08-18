@@ -24,9 +24,9 @@ class TestCNVScoreGain(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', genome = 'GRCh37', platform = 'SNP Array', cyto = 'C11-1111')
+		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111' )
+		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
@@ -84,9 +84,9 @@ class TestCNVScoreGainSecond(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', genome = 'GRCh37', platform = 'SNP Array', cyto = 'C11-1111')
+		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111' )
+		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
@@ -129,9 +129,9 @@ class TestCNVScoreLoss(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', genome = 'GRCh37', platform = 'SNP Array', cyto = 'C11-1111')
+		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111' )
+		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
@@ -175,9 +175,9 @@ class TestCNVScoreLossSecond(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', genome = 'GRCh37', platform = 'SNP Array', cyto = 'C11-1111')
+		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111' )
+		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
