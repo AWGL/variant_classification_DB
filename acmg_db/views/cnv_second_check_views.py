@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, CNVMethodForm, FinaliseCNVClassificationSecondCheckForm
+from acmg_db.forms import CNVSampleInfoForm, CNVDetailsForm, FinaliseCNVClassificationSecondCheckForm
 from acmg_db.models import *
 from acmg_db.utils.cnv_utils import calculate_acmg_class, cnv_previous_classifications
 
@@ -157,7 +157,6 @@ def cnv_second_check(request, pk):
 		# make empty instances of forms
 		sample_form = CNVSampleInfoForm(request.POST)
 		details_form = CNVDetailsForm(request.POST)
-		method_form = CNVMethodForm(request.POST)
 		finalise_form = FinaliseCNVClassificationSecondCheckForm(cnv_pk=cnv.pk)
 
 		# dict of data to pass to view
@@ -173,7 +172,6 @@ def cnv_second_check(request, pk):
 			'score_second': score_second,
 			'sample_form': sample_form,
 			'details_form': details_form,
-			'method_form' : method_form,
 			'finalise_form': finalise_form,
 			'warn': []
 		}
@@ -230,37 +228,6 @@ def cnv_second_check(request, pk):
 					cnv.copy = copy
 					cnv.genotype = genotype
 					cnv.save()
-			
-			# Changing ACMG Method Form
-			if 'method' in request.POST:
-
-				method_form = CNVMethodForm(request.POST)
-
-				if method_form.is_valid():
-					
-					method = method_form.cleaned_data['method']
-					
-					# if method on form doesn't equal method saved in object, update method and re-calculate answers
-					if method != cnv.method:
-						cnv.method = method
-						cnv.save()
-					
-					if cnv.method == "Gain":
-						answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-						if len(answers) == 0:
-							cnv.initiate_classification()
-							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-					elif cnv.method == "Loss":
-						answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
-						if len(answers) == 0:
-							cnv.initiate_classification()
-							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-					
-					context['answers'] = answers
-					context['method_form'] = CNVMethodForm(request.POST)	
-					
-					return render(request, 'acmg_db/cnv_second_check.html', context)
-		
 			
 			# FinaliseClassificationForm
 			if 'final_classification' in request.POST:
