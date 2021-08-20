@@ -64,7 +64,7 @@ def load_cnv(input_file):
 		
 			meta_dict['genome'] = "GRCh37"
 			
-		elif any("GRCh37" in field for field in line):
+		elif any("GRCh38" in field for field in line):
 		
 			meta_dict['genome'] = "GRCh38"
 			

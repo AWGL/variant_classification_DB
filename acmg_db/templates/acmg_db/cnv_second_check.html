@@ -17,11 +17,6 @@
 
 <br>
 
-<br>
-	<p> 
-	<a class="btn btn-success btn-sm" href="{% url 'pending_classifications' %}">RETURN TO MAIN ACMG VARIANT DB</a>
-	</p>
-<br>
 
 <br>
 <h4>CNV Second Check</h4>
@@ -54,12 +49,12 @@
 			<tr>
 				<td>{{ cnv.sample.worklist }}</td>
 				<td>{{ cnv.sample.sample_name }}</td>
-				<td>{{ cnv.cnv.full}} <br> 
-				{% if cnv.sample.genome == 'GRCh37' %}
-					<span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
-				{% elif cnv.sample.genome == 'GRCh38' %}
-					<span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
-					{% endif %}
+				<td> 
+			  {% if cnv.sample.genome == 'GRCh37' %}
+			  	{{ cnv.display }}<br><span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+			  {% elif cnv.sample.genome == 'GRCh38' %}
+			  	{{ cnv.display }}<br><span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+			  {% endif %}
 				<td style="text-align:center">
 					<div id="class_box">
 					{% if 'Pathogenic' in result_first %}
@@ -193,9 +188,9 @@
 				<tr>
 					<td  style="width: 25.00%" class="col-2">CNV</td>
 					{% if cnv.sample.genome == 'GRCh37' %}
-					<td style="width: 75.00%" class="col-8">{{ cnv.cnv.full }} <span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
+					<td style="width: 75.00%" class="col-8">{{ cnv.display}} <span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
 					{% elif cnv.sample.genome == 'GRCh38' %}
-					<td style="width: 75.00%" class="col-8">{{ cnv.cnv.full }} <span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
+					<td style="width: 75.00%" class="col-8">{{ cnv.display }} <span class="badge badge-success badge-pill">{{ cnv.sample.genome }}</td>
 					{% endif %}
 				</tr>
 				<tr>
@@ -206,7 +201,7 @@
 					<td>Gene(s)</td>
 					<td>
 					{% for gene in cnv.genes_as_list %}
-	  					{{ gene.gene }}<br>
+						<span class="badge badge-warning">{{ gene.gene }}</span>
 	  				{% endfor %}
 					</td>
 				</tr>
@@ -217,37 +212,26 @@
 				<tr>
 					<td>Decipher Links</td>
 					<td>
-					<a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }}>GENES</a><br>
-					{% if cnv.sample.genome == 'GRCh37' %}
-	  					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }}>BROWSER</a>
-	  				{% elif cnv.sample.genome == 'GRCh38' %}
-	  					<a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }}>BROWSER</a>
-	  				{% endif %}
+					<a href=https://www.deciphergenomics.org/search/genes?q={{ cnv.sample.genome|lower }}%3A{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Genes</a>
+					  {% if cnv.sample.genome == 'GRCh37' %}
+					     <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.sample.genome|lower }}:{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
+					  {% elif cnv.sample.genome == 'GRCh38' %}
+					  	 <a href=https://www.deciphergenomics.org/browser#q/{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Browser</a>
+					  {% endif %}
 					</td>
 				</tr>
 				<tr>
 					<td>ClinGen Dosage Link</td>
 					<td>
 					{% if cnv.sample.genome == "GRCh37" %}
-						<a href=https://dosage.clinicalgenome.org/region_search.cgi?loc=chr{{ cnv.cnv.full }}>DOSAGE LINK</a>
+
+						<a href=https://dosage.clinicalgenome.org/region_search.cgi?loc=chr{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Dosage</a>
 					{% elif cnv.sample.genome == "GRCh38" %}
-						<a href=https://dosage.clinicalgenome.org/region_search_38.cgi?loc=chr{{ cnv.cnv.full }}>DOSAGE LINK</a>
+						<a href=https://dosage.clinicalgenome.org/region_search_38.cgi?loc=chr{{ cnv.cnv.full }} class="badge badge-info badge-pill"  target="_blank">Dosage</a>
 					{% endif %}
 					</td>
 					
 				</tr>
-				<tr>
-					<td>Inheritance</td>
-					<td>{{ cnv.inheritance}}</td>
-				</tr>
-				<tr>
-					<td>Copy Number</td>
-					<td>{{ cnv.copy }}</td>
-				</tr>
-				<tr>
-					<td>Genotype</td>
-					<td>{{ cnv.genotype}}</td>
-				
 			</tbody>
 		
 		</table>
@@ -529,7 +513,13 @@
 			<tbody>
 				<tr>
 					<td style="width: 25.00%" class="col-2">CNV</td>
-					<td style="width: 75.00%" class="col-8">{{ cnv.cnv.full }}</td>
+				<td style="width: 75.00%" class="col-8">
+					{% if cnv.sample.genome == 'GRCh37' %}
+					{{ cnv.display}} <span class="badge badge-info badge-pill">{{ cnv.sample.genome }}
+					{% elif cnv.sample.genome == 'GRCh38' %}
+					{{ cnv.display }} <span class="badge badge-success badge-pill">{{ cnv.sample.genome }}
+					{% endif %}
+				</td>
 				</tr>
 				<tr>
 					<td>Status</td>
