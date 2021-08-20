@@ -90,7 +90,6 @@ def cnv_home(request):
 						affected_with = affected_with,
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						genome = genome,
 						platform = platform,
 						cyto=cyto_id
 						)
@@ -141,6 +140,7 @@ def cnv_home(request):
 							start = start,
 							stop = stop,
 							length = length,
+							genome = genome,
 							)
 								
 							
@@ -180,7 +180,7 @@ def cnv_home(request):
 			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
 				
-				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id)
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id, sample__worklist=worksheet_id)
 				
 				if 'transcript_consequences' in variant[0]:
 
@@ -332,7 +332,6 @@ def cnv_manual(request):
 						affected_with = affected_with,
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						genome = genome,
 						platform = platform,
 						cyto = cyto_id
 						)
@@ -345,6 +344,7 @@ def cnv_manual(request):
 							start = start,
 							stop = stop,
 							length = length,
+							genome = genome,
 							)
 							
 			# add CNV classification object
@@ -390,7 +390,7 @@ def cnv_manual(request):
 			# Loop through each variant and add gene to the database
 			for variant in variant_annotations:
 				
-				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id)
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id,sample__worklist=worksheet_id)
 				
 				if 'transcript_consequences' in variant[0]:
 
@@ -481,7 +481,7 @@ def view_cnvs(request):
 				'most_recent_date': most_recent_obj.second_check_date, 
 				'most_recent_class': most_recent_obj.display_final_classification(), 
 				'all_classes': '|'.join(all_classes_set),
-				'genome': most_recent_obj.sample.genome,
+				'genome': most_recent_obj.cnv.genome,
 			})
 	
 	return render(request, 'acmg_db/view_cnvs.html', {'cnv_data': cnv_data})
@@ -697,4 +697,17 @@ def cnv_view_classification(request, pk):
 			}
 		)
 
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def view_cnv(request, pk, ref):
+	"""
+	Page to view information about a specific CNV.
+
+	"""
+	
+	cnvs = CNV.objects.filter(cnv__full = pk, cnv__genome =ref).order_by('-second_check_date')
+
+	return render (request, 'acmg_db/view_cnv.html', {'cnvs': cnvs})
+	
 

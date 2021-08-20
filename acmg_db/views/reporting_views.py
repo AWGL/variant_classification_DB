@@ -224,10 +224,10 @@ def ajax_cnv_decipher_download(request):
 			
 			shared = 'CAW'
 			
-			if cnv.sample.genome == "GRCh37":
+			if cnv.cnv.genome == "GRCh37":
 				assembly = "GRCh37/hg19"
-			elif cnv.sample.genome == "GRCh38":
-				assembly = cnv.sample.genome
+			elif cnv.cnv.genome == "GRCh38":
+				assembly = cnv.cnv.genome
 				
 			chromosome = cnv.cnv.chromosome
 			start = cnv.cnv.start

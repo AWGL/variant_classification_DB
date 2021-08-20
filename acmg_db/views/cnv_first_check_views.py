@@ -210,10 +210,17 @@ def cnv_first_check(request, pk):
 					
 					method = method_form.cleaned_data['method']
 					
-					# if method on form doesn't equal method saved in object, update method and re-calculate answers
+					# if method on form doesn't equal method saved in object, update method, remove any existing answers and re-initiate new set of answers
 					if method != cnv.method:
+						#updating method and resetting score and classification
 						cnv.method = method
+						cnv.first_final_score = '0'
+						cnv.first_final_class = '5'
 						cnv.save()
+						
+						#Removing any existing answers. 
+						CNVGainClassificationAnswer.objects.filter(cnv=cnv).delete()
+						CNVLossClassificationAnswer.objects.filter(cnv=cnv).delete()
 					
 					if cnv.method == "Gain":
 						answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
@@ -224,8 +231,13 @@ def cnv_first_check(request, pk):
 						answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
 						if len(answers) == 0:
 							cnv.initiate_classification()
-							answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+							answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
 					
+					score = cnv.first_final_score
+					result = cnv.display_first_classification()
+					
+					context['score'] = score
+					context['result'] = result
 					context['answers'] = answers
 					context['method_form'] = CNVMethodForm(request.POST)	
 					

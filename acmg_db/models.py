@@ -593,7 +593,6 @@ class CNVSample(models.Model):
 	affected_with = models.TextField()
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
-	genome = models.TextField(default='GRCh37')
 	platform = models.TextField()
 	cyto = models.TextField(null=True)
 	
@@ -606,6 +605,7 @@ class CNVVariant(models.Model):
 	start = models.IntegerField()
 	stop = models.IntegerField()
 	length = models.IntegerField()
+	genome = models.TextField(default='GRCh37')
 
 class CNV(models.Model):	
 	"""
@@ -744,7 +744,7 @@ class CNV(models.Model):
 						score = 0,
 						comment = ''
 					)
-				new_answer.save()
+					new_answer.save()
 
 			else:
 				return HttpResponseForbidden()
@@ -777,7 +777,7 @@ class CNV(models.Model):
 		FINAL_CLASS_CHOICES above
 		"""
 		
-		if self.gain_loss == 'Gain':
+		if self.method == 'Gain':
 			# pull out all classification questions and answers
 			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
 			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
@@ -794,7 +794,7 @@ class CNV(models.Model):
 
 			return final_score
 		
-		elif self.gain_loss == 'Loss':
+		elif self.method == 'Loss':
 			
 			# pull out all classification questions and answers
 			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)

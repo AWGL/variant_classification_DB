@@ -180,6 +180,9 @@ def download_cnv_list(request):
 					cnv_id = most_recent_obj.cnv.full
 					
 					cnv_classification = most_recent_obj.display_final_classification()
+					
+					genome = most_recent_obj.cnv.genome
+					
 					if cnv_classification in whitelist_classes and cnv_classification in blacklist_classes:
 
 						errors = ['Cannot have the same class in the whitelist and the blacklist!']
@@ -200,7 +203,7 @@ def download_cnv_list(request):
 						keep_or_discard = 'none'
 
 
-					cnv_list.append([cnv_id, keep_or_discard, cnv_classification])	
+					cnv_list.append([cnv_id, keep_or_discard, cnv_classification, genome])	
 
 			file_name = f'cnv_list_{request.user}_{random.randint(1,100000)}.csv'
 			file_path = f'{settings.VEP_TEMP_DIR}/{file_name}'

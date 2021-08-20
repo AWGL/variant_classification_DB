@@ -4,7 +4,7 @@
 
 
 <br>
-<h4>All CNV classifications in the region {{chromosome}}:{{start}}-{{stop}}</h4>
+<h4>All Unique CNV classifications in the region {{chromosome}}:{{start}}-{{stop}}</h4>
 <br>
 
 <!------------ table of unique variants ------------>
@@ -24,14 +24,14 @@
 	{% for cnv in cnvs %}
 	<tr>
 	  {% if cnv.genome == 'GRCh37' %}
-	  <td><a href="{% url 'view_cnv' pk=cnv.cnv %}">{{ cnv.cnv }}</a><br><span class="badge badge-info badge-pill">{{ cnv.genome }}</td>
+	  <td><a href="{% url 'view_cnv' pk=cnv.cnv ref=cnv.genome %}">{{ cnv.cnv }}</a><br><span class="badge badge-info badge-pill">{{ cnv.genome }}</td>
 	  {% elif cnv.genome == 'GRCh38' %}
-	  <td><a href="{% url 'view_cnv' pk=cnv.cnv %}">{{ cnv.cnv }}</a><br><span class="badge badge-success badge-pill">{{ cnv.genome }}</td>
+	  <td><a href="{% url 'view_cnv' pk=cnv.cnv ref=cnv.genome %}">{{ cnv.cnv }}</a><br><span class="badge badge-success badge-pill">{{ cnv.genome }}</td>
 	  {% endif %}
 	  <td>{{ cnv.most_recent_obj.gain_loss }}</td>
 	 <td>
 	  {% for gene in cnv.most_recent_obj.genes_as_list %}
-	  	{{ gene.gene }}<br>
+	  	<span class="badge badge-warning">{{ gene.gene }}</span>
 	  {% endfor %}
 	  </td>
 	  <td>

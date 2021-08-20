@@ -55,10 +55,10 @@
       </tr>
       <tr>
         <td> CNV </td>
-        {% if cnv.sample.genome == 'GRCh37' %}
-	 <td>{{ cnv.display }} <span class="badge badge-info badge-pill">{{ cnv.sample.genome }}</td>
-	  {% elif cnv.sample.genome == 'GRCh38' %}
-	  <td>{{ cnv.display }} <span class="badge badge-success badge-pill">{{ classification.genome }}</td>
+        {% if cnv.cnv.genome == 'GRCh37' %}
+	 <td>{{ cnv.display }} <span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}</td>
+	  {% elif cnv.cnv.genome == 'GRCh38' %}
+	  <td>{{ cnv.display }} <span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}</td>
 	  {% endif %}
       </tr>
       <tr>
