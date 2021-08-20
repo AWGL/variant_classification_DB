@@ -36,8 +36,10 @@ class TestCNVScoreGain(TestCase):
 					user_creator = self.user
 		)
 		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
 		)
 		
@@ -97,8 +99,10 @@ class TestCNVScoreGainSecond(TestCase):
 					status = "1"
 		)
 		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
 		)
 		
@@ -141,8 +145,10 @@ class TestCNVScoreLoss(TestCase):
 					user_creator = self.user
 		)
 		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
 		)
 		
@@ -188,8 +194,10 @@ class TestCNVScoreLossSecond(TestCase):
 					status = "1"
 		)
 		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
 		)
 		

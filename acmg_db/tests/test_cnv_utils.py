@@ -58,8 +58,10 @@ class TestProcessCNV(TestCase):
 					user_creator = self.user
 		)
 		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
 		)
 		

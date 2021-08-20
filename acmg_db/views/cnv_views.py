@@ -197,11 +197,13 @@ def cnv_home(request):
 				# Loop through each consequence/transcript and get gene identifiers
 				for consequence in consequences:
 					gene_symbol = consequence.get('gene_symbol', 'None')
+
+					gene, created = Gene.objects.get_or_create(name=gene_symbol)
 					
 					# if statement to prevent multiple identical genes being added. 
-					if not CNVGene.objects.filter(cnv=cnv_obj,gene=gene_symbol).exists():
+					if not CNVGene.objects.filter(cnv=cnv_obj,gene=gene).exists():
 						cnvgene_obj = CNVGene.objects.create(
-							gene = gene_symbol,
+							gene = gene,
 							cnv = cnv_obj
 							)
 						cnvgene_obj.save()
@@ -407,11 +409,13 @@ def cnv_manual(request):
 				# Loop through each consequence/transcript and get gene identifiers
 				for consequence in consequences:
 					gene_symbol = consequence.get('gene_symbol', 'None')
+
+					gene, created = Gene.objects.get_or_create(name=gene_symbol)
 					
 					# if statement to prevent multiple identical genes being added. 
-					if not CNVGene.objects.filter(cnv=cnv_obj,gene=gene_symbol).exists():
+					if not CNVGene.objects.filter(cnv=cnv_obj,gene=gene).exists():
 						cnvgene_obj = CNVGene.objects.create(
-							gene = gene_symbol,
+							gene = gene,
 							cnv = cnv_obj
 							)
 						cnvgene_obj.save()

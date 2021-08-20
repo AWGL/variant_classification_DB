@@ -679,6 +679,13 @@ class CNV(models.Model):
 		return CNVGene.objects.filter(cnv=self)
 	
 	def count_genes(self):
+
+		count = CNVGene.objects.filter(cnv=self)
+
+		if count is None:
+
+			return 0
+
 		return len(CNVGene.objects.filter(cnv=self))
 		
 	def display_status(self):
@@ -862,7 +869,7 @@ class CNVGene(models.Model):
 	""" 
 	Model to hold all of the CNV genes 
 	"""
-	gene = models.TextField()
+	gene = models.ForeignKey(Gene, on_delete=models.CASCADE)
 	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
 
 class CNVLossClassificationQuestion(models.Model):

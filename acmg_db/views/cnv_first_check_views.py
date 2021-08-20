@@ -270,7 +270,7 @@ def cnv_first_check(request, pk):
 
 						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
 
-					if cnv.genuine  == '3' and (cleaned_data['final_classification'] != '7' ):
+					if cnv.genuine  == '3' and (cleaned_data['final_classification'] != '5' ):
 
 						context['warn'] += ['This classification was selected as Not Analysed - therefore the only valid option is Not Analysed']
 

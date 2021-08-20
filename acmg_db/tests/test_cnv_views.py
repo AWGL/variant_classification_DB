@@ -7,8 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from acmg_db.models import *
-
+from acmg_db.models import Worklist, Panel, CNVSample, CNVVariant, CNV, Gene, CNVGene
 
 class TestCNVViewsSimple(TestCase):
 	"""
@@ -86,9 +85,10 @@ class TestCNVChecks(TestCase):
 					method = 'Gain',
 					user_creator = self.user
 		)
-		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
 		)
 		
@@ -168,10 +168,12 @@ class TestCNVPermissionChecks(TestCase):
 					status = "1",
 		)
 		
+		gene, created = Gene.objects.get_or_create(name='TEST')
+
 		CNVGene.objects.get_or_create(
-						gene = 'TEST',
+						gene = gene,
 						cnv = CNV.objects.get(pk = 1)
-		)	
+		)
 	
 	# Test that we can view second check when set correctly
 	def test_view_cnv_second_check(self):
