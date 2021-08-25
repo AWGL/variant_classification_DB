@@ -4,7 +4,7 @@
 
 A  database to hold information about variant classifications done within the laboratory.
 
-The main purpose of this database is to store the results of classifying variants using the ACMG guidlines [1].
+The main purpose of this database is to store the results of classifying variants using the ACMG guidelines [1] and CNVs using the ACMG CNV guidelines [2].
 
 
 ## Install and Setup
@@ -15,7 +15,7 @@ Works on Centos 6/7
 
 The software is a Django application using Python 3. It is reccomended that the software be deployed in a conda virtual environment.
 
-First install Conda/Miniconda from [2]. Then type the following commands in your terminal to install and setup the application.
+First install Conda/Miniconda from [3]. Then type the following commands in your terminal to install and setup the application.
 
 `git clone https://github.com/josephhalstead/variant_classification_DB.git`
 
@@ -98,4 +98,6 @@ variants: a joint consensus recommendation of the American
 College of Medical Genetics and Genomics and the
 Association for Molecular Pathology https://www.acmg.net/docs/standards\_guidelines\_for\_the\_interpretation\_of\_sequence\_variants.pdf
 
-[2] https://conda.io/miniconda.html
+[2] Technical standards for the interpretation and reporting of constitutional copy number variants: a joint consensus recommendation of the American College of Medical Genetics and Genomics (ACMG) and the Clinical Genome Resource (ClinGen) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7313390/
+
+[3] https://conda.io/miniconda.html
