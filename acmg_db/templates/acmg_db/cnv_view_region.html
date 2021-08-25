@@ -13,6 +13,8 @@
   <thead>
 	<tr>
 	  <th>CNV (Click to View All)</th>
+	  <th>Length</th>
+	  <th>Cytogenetic Location</th>
 	  <th>Gain/Loss Status of Last Classification</th>
 	  <th>Gene(s)</th>
 	  <th>Last Classification<br>(Click to view)</th>
@@ -28,6 +30,8 @@
 	  {% elif cnv.genome == 'GRCh38' %}
 	  <td><a href="{% url 'view_cnv' pk=cnv.cnv ref=cnv.genome %}">{{ cnv.cnv }}</a><br><span class="badge badge-success badge-pill">{{ cnv.genome }}</td>
 	  {% endif %}
+	  <td>{{ cnv.most_recent_obj.cnv.length }}</td>
+	  <td>{{ cnv.most_recent_obj.cnv.cyto_loc }}</td>
 	  <td>{{ cnv.most_recent_obj.gain_loss }}</td>
 	 <td>
 	  {% for gene in cnv.most_recent_obj.genes_as_list %}
@@ -62,6 +66,8 @@
 
   <tfoot>
 	<tr>
+	  <th></th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>

@@ -115,10 +115,14 @@ def cnv_home(request):
 				else:
 					pattern = re.compile(r".+(?=p)|.+(?=q)")
 					chrom = pattern.search(cnv[1]).group()
+					
 				
 				#Take numbers in brackets as start/stop
 				start = re.search(r'\((.*?)_', cnv[1]).group(1)
 				stop = re.search(r'_(.*?)\)', cnv[1]).group(1)
+				
+				#Getting cytogenetic location
+				cyto_loc = (cnv[1].split("("))[0]
 				
 				#Calculate length
 				length = int(stop)-int(start)
@@ -141,6 +145,7 @@ def cnv_home(request):
 							stop = stop,
 							length = length,
 							genome = genome,
+							cyto_loc = cyto_loc,
 							)
 								
 							
@@ -280,6 +285,9 @@ def cnv_manual(request):
 			#get cyto ID
 			cyto_id = form.cleaned_data['cyto'].strip()
 			
+			#get cytogenetic location
+			cyto_loc = form.cleaned_data['cyto_loc'].strip()
+			
 			# sanitise input
 			for character in list(sample_id):
 				if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_':
@@ -347,6 +355,7 @@ def cnv_manual(request):
 							stop = stop,
 							length = length,
 							genome = genome,
+							cyto_loc = cyto_loc,
 							)
 							
 			# add CNV classification object

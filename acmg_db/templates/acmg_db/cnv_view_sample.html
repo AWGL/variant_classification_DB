@@ -51,6 +51,8 @@
 	  <th>Worksheet</th>
 	  <th>Panel</th>
 	  <th>CNV</th>
+	  <th>Length</th>
+	  <th>Cytogenetic Location</th>
 	  <th>Gain/Loss</th>
 	  <th>Gene(s)</th>
 	  <th>Classification<br>(Click to view)</th>
@@ -73,6 +75,8 @@
 	  		{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}
 	  	{% endif %}
 	  	</td>
+		<td> {{cnv.cnv.length}}</td>
+		<td> {{cnv.cnv.cyto_loc}}</td>
 		<td> {{cnv.gain_loss}} </td>
 		<td>
 	 	{% for gene in cnv.genes_as_list %}

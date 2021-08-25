@@ -150,6 +150,7 @@ class CNVManualUpload(forms.Form):
 	genome = forms.CharField(label='Which Human Reference Genome version was used?', widget=forms.Select(choices=GENOME_BUILD))
 	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
 	cyto = forms.CharField()
+	cyto_loc = forms.CharField()
 
 	def __init__(self, *args, **kwargs):
 
@@ -163,6 +164,7 @@ class CNVManualUpload(forms.Form):
 		self.fields['CNV'].label = 'CNV'
 		self.fields['worklist'].label = 'Worksheet'
 		self.fields['cyto'].label = 'Cyto ID'
+		self.fields['cyto_loc'].label = 'Cytogenetic Location'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
@@ -171,6 +173,7 @@ class CNVManualUpload(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('CNV', placeholder='Enter the CNV in the format Chr:Start-Stop, e.g. 8:8494182-8753293', title=False),
+			Field('cyto_loc', placeholder='Enter the cytogenetic location e.g. 8p23.1', title=False),
 			Field('sample_name', placeholder='Enter the Molecular Number, e.g. 19M12345', title=False),
 			Field('cyto', placeholder='Enter the Cyto ID', title=False),
 			Field('worklist', placeholder='Enter the worksheet', title=False),

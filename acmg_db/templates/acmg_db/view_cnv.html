@@ -13,6 +13,8 @@
 	<tr>
 	  <th>Status</th>
 	  <th>Reference Genome</th>
+	  <th>Length</th>
+	  <th>Cytogenetic Location</th>
 	  <th>Worksheet</th>
 	  <th>Molecular Number</th>
 	  <th>Cyto ID</th>
@@ -35,6 +37,8 @@
 		{% elif cnv.cnv.genome == "GRCh38" %}
 		<span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}
 		{% endif %}
+		<td> {{cnv.cnv.length}}</td>
+		<td> {{cnv.cnv.cyto_loc}}</td>
 		<td> {{cnv.sample.worklist}} </td>
 		<td> {{cnv.sample.sample_name}} </td>
 		<td> {{cnv.sample.cyto}}</td>

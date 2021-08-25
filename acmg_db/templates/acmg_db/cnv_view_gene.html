@@ -15,6 +15,8 @@
   <thead>
 	<tr>
 	  <th>CNV</th>
+	  <th>Length</th>
+	  <th>Cytogenetic Location</th>
 	  <th>Gene(s)</th>
 	  <th>Classification (Click to view)</th>
 	  <th>Classification Date</th>
@@ -32,6 +34,8 @@
 	  	{{ gene.cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ gene.cnv.cnv.genome }}
 	  	{% endif %}
 	  	</td>
+	  	<td>{{gene.cnv.cnv.length}}</td>
+	  	<td>{{gene.cnv.cnv.cyto_loc}}</td>
 		<td>
 	 	{% for gene in gene.cnv.genes_as_list %}
 	  		<span class="badge badge-warning">{{ gene.gene }}</span>
@@ -62,6 +66,8 @@
 
   <tfoot>
 	<tr>
+	  <th></th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>

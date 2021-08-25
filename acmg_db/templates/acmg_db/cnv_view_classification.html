@@ -62,6 +62,14 @@
 	  {% endif %}
       </tr>
       <tr>
+      	<td>Length</td>
+      	<td>{{ cnv.cnv.length }}</td>
+      <tr>
+      	<td>Cytogenetic Location</td>
+      	<td>{{ cnv.cnv.cyto_loc }}</td>
+      </tr>
+      </tr>
+      <tr>
         <td> Gene(s) </td>
         <td> {% for gene in cnv.genes_as_list %}
 	  	<span class="badge badge-warning">{{ gene.gene }}</span>

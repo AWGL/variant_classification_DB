@@ -81,7 +81,9 @@
 	  <th>Worksheet</th>
 	  <th>Molecular Number</th>
 	  <th>Cyto ID</th>
+	  <th>Cytogenetic Location</th>
 	  <th>CNV</th>
+	  <th>Length (bp)</th>
 	  <th>Gene(s)</th>
 	  <th>Decipher Links</th>
 	  <th>Classification<br>(Click to view)</th>
@@ -109,6 +111,7 @@
 	  <td>{{ cnv.sample.worklist }}</td>
 	  <td>{{ cnv.sample.sample_name }}</td>
 	  <td>{{ cnv.sample.cyto }}</td>
+	  <td>{{ cnv.cnv.cyto_loc }}</td>
 	  <td>
 	  {% if cnv.cnv.genome == 'GRCh37' %}
 	  	{{ cnv.display }}<br><span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}
@@ -116,6 +119,7 @@
 	  	{{ cnv.display }}<br><span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}
 	  {% endif %}
 	  </td>
+	  <td>{{ cnv.cnv.length }}</td>
 	  <td>
 	  	<a data-toggle="modal" href="#cnv{{cnv.pk}}" class="badge badge-warning badge-pill"> {{cnv.count_genes}} Genes </a>
 	  </td>
@@ -171,6 +175,8 @@
   <tfoot>
 	<tr>
 	  <th style="display:none;"></th>
+	  <th></th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>
