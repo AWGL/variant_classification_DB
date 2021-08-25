@@ -39,7 +39,8 @@ First install Conda/Miniconda from [2]. Then type the following commands in your
 
 `python manage.py loaddata CNV_Loss_ACMG_questions.json`
 
-Static files which are viewed on the webpage also need to be moved to the static directory
+Static files which are viewed on the webpage also need to be moved to the static directory:
+
 `mv files/* static/files/`
 
 ### Other Resources
