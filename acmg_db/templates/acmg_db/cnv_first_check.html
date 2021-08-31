@@ -195,7 +195,9 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Number of Genes</td>
+					<td><div data-toggle="tooltip" data-placement="top" title="Gene count calculated by VEP. Each gene from a gene family/group is counted separately. Pseudogenes are not counted.">Number of Genes
+	  				<span class="fa fa-info-circle" ></span> 
+	  				</div></td>
 					<td>{{ cnv.count_genes }}</td>
 				</tr>
 				<tr>
@@ -388,6 +390,17 @@
 		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
 		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score}}"> </td>
+		  <!-- If we wanted to change to drop down
+		  
+		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
+				<option value="0.00" selected>0.00</option>
+				<option value="0.15" selected>0.15</option>
+				<option value="0.30" selected>0.30</option>
+				<option value="0.45" selected>0.45</option>
+				<option value="0.90" selected>0.90</option>
+				<option value="1.00" selected>1.00</option>
+			  </td>
+		  -->		
 		  <!-- Comments box -->
 			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment}}"></td>
 		</tr>	

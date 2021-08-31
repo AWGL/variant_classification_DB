@@ -84,7 +84,11 @@
 	  <th>Cytogenetic Location</th>
 	  <th>CNV</th>
 	  <th>Length (bp)</th>
-	  <th>Gene(s)</th>
+	  <th>
+	  <div data-toggle="tooltip" data-placement="top" title="Gene count calculated by VEP. Each gene from a gene family/group is counted separately. Pseudogenes are not counted.">Gene(s)
+	  <span class="fa fa-info-circle" ></span> 
+	  </div>
+	  </th>
 	  <th>Decipher Links</th>
 	  <th>Classification<br>(Click to view)</th>
 	  <th>Assigned</th>
@@ -192,7 +196,7 @@
 </table>
 <br>
 <br>
-
+ 
 
 {% for cnv in cnvs %}
 
