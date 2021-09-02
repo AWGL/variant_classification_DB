@@ -5,6 +5,8 @@ from auditlog.models import AuditlogHistoryField
 
 from acmg_db.utils import acmg_classifier
 
+import numpy as np
+
 class Worklist(models.Model):
 	"""
 	Model to store which worklist the sample was on.
@@ -887,12 +889,41 @@ class CNVLossClassificationQuestion(models.Model):
 						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if either your CNV overlapped with an established HI gene/region in section 2, OR there have been no reports associating either the CNV or any genes within the CNV with human phenotypes caused by loss of function [LOF] or copy-number loss)', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
 						)
+	
+	TYPE_CHOICES = (('Pathogenic Supporting','PS'),('Benign Supporting','BS'),('Zero','0'))
 		
 	evidence_type = models.CharField(max_length=500)
 	evidence = models.TextField()
 	suggested = models.TextField()
-	max_score = models.DecimalField(decimal_places=2, max_digits=10)
+	max_score = models.FloatField()
 	category = models.TextField(choices= CATEGORY_CHOICES)
+	qu_type = models.TextField(choices=TYPE_CHOICES)
+	
+	def score_range_pos(self):
+	
+		max_val = self.max_score + 0.01
+		array = np.arange(0,max_val,0.05)
+		
+		new_list = []
+		
+		for i in array:
+		
+			new_list.append(str(round(i, 2)))
+		
+		return new_list
+	
+	def score_range_neg(self):
+	
+		max_val = self.max_score - 0.01
+		array = np.arange(0,max_val,-0.05)
+		
+		new_list = []
+		
+		for i in array:
+		
+			new_list.append(str(round(i, 2)))
+		
+		return new_list
 
 		
 class CNVGainClassificationQuestion(models.Model):
@@ -909,12 +940,42 @@ class CNVGainClassificationQuestion(models.Model):
 						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if there have been no reports associating either the copy-number gain or any of the genes therein with human phenotypes caused by triplosensitivity', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
 						)
-		
+	
+	TYPE_CHOICES = (('Pathogenic Supporting','PS'),('Benign Supporting','BS'),('Zero','0'))
+	
 	evidence_type = models.CharField(max_length=500)
 	evidence = models.TextField()
 	suggested = models.TextField()
-	max_score = models.DecimalField(decimal_places=2, max_digits=10)
+	max_score = models.FloatField()
 	category = models.TextField(choices= CATEGORY_CHOICES)
+	qu_type = models.TextField(choices=TYPE_CHOICES)
+	
+	#Function to produce range of values for the scoring
+	def score_range_pos(self):
+		
+		max_val = self.max_score + 0.01
+		array = np.arange(0,max_val,0.05)
+		
+		new_list = []
+		
+		for i in array:
+		
+			new_list.append(str(round(i, 2)))
+		
+		return new_list
+		
+	def score_range_neg(self):
+	
+		max_val = self.max_score - 0.01
+		array = np.arange(0,max_val,-0.05)
+		
+		new_list = []
+		
+		for i in array:
+		
+			new_list.append(str(round(i, 2)))
+		
+		return new_list
 	
 class CNVGainClassificationAnswer(models.Model):
 	"""

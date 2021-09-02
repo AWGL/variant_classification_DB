@@ -396,7 +396,27 @@
 		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.score }}
-		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" value="{{answer.score_second}}"> </td>
+		  
+		  {% if answer.cnv_classification_question.qu_type == "Pathogenic Supporting" %}
+		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
+		  {% for num in answer.cnv_classification_question.score_range_pos %}
+		      <option value="{{num}}" {% if forloop.first %}selected{% endif %}>{{num}}</option>
+		  {% endfor %}
+		  </td>
+		   		
+		 {% elif answer.cnv_classification_question.qu_type == "Benign Supporting" %}
+		 <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
+		  {% for num in answer.cnv_classification_question.score_range_neg %}
+		      <option value="{{num}}" {% if forloop.first %}selected{% endif %}>{{num}}</option>
+		  {% endfor %}
+		  </td>
+		  
+		  {% elif answer.cnv_classification_question.qu_type == "Zero" %}
+		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
+				<option value="0.0" selected>0.0</option>
+			  </td>
+		  {% endif %}
+		  
 		  <!-- Comments box -->
 			  <td class='comment' style="width: 36.00%"> <input type="text" class="form-control" value="{{answer.comment_second}}"></td>
 		</tr>	
