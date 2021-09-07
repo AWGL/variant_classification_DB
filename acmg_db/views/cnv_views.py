@@ -214,7 +214,7 @@ def cnv_home(request):
 						cnvgene_obj.save()
 
 			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
-			params = '?worksheet={}&sample={}&panel={}'.format(worksheet_id, sample_id, analysis_performed_pk)
+			params = '?worksheet={}'.format(worksheet_id)
 
 			context = {
 					'form': form, 
@@ -430,7 +430,7 @@ def cnv_manual(request):
 						cnvgene_obj.save()
 						
 			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
-			params = '?worksheet={}&sample={}&panel={}'.format(worksheet_id, sample_id, analysis_performed_pk)
+			params = '?worksheet={}'.format(worksheet_id)
 
 			context = {
 					'form': form, 
