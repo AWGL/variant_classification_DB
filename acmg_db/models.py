@@ -900,29 +900,47 @@ class CNVLossClassificationQuestion(models.Model):
 	qu_type = models.TextField(choices=TYPE_CHOICES)
 	
 	def score_range_pos(self):
-	
-		max_val = self.max_score + 0.01
-		array = np.arange(0,max_val,0.05)
 		
+		#code block for having every number between 0 and 1 in increments of 0.05 up to the max score
+		#max_val = self.max_score + 0.01
+		#array = np.arange(0,max_val,0.05)
+		
+		#new_list = []
+		
+		#for i in array:
+		
+		#	new_list.append(str(round(i, 2)))
+		
+		#code block for having only 0, 0.15, 0.3, 0.45, 0.9 and 1 as options, up to the max score
+		array = [0.00,0.15,0.30,0.45,0.90,1.00]
 		new_list = []
 		
 		for i in array:
-		
-			new_list.append(str(round(i, 2)))
+			if i <= self.max_score:
+				new_list.append(round(i,2))
 		
 		return new_list
 	
 	def score_range_neg(self):
-	
-		max_val = self.max_score - 0.01
-		array = np.arange(0,max_val,-0.05)
 		
+		#code block for having every number between 0 and 1 in increments of 0.05 up to the max score
+		#max_val = self.max_score - 0.01
+		#array = np.arange(0,max_val,-0.05)
+		
+		#new_list = []
+		
+		#for i in array:
+		
+		#	new_list.append(str(round(i, 2)))
+		
+		
+		#code block for having only 0, -0.15, -0.3, -0.45, -0.9 and -1 as options, up to the max score
+		array = [0.00,-0.15,-0.30,-0.45,-0.90,-1.00]
 		new_list = []
 		
 		for i in array:
-		
-			new_list.append(str(round(i, 2)))
-		
+			if i >= self.max_score:
+				new_list.append(round(i,2))
 		return new_list
 
 		
