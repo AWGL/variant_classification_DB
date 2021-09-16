@@ -195,7 +195,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><div data-toggle="tooltip" data-placement="top" title="Gene count calculated by VEP. Each gene from a gene family/group is counted separately.">Number of Genes
+					<td><div data-toggle="tooltip" data-placement="top" title="Gene count calculated by VEP in comparison to RefSeq. This will differ to the gene count given on Decipher. Each gene from a gene family/group is counted separately.">Number of Genes
 	  				<span class="fa fa-info-circle" ></span> 
 	  				</div></td>
 					<td>{{ cnv.count_genes }}</td>
@@ -415,6 +415,12 @@
 		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
 				<option value="0.0" selected>0.0</option>
 			  </td>
+			  
+	          {% elif answer.cnv_classification_question.qu_type == "1B" %}
+		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
+				<option value="-0.60" selected>-0.60</option>
+			  </td>
+			  
 		  {% endif %}
 		  
 		  <!-- Comments box -->
