@@ -30,6 +30,16 @@ class TestCNVViewsSimple(TestCase):
 		response = self.client.get(reverse('cnv_manual'))
 		self.assertEqual(response.status_code,200)
 		
+	def test_view_cnv_import(self):
+	
+		response = self.client.get(reverse('cnv_import'))
+		self.assertEqual(response.status_code,200)
+	
+	def test_view_cnv_bluefuse(self):
+	
+		response = self.client.get(reverse('cnv_bluefuse'))
+		self.assertEqual(response.status_code,200)
+		
 	def test_view_cnv_pending(self):
 		
 		response = self.client.get(reverse('cnv_pending'))
