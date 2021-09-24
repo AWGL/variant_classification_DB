@@ -7,13 +7,13 @@
 <br><br>
 <center>
   <div>
-	<h4> Import CNVs from CytoSure Interpret Software file </h4>
+	<h4> Import CNVs from BlueFuse Multi Software file </h4>
 	<br>
 	
 	{% crispy form %}
 
-	<p class="text-muted">Import file must be the .txt file outputted by CytoSure Interpret Software Aberration Report. If there are any errors, the data will not be uploaded.</p>
-
+	<p class="text-muted">Import file must be the .xls CGH summary file outputted by BlueFuse Multi Software. If there are any errors, the data will not be uploaded.</p>
+	
 	{% if error %}
 	  {% for e in error %}
 	    <div class="alert alert-danger col-lg-2-8">
@@ -37,6 +37,7 @@
 		  </div>
 	  {% endfor %}
 	{% endif %}
+	
   </div>
 
   <br>

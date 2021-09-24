@@ -46,6 +46,8 @@ urlpatterns = [
     path('api-add-variants/', views.AddVariantsForAnalysis.as_view(), name='add-variants'),
     
     path('cnv_home/', views.cnv_home, name = 'cnv_home'),
+    path('cnv_import/', views.cnv_import, name = 'cnv_import'),
+    path('cnv_bluefuse', views.cnv_bluefuse, name = 'cnv_bluefuse'),
     path('cnv_pending/', views.cnv_pending, name = 'cnv_pending'),
     path('cnv_manual/', views.cnv_manual, name = 'cnv_manual'),
     path('cnv_first_check/<int:pk>/', views.cnv_first_check, name = 'cnv_first_check'),

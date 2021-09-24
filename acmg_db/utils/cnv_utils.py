@@ -93,6 +93,76 @@ def load_cnv(input_file):
 
 
 	return df, meta_dict
+	
+#------------------------------------------------
+def load_bluefuse(input_file):
+	"""
+	Loads the CNV worksheet (from bluefuse) and returns a dataframe containing the information as
+	well as meta data.
+	"""
+
+	# make empty dictionary and lists to collect data
+	meta_dict = {}
+	headers = []
+	data_values = []
+
+	# make a csv reader object from the worksheet tsv file
+	reader = csv.reader(input_file, delimiter='\t')
+	
+	# loop through lines, seperate out headers from data, pull out Worksheet (Array Barcode), Sample and Genome from headers
+	for line in reader:
+			
+		#skip empty lines
+		if len(line) == 0:
+		
+			continue
+		
+		# If line starts with Region , take the headers, and then the data lines until an empty line is reached
+		if line[0] == 'Region':
+
+			headers += [[field for field in line if field != '']]
+			next_line = next(reader)
+			while len(next_line) != 0:
+				data_values += [next_line]
+				next_line = next(reader)
+			
+		#Molecular Number
+		elif line[0].startswith('Subject ID'):
+			
+			meta_dict['sample_id'] = line[1]
+		
+		#Reference Genome	
+		elif any("GRCh37" in field for field in line):
+		
+			meta_dict['genome'] = "GRCh37"
+			
+		elif any("GRCh38" in field for field in line):
+		
+			meta_dict['genome'] = "GRCh38"
+			
+		else:
+			
+			continue
+	
+	print(headers)
+	print(data_values)
+	print(meta_dict)
+	
+	# pull out metadata
+	report_info = []
+
+	for i in headers:
+
+		report_info.append(i)
+
+	# make a dataframe from data section
+	df = pd.DataFrame(data=data_values, columns=headers)
+
+	#add to meta dictionary
+	meta_dict['report_info'] = report_info
+
+
+	return df, meta_dict
 
 #------------------------------------------------
 def process_cnv_input(cnv_input):

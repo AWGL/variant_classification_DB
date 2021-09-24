@@ -11,11 +11,18 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.db.models import Q, Prefetch
 
-from acmg_db.forms import CNVFileUploadForm, CNVManualUpload, ArchiveCNVClassificationForm, CNVAssignSecondCheckToMeForm, CNVSendBackToFirstCheckForm, CNVResetClassificationForm
+from acmg_db.forms import CNVFileUploadForm, CNVBluefuseUploadForm, CNVManualUpload, ArchiveCNVClassificationForm, CNVAssignSecondCheckToMeForm, CNVSendBackToFirstCheckForm, CNVResetClassificationForm
 from acmg_db.models import *
 from acmg_db.utils.variant_utils import load_worksheet,  process_variant_input
-from acmg_db.utils.cnv_utils import load_cnv, get_vep_info_local_cnv
+from acmg_db.utils.cnv_utils import load_cnv, load_bluefuse, get_vep_info_local_cnv
 from acmg_db.utils.acmg_classifier import guideline_version
+
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def cnv_import(request):
+
+	return render(request, 'acmg_db/cnv_import.html')
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
@@ -442,6 +449,206 @@ def cnv_manual(request):
 
 	return render(request, 'acmg_db/cnv_manual.html', context)
 
+#--------------------------------------------------------------------------------------------------
+@transaction.atomic
+@login_required
+def cnv_bluefuse(request):
+
+	"""
+	Allows users to upload a file of CNVs to classify. File must be from BlueFuse.
+
+	"""
+
+	PANEL_OPTIONS = [(str(panel.pk), panel) for panel in Panel.objects.all().order_by('panel')]
+
+	# Inititate the upload form and context dict to pass to template
+	form = CNVBluefuseUploadForm(options=PANEL_OPTIONS)
+	context = {
+		'form': form, 
+		'error': None,
+		'warn': None,
+		'success': None,
+		'params': None
+	}
+
+	if request.POST:
+
+		form = CNVBluefuseUploadForm(request.POST, request.FILES, options=PANEL_OPTIONS)
+
+		if form.is_valid():
+
+			# get panel
+			analysis_performed_pk = form.cleaned_data['panel_applied'].lower()
+			panel_obj = get_object_or_404(Panel, panel = analysis_performed_pk)
+
+			# get affected with
+			affected_with = form.cleaned_data['affected_with']
+			
+			# get platform
+			platform = form.cleaned_data['platform']
+			
+			# get worksheet
+			worksheet_id = form.cleaned_data['worksheet']
+			
+			# get cyto id
+			cyto_id = form.cleaned_data['cyto']
+			
+			# process tsv file
+			raw_file = request.FILES['CNV_file']
+			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
+			df, meta_dict = load_bluefuse(utf_file)
+
+			# Get key information from the metadata
+			sample_id = meta_dict.get('sample_id')
+			genome = meta_dict.get('genome')	
+
+			# add worksheet
+			worksheet_obj, created = Worklist.objects.get_or_create(
+					name = worksheet_id
+					)
+			
+			# add cnv sample
+				
+			try:
+				CNVSample_obj = CNVSample.objects.get(sample_name=sample_id,worklist = worksheet_id)
+
+				# throw error if the sample has been uploaded before with the same panel (wont throw error if its a different panel)
+				context['error'] = [f'ERROR: {CNVSample_obj.sample_name} has already been uploaded from {worksheet_id}.']
+				return render(request, 'acmg_db/cnv_bluefuse.html', context)
+
+			except CNVSample.DoesNotExist:
+				CNVSample_obj = CNVSample.objects.create(
+						sample_name = sample_id,
+						worklist = worksheet_obj,
+						affected_with = affected_with,
+						analysis_performed = panel_obj,
+						analysis_complete = False,
+						platform = platform,
+						cyto=cyto_id
+						)
+				CNVSample_obj.save()
+			
+			unique_cnvs = []
+			# add cnv variant, taking information from dataframe	
+			for index, row in df.iterrows():
+			
+				#print(row)	
+				#Set CNV
+				start = row['Start'][0]
+				start = start.replace(',', '')
+				start = int(start)
+						
+				stop = row['End'][0]
+				stop = stop.replace(',', '')
+				stop = int(stop)
+				
+				chrom = row['Chromosome'][0]
+				
+				#Getting cytogenetic location
+				cyto_loc = row['Start Cyto'][0]
+				
+				#Calculate length
+				length = stop-start
+								
+				#Put together to make final CNV
+				final_cnv = chrom+":"+str(start)+"-"+str(stop)
+				
+				#Set Gain/Loss
+				gain_loss = (row['Type'][0]).lower()
+				gain_loss = gain_loss.title()
+				
+				print(final_cnv)
+				
+				if final_cnv not in unique_cnvs:
+					unique_cnvs.append(final_cnv)
+				
+				
+				CNVVariant_obj, created = CNVVariant.objects.get_or_create(
+							full = final_cnv,
+							chromosome = chrom,
+							start = start,
+							stop = stop,
+							length = length,
+							genome = genome,
+							cyto_loc = cyto_loc,
+							)
+								
+							
+				CNV_obj = CNV.objects.create(
+						sample = CNVSample_obj,
+						cnv = CNVVariant_obj,
+						gain_loss = gain_loss,
+						method = gain_loss,
+						status = 0,
+						creation_date = timezone.now(),
+						user_creator = request.user,
+						)
+				CNV_obj.save()
+			
+					
+			# Get VEP annotations
+			# Set dictionary depending on Reference genome input from form
+			if genome == "GRCh37":
+				vep_info_dict = {
+					'reference_genome' : settings.REFERENCE_GENOME_37,
+					'vep_cache': settings.VEP_CACHE_37,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_37,
+					'version': settings.VEP_VERSION_37
+				}
+			elif genome == "GRCh38":
+				vep_info_dict = {
+					'reference_genome': settings.REFERENCE_GENOME_38,
+					'vep_cache': settings.VEP_CACHE_38,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_38,
+					'version': settings.VEP_VERSION_38
+				}
+
+			variant_annotations = get_vep_info_local_cnv(unique_cnvs, vep_info_dict, sample_id)
+
+			# Loop through each variant and add gene to the database
+			for variant in variant_annotations:
+				
+				cnv_obj = CNV.objects.get(cnv__full=variant[1],sample__sample_name=sample_id, sample__worklist=worksheet_id)
+				
+				if 'transcript_consequences' in variant[0]:
+
+					consequences = variant[0]['transcript_consequences']
+
+				elif 'intergenic_consequences' in variant[0]:
+
+					consequences = variant[0]['intergenic_consequences']
+
+				else:
+
+					raise Exception(f'Could not get the consequences for variant {variant}')
+
+				# Loop through each consequence/transcript and get gene identifiers
+				for consequence in consequences:
+					gene_symbol = consequence.get('gene_symbol', 'None')
+
+					gene, created = Gene.objects.get_or_create(name=gene_symbol)
+					
+					# if statement to prevent multiple identical genes being added. 
+					if not CNVGene.objects.filter(cnv=cnv_obj,gene=gene).exists():
+						cnvgene_obj = CNVGene.objects.create(
+							gene = gene,
+							cnv = cnv_obj
+							)
+						cnvgene_obj.save()
+
+			success = ['Worksheet {} - Sample {} - {} panel - Upload completed '.format(worksheet_id, sample_id, analysis_performed_pk)]
+			params = '?worksheet={}'.format(worksheet_id)
+
+			context = {
+					'form': form, 
+					'success': success,
+					'params': params
+					}
+			
+	return render(request, 'acmg_db/cnv_bluefuse.html', context)
+	
 #------------
 @transaction.atomic
 @login_required

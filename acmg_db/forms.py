@@ -131,6 +131,43 @@ class CNVFileUploadForm(forms.Form):
 			Field('platform', placeholder='Select platform used', title=False)
 		)
 		
+class CNVBluefuseUploadForm(forms.Form):
+	"""
+	Form for inputting a CNV file of CNVs from the Bluefuse Multi Software, and adding them to the database
+	"""
+	
+	CNV_file = forms.FileField()
+	cyto = forms.CharField()
+	panel_applied = forms.ChoiceField()
+	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
+	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
+	worksheet = forms.CharField()
+	
+	def __init__(self, *args, **kwargs):
+		
+		self.panel_options = kwargs.pop('options')
+
+		super(CNVBluefuseUploadForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.fields['panel_applied'].choices = self.panel_options
+		self.fields['panel_applied'].help_text = 'Click on Panels in the top bar to add new panels'
+		self.fields['cyto'].label = 'Cyto ID'
+		self.helper.form_id = 'file-upload-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_bluefuse')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('CNV_file', placeholder='Select a file to upload. Must be the CGH summary file', title=False),
+			Field('cyto', placeholder='Enter the Cyto ID', title=False),
+			Field('worksheet', placeholder='Enter worksheet', title=False),
+			Field('panel_applied', placeholder='Enter analysis performed', title=False),
+			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
+			Field('platform', placeholder='Select platform used', title=False)
+		)
+		
 class CNVManualUpload(forms.Form):
 	"""
 	Used for inputting individual CNVs into the database
