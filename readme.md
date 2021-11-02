@@ -81,6 +81,17 @@ If the ACMG criteria are changed, a JSON file should be saved into the fixtures 
 
 To do this, run the command `python manage.py dumpdata acmg_db.classificationquestion > <date>_acmg_questions.json`
 
+##Querying Database
+
+1. classification log 
+
+If a clinical scientist requests for a list of all classifications they have made in the database for their competency portfolio, run the following command and ensure the        acmg_db conda environment is activated. 
+
+Command: python manager.py classification_log <--firstchecker or --secondchecker flag> <email> <path to output directory>
+Example: python manager.py classification_log --firstchecker laz.lazarou@wales.nhs.uk ./queries 
+
+For additional information run the following 
+  python manager.py classification_log -h 
 
 ## References
 
