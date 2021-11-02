@@ -5,14 +5,12 @@ import csv
 from datetime import datetime 
 
 '''
-
 Author: Seemu Ali 
 Date: 02.11.2021 
-description: Get a log of classifications requested by clinical scientist for their competency portfolio 
+description: Get a log of classifications requested by clinical scientist for their competency portfolio, run command within variant_classification_DB directory 
+	     and ensure the acmg_db conda environment is activated.
 Command: python manager.py classification_log <--firstchecker or --secondchecker flag> <email> <path to output directory>
 example: python manager.py classification_log --firstchecker laz.lazarou@wales.nhs.uk ./queries 
-
-
 '''
 
 class Command(BaseCommand):
@@ -36,7 +34,9 @@ class Command(BaseCommand):
 		first_chk_date =[]
 		first_class = []
 		second_class = []
-		for contents in checks:   #loop through classification object to pull out relevant data for report 
+		
+		#loop through classification object to pull out relevant data for report 
+		for contents in checks:  
 			second_chk.append(contents.user_second_checker)
 			second_chk_date.append(contents.second_check_date)
 			first_chk.append(contents.user_first_checker)
@@ -45,8 +45,13 @@ class Command(BaseCommand):
 			sample_id.append(contents.sample)
 			first_class.append(contents.first_final_class)
 			second_class.append(contents.second_final_class)
+		
+		
+		#collates all classification data from lists defined above and defines the header for log report 
+		data_log=zip(sample_id, variant_info, first_class, first_chk, first_chk_date, second_class, second_chk, second_chk_date) 
 		header=['sample', 'variant',  'first classification (0-5=benign-pathogenic, 6=artefact, 7=not analysed)', 'first checker', 'first check date', 'second classification (0-5=benign-pathogenic, 6=artefact, 7=not analysed)', 'second checker', 'second check date']
-		data_log=zip(sample_id, variant_info, first_class, first_chk, first_chk_date, second_class, second_chk, second_chk_date) #collates all classification data from lists defined above
+		
+		#generate log report  
 		with open(f"{output}/{date}_{check_string}.csv", "w") as f:
 			writer = csv.writer(f)
 			writer.writerow(header)
@@ -55,21 +60,23 @@ class Command(BaseCommand):
 			
 
 	def handle(self, *args, **options):
-
+		
+		#define variables from command line arguments 
 		email = options['email']
 		firstcheck = options['firstchecker']
 		secondcheck = options['secondchecker']
 		output = options['output']
-
+		
 		scientist = User.objects.get(username=email)
 
 		if firstcheck == True:
-			checks = Classification.objects.filter(user_first_checker=scientist)   #filter classification object to clinical scientist as first checker 
+			# if firstcheck flag used filter database with clinical scientist as first checker  
+			checks = Classification.objects.filter(user_first_checker=scientist)   
 			check_string = 'firstchk'
 
 		if secondcheck == True:
-
-			checks = Classification.objects.filter(user_second_checker=scientist) #filter classification object to clinical scientist as second checker 
+			#if secondcheck flag used filter database with clinical scientist as second checker  
+			checks = Classification.objects.filter(user_second_checker=scientist) 
 			check_string = 'secondchk' 
 
 
