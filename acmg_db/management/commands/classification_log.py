@@ -7,10 +7,10 @@ from datetime import datetime
 '''
 Author: Seemu Ali 
 Date: 02.11.2021 
-description: Get a log of classifications requested by clinical scientist for their competency portfolio, run command within variant_classification_DB directory 
+Description: Get a log of classifications requested by clinical scientist for their competency portfolio, run command within variant_classification_DB directory 
 	     and ensure the acmg_db conda environment is activated.
 Command: python manager.py classification_log <--firstchecker or --secondchecker flag> <email> <path to output directory>
-example: python manager.py classification_log --firstchecker laz.lazarou@wales.nhs.uk ./queries 
+Example: python manager.py classification_log --firstchecker laz.lazarou@wales.nhs.uk ./queries 
 '''
 
 class Command(BaseCommand):
