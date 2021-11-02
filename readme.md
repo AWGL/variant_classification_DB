@@ -81,7 +81,7 @@ If the ACMG criteria are changed, a JSON file should be saved into the fixtures 
 
 To do this, run the command `python manage.py dumpdata acmg_db.classificationquestion > <date>_acmg_questions.json`
 
-##Querying Database
+## Querying Database
 
 1. classification log 
 
