@@ -418,7 +418,8 @@
 			  
 	          {% elif answer.cnv_classification_question.qu_type == "1B" %}
 		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
-				<option value="-0.60" selected>-0.60</option>
+		  		<option value="-0.60" selected>-0.60</option>
+		  		<option value="0.0" selected>0.0</option>
 			  </td>
 			  
 		  {% endif %}
