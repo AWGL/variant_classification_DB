@@ -29,12 +29,18 @@
   <tbody>
 	{% for variant in all_variants %}
 	<tr>
-		<td>  <a href="{% url 'view_variant' pk=variant.0.variant_hash %}" > {{ variant.0.chromosome }}:{{ variant.0.position }}{{ variant.0.ref|truncatechars:10 }}>{{ variant.0.alt|truncatechars:10 }}</td>
+		<td>  
+		{% if variant.0.genome == 'GRCh37' %}
+		<a href="{% url 'view_variant' pk=variant.0.variant_hash %}" > {{ variant.0.chromosome }}:{{ variant.0.position }}{{ variant.0.ref|truncatechars:10 }}>{{ variant.0.alt|truncatechars:10 }}</a><br><span class="badge badge-info badge-pill">{{ variant.0.genome }}
+		{% elif variant.0.genome == 'GRCh38' %}
+		<a href="{% url 'view_variant' pk=variant.0.variant_hash %}" > {{ variant.0.chromosome }}:{{ variant.0.position }}{{ variant.0.ref|truncatechars:10 }}>{{ variant.0.alt|truncatechars:10 }}</a><br><span class="badge badge-success badge-pill">{{ variant.0.genome }}
+		{% endif %}
+		</td>
 		<td> {{variant.1.0.selected_transcript_variant.transcript.gene.name}} </td>
 		<td> {{variant.1.0.selected_transcript_variant.transcript.name}} </td>
 		<td> {{variant.1.0.selected_transcript_variant.display_hgvsc|truncatechars:25}}</td>
 		<td> {{variant.1.0.selected_transcript_variant.display_hgvsp|truncatechars:25}}</td>
-
+		
 		<td>
 		{% if 'Benign' in variant.1.0.display_classification %}
 		<a class="btn btn-info btn-sm" href="{% url 'view_classification' pk=variant.1.0.pk %}" role="button"> 
@@ -67,7 +73,7 @@
 	  <th></th>
 	  <th></th>
 	  <th></th>
-	  <th> </th>
+	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>

@@ -50,7 +50,7 @@ def first_check(request, pk):
 
 		# Get data to render form
 		variant = classification.variant
-		previous_classifications = Classification.objects.filter(variant=variant, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
+		previous_classifications = Classification.objects.filter(variant=variant,variant__genome=classification.variant.genome, status__in=['2', '3']).exclude(pk=classification.pk).order_by('-second_check_date')
 		previous_full_classifications = previous_classifications.filter(genuine='1').order_by('-second_check_date')
 		answers = ClassificationAnswer.objects.filter(classification=classification).order_by('classification_question__order')
 		comments = UserComment.objects.filter(classification=classification, visible=True)

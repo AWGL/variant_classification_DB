@@ -55,7 +55,11 @@
       </tr>
       <tr>
         <td> Variant </td>
-        <td> {{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} </td>
+        {% if classification.variant.genome == 'GRCh37' %}
+	 <td>{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-info badge-pill">{{ classification.variant.genome }}</td>
+	  {% elif classification.variant.genome == 'GRCh38' %}
+	  <td>{{classification.variant.chromosome}}:{{classification.variant.position}}{{classification.variant.ref}}>{{classification.variant.alt}} <span class="badge badge-success badge-pill">{{ classification.variant.genome }}</td>
+	  {% endif %}
       </tr>
       <tr>
         <td> Gene </td>

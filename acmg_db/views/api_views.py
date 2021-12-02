@@ -34,10 +34,9 @@ class AddVariantsForAnalysis(APIView):
 		sample_id: (str) - the panel applied
 		worksheet_id: (str) - the worksheet id
 		analysis_id: (int) - an analysis id
+		genome: (str) - the reference genome used
 
 		"""
-
-		print(request)
 
 		try:
 
@@ -48,6 +47,7 @@ class AddVariantsForAnalysis(APIView):
 			sample_id = request.data['sample_id']
 			worksheet_id = request.data['worksheet_id']
 			analysis_id = request.data['analysis_id']
+			genome = request.data['reference']
 
 		except KeyError:
 
@@ -109,17 +109,29 @@ class AddVariantsForAnalysis(APIView):
 						affected_with = 'input required',
 						analysis_performed = panel_obj,
 						analysis_complete = False,
-						other_changes = ''
+						other_changes = '',
+						genome = genome,
 						)
 				sample_obj.save()
 
 
 			# Get VEP annotations
-			vep_info_dict = {
-				'reference_genome' : settings.REFERENCE_GENOME,
-				'vep_cache': settings.VEP_CACHE,
-				'temp_dir': settings.VEP_TEMP_DIR
-			}
+			if genome == 'GRCh37':
+				vep_info_dict = {
+					'reference_genome' : settings.REFERENCE_GENOME_37,
+					'vep_cache': settings.VEP_CACHE_37,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_37,
+					'version': settings.VEP_VERSION_37
+				}
+			elif genome == 'GRCh38':
+				vep_info_dict = {
+					'reference_genome': settings.REFERENCE_GENOME_38,
+					'vep_cache': settings.VEP_CACHE_38,
+					'temp_dir': settings.VEP_TEMP_DIR,
+					'assembly': settings.ASSEMBLY_38,
+					'version': settings.VEP_VERSION_38
+				}
 
 
 			just_variants = [variant[0] for variant in variant_list]
@@ -142,7 +154,7 @@ class AddVariantsForAnalysis(APIView):
 			for variant in variant_annotations:
 
 				var = variant[1]
-				variant_data = process_variant_input(var)
+				variant_data = process_variant_input(var, genome)
 
 				variant_hash = variant_data[0]
 				chromosome = variant_data[1]
@@ -155,7 +167,8 @@ class AddVariantsForAnalysis(APIView):
 						chromosome = chromosome,
 						position = position,
 						ref = ref,
-						alt = alt
+						alt = alt,
+						genome = genome
 						)
 
 				if 'transcript_consequences' in variant[0]:
@@ -210,8 +223,13 @@ class AddVariantsForAnalysis(APIView):
 						)
 
 					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+					if genome == "GRCh37":
+						vep_version = settings.VEP_VERSION_37
+					elif genome == "GRCh38":
+						vep_version = settings.VEP_VERSION_38
+						
 					if created:
-						transcript_variant_obj.vep_version = settings.VEP_VERSION
+						transcript_variant_obj.vep_version = vep_version
 						transcript_variant_obj.save()
 
 					# Find the transcript that VEP has picked
@@ -246,7 +264,7 @@ class AddVariantsForAnalysis(APIView):
 					selected_transcript_variant = selected,
 					genotype=genotype,
 					guideline_version=guideline_version,
-					vep_version=settings.VEP_VERSION,
+					vep_version=vep_version,
 					analysis_id = analysis_id
 					)
 

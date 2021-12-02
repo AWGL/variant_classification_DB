@@ -46,6 +46,7 @@ class Sample(models.Model):
 	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
 	analysis_complete = models.BooleanField()
 	other_changes = models.TextField()
+	genome = models.TextField(default='GRCh37')
 
 	def __str__(self):
 		return self.name
@@ -56,11 +57,12 @@ class Variant(models.Model):
 
 	"""
 
-	variant_hash = models.CharField(max_length=64, primary_key =True)
+	variant_hash = models.CharField(max_length=64, primary_key=True)
 	chromosome  = models.CharField(max_length=25)
 	position  = models.IntegerField()
 	ref = models.TextField()
 	alt = models.TextField()
+	genome = models.TextField(default='GRCh37')
 
 	def __str__(self):
 		return f'{self.chromosome}:{self.position}{self.ref}>{self.alt}'

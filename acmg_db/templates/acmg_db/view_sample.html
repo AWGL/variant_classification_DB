@@ -47,6 +47,7 @@
 	  <th>Status</th>
 	  <th>Worksheet</th>
 	  <th>Panel</th>
+	  <th>Variant</th>
 	  <th>Genotype</th>
 	  <th>Gene</th>
 	  <th>Transcript</th>
@@ -66,6 +67,13 @@
 		<td> {{classification.display_status}} </td>
 		<td> {{classification.sample.worklist.name}} </td>
 		<td> {{classification.sample.analysis_performed.panel}} </td>
+		<td>
+	  	{% if classification.variant.genome == 'GRCh37' %}
+	  	{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-info badge-pill">{{ classification.variant.genome }}
+	  	{% elif classification.variant.genome == 'GRCh38' %}
+	  	{{ classification.variant.chromosome }}:{{ classification.variant.position }}{{ classification.variant.ref|truncatechars:10 }}>{{ classification.variant.alt|truncatechars:10 }}<br><span class="badge badge-success badge-pill">{{ classification.variant.genome }}
+	  	{% endif %}
+	  	</td>
 		<td> {{classification.display_genotype}} </td>
 		<td> {{classification.selected_transcript_variant.transcript.gene.name}} </td>
 		<td> {{classification.selected_transcript_variant.transcript.name}} </td>

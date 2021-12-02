@@ -3,7 +3,11 @@
 {% block content %}
 
 <br>
-<h4>All classifications for {{ variant.chromosome }}:{{ variant.position }}{{ variant.ref }}>{{ variant.alt }}</h4>
+{% if variant.genome == 'GRCh37' %}
+<h4>All classifications for {{ variant.chromosome }}:{{ variant.position }}{{ variant.ref }}>{{ variant.alt }} <span class="badge badge-info badge-pill">{{ variant.genome }}</h4>
+{% elif variant.genome == 'GRCh38' %}
+<h4>All classifications for {{ variant.chromosome }}:{{ variant.position }}{{ variant.ref }}>{{ variant.alt }} <span class="badge badge-success badge-pill">{{ variant.genome }}</h4>
+{% endif %}
 <br>
 
 <table id="classifications" class = "table table-hover table-bordered" style="width:100%">

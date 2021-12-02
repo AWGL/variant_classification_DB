@@ -26,7 +26,11 @@
   <tbody>
 	{% for variant in all_variants %}
 	<tr>
-	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</td>
+	  {% if variant.genome == 'GRCh37' %}
+	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</a><br><span class="badge badge-info badge-pill">{{ variant.genome }}</td>
+	  {% elif variant.genome == 'GRCh38' %}
+	  <td><a href="{% url 'view_variant' pk=variant.variant_hash %}">{{ variant.variant_id | truncatechars:20 }}</a><br><span class="badge badge-success badge-pill">{{ variant.genome }}</td>
+	  {% endif %}
 	  <td>{{ variant.gene }}</td>
 	  <td>{{ variant.transcript }}</td>
 	  <td>{{ variant.hgvs_c | truncatechars:25 }}</td>
