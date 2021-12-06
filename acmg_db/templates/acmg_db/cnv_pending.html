@@ -27,16 +27,12 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td>Patient ID</td>
+			<td>Molecular Number</td>
 			<td><input type="text" name="sample"></td>
 		</tr>
 		<tr>
 			<td>Worksheet ID</td>
-			<td><input type="text" name="worksheet"></td>
-		</tr>
-		<tr>
-			<td>Panel</td>
-			<td><input type="text" name="panel">&nbsp;&nbsp;<input class="btn btn-info" type="submit" value="Submit"></td>
+			<td><input type="text" name="worksheet">&nbsp;&nbsp;<input class="btn btn-info" type="submit" value="Submit"></td>
 		</tr>
 		</form>
 		<tr>
@@ -60,7 +56,7 @@
 		</tr>
 		<tr>
 		  <td>
-			<a class="btn btn-info" href={% url 'pending_classifications' %} role="button">Remove all filters</a>
+			<a class="btn btn-info" href={% url 'cnv_pending' %} role="button">Remove all filters</a>
 		  </td>
 		  <td></td>
 		</tr>
@@ -278,13 +274,13 @@ $(document).ready(function(){
 		pk: null,
 		status: null,
 		worksheet: null,
-		panel: null,
 		sample: null,
-		gene: null,
-		variant: null,
-		transcript: null,
-		hgvs_c: null,
-		hgvs_p: null,
+		cyto: null,
+		cyto_loc: null,
+		display: null,
+		length: null,
+		genes: null,
+		links: null,
 		classification: null,
 		assigned: null,
 	};
