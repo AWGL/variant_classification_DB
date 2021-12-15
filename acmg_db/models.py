@@ -888,7 +888,7 @@ class CNVLossClassificationQuestion(models.Model):
 						('Section 3: Evaluation of Gene Number', '3'),
 						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if either your CNV overlapped with an established HI gene/region in section 2, OR there have been no reports associating either the CNV or any genes within the CNV with human phenotypes caused by loss of function [LOF] or copy-number loss)', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
-						('Section 6: Other evidence','6'),
+						('Section 6: Other criteria from SNV variant interpretation guidelines','6'),
 						)
 	
 	TYPE_CHOICES = (('Pathogenic Supporting','PS'),('Benign Supporting','BS'),('Zero','0'),('1B','1B'),('Other','Other'))
@@ -958,7 +958,7 @@ class CNVGainClassificationQuestion(models.Model):
 						('Section 3: Evaluation of Gene Number', '3'),
 						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if there have been no reports associating either the copy-number gain or any of the genes therein with human phenotypes caused by triplosensitivity)', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
-						('Section 6: Other evidence','6'),
+						('Section 6: Other criteria from SNV variant interpretation guidelines','6'),
 						)
 	
 	TYPE_CHOICES = (('Pathogenic Supporting','PS'),('Benign Supporting','BS'),('Zero','0'),('1B','1B'),('Other','Other'))
