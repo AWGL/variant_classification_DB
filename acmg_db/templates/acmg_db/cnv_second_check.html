@@ -422,6 +422,11 @@
 				<option value="0.0" selected>-0.0</option>
 			  </td>
 			  
+	          {% elif answer.cnv_classification_question.qu_type == "Other" %}
+		  <td class='score' style="width: 5.00%"> <input type="text" class="form-control" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
+		  
+		  </td>
+			  
 		  {% endif %}
 		  
 		  <!-- Comments box -->
