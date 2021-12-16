@@ -105,6 +105,7 @@ def load_bluefuse(input_file):
 	meta_dict = {}
 	headers = []
 	data_values = []
+	max_values = []
 
 	# make a csv reader object from the worksheet tsv file
 	reader = csv.reader(input_file, delimiter='\t')
@@ -120,7 +121,7 @@ def load_bluefuse(input_file):
 		# If line starts with Region , take the headers, and then the data lines until an empty line is reached
 		if line[0] == 'Region':
 
-			headers += [[field for field in line if field != '']]
+			headers += [field for field in line if field != '']
 			next_line = next(reader)
 			while len(next_line) != 0:
 				data_values += [next_line]
@@ -140,6 +141,13 @@ def load_bluefuse(input_file):
 		
 			meta_dict['genome'] = "GRCh38"
 			
+		#Max values
+		elif line[0] == 'max':
+			
+			start = line[7]
+			stop = line[8]
+			max_values += [[start, stop]]
+			
 		else:
 			
 			continue
@@ -147,6 +155,7 @@ def load_bluefuse(input_file):
 	print(headers)
 	print(data_values)
 	print(meta_dict)
+	print(max_values)
 	
 	# pull out metadata
 	report_info = []
@@ -156,11 +165,16 @@ def load_bluefuse(input_file):
 		report_info.append(i)
 
 	# make a dataframe from data section
-	df = pd.DataFrame(data=data_values, columns=headers)
+	df_values = pd.DataFrame(data=data_values, columns=headers)
+	
+	df_max = pd.DataFrame(data=max_values, columns=("max_start","max_stop"))
+
+	df = pd.concat([df_values,df_max], axis=1)
+	
+	print(df)
 
 	#add to meta dictionary
 	meta_dict['report_info'] = report_info
-
 
 	return df, meta_dict
 

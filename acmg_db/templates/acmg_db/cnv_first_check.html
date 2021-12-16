@@ -167,12 +167,16 @@
 		
 			<tbody>
 				<tr>
-					<td  style="width: 25.00%" class="col-2">CNV</td>
+					<td  style="width: 25.00%" class="col-2">CNV (Based on Min)</td>
 					{% if cnv.cnv.genome == 'GRCh37' %}
 					<td style="width: 75.00%" class="col-8">{{ cnv.display}} <span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}</td>
 					{% elif cnv.cnv.genome == 'GRCh38' %}
 					<td style="width: 75.00%" class="col-8">{{ cnv.display }} <span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}</td>
 					{% endif %}
+				</tr>
+				<tr>
+					<td>Max CNV (if information not available, min coordinates given)</td>
+					<td>{{ cnv.cnv.chromosome }}:{{ cnv.cnv.max_start }}-{{ cnv.cnv.max_stop }}
 				</tr>
 				<tr>
 					<td>Length</td>

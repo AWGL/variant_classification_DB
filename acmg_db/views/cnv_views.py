@@ -153,6 +153,8 @@ def cnv_home(request):
 							length = length,
 							genome = genome,
 							cyto_loc = cyto_loc,
+							max_start = start,
+							max_stop = stop,
 							)
 								
 							
@@ -363,6 +365,8 @@ def cnv_manual(request):
 							length = length,
 							genome = genome,
 							cyto_loc = cyto_loc,
+							max_start = start,
+							max_stop = stop,
 							)
 							
 			# add CNV classification object
@@ -534,28 +538,38 @@ def cnv_bluefuse(request):
 			
 				#print(row)	
 				#Set CNV
-				start = row['Start'][0]
+				start = row['Start']
 				start = start.replace(',', '')
 				start = int(start)
 						
-				stop = row['End'][0]
+				stop = row['End']
 				stop = stop.replace(',', '')
 				stop = int(stop)
 				
-				chrom = row['Chromosome'][0]
+				chrom = row['Chromosome']
 				
 				#Getting cytogenetic location
-				cyto_loc = row['Start Cyto'][0]
+				cyto_loc = row['Start Cyto']
 				
 				#Calculate length
-				length = stop-start
+				length = row['Size (bp)']
+				length = length.replace(',', '')
+				length = int(length)
 								
 				#Put together to make final CNV
 				final_cnv = chrom+":"+str(start)+"-"+str(stop)
 				
 				#Set Gain/Loss
-				gain_loss = (row['Type'][0]).lower()
+				gain_loss = (row['Type']).lower()
 				gain_loss = gain_loss.title()
+				
+				#Get max sizes
+				max_start = row['max_start']
+				max_start = max_start.replace(',', '')
+				max_start = int(max_start)
+				max_stop = row['max_stop']
+				max_stop = max_stop.replace(',', '')
+				max_stop = int(max_stop)
 				
 				print(final_cnv)
 				
@@ -571,6 +585,8 @@ def cnv_bluefuse(request):
 							length = length,
 							genome = genome,
 							cyto_loc = cyto_loc,
+							max_start = max_start,
+							max_stop = max_stop,
 							)
 								
 							

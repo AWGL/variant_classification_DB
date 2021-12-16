@@ -609,6 +609,8 @@ class CNVVariant(models.Model):
 	length = models.IntegerField()
 	genome = models.TextField(default='GRCh37')
 	cyto_loc = models.TextField()
+	max_start = models.IntegerField()
+	max_stop = models.IntegerField()
 
 class CNV(models.Model):	
 	"""
