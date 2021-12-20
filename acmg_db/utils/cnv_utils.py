@@ -128,9 +128,16 @@ def load_bluefuse(input_file):
 				next_line = next(reader)
 			
 		#Molecular Number
-		elif line[0].startswith('Subject ID'):
+		elif line[0].startswith('Sample ID'):
 			
-			meta_dict['sample_id'] = line[1]
+			sample_id = line[0].split(": ")[1]
+			meta_dict['sample_id'] = sample_id
+		
+		#Cyto ID
+		elif line[0].startswith('Subject ID'):
+		
+			subject_id = line[0].split(": ")[1]
+			meta_dict['cyto_id'] = subject_id
 		
 		#Reference Genome	
 		elif any("GRCh37" in field for field in line):

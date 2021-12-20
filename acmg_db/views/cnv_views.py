@@ -494,9 +494,6 @@ def cnv_bluefuse(request):
 			# get worksheet
 			worksheet_id = form.cleaned_data['worksheet']
 			
-			# get cyto id
-			cyto_id = form.cleaned_data['cyto']
-			
 			# process tsv file
 			raw_file = request.FILES['CNV_file']
 			utf_file = TextIOWrapper(raw_file, encoding='utf-8')
@@ -504,7 +501,8 @@ def cnv_bluefuse(request):
 
 			# Get key information from the metadata
 			sample_id = meta_dict.get('sample_id')
-			genome = meta_dict.get('genome')	
+			genome = meta_dict.get('genome')
+			cyto_id = meta_dict.get('cyto_id')	
 
 			# add worksheet
 			worksheet_obj, created = Worklist.objects.get_or_create(

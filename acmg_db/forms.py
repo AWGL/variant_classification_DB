@@ -137,7 +137,6 @@ class CNVBluefuseUploadForm(forms.Form):
 	"""
 	
 	CNV_file = forms.FileField()
-	cyto = forms.CharField()
 	panel_applied = forms.ChoiceField()
 	affected_with = forms.CharField(widget=forms.Textarea(attrs={'rows':4}))
 	platform = forms.CharField(widget=forms.Select(choices=platform_choices))
@@ -151,7 +150,6 @@ class CNVBluefuseUploadForm(forms.Form):
 		self.helper = FormHelper()
 		self.fields['panel_applied'].choices = self.panel_options
 		self.fields['panel_applied'].help_text = 'Click on Panels in the top bar to add new panels'
-		self.fields['cyto'].label = 'Cyto ID'
 		self.helper.form_id = 'file-upload-form'
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-8'
@@ -161,7 +159,6 @@ class CNVBluefuseUploadForm(forms.Form):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
 			Field('CNV_file', placeholder='Select a file to upload. Must be the CGH summary file', title=False),
-			Field('cyto', placeholder='Enter the Cyto ID', title=False),
 			Field('worksheet', placeholder='Enter worksheet', title=False),
 			Field('panel_applied', placeholder='Enter analysis performed', title=False),
 			Field('affected_with', placeholder='Enter what the patient is affected with', title=False),
