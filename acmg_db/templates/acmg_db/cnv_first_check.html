@@ -358,9 +358,13 @@
 			{% endif %}
 		{% elif cnv.method == 'Loss' %}
 			<h5>Copy Number Loss</h5>
-			{% if cnv.method != cnv.gain_loss %}
+			{% if cnv.gain_loss == "Gain" %}
 			<div class="alert alert-danger">
   				<strong>Oh No!</strong> NOTE! THIS IS NOT THE DEFAULT ACMG CLASSIFICATION GUIDELINES? DID YOU MEAN TO CHANGE THIS?!
+			</div>
+			{% elif cnv.gain_loss == 'Loh' %}
+			<div class="alert alert-danger">
+  				LOH with Loss Guidelines applied by default
 			</div>
 			{% endif %}
 		{% endif %}

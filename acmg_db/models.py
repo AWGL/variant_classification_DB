@@ -669,6 +669,10 @@ class CNV(models.Model):
 		if gain_loss == 'Loss':
 
 			gain_loss = 'del'
+		
+		elif gain_loss == 'Loh':
+		
+			gain_loss = "LOH"
 
 		elif gain_loss == 'Gain':
 
@@ -851,6 +855,24 @@ class CNV(models.Model):
 			return final_score
 		
 		elif self.gain_loss == 'Loss':
+			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return 'NA'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score_second
+
+			return final_score
+			
+		elif self.gain_loss == 'Loh':
 			
 			# pull out all classification questions and answers
 			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)

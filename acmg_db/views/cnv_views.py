@@ -562,6 +562,14 @@ def cnv_bluefuse(request):
 				#Set Gain/Loss
 				gain_loss = (row['Type']).lower()
 				gain_loss = gain_loss.title()
+				print(gain_loss)
+				
+				#Settings incase type is LOH
+				if gain_loss == "Loh":
+					method = "Loss"
+				else:
+					method = gain_loss
+				print(method)
 				
 				#Get max sizes
 				max_start = row['max_start']
@@ -594,7 +602,7 @@ def cnv_bluefuse(request):
 						sample = CNVSample_obj,
 						cnv = CNVVariant_obj,
 						gain_loss = gain_loss,
-						method = gain_loss,
+						method = method,
 						status = 0,
 						creation_date = timezone.now(),
 						user_creator = request.user,
