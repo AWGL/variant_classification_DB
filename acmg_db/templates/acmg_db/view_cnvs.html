@@ -16,7 +16,6 @@
 	  <th>Length</th>
 	  <th>Cytogenetic Location</th>
 	  <th>Gain/Loss Status of Last Classification</th>
-	  <th>Gene(s)</th>
 	  <th>Last Classification<br>(Click to view)</th>
 	  <th>Last Classification Date</th>
 	</tr>
@@ -36,11 +35,6 @@
 	  <td> {{ cnv.most_recent_obj.cnv.length }} </td>
 	  <td> {{ cnv.most_recent_obj.cnv.cyto_loc }}</td>
 	  <td>{{ cnv.most_recent_obj.gain_loss }}</td>
-	 <td>
-	  {% for gene in cnv.most_recent_obj.genes_as_list %}
-	  	<span class="badge badge-warning">{{ gene.gene }}</span>
-	  {% endfor %}
-	  </td>
 	  <td>
 		<!-- change button colour based on class -->
 		<a class=
@@ -69,7 +63,6 @@
 
   <tfoot>
 	<tr>
-	  <th></th>
 	  <th></th>
 	  <th></th>
 	  <th></th>
