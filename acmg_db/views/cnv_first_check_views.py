@@ -59,16 +59,24 @@ def cnv_first_check(request, pk):
 		previous_classifications.sort(key=lambda x: x.second_check_date, reverse = True)
 		previous_full_classifications.sort(key=lambda x: x.second_check_date, reverse = True)
 		
-		if cnv.method == "Gain":
+		if cnv.method == 'Gain':
+
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+
 			if len(answers) == 0:
+
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
-		elif cnv.method == "Loss":
+
+		elif cnv.method == 'Loss':
+
 			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+
 			if len(answers) == 0:
+				
 				cnv.initiate_classification()
 				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+
 		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 		result = cnv.display_first_classification()  # current class to display
 		score = cnv.first_final_score
