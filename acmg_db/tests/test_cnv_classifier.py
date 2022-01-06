@@ -60,7 +60,11 @@ class TestCNVScoreGain(TestCase):
 	# Test that data sent via ajax is correct and first score is calculated correctly
 	def test_acmg_cnv_score_first_gain(self):
 		
-		response = self.client.get('/cnv_first_check/1/')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_first_check/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		
 		# Create POST data for ajax submission and check class is updated
 		data = {'cnvs': [('{" 1":["0.33","Comment"]," 2":["0.33","None"]," 3":["0.34","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]}')], 'cnv_pk': ['1']}
@@ -109,7 +113,11 @@ class TestCNVScoreGainSecond(TestCase):
 	
 	def test_acmg_cnv_score_second_gain(self):
 		
-		response = self.client.get('/cnv_second_check/1/')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_second_check/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		
 		# Create POST data for ajax submission and check class is updated
 		data = {'cnvs': [('{" 1":["-1","Comment"]," 2":["0.5","None"]," 3":["1","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]}')], 'cnv_pk': ['1']}
@@ -156,7 +164,11 @@ class TestCNVScoreLoss(TestCase):
 	# Test that data sent via ajax is correct and first score is calculated correctly
 	def test_acmg_cnv_score_first_loss(self):
 		
-		response = self.client.get('/cnv_first_check/1/')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_first_check/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		
 		# Create POST data for ajax submission and check class is updated
 		data = {'cnvs': [('{" 1":["0.33","Comment"]," 2":["0.33","None"]," 3":["0.34","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]," 45":["0","None"]," 46":["0","None"]}')], 'cnv_pk': ['1']}
@@ -204,7 +216,11 @@ class TestCNVScoreLossSecond(TestCase):
 	
 	def test_acmg_cnv_score_second_loss(self):
 		
-		response = self.client.get('/cnv_second_check/1/')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_second_check/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		
 		# Create POST data for ajax submission and check class is updated
 		data = {'cnvs': [('{" 1":["-1","Comment"]," 2":["0.5","None"]," 3":["1","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]," 45":["0","None"]," 46":["0","None"]}')], 'cnv_pk': ['1']}
