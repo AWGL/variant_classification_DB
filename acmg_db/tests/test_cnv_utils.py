@@ -46,13 +46,13 @@ class TestProcessCNV(TestCase):
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
 		# 'New'CNV set up
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
-					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+		cnvobj, created = CNV.objects.get_or_create(
+					sample = cnvsampleobj,
+					cnv = cnvvariantobj,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user
@@ -62,7 +62,7 @@ class TestProcessCNV(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 		
 		# Existing CNV	(already classified) set up
@@ -72,7 +72,7 @@ class TestProcessCNV(TestCase):
 		# Identical CNV to 'New'
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 1),
+					cnv = cnvvariantobj,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -81,11 +81,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# Existing CNV entirely within new CNV
-		CNVVariant.objects.get_or_create(full = 'X:134567:223456', chromosome = 'X', start = '134567', stop = '223456', length = '88889', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj2, created = CNVVariant.objects.get_or_create(full = 'X:134567:223456', chromosome = 'X', start = '134567', stop = '223456', length = '88889', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 2),
+					cnv = cnvvariantobj2,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -94,11 +94,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# New CNV entirely within existing CNV
-		CNVVariant.objects.get_or_create(full = 'X:112345:245678', chromosome = 'X', start = '112345', stop = '245678', length = '133333', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj3, created = CNVVariant.objects.get_or_create(full = 'X:112345:245678', chromosome = 'X', start = '112345', stop = '245678', length = '133333', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 3),
+					cnv = cnvvariantobj3,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -108,11 +108,11 @@ class TestProcessCNV(TestCase):
 		
 		
 		# Existing CNV starts and stops after new
-		CNVVariant.objects.get_or_create(full = 'X:134567:245678', chromosome = 'X', start = '134567', stop = '245678', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj4, created = CNVVariant.objects.get_or_create(full = 'X:134567:245678', chromosome = 'X', start = '134567', stop = '245678', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 4),
+					cnv = cnvvariantobj4,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -121,11 +121,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# Existing CNV starts and stops before new
-		CNVVariant.objects.get_or_create(full = 'X:112345:223456', chromosome = 'X', start = '112345', stop = '223456', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj5, created = CNVVariant.objects.get_or_create(full = 'X:112345:223456', chromosome = 'X', start = '112345', stop = '223456', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 5),
+					cnv = cnvvariantobj5,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -134,11 +134,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# Existing overlaps but not by 50% reciprocal overlap
-		CNVVariant.objects.get_or_create(full = 'X:234560:234570', chromosome = 'X', start = '234560', stop = '234570', length = '10', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj6, created = CNVVariant.objects.get_or_create(full = 'X:234560:234570', chromosome = 'X', start = '234560', stop = '234570', length = '10', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 6),
+					cnv = cnvvariantobj6,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -147,11 +147,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# Existing doesn't overlap
-		CNVVariant.objects.get_or_create(full = 'X:345678:456789', chromosome = 'X', start = '345678', stop = '456789', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj7, created = CNVVariant.objects.get_or_create(full = 'X:345678:456789', chromosome = 'X', start = '345678', stop = '456789', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 7),
+					cnv = cnvvariantobj7,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -160,11 +160,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# Existing has same coordinates but different chromosome, therefore doesn't overlap
-		CNVVariant.objects.get_or_create(full = '1:123456:234567', chromosome = '1', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj8, created = CNVVariant.objects.get_or_create(full = '1:123456:234567', chromosome = '1', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 8),
+					cnv = cnvvariantobj8,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -173,11 +173,11 @@ class TestProcessCNV(TestCase):
 		)
 		
 		# Existing is identical but from different reference genome, therefore doesn't overlap
-		CNVVariant.objects.get_or_create(full = '1:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh38', max_start = '123456', max_stop = '234567')
+		cnvvariantobj9, created = CNVVariant.objects.get_or_create(full = '1:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh38', max_start = '123456', max_stop = '234567')
 		
 		CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='22M22222'),
-					cnv = CNVVariant.objects.get(pk = 9),
+					cnv = cnvvariantobj9,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -187,7 +187,7 @@ class TestProcessCNV(TestCase):
 		
 	def test_previous_cnv(self):
 		
-		cnv_obj = CNV.objects.get(pk=1)
+		cnv_obj = CNV.objects.get(sample__sample_name="11M11111")
 		
 		previous,previous_full = cnv_previous_classifications(cnv_obj)
 		
