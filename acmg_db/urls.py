@@ -44,5 +44,28 @@ urlpatterns = [
 
     path('api-token-auth/', rest_views.obtain_auth_token),
     path('api-add-variants/', views.AddVariantsForAnalysis.as_view(), name='add-variants'),
-
+    
+    path('cnv_home/', views.cnv_home, name = 'cnv_home'),
+    path('cnv_import/', views.cnv_import, name = 'cnv_import'),
+    path('cnv_bluefuse', views.cnv_bluefuse, name = 'cnv_bluefuse'),
+    path('cnv_pending/', views.cnv_pending, name = 'cnv_pending'),
+    path('cnv_manual/', views.cnv_manual, name = 'cnv_manual'),
+    path('cnv_first_check/<int:pk>/', views.cnv_first_check, name = 'cnv_first_check'),
+    path('cnv_second_check/<int:pk>/', views.cnv_second_check, name = 'cnv_second_check'),
+    path('ajax/acmg_cnv_classification_first/', views.ajax_acmg_cnv_classification_first, name='ajax_acmg_cnv_classification_first'),
+    path('ajax/acmg_cnv_classification_second/', views.ajax_acmg_cnv_classification_second, name='ajax_acmg_cnv_classification_second'),
+    path('ajax/cnv_comments/', views.ajax_cnv_comments, name='ajax_cnv_comments'),
+    path('ajax/cnv_delete_comment/', views.ajax_cnv_delete_comment, name='ajax_cnv_delete_comment'),
+    path('view_cnvs/', views.view_cnvs, name='view_cnvs'),
+    path('cnv_view_classification/<int:pk>/', views.cnv_view_classification, name='cnv_view_classification'),
+    path('cnv_reporting/', views.cnv_reporting, name='cnv_reporting'),
+    path('cnv_search',views.cnv_search, name='cnv_search'),
+    path('cnv_view_sample/<str:pk>/',views.cnv_view_sample, name='cnv_view_sample'),
+    path('view_cnv/<str:pk>/<str:ref>', views.view_cnv, name='view_cnv'),
+    path('view_cnv_search/<str:pk>/', views.view_cnv_search, name='view_cnv_search'),
+    path('cnv_view_gene/<str:pk>/', views.cnv_view_gene, name='cnv_view_gene'),
+    path('download_cnv_list/', views.download_cnv_list, name='download_cnv_list'),
+    path('ajax/cnv_decipher_download/', views.ajax_cnv_decipher_download, name='ajax_cnv_decipher_download'),
+    path('cnv_view_region/<str:pk>/', views.cnv_view_region, name='cnv_view_region'),
+    
 ]

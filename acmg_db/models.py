@@ -5,6 +5,8 @@ from auditlog.models import AuditlogHistoryField
 
 from acmg_db.utils import acmg_classifier
 
+import numpy as np
+
 class Worklist(models.Model):
 	"""
 	Model to store which worklist the sample was on.
@@ -581,7 +583,538 @@ class Evidence(models.Model):
 
 	file = models.FileField(upload_to='uploads/', null=True, blank=True)
 	comment = models.ForeignKey(UserComment, on_delete=models.CASCADE)
+	
+class CNVSample(models.Model):
+	"""
+	Model to hold CNV Sample information upon upload
+	"""
+	history = AuditlogHistoryField()
+	
+	sample_name = models.CharField(max_length=150, default='')  # sample_id only
+	worklist = models.ForeignKey(Worklist, on_delete=models.CASCADE)
+	affected_with = models.TextField()
+	analysis_performed = models.ForeignKey(Panel, null=True, blank=True, on_delete=models.CASCADE)
+	analysis_complete = models.BooleanField()
+	platform = models.TextField()
+	cyto = models.TextField(null=True)
+	
+class CNVVariant(models.Model):
+	"""
+	Model to hold CNV variant information
+	"""
+	full = models.TextField() #full CNV variant in format CHR:START-STOP
+	chromosome = models.TextField()
+	start = models.IntegerField()
+	stop = models.IntegerField()
+	length = models.IntegerField()
+	genome = models.TextField(default='GRCh37')
+	cyto_loc = models.TextField()
+	max_start = models.IntegerField()
+	max_stop = models.IntegerField()
 
+class CNV(models.Model):	
+	"""
+	Model to hold CNV classification information 
+	"""	
+	STATUS_CHOICES = (('0', 'First Check'), ('1', 'Second Check'), ('2', 'Complete'), ('3', 'Archived'))
+	FINAL_CLASS_CHOICES = (
+		('0', 'Benign'), 
+		('1', 'Likely Benign'), 
+		('2', 'VUS - Criteria Not Met'),
+		('3', 'Likely Pathogenic'), 
+		('4', 'Pathogenic'),
+		('5', 'Not analysed'),
+		('6', 'Artefact')
+	)
+	GENUINE_ARTEFACT_CHOICES = (
+		('0', 'Pending'), 
+		('1', 'Genuine - New Classification'), 
+		('2', 'Genuine - Use Previous Classification'),
+		('3', 'Genuine - Not Analysed'),
+		('4', 'Artefact')
+	)
+	
+	history = AuditlogHistoryField()
+	
+	sample = models.ForeignKey(CNVSample, on_delete=models.CASCADE)
+	cnv = models.ForeignKey(CNVVariant, on_delete=models.CASCADE, related_name='cnv_classification')
+	gain_loss = models.TextField()
+	status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
+	user_first_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_first_checker')
+	user_second_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='cnv_second_checker')
+	first_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
+	second_final_score = models.DecimalField(decimal_places=2, max_digits=10, default='0')
+	first_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')
+	second_final_class = models.CharField(max_length=1, null=True, blank=True, choices = FINAL_CLASS_CHOICES, default = '5')  # The actual one we want to display.
+	inheritance = models.TextField(null=True)
+	copy = models.TextField(null=True)
+	genotype = models.TextField(null=True)
+	genuine = models.CharField(max_length=1, choices=GENUINE_ARTEFACT_CHOICES, default='0')
+	method = models.TextField() #this allows us to change the ACMG guidelines being used whilst retaining the information on actual gain/loss
+	first_check_date = models.DateTimeField(null=True, blank=True)
+	second_check_date = models.DateTimeField(null=True, blank=True)
+	creation_date = models.DateTimeField(null=True)
+	user_creator = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='cnv_user_creator')
+		
+	def __str__(self):
+		return f'{self.id}'
+
+	def display(self):
+
+		chrom = self.cnv.chromosome
+		start = self.cnv.start
+		end = self.cnv.stop
+		gain_loss = self.gain_loss
+
+		if gain_loss == 'Loss':
+
+			gain_loss = 'del'
+		
+		elif gain_loss == 'Loh':
+		
+			gain_loss = "LOH"
+
+		elif gain_loss == 'Gain':
+
+			gain_loss = 'dup'
+
+		else:
+
+			raise Exception('Unknown CNV type')
+
+		return f'{chrom}:{start}-{end}{gain_loss}'
+	
+	def genes_as_list(self):
+		return CNVGene.objects.filter(cnv=self)
+	
+	def count_genes(self):
+
+		count = CNVGene.objects.filter(cnv=self)
+
+		if count is None:
+
+			return 0
+
+		return len(CNVGene.objects.filter(cnv=self))
+		
+	def display_status(self):
+		"""
+		Take the status in the database e.g. 0 and return the string \
+		which corresponds to that e.g First check
+		"""
+		return self.STATUS_CHOICES[int(self.status)][1]
+
+	def display_genuine(self):
+		"""
+		Display the genuine status attribute.
+		"""
+		return self.GENUINE_ARTEFACT_CHOICES[int(self.genuine)][1]
+	
+	def display_first_classification(self):
+		"""
+		Take the classification in the database e.g. 0 and return the string \
+		which corresponds to that e.g Pathogenic
+
+		This displays the result of the first check analysis.
+		"""
+		return self.FINAL_CLASS_CHOICES[int(self.first_final_class)][1]		
+
+	def display_final_classification(self):
+
+		"""
+		Take the classification in the database e.g. 0 and return the string \
+		which corresponds to that e.g Pathogenic.
+
+		This displays the result of the second check analysis.
+		"""
+		if  self.second_final_class == 'False':
+			return 'False'
+		else:
+			return self.FINAL_CLASS_CHOICES[int(self.second_final_class)][1]	
+
+	def display_classification(self):
+		"""
+		For instances where we only want to display the final class if the \
+		classification has been completed i.e. second check has been done.
+		"""
+		if self.status == '2' or self.status == '3':
+			return self.display_final_classification()
+		else:
+			return 'Pending'
+			
+	def initiate_classification(self):
+		"""
+		Creates the needed CNVClassificationAnswer objects for a new CNV classification.
+		"""
+		if self.method == 'Gain':
+			answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+			#Check we're not running the function twice
+			if len(answers) == 0:
+				questions = CNVGainClassificationQuestion.objects.all()
+
+				for question in questions:
+
+					new_answer = CNVGainClassificationAnswer.objects.create(
+						cnv = self,
+						cnv_classification_question=question,
+						score = 0,
+						comment = ''
+					)
+					new_answer.save()
+
+			else:
+				return HttpResponseForbidden()
+
+			return None
+		elif self.method == 'Loss':
+			answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			#Check we're not running the function twice
+			if len(answers) == 0:
+				questions = CNVLossClassificationQuestion.objects.all()
+				for question in questions:
+					new_answer = CNVLossClassificationAnswer.objects.create(
+						cnv = self,
+						cnv_classification_question=question,
+						score = 0,
+						comment = ''
+						)
+					new_answer.save()
+			else:
+				return HttpResponseForbidden()
+	
+			return None
+	
+	def calculate_acmg_score_first(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+		Calculates based on the first user's input.
+		Output:
+		integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
+		"""
+		
+		if self.method == 'Gain':
+			# pull out all classification questions and answers
+			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return 'NA'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score
+
+			return final_score
+		
+		elif self.method == 'Loss':
+			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return 'NA'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score
+
+			return final_score
+	
+	def calculate_acmg_score_second(self):
+		"""
+		Use the acmg_classifer util to generate the ACMG classification.
+		Calculates based on the second user's input.
+		Output:
+		integer classification to store in database, corresponding to 
+		FINAL_CLASS_CHOICES above
+		"""
+		
+		if self.gain_loss == 'Gain':
+			# pull out all classification questions and answers
+			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return 'NA'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score_second
+
+			return final_score
+		
+		elif self.gain_loss == 'Loss':
+			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return 'NA'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score_second
+
+			return final_score
+			
+		elif self.gain_loss == 'Loh':
+			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) != all_questions_count:
+				return 'NA'
+
+			final_score = 0
+
+			#Add up total score
+			for answer in classification_answers:
+				final_score+=answer.score_second
+
+			return final_score
+	
+	
+			
+class CNVGene(models.Model):
+	""" 
+	Model to hold all of the CNV genes 
+	"""
+	gene = models.ForeignKey(Gene, on_delete=models.CASCADE)
+	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
+
+class CNVLossClassificationQuestion(models.Model):
+	"""
+	Model to hold the possible questions that a user may be asked for CNV Classification.
+
+	That is hold all the ACMG questions e.g. PVS1
+
+	"""
+
+	CATEGORY_CHOICES = (('Section 1: Initial assessment of genomics content', '1'), 
+						('Section 2: Overlap with established/predicted haploinsufficiency (HI) or established benign genes/genomic regions (Skip to Section 3 if your copy-number loss DOES NOT overlap these types of genes/regions)', '2'),
+						('Section 3: Evaluation of Gene Number', '3'),
+						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if either your CNV overlapped with an established HI gene/region in section 2, OR there have been no reports associating either the CNV or any genes within the CNV with human phenotypes caused by loss of function [LOF] or copy-number loss)', '4'),
+						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
+						('Section 6: Other criteria from SNV variant interpretation guidelines','6'),
+						)
+	
+	TYPE_CHOICES = (('Pathogenic Supporting','PS'),('Benign Supporting','BS'),('Zero','0'),('1B','1B'),('Other','Other'))
+		
+	evidence_type = models.CharField(max_length=500)
+	evidence = models.TextField()
+	suggested = models.TextField()
+	max_score = models.FloatField()
+	category = models.TextField(choices= CATEGORY_CHOICES)
+	qu_type = models.TextField(choices=TYPE_CHOICES)
+	
+	def score_range_pos(self):
+		
+		#code block for having every number between 0 and 1 in increments of 0.05 up to the max score
+		#max_val = self.max_score + 0.01
+		#array = np.arange(0,max_val,0.05)
+		
+		#new_list = []
+		
+		#for i in array:
+		
+		#	new_list.append(str(round(i, 2)))
+		
+		#code block for having only 0, 0.15, 0.3, 0.45, 0.9 and 1 as options, up to the max score
+		array = [0.00,0.15,0.30,0.45,0.90,1.00]
+		new_list = []
+		
+		for i in array:
+			if i <= self.max_score:
+				new_list.append(round(i,2))
+		
+		return new_list
+	
+	def score_range_neg(self):
+		
+		#code block for having every number between 0 and 1 in increments of 0.05 up to the max score
+		#max_val = self.max_score - 0.01
+		#array = np.arange(0,max_val,-0.05)
+		
+		#new_list = []
+		
+		#for i in array:
+		
+		#	new_list.append(str(round(i, 2)))
+		
+		
+		#code block for having only 0, -0.15, -0.3, -0.45, -0.9 and -1 as options, up to the max score
+		array = [0.00,-0.15,-0.30,-0.45,-0.90,-1.00]
+		new_list = []
+		
+		for i in array:
+			if i >= self.max_score:
+				new_list.append(round(i,2))
+		return new_list
+
+		
+class CNVGainClassificationQuestion(models.Model):
+	"""
+	Model to hold the possible questions that a user may be asked for CNV Classification.
+
+	That is hold all the ACMG questions e.g. PVS1
+
+	"""
+
+	CATEGORY_CHOICES = (('Section 1: Initial assessment of genomics content', '1'), 
+						('Section 2: Overlap with established triplosensitive (TS), haploinsufficiency (HI) or benign genes/genomic regions (Skip to Section 3 if your copy-number gain DOES NOT overlap these types of genes/regions)', '2'),
+						('Section 3: Evaluation of Gene Number', '3'),
+						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if there have been no reports associating either the copy-number gain or any of the genes therein with human phenotypes caused by triplosensitivity)', '4'),
+						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
+						('Section 6: Other criteria from SNV variant interpretation guidelines','6'),
+						)
+	
+	TYPE_CHOICES = (('Pathogenic Supporting','PS'),('Benign Supporting','BS'),('Zero','0'),('1B','1B'),('Other','Other'))
+	
+	evidence_type = models.CharField(max_length=500)
+	evidence = models.TextField()
+	suggested = models.TextField()
+	max_score = models.FloatField()
+	category = models.TextField(choices= CATEGORY_CHOICES)
+	qu_type = models.TextField(choices=TYPE_CHOICES)
+	
+	#Function to produce range of values for the scoring
+	def score_range_pos(self):
+		
+		#code block for having every number between 0 and 1 in increments of 0.05 up to the max score
+		#max_val = self.max_score + 0.01
+		#array = np.arange(0,max_val,0.05)
+		
+		#new_list = []
+		
+		#for i in array:
+		
+		#	new_list.append(str(round(i, 2)))
+			
+		#code block for having only 0, 0.15, 0.3, 0.45, 0.9 and 1 as options, up to the max score
+		array = [0.00,0.15,0.30,0.45,0.90,1.00]
+		new_list = []
+		
+		for i in array:
+			if i <= self.max_score:
+				new_list.append(round(i,2))
+		
+		return new_list
+		
+	def score_range_neg(self):
+	 	
+	 	#code block for having every number between 0 and 1 in increments of 0.05 up to the max score
+		#max_val = self.max_score - 0.01
+		#array = np.arange(0,max_val,-0.05)
+		
+		#new_list = []
+		
+		#for i in array:
+		
+		#	new_list.append(str(round(i, 2)))
+		
+		#code block for having only 0, 0.15, 0.3, 0.45, 0.9 and 1 as options, up to the max score
+		array = [0.00,-0.15,-0.30,-0.45,-0.90,-1.00]
+		new_list = []
+		
+		for i in array:
+			if i >= self.max_score:
+				new_list.append(round(i,2))
+		
+		return new_list
+	
+class CNVGainClassificationAnswer(models.Model):
+	"""
+	Model to store the user's selected answer (True, False) and the selected strength for each \
+	ClassificationQuestion in a Classification.
+
+	"""
+	history = AuditlogHistoryField()
+	
+	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
+	cnv_classification_question = models.ForeignKey(CNVGainClassificationQuestion, on_delete=models.CASCADE)
+	score = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
+	comment = models.TextField(null=True)
+	score_second = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
+	comment_second = models.TextField(null=True)
+
+	def __str__(self):
+		return f'{self.id}'
+		
+class CNVLossClassificationAnswer(models.Model):
+	"""
+	Model to store the user's selected answer (True, False) and the selected strength for each \
+	ClassificationQuestion in a Classification.
+
+	"""
+	history = AuditlogHistoryField()
+	
+	cnv = models.ForeignKey(CNV, on_delete=models.CASCADE)
+	cnv_classification_question = models.ForeignKey(CNVLossClassificationQuestion, on_delete=models.CASCADE)
+	score = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
+	comment = models.TextField(null=True)
+	score_second = models.DecimalField(max_digits=10, decimal_places=2, default='0.00')
+	comment_second = models.TextField(null=True)
+
+	def __str__(self):
+		return f'{self.id}'
+
+class CNVUserComment(models.Model):
+	"""
+	Model to hold a comment by a user against a CNV Classification object.
+
+	"""
+
+	classification = models.ForeignKey(CNV, on_delete=models.CASCADE)
+	user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+	text = models.TextField()
+	time = models.DateTimeField()
+	visible = models.BooleanField(default=True)
+
+	def __str__(self):
+		if len(self.text) > 50:
+			return f'{self.text[:50]}...'
+		else:
+			return f'{self.text}'
+
+
+	def get_evidence(self):
+		"""
+		Return the evidence associated with a comment.
+
+		"""
+		evidence = CNVEvidence.objects.filter(comment=self)
+
+		if len(evidence) == 0:
+
+			return None
+
+		return evidence
+		
+class CNVEvidence(models.Model):
+	"""
+	Model to hold files that relate to CNV evidence e.g. pdfs, screenshots.
+	Must be associated with a comment.
+	"""
+
+	file = models.FileField(upload_to='uploads/', null=True, blank=True)
+	comment = models.ForeignKey(CNVUserComment, on_delete=models.CASCADE)
 
 # register audit logs
 auditlog.register(Worklist)
@@ -596,3 +1129,5 @@ auditlog.register(ClassificationQuestion)
 auditlog.register(ClassificationAnswer)
 auditlog.register(UserComment)
 auditlog.register(Evidence)
+auditlog.register(CNVSample)
+auditlog.register(CNV)

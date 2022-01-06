@@ -1,0 +1,67 @@
+Sample ID: 22M12345
+
+Subject information
+
+Subject ID: C22-1234
+Last name: Bloggs	First name: Joe
+DOB: 2000-01-01
+Sex: Male
+
+
+Experimental Details
+
+Microarray	Barcode: 205704070050
+Microarray type: Illumina CytoSNP-850K v1.2	Location: R01C01
+GTC file: 205704070050_R01C01.gtc
+SNP manifest file: CytoSNP-850Kv1-2_iScan_D2.bpm	SNP cluster file: CytoSNP-850Kv1-2_iScan_EMEA_ClusterFile_27Jun2019.egt
+Ensembl version: 91	Genome build name: GRCh38
+Experiment date: 2021-10-29
+Description: Training run
+
+
+##################################################
+
+QC Measures
+QC Status			Pass
+SD Autosome/Robust			0.11/0.09
+DLR Raw			0.09
+Median Log R Deviation			0.10
+Median BAF Deviation			0.03
+Median Call Rate			1.00
+
+
+##################################################
+
+Sign Off History
+Sign Off at 	30/11/21 15:13:55. 	ma083862. 	Level 2 Sign Off
+Sign Off at 	30/11/21 15:08:36. 	ma083862. 	Level 2 Sign Off
+Sign Off at 	30/11/21 15:06:10. 	ma083862. 	Level 1 Sign Off
+
+
+Tabular View
+
+(*) Assessments with a ? DO NOT represent a diagnosis. A question mark in the assessment field indicates the assessment was obtained automatically through application of ad-hoc rules and should be considered only as a helpful aid for prioritization. It does not indicate, in any way, an automated diagnosis, and all automated assessments should be manually confirmed or modified. 
+
+Number of Regions		3
+Region	Start Cyto	End Cyto	Assessment	Type	Copy #	Chromosome	Start	End	Size (bp)	Man Change	Included	Excluded	%Included
+1	7q11.23	7q11.23	Benign	GAIN	0.13	7	76,815,331	76,978,826	163,496	yes	14	0	100.00
+2	12p12.1	12p12.1	Benign	LOSS	-0.41	12	21,197,395	21,199,252	1,858	yes	11	0	100.00
+3	15q11.2	15q11.2	Pathogenic	LOSS	-0.30	15	22,711,766	23,220,738	508,973	yes	147	0	100.00
+
+####################################################################################################
+
+Detailed Region Summary
+
+Region 1	Start Cyto	End Cyto	Assessment	Type	Copy #	Chromosome	Start	End	Size (bp)	Man Change	Included	Excluded	%Included
+min	7q11.23	7q11.23	Benign	GAIN	0.13	7	76,815,331	76,978,826	163,496	yes	14	0	100.00
+max	7q11.23	7q11.23	Benign	GAIN	0.13	7	76,803,336	76,986,032	182,697	yes	14	0	100.00
+Region 2	Start Cyto	End Cyto	Assessment	Type	Copy #	Chromosome	Start	End	Size (bp)	Man Change	Included	Excluded	%Included
+min	12p12.1	12p12.1	Benign	LOSS	-0.41	12	21,197,395	21,199,252	1,858	yes	11	0	100.00
+max	12p12.1	12p12.1	Benign	LOSS	-0.41	12	21,197,100	21,199,489	2,390	yes	11	0	100.00
+Region 3	Start Cyto	End Cyto	Assessment	Type	Copy #	Chromosome	Start	End	Size (bp)	Man Change	Included	Excluded	%Included
+min	15q11.2	15q11.2	Pathogenic	LOSS	-0.30	15	22,711,766	23,220,738	508,973	yes	147	0	100.00
+max	15q11.2	15q11.2	Pathogenic	LOSS	-0.30	15	22,708,781	23,422,265	713,485	yes	147	0	100.00
+
+####################################################################################################
+
+Warning: All results should be confirmed using an alternative technique.

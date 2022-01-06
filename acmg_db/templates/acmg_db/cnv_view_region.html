@@ -1,0 +1,122 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+
+
+<br>
+<h4>All Unique CNV classifications in the region {{chromosome}}:{{start}}-{{stop}}</h4>
+<br>
+
+<!------------ table of unique variants ------------>
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>CNV (Click to View All)</th>
+	  <th>Length</th>
+	  <th>Cytogenetic Location</th>
+	  <th>Gain/Loss Status of Last Classification</th>
+	  <th>Gene(s)</th>
+	  <th>Last Classification<br>(Click to view)</th>
+	  <th>Last Classification Date</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for cnv in cnvs %}
+	<tr>
+	  {% if cnv.genome == 'GRCh37' %}
+	  <td><a href="{% url 'view_cnv' pk=cnv.cnv ref=cnv.genome %}">{{ cnv.cnv }}</a><br><span class="badge badge-info badge-pill">{{ cnv.genome }}</td>
+	  {% elif cnv.genome == 'GRCh38' %}
+	  <td><a href="{% url 'view_cnv' pk=cnv.cnv ref=cnv.genome %}">{{ cnv.cnv }}</a><br><span class="badge badge-success badge-pill">{{ cnv.genome }}</td>
+	  {% endif %}
+	  <td>{{ cnv.most_recent_obj.cnv.length }}</td>
+	  <td>{{ cnv.most_recent_obj.cnv.cyto_loc }}</td>
+	  <td>{{ cnv.most_recent_obj.gain_loss }}</td>
+	 <td>
+	  {% for gene in cnv.most_recent_obj.genes_as_list %}
+	  	<span class="badge badge-warning">{{ gene.gene }}</span>
+	  {% endfor %}
+	  </td>
+	  <td>
+		<!-- change button colour based on class -->
+		<a class=
+
+			{% if 'Benign' in cnv.most_recent_class %}
+			  "btn btn-info btn-sm"
+			{% elif 'Pathogenic' in cnv.most_recent_class %}
+			  "btn btn-danger btn-sm"
+			{% elif 'VUS' in cnv.most_recent_class %}
+			  "btn btn-warning btn-sm"
+			{% elif 'Artefact' in cnv.most_recent_class %}
+			  "btn btn-secondary btn-sm"
+			{% elif 'Contradictory' in cnv.most_recent_class %}
+			  "btn btn-primary btn-sm"
+			{% else %}
+			  "btn btn-light btn-sm"
+			{% endif %}
+
+		  href="{% url 'cnv_view_classification' pk=cnv.most_recent_obj.pk %}" role="button"><span class="fa fa-binoculars"></span> {{ cnv.most_recent_class }}
+		</a>
+	  </td>
+	  <td>{{ cnv.most_recent_date | date:"Y/m/d" }}</td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+  <tfoot>
+	<tr>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	</tr>
+  </tfoot>
+
+</table>
+<br>
+<br>
+
+
+<!------------ Javascript ------------>
+<script>
+$(document).ready(function(){
+
+ // Setup - add a text input to each footer cell
+    $('#classifications tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" class="form-control" placeholder="Search '+title+'" />' );
+    } );
+ 
+    // DataTable
+    // Inititialise DataTable
+	var table = $('#classifications').DataTable({
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"pageLength": 25,
+		"searching": true,
+		"aaSorting": [],
+	});
+ 
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+
+
+});
+</script>
+
+{% endblock %}

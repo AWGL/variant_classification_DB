@@ -1,0 +1,122 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+
+
+<h4> All CNVs With Complete Classification for Gene: {{genes.0.gene}} </h4>
+
+
+<br>
+
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>CNV</th>
+	  <th>Length</th>
+	  <th>Cytogenetic Location</th>
+	  <th>Gene(s)</th>
+	  <th>Classification (Click to view)</th>
+	  <th>Classification Date</th>
+	  <th>Genuine</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for gene in genes %}
+	<tr>
+		<td>
+	  	{% if gene.cnv.cnv.genome == 'GRCh37' %}
+	  	{{ gene.cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ gene.cnv.cnv.genome }}
+	  	{% elif gene.cnv.cnv.genome == 'GRCh38' %}
+	  	{{ gene.cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ gene.cnv.cnv.genome }}
+	  	{% endif %}
+	  	</td>
+	  	<td>{{gene.cnv.cnv.length}}</td>
+	  	<td>{{gene.cnv.cnv.cyto_loc}}</td>
+		<td>
+	 	{% for gene in gene.cnv.genes_as_list %}
+	  		<span class="badge badge-warning">{{ gene.gene }}</span>
+	  	{% endfor %}
+	  	</td>
+		<td>
+		{% if 'Benign' in gene.cnv.display_classification %}
+		<a class="btn btn-sm btn-info" href="{% url 'cnv_view_classification' pk=gene.cnv.pk %}" role="button"> 
+		{% elif 'Pathogenic' in gene.cnv.display_classification %}
+		<a class="btn btn-sm btn-danger" href="{% url 'cnv_view_classification' pk=gene.cnv.pk %}" role="button"> 
+		{% elif 'VUS' in gene.cnv.display_classification %}
+		<a class="btn btn-sm btn-warning" href="{% url 'cnv_view_classification' pk=gene.cnv.pk %}" role="button"> 
+		{% elif 'Artefact' in gene.cnv.display_classification %}
+		<a class="btn btn-sm btn-secondary" href="{% url 'cnv_view_classification' pk=gene.cnv.pk %}" role="button"> 
+		{% elif 'Contradictory' in gene.cnv.display_classification %}
+		<a class="btn btn-sm btn-primary" href="{% url 'cnv_view_classification' pk=gene.cnv.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-sm btn-light" href="{% url 'cnv_view_classification' pk=gene.cnv.pk %}" role="button"> 
+		{% endif %}	
+			<span class="fa fa-binoculars"></span>  {{ gene.cnv.display_classification}} 
+		</a>
+		</td>
+		<td> {{gene.cnv.second_check_date|date:"Y/m/d"}}</td>
+		<td> {{gene.cnv.display_genuine}}</td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+  <tfoot>
+	<tr>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	  <th></th>
+	</tr>
+  </tfoot>
+
+</table>
+<br>
+<br>
+
+
+
+<script>
+$(document).ready(function(){
+
+ // Setup - add a text input to each footer cell
+    $('#classifications tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" class="form-control" placeholder="Search '+title+'" />' );
+    } );
+ 
+    // DataTable
+    	// Inititialise DataTable
+	var table = $('#classifications').DataTable({
+		"paging":   true,
+		"ordering": true,
+		"info":     false,
+		"pageLength": 25,
+		"searching": true,
+		"aaSorting": [],
+	});
+ 
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+
+
+});
+</script>
+
+{% endblock %}

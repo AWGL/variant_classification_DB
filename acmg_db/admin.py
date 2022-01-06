@@ -61,3 +61,33 @@ class PanelAdmin(admin.ModelAdmin):
     list_display = ('panel', 'added_by',)
     search_fields = ('panel', 'added_by',)
 admin.site.register(Panel, PanelAdmin)
+
+class CNVSampleAdmin(admin.ModelAdmin):
+	list_display = ('id','sample_name','worklist',)
+	search_fields = ('id','sample_name','worklist',)
+admin.site.register(CNVSample, CNVSampleAdmin)
+
+class CNVAdmin(admin.ModelAdmin):
+	list_display = ('pk','cnv',)
+	search_fields = ('pk','cnv',)
+admin.site.register(CNV, CNVAdmin)
+
+class CNVLossClassificationQuestionAdmin(admin.ModelAdmin):
+	list_display = ('category','evidence_type','evidence',)
+	search_fields = ('category','evidence_type','evidence',)
+admin.site.register(CNVLossClassificationQuestion, CNVLossClassificationQuestionAdmin)
+
+class CNVGainClassificationQuestionAdmin(admin.ModelAdmin):
+	list_display = ('category','evidence_type','evidence',)
+	search_fields = ('category','evidence_type','evidence',)
+admin.site.register(CNVGainClassificationQuestion, CNVGainClassificationQuestionAdmin)
+
+class CNVLossClassificationAnswerAdmin(admin.ModelAdmin):
+	list_display = ('cnv','cnv_classification_question',)
+	search_fields = ('cnv','cnv_classification_question',)
+admin.site.register(CNVLossClassificationAnswer, CNVLossClassificationAnswerAdmin)
+
+class CNVGeneAdmin(admin.ModelAdmin):
+	list_display = ('gene','cnv',)
+	search_fields = ('gene','cnv',)
+admin.site.register(CNVGene, CNVGeneAdmin)

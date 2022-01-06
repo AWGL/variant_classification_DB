@@ -9,3 +9,6 @@ from acmg_db.views.reporting_views import *
 from acmg_db.views.search_views import *
 from acmg_db.views.download_views import *
 from acmg_db.views.api_views import *
+from acmg_db.views.cnv_views import *
+from acmg_db.views.cnv_first_check_views import *
+from acmg_db.views.cnv_second_check_views import *
