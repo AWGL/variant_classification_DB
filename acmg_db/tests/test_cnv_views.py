@@ -84,13 +84,13 @@ class TestCNVChecks(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
-					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+		cnvobj, created = CNV.objects.get_or_create(
+					sample = cnvsampleobj,
+					cnv = cnvvariantobj,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user
@@ -99,7 +99,7 @@ class TestCNVChecks(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 		
 	# Testing that we can view first check	
@@ -165,13 +165,13 @@ class TestCNVPermissionChecks(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
-					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+		cnvobj, created = CNV.objects.get_or_create(
+					sample = cnvsampleobj,
+					cnv = cnvvariantobj,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -182,7 +182,7 @@ class TestCNVPermissionChecks(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 	
 	# Test that we can view second check when set correctly

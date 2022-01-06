@@ -24,13 +24,13 @@ class TestCNVScoreGain(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
+		cnvobj, created = CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+					cnv = cnvvariantobj,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user
@@ -40,19 +40,19 @@ class TestCNVScoreGain(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 		
 	# Test if CNV score calculator returns 0 if no data passed via ajax for scores	
 	def test_acmg_cnv_score_first_na(self):
 		
-		cnv = CNV.objects.get(pk=1)
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
 		
 		self.assertEqual(cnv.calculate_acmg_score_first(), 'NA')
 		
 	def test_acmg_cnv_score_second_na(self):
 		
-		cnv = CNV.objects.get(pk=1)
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
 		
 		self.assertEqual(cnv.calculate_acmg_score_second(), 'NA')
 		
@@ -66,7 +66,7 @@ class TestCNVScoreGain(TestCase):
 		data = {'cnvs': [('{" 1":["0.33","Comment"]," 2":["0.33","None"]," 3":["0.34","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]}')], 'cnv_pk': ['1']}
 		response = self.client.post('/ajax/acmg_cnv_classification_first/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 		
-		cnv_obj = CNV.objects.get(pk=1)
+		cnv_obj = CNV.objects.get(sample__sample_name="11M11111")
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_first(), 1.00)
 	
@@ -86,13 +86,13 @@ class TestCNVScoreGainSecond(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
+		cnvobj, created = CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+					cnv = cnvvariantobj,
 					gain_loss = 'Gain',
 					method = 'Gain',
 					user_creator = self.user,
@@ -103,7 +103,7 @@ class TestCNVScoreGainSecond(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 		
 	
@@ -115,7 +115,7 @@ class TestCNVScoreGainSecond(TestCase):
 		data = {'cnvs': [('{" 1":["-1","Comment"]," 2":["0.5","None"]," 3":["1","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]}')], 'cnv_pk': ['1']}
 		response = self.client.post('/ajax/acmg_cnv_classification_second/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 		
-		cnv_obj = CNV.objects.get(pk=1)
+		cnv_obj = CNV.objects.get(sample__sample_name="11M11111")
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_second(), 0.5)
 		
@@ -133,13 +133,13 @@ class TestCNVScoreLoss(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
+		cnvobj, created = CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+					cnv = cnvvariantobj,
 					gain_loss = 'Loss',
 					method = 'Loss',
 					user_creator = self.user
@@ -149,7 +149,7 @@ class TestCNVScoreLoss(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 		
 	
@@ -162,7 +162,7 @@ class TestCNVScoreLoss(TestCase):
 		data = {'cnvs': [('{" 1":["0.33","Comment"]," 2":["0.33","None"]," 3":["0.34","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]," 45":["0","None"]," 46":["0","None"]}')], 'cnv_pk': ['1']}
 		response = self.client.post('/ajax/acmg_cnv_classification_first/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 		
-		cnv_obj = CNV.objects.get(pk=1)
+		cnv_obj = CNV.objects.get(sample__sample_name="11M11111")
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_first(), 1.00)
 
@@ -181,13 +181,13 @@ class TestCNVScoreLossSecond(TestCase):
 		
 		Panel.objects.get_or_create(panel='Array', added_by = self.user)
 		
-		CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
+		cnvsampleobj, created = CNVSample.objects.get_or_create(sample_name = '11M11111', worklist = Worklist.objects.get(name = '12-12345'), affected_with = 'phenotype', analysis_performed = Panel.objects.get(panel = 'Array'), analysis_complete = 'False', platform = 'SNP Array', cyto = 'C11-1111')
 		
-		CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
+		cnvvariantobj, created = CNVVariant.objects.get_or_create(full = 'X:123456:234567', chromosome = 'X', start = '123456', stop = '234567', length = '111111', genome = 'GRCh37', max_start = '123456', max_stop = '234567')
 		
-		CNV.objects.get_or_create(
+		cnvobj, created = CNV.objects.get_or_create(
 					sample = CNVSample.objects.get(sample_name='11M11111'),
-					cnv = CNVVariant.objects.get(pk = 1),
+					cnv = cnvvariantobj,
 					gain_loss = 'Loss',
 					method = 'Loss',
 					user_creator = self.user,
@@ -198,7 +198,7 @@ class TestCNVScoreLossSecond(TestCase):
 
 		CNVGene.objects.get_or_create(
 						gene = gene,
-						cnv = CNV.objects.get(pk = 1)
+						cnv = cnvobj
 		)
 		
 	
@@ -210,7 +210,7 @@ class TestCNVScoreLossSecond(TestCase):
 		data = {'cnvs': [('{" 1":["-1","Comment"]," 2":["0.5","None"]," 3":["1","None"]," 4":["0","None"]," 5":["0","None"]," 6":["0","None"]," 7":["0","None"]," 8":["0","None"]," 9":["0","None"]," 10":["0","None"]," 11":["0","None"]," 12":["0","None"]," 13":["0","None"]," 14":["0","None"]," 15":["0","None"]," 16":["0","None"]," 17":["0","None"]," 18":["0","None"]," 19":["0","None"]," 20":["0","None"]," 21":["0","None"]," 22":["0","None"]," 23":["0","None"]," 24":["0","None"]," 25":["0","None"]," 26":["0","None"]," 27":["0","None"]," 28":["0","None"]," 29":["0","None"]," 30":["0","None"]," 31":["0","None"]," 32":["0","None"]," 33":["0","None"]," 34":["0","None"]," 35":["0","None"]," 36":["0","None"]," 37":["0","None"]," 38":["0","None"]," 39":["0","None"]," 40":["0","None"]," 41":["0","None"]," 42":["0","None"]," 43":["0","None"]," 44":["0","None"]," 45":["0","None"]," 46":["0","None"]}')], 'cnv_pk': ['1']}
 		response = self.client.post('/ajax/acmg_cnv_classification_second/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
 		
-		cnv_obj = CNV.objects.get(pk=1)
+		cnv_obj = CNV.objects.get(sample__sample_name="11M11111")
 
 		self.assertEqual(cnv_obj.calculate_acmg_score_second(), 0.5)
 		
