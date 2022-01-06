@@ -104,26 +104,38 @@ class TestCNVChecks(TestCase):
 		
 	# Testing that we can view first check	
 	def test_view_cnv_first_check(self):
-	
-		response = self.client.get('/cnv_first_check/1/')
+		
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_first_check/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		self.assertEqual(response.status_code,200)
 	
 	# Testing that we can't view second check yet
 	def test_view_cnv_second_check_permission(self):
-	
-		response = self.client.get('/cnv_second_check/1/')
+		
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_second_check/'+str(pk)+'/'		
+			
+		response = self.client.get(path)
 		self.assertEqual(response.status_code,403)
 	
 	
 	#Testing that we can view the classification summary
 	def test_view_cnv_classification(self):
 		
-		response = self.client.get('/cnv_view_classification/1/')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_view_classification/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		self.assertEqual(response.status_code, 200)
 		
 	#Testing that we can view the sample summary
 	def test_view_cnv_sample(self):
-	
+		
 		response = self.client.get('/cnv_view_sample/11M11111/')
 		self.assertEqual(response.status_code, 200)
 	
@@ -136,7 +148,11 @@ class TestCNVChecks(TestCase):
 	#Testing that we can view the cnv summary
 	def test_view_cnv(self):
 		
-		response = self.client.get('/view_cnv/1/GRCh37')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/view_cnv/'+str(pk)+'/GRCh37'
+		
+		response = self.client.get(path)
 		self.assertEqual(response.status_code, 200)
 		
 	#Testing that we can view the CNV region summary - with random region
@@ -188,26 +204,36 @@ class TestCNVPermissionChecks(TestCase):
 	# Test that we can view second check when set correctly
 	def test_view_cnv_second_check(self):
 		
-		response = self.client.get('/cnv_second_check/1/')
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_second_check/'+str(pk)+'/'
+		
+		response = self.client.get(path)
 		self.assertEqual(response.status_code, 200)
 		
 	
 	#Testing that we can't view first check when status is set to second check
 	def test_view_first_when_second(self):
 		
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_first_check/'+str(pk)+'/'
 		
-		response = self.client.get('/cnv_first_check/1/')
+		response = self.client.get(path)
 		self.assertEqual(response.status_code, 403)
 		
 	#Test that non-assigned user can't access second check
 	def test_assigned_user(self):
 		
+		cnv = CNV.objects.get(sample__sample_name="11M11111")
+		pk = cnv.pk
+		path = '/cnv_second_check/'+str(pk)+'/'
 		
 		self.client.login(username='test', password='hello123')
-		response = self.client.get('/cnv_second_check/1/')
+		response = self.client.get(path)
 		
 		self.client.login(username='testuser', password='hello123!')
-		response = self.client.get('/cnv_second_check/1/')
+		response = self.client.get(path)
 		self.assertEqual(response.status_code, 403)
 	
 		
