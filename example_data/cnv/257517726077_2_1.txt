@@ -1,0 +1,37 @@
+CytoSure Interpret Software Aberration Report for C18-6960
+
+Sample Data
+Sample ID	C18-6965
+Gender	Male
+First Name	Django
+Last Name	Cumberdale
+
+Genome Build	hg19:GRCh37:Feb2009
+Experiment Details
+Array Barcode	257517726077_2_1
+Design	Constitutional v3 (8x60k) (075177)
+Molecular Number	sample2
+Aneuploidy Summary Analyst	No additional imbalance
+Software Version	4.10.44
+Analysis Protocol	OGTv3_EFSA
+Result	VOUS - likely pathogenic
+Target Regions	
+
+QC Metrics
+DLR Spread	Red Signal-to-Noise Ratio	Green Signal-to-Noise Ratio	Non-Uniform Features	
+0.125	93.7748	92.0319	0.04%	
+
+
+Aberrations
+ISCN Notation	Gain/Loss	# Probes	Mean Log Ratio	Size	Classification (Initial)	OMIM Morbids	Genes	Region List	
+arr[GRCh37] 2q37.3(242856599_243007457)x1	Loss	30	-0.7489	150.86Kb	Benign		AC131097.3; AC093642.3; AC093642.4; AC093642.6; 	?	
+arr[GRCh37] 6p25.3(259531_339797)x1	Loss	13	-0.729	80.27Kb	Benign		DUSP22; 	?	
+arr[GRCh37] 18q21.2(53020611_53192900)x1	Loss	41	-0.8463	172.29Kb	Pathogenic	TCF4; 	TCF4; RP11-619L19.1; MIR4529; RP11-619L19.2; 	?	
+arr[GRCh37] Xp22.33(76118_161232)x2	Gain	6	0.4502	85.11Kb	Benign			?	
+arr[GRCh37] Xp22.31(7809282_7812197)x2	Gain	13	0.3055	2.92Kb	Benign		VCX; 	?	
+arr[GRCh37] Xp22.31(8433618_8434361)x2	Gain	7	0.3236	744b	Benign		VCX3B; 	?	
+arr[GRCh37] Yp11.32(27254_111232)x2	Gain	4	0.6092	83.98Kb	Benign			?	
+arr[GRCh37] Yq11.223(25290579_25309853)x0	Loss	16	-0.6683	19.27Kb	Benign	DAZ1; 	DAZ1; 	?	
+arr[GRCh37] Yq11.223(25379293_25410421)x0	Loss	27	-0.6435	31.13Kb	Benign	DAZ2; 	DAZ2; 	?	
+arr[GRCh37] Yq11.23(26928273_26943521)x0	Loss	21	-0.7325	15.25Kb	Benign	DAZ3; 	DAZ3; 	?	
+arr[GRCh37] Yq11.23(27006933_27028478)x0	Loss	19	-0.7041	21.55Kb	Benign	DAZ4; 	DAZ4; 	?	

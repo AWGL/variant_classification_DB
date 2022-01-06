@@ -1,0 +1,417 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<style>
+.evidence_images {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.evidence_images:hover {opacity: 0.7;}
+</style>
+
+
+<br>
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="variant_info" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Information</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">History</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+  <hr>
+  <h3> CNV Classification Information </h3>
+  <hr>
+
+  <table id="classification_info" class = "table table-hover table-bordered table-sm" style="width:50%">
+    <thead>
+    </thead>
+    <tbody>
+      <tr>
+        <td> Classification </td>
+        <td>
+          {% if 'Pathogenic' in cnv.display_classification %}
+            <button type="button" class="btn btn-danger" style="width: 40rem;">{{cnv.display_classification}}</button>
+          {% elif 'Benign' in cnv.display_classification %}
+            <button type="button" class="btn btn-info" style="width: 40rem;">{{cnv.display_classification}}</button>
+          {% elif 'VUS' in cnv.display_classification %}
+            <button type="button" class="btn btn-warning" style="width: 40rem;">{{cnv.display_classification}}</button>
+          {% elif 'Artefact' in cnv.display_classification %}
+            <button type="button" class="btn btn-secondary" style="width: 40rem;">{{cnv.display_classification}}</button>
+          {% elif 'Contradictory' in cnv.display_classification %}
+            <button type="button" class="btn btn-primary" style="width: 40rem;">{{cnv.display_classification}}</button>
+          {% else %}
+            <button type="button" class="btn btn-light" style="width: 40rem;">{{cnv.display_classification}}</button>
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td> Classification ID </td>
+        <td> {{cnv.pk}} </td>
+      </tr>
+      <tr>
+        <td> CNV (Based on Min)</td>
+        {% if cnv.cnv.genome == 'GRCh37' %}
+	 <td>{{ cnv.display }} <span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}</td>
+	  {% elif cnv.cnv.genome == 'GRCh38' %}
+	  <td>{{ cnv.display }} <span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}</td>
+	  {% endif %}
+      </tr>
+      <tr>
+	<td>Max CNV (if information not available, min coordinates given)</td>
+	<td>{{ cnv.cnv.chromosome }}:{{ cnv.cnv.max_start }}-{{ cnv.cnv.max_stop }}
+      </tr>
+      <tr>
+      	<td>Length</td>
+      	<td>{{ cnv.cnv.length }}</td>
+      <tr>
+      	<td>Cytogenetic Location</td>
+      	<td>{{ cnv.cnv.cyto_loc }}</td>
+      </tr>
+      </tr>
+      <tr>
+        <td> Gene(s) </td>
+        <td> {% for gene in cnv.genes_as_list %}
+	  	<span class="badge badge-warning">{{ gene.gene }}</span>
+	  {% endfor %}
+	 </td>
+      </tr>
+      <tr> 
+      	<td> Gain/Loss </td>
+      	<td> {{ cnv.gain_loss }}</td>
+      </tr>
+      <tr>
+      	<td> Guidelines Used </td>
+      	<td> {{ cnv.method }}</td>
+      </tr>
+      <tr>
+        <td> Created Date </td>
+        <td> {{ cnv.creation_date|date:"d/m/Y"}} </td>
+      </tr>
+      <tr>
+        <td> Creation User</td>
+        <td> {{cnv.user_creator }} </td>
+      </tr>
+      <tr>
+        <td> First Check Date </td>
+        <td> {{ cnv.first_check_date|date:"d/m/Y"}} </td>
+      </tr>
+      <tr>
+        <td> First Check User</td>
+        <td> {{cnv.user_first_checker }} </td>
+      </tr>
+      <tr>
+        <td> Second Check Date</td>
+        <td> {{ cnv.second_check_date|date:"d/m/Y"}} </td>
+      </tr>
+      <tr>
+        <td> Second Check User</td>
+        <td> {{cnv.user_second_checker }} </td>
+      </tr>
+      <tr>
+        <td> Status </td>
+        <td> {{cnv.display_status }} </td>
+      </tr>
+      <tr>
+        <td> Genuine Variant? </td>
+        <td> {{cnv.display_genuine }} </td>
+      </tr>
+      <tr>
+        <td> Molecular Number </td>
+        <td> {{cnv.sample.sample_name }} </td>
+      <tr>
+        <td> Cyto Number </td>
+        <td> {{cnv.sample.cyto }} </td>
+      </tr>
+       <tr>
+        <td> Worklist </td>
+        <td> {{cnv.sample.worklist }} </td>
+      </tr>
+      <tr>
+        <td> Analysis Performed </td>
+        <td> {{cnv.sample.analysis_performed|linebreaksbr }} </td>
+      </tr>
+      <tr>
+        <td> Affected With </td>
+        <td> {{cnv.sample.affected_with|linebreaksbr }} </td>
+      </tr>
+      <tr>
+        <td> Inheritance Pattern </td>
+        <td> {{cnv.inheritance|linebreaksbr }} </td>
+      </tr>
+      <tr>
+        <td> Copy Number </td>
+        <td> {{cnv.copy|linebreaksbr }} </td>
+      </tr>
+      <tr>
+        <td> Genotype </td>
+        <td> {{cnv.genotype|linebreaksbr }} </td>
+      </tr>
+    </tbody>
+
+  </table>
+  <br/>
+
+
+
+<!-------- ACMG section -------->
+  <hr>
+  <h3> ACMG Details </h3>
+  <hr><br/>
+
+<!-- Summary table -->
+{% if cnv.genuine == '1' %}
+	
+          {% if 'Pathogenic' in cnv.display_first_classification %}
+            <button type="button" class="btn btn-danger" style="width: 40rem;">First Check: {{cnv.display_first_classification}} |  Score = {{ cnv.first_final_score }}</button>
+          {% elif 'Benign' in cnv.display_first_classification %}
+            <button type="button" class="btn btn-info" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+          {% elif 'VUS' in cnv.display_first_classification %}
+            <button type="button" class="btn btn-warning" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+          {% elif 'Artefact' in cnv.display_first_classification %}
+            <button type="button" class="btn btn-secondary" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+          {% elif 'Contradictory' in cnv.display_first_classification %}
+            <button type="button" class="btn btn-primary" style="width: 40rem;">{{cnv.display_first_classification}}  |  Score = {{ cnv.first_final_score }}</button>
+          {% else %}
+            <button type="button" class="btn btn-light" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+          {% endif %}
+
+          <br>
+          <br>
+
+          {% if 'Pathogenic' in cnv.display_classification %}
+            <button type="button" class="btn btn-danger" style="width: 40rem;">First Check: {{cnv.display_classification}} |  Score = {{ cnv.second_final_score }}</button>
+          {% elif 'Benign' in cnv.display_classification %}
+            <button type="button" class="btn btn-info" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+          {% elif 'VUS' in cnv.display_classification %}
+            <button type="button" class="btn btn-warning" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+          {% elif 'Artefact' in cnv.display_classification %}
+            <button type="button" class="btn btn-secondary" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+          {% elif 'Contradictory' in cnv.display_classification %}
+            <button type="button" class="btn btn-primary" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+          {% else %}
+            <button type="button" class="btn btn-light" style="width: 40rem;">{{cnv.display_classification}}  |  Score = {{ cnv.second_final_score }}</button>
+          {% endif %}
+
+          <br>
+          <hr>
+
+	<br><h5> Table of all scores assigned DIFFERING FROM 0</h5>
+	<br>
+
+  <!-- Full list of codes -->
+  <table id="acmg_question_table" class = "table table-hover table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <th style="display:none;" class='answer_pk'> Answer PK </th>
+        <th style="display:none;" class='cat'> Category </th>
+        <th> Evidence Type </th>
+        <th> Evidence Description </th>
+        <th> First Allocated Score </th>
+        <th> First Comment </th>
+        <th> Second Allocated Score </th>
+        <th> Second Comment </th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for answer in cnv_answers %}
+
+      {% if answer.score != 0 or answer.score_second != 0 %}
+        <td class='answer_pk' style="display:none;"> {{ answer.pk}}</td>
+        <td class='cat' style="display:none;"> {{ answer.cnv_classification_question.category}}</td>
+        <td> {{ answer.cnv_classification_question.evidence_type  }} </td>
+        <td> {{ answer.cnv_classification_question.evidence  }} </td>
+        <td>{{ answer.score }}</td>
+        <td>{{ answer.comment }}</td>
+        <td>{{ answer.score_second }}</td>
+        <td>{{ answer.comment_second }}</td>
+      </tr>
+      {% endif %}
+          
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% else %}
+  <div class="alert alert-warning" role="alert">
+    <p>This variant was not set for a new ACMG classification to be carried out.</p>
+  </div>
+
+{% endif %}
+
+
+    <hr>
+    <h3> Comments and Evidence </h3>
+    <hr>
+    <div id='comment_box'>
+      <!-- Comment box folds the comments and files for the variant - updated via ajax -->
+      {% for comment in comments %}
+        <div class="card">
+          <h7 class="card-header">{{comment.user}} on {{comment.time}}</h7>
+          <div class="card-body">
+            {{comment.text|linebreaks}}
+            {% if comment.get_evidence == None %}
+            {% else %}
+              <hr>
+              {% for evidence in comment.get_evidence %}
+
+                  {% if evidence.file|make_list|slice:"-4:"|join:"" == ".png" %}
+
+                        <a href="/media/{{ evidence.file }}" target="_blank"> <img class="evidence_images" src=/media/{{ evidence.file }} style="width:100%;max-width:300px"></a>
+
+                  {% else %}
+
+                        <a href="/media/{{ evidence.file }}" target="_blank">{{evidence.file }} </a>
+
+    {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <hr>
+      {% endfor %}
+
+</div>
+
+
+
+</div>
+<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+  <br>
+
+ <table id="history" class = "table table-hover table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Time</th>
+        <th>User</th>
+        <th>Changes</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in history %}
+
+            <td>{{h.object_pk}}</td>
+            <td>{{h.timestamp}}</td>
+            <td>{{h.actor}}</td>
+            <td>{{h.changes}}</td>
+          </tr>
+          
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+{% if cnv.status == '2' %}
+
+<hr>
+<h3> Archive Classification </h3>
+<hr>
+
+
+{% crispy archive_form %}
+
+{% endif %}
+
+
+{% if cnv.status == '0' or cnv.status == '1' %}
+
+<hr>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalLong">
+  Reset Classification
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Watch Out!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to reset the Classification - any selected Answers will be deleted?
+      </div>
+      <div class="modal-footer">
+          {% crispy reset_form %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% if cnv.status == '1' and cnv.user_second_checker != request.user %}
+
+<hr>
+
+{% crispy assign_form %}
+
+{% endif %}
+
+{% if cnv.status == '1'  %}
+
+  {% if cnv.user_second_checker == request.user %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+
+  {% elif cnv.user_first_checker == request.user %}
+
+    <hr>
+
+    {% crispy sendback_form %}
+
+
+
+{% endif %}
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+<br>
+<br>
+
+</div>
+
+
+<!-- Javascript -->
+<script>
+$(document).ready(function(){
+
+// Inititialise DataTable
+  var table = $('#acmg_question_table').DataTable({
+    "paging":   false,
+    "ordering": false,
+    "info":     false,
+    "searching": false,
+    "rowGroup": {
+        dataSrc: 1
+    }
+    });
+
+});
+
+</script>
+
+{% endblock %}

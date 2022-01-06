@@ -1,0 +1,222 @@
+{% extends 'acmg_db/cnv_base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br>
+<h4>CNV Reporting</h4>
+<br>
+<h5>Select worksheet to view summary</h5>
+
+
+<!-- Worksheet search form -->
+<div class="card card-body bg-light">
+	{% crispy form %}
+</div>
+<br>
+
+
+<!-- Message if search hasnt been submitted -->
+{% if cnvs == None %}
+<!--<div class="alert alert-warning" role="alert">
+	Search for a run above.
+</div>-->
+
+
+<!-- Summary of worksheet -->
+{% else %}
+<h5>Worksheet status</h5>
+<table class = "table table-hover table-bordered col-5">
+	<tr>
+		<td style="width: 20%">Status</td>
+		<td style="width: 20%">{{ worksheet_status }}</td>
+	</tr>
+	<tr>
+		<td>First checker(s)</td>
+		<td>{{ first_checker }}</td>
+	</tr>
+	<tr>
+		<td>Second checker(s)</td>
+		<td>{{ second_checker }}</td>
+	</tr>
+	<tr>
+		<td>Number of variants</td>
+		<td id="num_cnvs"></td>
+	</tr>
+</table>
+
+
+<!-- List of variants -->
+<br>
+<h5>CNVs</h5>
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+		<th></th>
+		<th style="display:none;"></th>
+	  <th>Status</th>
+	  <th>Worksheet</th>
+	  <th>Panel</th>
+	  <th>Molecular Number</th>
+	  <th>CNV</th>
+	  <th>Gene(s)</th>
+	  <th>Classification</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for cnv in cnvs %}
+	<tr>
+		<td></td>
+		<td style="display:none;">{{ cnv.pk }}</td>
+	  <td>
+		{% if cnv.status == '0' %}
+			First Check
+		{% elif cnv.status == '1' %}
+			Second Check
+		{% elif cnv.status == '2' %}
+		  Completed
+		{% elif cnv.status == '3' %}
+		  Archived
+		{% else %}
+		  Unknown
+		{% endif %}
+	  </td>
+	  <td>{{ cnv.sample.worklist }}</td>
+	  <td>{{ cnv.sample.analysis_performed }}</td>
+	  <td>{{ cnv.sample.sample_name }}</td>
+	  <td>
+	  {% if cnv.cnv.genome == 'GRCh37' %}
+	  	{{ cnv.display }}<br><span class="badge badge-info badge-pill">{{ cnv.cnv.genome }}
+	  {% elif cnv.cnv.genome == 'GRCh38' %}
+	  	{{ cnv.display }}<br><span class="badge badge-success badge-pill">{{ cnv.cnv.genome }}
+	  {% endif %}
+	  </td>
+	  <td>
+	  {% for gene in cnv.genes_as_list %}
+	  	<span class="badge badge-warning">{{ gene.gene }}</span>
+	  {% endfor %}
+	  </td>
+	  <td>
+		{% if 'Benign' in cnv.display_classification %}
+		<a class="btn btn-info btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Pathogenic' in cnv.display_classification %}
+		<a class="btn btn-danger btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'VUS' in cnv.display_classification %}
+		<a class="btn btn-warning btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Artefact' in cnv.display_classification %}
+		<a class="btn btn-secondary btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% elif 'Contradictory' in cnv.display_classification %}
+    <a class="btn btn-primary btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% else %}
+		<a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=cnv.pk %}" role="button"> 
+		{% endif %}
+		<span class="fa fa-binoculars"></span>  {{ cnv.display_classification }}
+		</a>
+	  </td>
+	</tr>
+	{% endfor %}
+  </tbody>
+
+</table>
+
+
+<!-- Button to export to Decipher Format -->
+This will produce a file formatted ready for bulk upload to Decipher. 
+<br><button type="button" class="btn btn-success submit-selected">Export</button>
+
+
+{% endif %}
+
+
+<!-- BOX TO SHOW ERRORS -->
+{% if warn %}
+  {% for w in warn %}
+    <div class="alert alert-danger" role="alert">
+	    Error: {{ w }}
+	  </div>
+  {% endfor %}
+{% endif %}
+
+<br>
+<br>
+<!------------------------------------- END OF HTML ------------------------------------->
+
+
+<!-- JAVASCRIPT -->
+<script>
+$(document).ready(function(){
+
+	  // Inititialise DataTable
+	  var table = $('#classifications').DataTable( {
+				'paging':    false,
+				'ordering':  false,
+				'info':      false,
+				'searching': false,
+				'columnDefs': [ {
+						'orderable': false,
+						'className': 'select-checkbox',
+						'targets':   0
+				} ],
+				select: {
+						'style':    'multi',
+						'selector': 'td:first-child'
+				},
+				order: [[ 1, 'asc']]
+		} );
+
+
+		// make header showing total number of CNV classifications and number shown in the table
+		var info = table.page.info();
+		document.getElementById('num_cnvs').innerHTML = info['recordsTotal'];
+
+
+		// get selected rows and download file
+		$(".submit-selected").click(function(){
+	
+				var processed_array = [];
+				// pull out entire dataset for each selected row
+				var selected_rows = table.rows( { selected: true } ).data();
+				if (selected_rows['length'] > 0) {
+					// add the primary key for each selected variant into a new array
+					
+					for (var i = 0; i < selected_rows['length']; i++) {
+							processed_array.push(selected_rows[i][1]);
+					};
+					//TODO - pass list of primary keys to python function to make XML
+					console.log(JSON.stringify(processed_array))
+				}
+				var data = {"cnvs": processed_array};
+				
+				var downloadURL = "cnv_decipher_download_{{request.user}}.csv";
+				// Use XMLHttpRequest instead of Jquery $ajax
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+    					var a;
+    					if (xhttp.readyState === 4 && xhttp.status === 200) {
+        					// Trick for making downloadable link
+        					a = document.createElement('a');
+        					a.href = window.URL.createObjectURL(xhttp.response);
+        					// Give filename you wish to download
+       					a.download = downloadURL;
+       					a.style.display = 'none';
+        					document.body.appendChild(a);
+       					a.click();
+    					}
+				};
+				
+				// Post data to URL which handles post request
+				xhttp.open("POST", "/ajax/cnv_decipher_download/");
+				xhttp.setRequestHeader("X-CSRFToken", document.getElementsByName('csrfmiddlewaretoken')[0].value) 
+				xhttp.setRequestHeader("Content-Type", "application/json");
+				// You should set responseType as blob for binary responses
+				xhttp.responseType = 'blob';
+				xhttp.send(JSON.stringify(data));
+				});
+				
+
+});
+</script>
+
+{% endblock %}

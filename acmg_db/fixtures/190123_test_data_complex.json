@@ -25,7 +25,8 @@
       "chromosome": "1",
       "position": 105607830,
       "ref": "G",
-      "alt": "A"
+      "alt": "A",
+      "genome": "GRCh37"
     }
   },
   {
@@ -36,7 +37,8 @@
       "chromosome": "1",
       "position": 161596104,
       "ref": "C",
-      "alt": "G"
+      "alt": "G",
+      "genome": "GRCh37"
     }
   },
   {
@@ -47,7 +49,8 @@
       "chromosome": "18",
       "position": 59739962,
       "ref": "TA",
-      "alt": "T"
+      "alt": "T",
+      "genome": "GRCh37"
     }
   },
   {
@@ -58,7 +61,8 @@
       "chromosome": "19",
       "position": 41183190,
       "ref": "C",
-      "alt": "T"
+      "alt": "T",
+      "genome": "GRCh37"
     }
   },
   {
@@ -69,7 +73,8 @@
       "chromosome": "19",
       "position": 41736900,
       "ref": "C",
-      "alt": "T"
+      "alt": "T",
+      "genome": "GRCh37"
     }
   },
   {
@@ -80,7 +85,8 @@
       "chromosome": "2",
       "position": 170112639,
       "ref": "G",
-      "alt": "A"
+      "alt": "A",
+      "genome": "GRCh37"
     }
   },
   {
@@ -91,7 +97,8 @@
       "chromosome": "2",
       "position": 179468753,
       "ref": "T",
-      "alt": "C"
+      "alt": "C",
+      "genome": "GRCh37"
     }
   },
   {
@@ -102,7 +109,8 @@
       "chromosome": "2",
       "position": 179579025,
       "ref": "C",
-      "alt": "T"
+      "alt": "T",
+      "genome": "GRCh37"
     }
   },
   {
@@ -113,7 +121,8 @@
       "chromosome": "2",
       "position": 234638237,
       "ref": "C",
-      "alt": "T"
+      "alt": "T",
+      "genome": "GRCh37"
     }
   },
   {
@@ -124,7 +133,8 @@
       "chromosome": "2",
       "position": 241661268,
       "ref": "C",
-      "alt": "G"
+      "alt": "G",
+      "genome": "GRCh37"
     }
   },
   {
@@ -135,7 +145,8 @@
       "chromosome": "20",
       "position": 57486209,
       "ref": "T",
-      "alt": "TA"
+      "alt": "TA",
+      "genome": "GRCh37"
     }
   },
   {
@@ -146,7 +157,8 @@
       "chromosome": "21",
       "position": 47421938,
       "ref": "G",
-      "alt": "A"
+      "alt": "A",
+      "genome": "GRCh37"
     }
   },
   {
@@ -157,7 +169,8 @@
       "chromosome": "5",
       "position": 176637550,
       "ref": "A",
-      "alt": "G"
+      "alt": "G",
+      "genome": "GRCh37"
     }
   },
   {
@@ -168,7 +181,8 @@
       "chromosome": "8",
       "position": 117864952,
       "ref": "TA",
-      "alt": "T"
+      "alt": "T",
+      "genome": "GRCh37"
     }
   },
   {
@@ -179,7 +193,8 @@
       "chromosome": "8",
       "position": 38271216,
       "ref": "G",
-      "alt": "A"
+      "alt": "A",
+      "genome": "GRCh37"
     }
   },
   {
