@@ -246,6 +246,18 @@
 					</td>
 					
 				</tr>
+				<tr>
+					<td>Inheritance</td>
+					<td>{{ cnv.inheritance }}</td>
+				</tr>
+				<tr>
+					<td>Copy Number</td>
+					<td>{{ cnv.copy }}</td>
+				</tr>
+				<tr>
+					<td>Genotype</td>
+					<td>{{ cnv.genotype }}</td>
+				</tr>
 			</tbody>
 		
 		</table>
@@ -328,12 +340,6 @@
 			</div>
 			
 	<hr>
-	<h5>CNV Further Details</h5>
-	
-	<br>Please select the options below. Warning! If any of the options above are updated, these settings will be automatically reset.
-	<br>
-	<br>	
-	{% crispy details_form %}
 		
 	</div>
 	
