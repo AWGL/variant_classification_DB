@@ -920,7 +920,7 @@ class CNVLossClassificationQuestion(models.Model):
 	evidence_type = models.CharField(max_length=500)
 	evidence = models.TextField()
 	suggested = models.TextField()
-	max_score = models.FloatField()
+	max_score = models.FloatField(null=True)
 	category = models.TextField(choices= CATEGORY_CHOICES)
 	qu_type = models.TextField(choices=TYPE_CHOICES)
 	
@@ -990,7 +990,7 @@ class CNVGainClassificationQuestion(models.Model):
 	evidence_type = models.CharField(max_length=500)
 	evidence = models.TextField()
 	suggested = models.TextField()
-	max_score = models.FloatField()
+	max_score = models.FloatField(null=True)
 	category = models.TextField(choices= CATEGORY_CHOICES)
 	qu_type = models.TextField(choices=TYPE_CHOICES)
 	
