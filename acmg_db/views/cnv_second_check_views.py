@@ -132,15 +132,15 @@ def cnv_second_check(request, pk):
 		
 		#classification method
 		if cnv.method == "Gain":
-			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
 			if len(answers) == 0:
 				cnv.initiate_classification()
-				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
 		elif cnv.method == "Loss":
-			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv)
+			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
 			if len(answers) == 0:
 				cnv.initiate_classification()
-				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv)
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
 
 		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 
