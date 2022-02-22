@@ -318,8 +318,8 @@ class VariantInfoForm(forms.Form):
 	"""
 	inheritance_choices = Gene.INHERITANCE_CHOICES
 
-	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
-	conditions = forms.CharField(widget=forms.Textarea)
+	inheritance_pattern = forms.ChoiceField(choices=inheritance_choices, required=False)
+	conditions = forms.CharField(widget=forms.Textarea, required=False)
 	is_trio_de_novo = forms.BooleanField(required=False)
 	genotype = forms.ChoiceField(
 		choices = (
@@ -355,10 +355,7 @@ class VariantInfoForm(forms.Form):
 		super(VariantInfoForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.get_inheritance_choices_as_list()
 		self.fields['inheritance_pattern'].widget.attrs['size'] = 9
-		self.fields['inheritance_pattern'].help_text = 'Hold shift ctrl to select multiple.'
-		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
 		self.fields['genotype'].initial = genotype_init
@@ -370,7 +367,7 @@ class VariantInfoForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			HTML(f'<hr><div class="row"><div class="col-md-2"><h5>Edit gene info</h5></div><div class="col-md-8"><h5>Gene name - {self.classification.selected_transcript_variant.transcript.gene}</h5></div></div>'),
+			HTML(f'<hr><div class="row"><div class="col-md-2"><h5>Add gene info</h5></div><div class="col-md-8"><h5>Gene name - {self.classification.selected_transcript_variant.transcript.gene}</h5></div></div>'),
 			Field('inheritance_pattern'),
 			Field('conditions'),
 			HTML('<h5>Edit variant info</h5>'),
@@ -439,7 +436,7 @@ class FinaliseClassificationForm(forms.Form):
 	"""
 	Form for submitting the first check page.
 	"""
-	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('8', 'Use classification (don\'t override)'),)
+	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('9', 'Use classification (don\'t override)'),)
 	final_classification = forms.ChoiceField(choices=final_class_choices)
 	confirm = forms.BooleanField(required=True)
 
@@ -451,7 +448,7 @@ class FinaliseClassificationForm(forms.Form):
 		super(FinaliseClassificationForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['final_classification'].initial = '8'
+		self.fields['final_classification'].initial = '9'
 		self.fields['final_classification'].label = 'Final classification'
 		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
 		self.fields['confirm'].label = 'Confirm that the classification is complete'
@@ -639,7 +636,7 @@ class VariantInfoFormSecondCheck(forms.Form):
 	"""
 	inheritance_choices = Gene.INHERITANCE_CHOICES
 
-	inheritance_pattern = forms.MultipleChoiceField(choices=inheritance_choices)
+	inheritance_pattern = forms.ChoiceField(choices=inheritance_choices)
 	conditions = forms.CharField(widget=forms.Textarea)
 	is_trio_de_novo = forms.BooleanField(required=False)
 	genotype = forms.ChoiceField(
@@ -676,10 +673,7 @@ class VariantInfoFormSecondCheck(forms.Form):
 		super(VariantInfoFormSecondCheck, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['inheritance_pattern'].initial = self.classification.selected_transcript_variant.transcript.gene.get_inheritance_choices_as_list()
 		self.fields['inheritance_pattern'].widget.attrs['size'] = 9
-		self.fields['inheritance_pattern'].help_text = 'Hold shift ctrl to select multiple.'
-		self.fields['conditions'].initial = self.classification.selected_transcript_variant.transcript.gene.conditions
 		self.fields['conditions'].widget.attrs['rows'] = 2
 		self.fields['is_trio_de_novo'].initial = self.classification.is_trio_de_novo
 		self.fields['genotype'].initial = genotype_init
@@ -691,7 +685,7 @@ class VariantInfoFormSecondCheck(forms.Form):
 		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
 		self.helper.form_class = 'form-horizontal'
 		self.helper.layout = Layout(
-			HTML(f'<hr><div class="row"><div class="col-md-2"><h5>Edit gene info</h5></div><div class="col-md-8"><h5>Gene name - {self.classification.selected_transcript_variant.transcript.gene}</h5></div></div>'),
+			HTML(f'<hr><div class="row"><div class="col-md-2"><h5>Add gene info</h5></div><div class="col-md-8"><h5>Gene name - {self.classification.selected_transcript_variant.transcript.gene}</h5></div></div>'),
 			Field('inheritance_pattern'),
 			Field('conditions'),
 			HTML('<h5>Edit variant info</h5>'),
@@ -705,7 +699,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 	"""
 	Form for submitting the second check page.
 	"""
-	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('8', 'Use classification (don\'t override)'),)
+	final_class_choices = Classification.FINAL_CLASS_CHOICES + (('9', 'Use classification (don\'t override)'),)
 	final_classification = forms.ChoiceField(choices=final_class_choices)
 	confirm = forms.BooleanField(required=True)
 
@@ -717,7 +711,7 @@ class FinaliseClassificationSecondCheckForm(forms.Form):
 		super(FinaliseClassificationSecondCheckForm, self).__init__(*args, **kwargs)
 
 		self.helper = FormHelper()
-		self.fields['final_classification'].initial = '8'
+		self.fields['final_classification'].initial = '9'
 		self.fields['final_classification'].label = 'Final classification'
 		self.fields['final_classification'].help_text = 'If you would like to overwrite the ACMG classification, add the reason to the Evidence tab and select the classification from this drop-down'
 		self.fields['confirm'].label = 'Confirm that the classification is complete'

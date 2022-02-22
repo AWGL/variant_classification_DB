@@ -121,31 +121,60 @@ class Gene(models.Model):
 	def __str__(self):
 		return self.name
 
+	def get_all_phenotypes(self):
+		"""
+		Get all phenotypes for a gene
+		"""
 
-	def all_inheritance_patterns(self):
-		'''
-		Join all inheritance patterns together into a string for viewing in the app.
-		Making the initial list is over complicated because the list is represented as a string in the database,
-		so it needs to be converte back into a list before joining
-		'''
-		inheritance_list = []
-		for i in str(self.inheritance_pattern).split(', '):
-			i = i.replace('[', '').replace(']', '').replace("'", "")
-			inheritance_list.append(i)
+		related_phenotypes = GenePhenotype.objects.filter(gene=self)
 
-		inheritance_string = ', '.join(inheritance_list)
-		return inheritance_string
+		phenotype_list = []
+
+		for phenotype in related_phenotypes:
+
+			phenotype_list.append(phenotype.disease_name)
+
+		return phenotype_list
+
+	def get_all_inheritance(self):
+		"""
+		Get all inheritance patterns for a gene
+		"""
+
+		related_phenotypes = GenePhenotype.objects.filter(gene=self)
+
+		phenotype_list = []
+
+		for phenotype in related_phenotypes:
+
+			if phenotype.inheritance != '':
+
+				# split up mixed ones
+				if ',' in phenotype.inheritance:
+
+					phenotype_inherit = phenotype.inheritance.split(',')
+
+					for split_inheritance in phenotype_inherit:
+
+					 	phenotype_list.append(split_inheritance.strip())
+
+				else:
+
+					phenotype_list.append(phenotype.inheritance.strip())
 
 
-	def get_inheritance_choices_as_list(self):
+		return list(set(phenotype_list))
 
-		inheritance_list = []
-		for i in str(self.inheritance_pattern).split(', '):
-			i = i.replace('[', '').replace(']', '').replace("'", "")
-			inheritance_list.append(i)
 
-		return inheritance_list
+class GenePhenotype(models.Model):
+	"""
+	Model links gene with a phenotype
+	"""
 
+	gene = models.ForeignKey(Gene, on_delete=models.CASCADE)
+	disease_name = models.TextField()
+	inheritance = models.TextField()
+	manual = models.BooleanField()
 
 class Transcript(models.Model):
 	"""
@@ -236,7 +265,8 @@ class Classification(models.Model):
 		('1', 'Genuine - New Classification'), 
 		('2', 'Genuine - Use Previous Classification'),
 		('3', 'Genuine - Not Analysed'),
-		('4', 'Artefact')
+		('4', 'Artefact'),
+		('5', 'Genuine - Not Analysed Unrelated to Phenotype'),
 	)
 	FINAL_CLASS_CHOICES = (
 		('0', 'Benign'), 
@@ -246,7 +276,8 @@ class Classification(models.Model):
 		('4', 'Likely Pathogenic'), 
 		('5', 'Pathogenic'),
 		('6', 'Artefact'), 
-		('7', 'Not analysed')
+		('7', 'Not analysed'),
+		('8', 'Not Analysed Unrelated to Phenotype'),
 	)
 
 	history = AuditlogHistoryField()
@@ -326,7 +357,17 @@ class Classification(models.Model):
 
 		#Check we're not running the function twice
 		if len(answers) == 0:
-			questions = ClassificationQuestion.objects.all()
+
+			# for TSC
+			if self.sample.analysis_performed.panel[0:4].lower() == 'tsc_':
+
+				questions = ClassificationQuestion.objects.all()
+
+			else:
+
+				questions = ClassificationQuestion.objects.all().exclude(category = 'Familial Cancer Specific')
+
+
 			questions = questions.order_by('order')
 
 			for question in questions:
@@ -356,10 +397,19 @@ class Classification(models.Model):
 		"""
 		# pull out all classification questions and answers
 		classification_answers = ClassificationAnswer.objects.filter(classification=self)
-		all_questions_count = ClassificationQuestion.objects.all().count()
+
+		# for TSC
+		if self.sample.analysis_performed.panel[0:4].lower() == 'tsc_':
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().count()
+
+		else:
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().exclude(category = 'Familial Cancer Specific').count()
+
 
 		#Check we have all the answers
-		if len(classification_answers) != all_questions_count:
+		if len(classification_answers) != correct_number_of_questions:
 			return '7'
 
 		results = []
@@ -394,10 +444,19 @@ class Classification(models.Model):
 		"""
 		# pull out all classification questions and answers
 		classification_answers = ClassificationAnswer.objects.filter(classification=self)
-		all_questions_count = ClassificationQuestion.objects.all().count()
+
+		# for TSC
+		if self.sample.analysis_performed.panel[0:4].lower() == 'tsc_':
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().count()
+
+		else:
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().exclude(category = 'Familial Cancer Specific').count()
+
 
 		#Check we have all the answers
-		if len(classification_answers) != all_questions_count:
+		if len(classification_answers) != correct_number_of_questions:
 			return '7'
 
 		results = []
@@ -472,7 +531,8 @@ class ClassificationQuestion(models.Model):
 						('Computer predictions', 'E'),
 						('De novo variants', 'F'),
 						('Phenotype and family history information', 'G'),
-						('Multiple variants identified in a patient', 'H'))
+						('Multiple variants identified in a patient', 'H'),
+						('Familial Cancer Specific', 'I'))
 		
 	acmg_code = models.CharField(max_length=5)
 	order = models.IntegerField()
@@ -747,9 +807,12 @@ class CNV(models.Model):
 		Creates the needed CNVClassificationAnswer objects for a new CNV classification.
 		"""
 		if self.method == 'Gain':
+
 			answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+
 			#Check we're not running the function twice
 			if len(answers) == 0:
+
 				questions = CNVGainClassificationQuestion.objects.all()
 
 				for question in questions:
@@ -763,23 +826,31 @@ class CNV(models.Model):
 					new_answer.save()
 
 			else:
+
 				return HttpResponseForbidden()
 
 			return None
+
 		elif self.method == 'Loss':
 			answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+
 			#Check we're not running the function twice
 			if len(answers) == 0:
+
 				questions = CNVLossClassificationQuestion.objects.all()
+
 				for question in questions:
+
 					new_answer = CNVLossClassificationAnswer.objects.create(
 						cnv = self,
 						cnv_classification_question=question,
 						score = 0,
 						comment = ''
 						)
+
 					new_answer.save()
 			else:
+
 				return HttpResponseForbidden()
 	
 			return None

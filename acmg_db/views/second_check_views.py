@@ -37,8 +37,14 @@ def ajax_acmg_classification_second(request):
 
 			raise PermissionDenied('You do not have permission to start this classification.')
 
-		# Check we have every question
-		correct_number_of_questions = ClassificationQuestion.objects.all().count()
+		# for TSC
+		if classification.sample.analysis_performed.panel[0:4].lower() == 'tsc_':
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().count()
+
+		else:
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().exclude(category = 'Familial Cancer Specific').count()
 
 		if len(classification_answers) != correct_number_of_questions:
 
@@ -186,7 +192,7 @@ def second_check(request, pk):
 
 
 			# VariantInfoForm
-			if 'inheritance_pattern' in request.POST:
+			if 'genotype' in request.POST:
 
 				variant_form = VariantInfoFormSecondCheck(request.POST, classification_pk = classification.pk, options=fixed_refseq_options)
 
@@ -214,14 +220,18 @@ def second_check(request, pk):
 						genotype = None
 
 					classification.genotype = genotype
-					
 					classification.save()
-
+					
 					# genes section
 					gene = classification.selected_transcript_variant.transcript.gene
-					gene.inheritance_pattern = cleaned_data['inheritance_pattern']
-					gene.conditions = cleaned_data['conditions']
+
+					if cleaned_data['conditions'] != '':
+
+						new_phenotype = GenePhenotype(gene=gene, inheritance=cleaned_data['inheritance_pattern'], disease_name= cleaned_data['conditions'], manual=True)
+						new_phenotype.save()
+
 					gene.save()
+
 
 				# reload dict variables for rendering
 				context['classification'] = classification
@@ -237,6 +247,14 @@ def second_check(request, pk):
 
 				finalise_form = FinaliseClassificationSecondCheckForm(request.POST, classification_pk=classification.pk)
 
+				phenotypes = GenePhenotype.objects.filter(gene=classification.selected_transcript_variant.transcript.gene)
+
+				no_phenotypes = False
+
+				if len(phenotypes) == 0:
+
+					no_phenotypes = True
+
 				if finalise_form.is_valid():
 
 					cleaned_data = finalise_form.cleaned_data
@@ -247,13 +265,12 @@ def second_check(request, pk):
 
 						context['warn'] += ['Select whether the variant is genuine or artefact']
 
-					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None or classification.selected_transcript_variant.transcript.gene.inheritance_pattern == '':
+					if no_phenotypes:
 
 						context['warn'] += ['Inheritence pattern has not been set']
 
-					if classification.selected_transcript_variant.transcript.gene.conditions == None or classification.selected_transcript_variant.transcript.gene.conditions == '':
-
 						context['warn'] += ['Gene associated conditions have not been set']
+
 
 					if classification.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
 
@@ -276,7 +293,7 @@ def second_check(request, pk):
 							classification.second_final_class = classification.calculate_acmg_score_second()
 
 						# if anything other than 'dont override' selected, then change the classification
-						if cleaned_data['final_classification'] != '8':
+						if cleaned_data['final_classification'] != '9':
 
 							classification.second_final_class = cleaned_data['final_classification']
 
