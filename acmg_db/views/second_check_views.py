@@ -178,18 +178,21 @@ def second_check(request, pk):
 
 			# TranscriptForm
 			if 'select_transcript' in request.POST:
+
 				transcript_form = TranscriptFormSecondCheck(request.POST, classification_pk=classification.pk, options=fixed_refseq_options)
+
 				if transcript_form.is_valid():
+
 					cleaned_data = transcript_form.cleaned_data
 					select_transcript = cleaned_data['select_transcript']
 					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
 					classification.selected_transcript_variant = selected_transcript_variant
 					classification.save()
+
 				# reload dict variables for rendering
 				context['classification'] = classification
 				context['transcript_form'] = TranscriptFormSecondCheck(classification_pk=classification.pk, options=fixed_refseq_options)
 				context['variant_form'] = VariantInfoFormSecondCheck(classification_pk=classification.pk, options=fixed_refseq_options)
-
 
 			# VariantInfoForm
 			if 'genotype' in request.POST:
