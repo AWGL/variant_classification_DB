@@ -981,7 +981,7 @@ class CNVLossClassificationQuestion(models.Model):
 	CATEGORY_CHOICES = (('Section 1: Initial assessment of genomics content', '1'), 
 						('Section 2: Overlap with established/predicted haploinsufficiency (HI) or established benign genes/genomic regions (Skip to Section 3 if your copy-number loss DOES NOT overlap these types of genes/regions)', '2'),
 						('Section 3: Evaluation of Gene Number', '3'),
-						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if either your CNV overlapped with an established HI gene/region in section 2, OR there have been no reports associating either the CNV or any genes within the CNV with human phenotypes caused by loss of function [LOF] or copy-number loss)', '4'),
+						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
 						('Section 6: Other criteria from SNV variant interpretation guidelines','6'),
 						)
@@ -1051,7 +1051,7 @@ class CNVGainClassificationQuestion(models.Model):
 	CATEGORY_CHOICES = (('Section 1: Initial assessment of genomics content', '1'), 
 						('Section 2: Overlap with established triplosensitive (TS), haploinsufficiency (HI) or benign genes/genomic regions (Skip to Section 3 if your copy-number gain DOES NOT overlap these types of genes/regions)', '2'),
 						('Section 3: Evaluation of Gene Number', '3'),
-						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data (Skip to section 5 if there have been no reports associating either the copy-number gain or any of the genes therein with human phenotypes caused by triplosensitivity)', '4'),
+						('Section 4: Detailed evaluation of genomic content using cases from published literature, public databases, and/or internal lab data', '4'),
 						('Section 5: Evaluation of inheritance pattern/family history for patient being studied', '5'),
 						('Section 6: Other criteria from SNV variant interpretation guidelines','6'),
 						)
