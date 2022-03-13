@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ModelForm
 from acmg_db.models import  *
 from django.urls import reverse
 from crispy_forms.bootstrap import Field
@@ -1111,3 +1112,18 @@ class DownloadCNVListForm(forms.Form):
 			Field('black_list', placeholder='CNV classifications to blacklist', title=False),
 			Field('white_list', placeholder='CNV classifications to whitelist.', title=False),
 		)
+
+
+# Create the form class.
+class PhenotypeForm(ModelForm):
+
+	def __init__(self, *args, **kwargs):
+		super(PhenotypeForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper(self)
+		self.helper.layout.append(Submit('Save', 'Save'))
+		self.helper.form_method = 'post'
+
+
+	class Meta:
+		model = GenePhenotype
+		fields = ['disease_name', 'inheritance']

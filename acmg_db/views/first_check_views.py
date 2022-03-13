@@ -172,6 +172,7 @@ def first_check(request, pk):
 						new_phenotype = GenePhenotype(gene=gene, inheritance=cleaned_data['inheritance_pattern'], disease_name= cleaned_data['conditions'], manual=True)
 						new_phenotype.save()
 
+
 					gene.save()
 
 				# reload dict variables for rendering
@@ -314,6 +315,8 @@ def first_check(request, pk):
 						))
 
 			return render(request, 'acmg_db/first_check.html', context)
+
+
 		return render(request, 'acmg_db/first_check.html', context)
 
 

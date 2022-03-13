@@ -1,0 +1,45 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br><br>
+
+<h2>{{gene.name}} </h2>
+
+<br>
+
+<table id="phenotypes" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  
+	  <th>Disease Name</th>
+	  <th>Inheritance</th>
+	  <th>Edit</th>
+	  <th>Delete</th>
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for phenotype in gene_phenotypes %}
+	<tr>
+
+		<td> {{phenotype.disease_name}} </td>
+
+		<td> {{phenotype.inheritance}} </td>
+
+		<td> <a href="{% url 'edit_gene_phenotype' pk=phenotype.pk %}" class="btn btn-success"> Edit </a> </td>
+
+		<td> <a href="{% url 'delete_gene_phenotype' pk=phenotype.pk %}" class="btn btn-danger">Delete</a> </td>
+
+	</tr>
+	{% endfor %}
+  </tbody>
+
+</table>
+
+
+
+
+{% endblock %}

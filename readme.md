@@ -17,6 +17,12 @@ The software is a Django application using Python 3. It is reccomended that the 
 
 First install Conda/Miniconda from [3]. Then type the following commands in your terminal to install and setup the application.
 
+Optionally collect the gene annotations from the variant_filtering_app/data_sets/gene_data.csv
+
+`git clone https://github.com/AWGL/variant_filtering_app.git`
+
+Download main repository
+
 `git clone https://github.com/josephhalstead/variant_classification_DB.git`
 
 `cd variant_classification_DB`
@@ -38,6 +44,11 @@ First install Conda/Miniconda from [3]. Then type the following commands in your
 `python manage.py loaddata CNV_Gain_ACMG_questions.json`
 
 `python manage.py loaddata CNV_Loss_ACMG_questions.json`
+
+Optionally add gene data:
+
+`python manage.py load_genes --gene_file variant_filtering_app/data_sets/gene_data.csv `
+
 
 Static files which are viewed on the webpage also need to be moved to the static directory:
 
