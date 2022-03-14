@@ -1,8 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 from acmg_db.models import Gene, GenePhenotype
 from acmg_db.forms import PhenotypeForm
 
+
+@transaction.atomic
+@login_required
 def view_gene_phenotypes(request, pk):
 	"""
 	Page for viewing info on a gene
@@ -15,7 +20,8 @@ def view_gene_phenotypes(request, pk):
 
 	return render(request, 'acmg_db/view_gene_phenotypes.html', {'gene': gene, 'gene_phenotypes': gene_phenotypes})
 
-
+@transaction.atomic
+@login_required
 def edit_gene_phenotype(request, pk):
 	"""
 	Edit a GenePhenotype object
@@ -44,7 +50,8 @@ def edit_gene_phenotype(request, pk):
 
 	return render(request, 'acmg_db/edit_gene_phenotype.html', {'gene_phenotype': gene_phenotype, 'form': form})
 
-
+@transaction.atomic
+@login_required
 def delete_gene_phenotype(request, pk):
 	"""
 	Delete a GenePhenotype object
