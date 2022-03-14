@@ -61,6 +61,7 @@ def first_check(request, pk):
 
 		# Get relevant options for the variant transcripts
 		for transcript_var in refseq_options:
+
 			fixed_refseq_options.append((transcript_var.pk, transcript_var.transcript.name + ' - ' + transcript_var.transcript.gene.name + ' - ' + transcript_var.consequence))
 
 		# make empty instances of forms
@@ -111,20 +112,24 @@ def first_check(request, pk):
 
 			# TranscriptForm
 			if 'select_transcript' in request.POST:
+
 				transcript_form = TranscriptForm(request.POST, classification_pk=classification.pk, options=fixed_refseq_options)
+
 				if transcript_form.is_valid():
+
 					cleaned_data = transcript_form.cleaned_data
 					select_transcript = cleaned_data['select_transcript']
 					selected_transcript_variant = get_object_or_404(TranscriptVariant, pk=select_transcript)
 					classification.selected_transcript_variant = selected_transcript_variant
 					classification.save()
+
 				# reload dict variables for rendering
 				context['classification'] = classification
 				context['transcript_form'] = TranscriptForm(classification_pk=classification.pk, options=fixed_refseq_options)
 				context['variant_form'] = VariantInfoForm(classification_pk=classification.pk, options=fixed_refseq_options)
 
 			# VariantInfoForm
-			if 'inheritance_pattern' in request.POST:
+			if 'genotype' in request.POST:
 
 				variant_form = VariantInfoForm(request.POST, classification_pk = classification.pk, options=fixed_refseq_options)
 
@@ -137,15 +142,19 @@ def first_check(request, pk):
 					genotype = cleaned_data['genotype']
 
 					if genotype == 'Het':
+
 						genotype = 1
 
 					elif genotype == 'Hom':
+
 						genotype = 2
 
 					elif genotype == 'Hemi':
+
 						genotype = 3
 
 					elif genotype == 'Mosaic':
+
 						genotype = 4
 
 					else:
@@ -157,8 +166,13 @@ def first_check(request, pk):
 
 					# genes section
 					gene = classification.selected_transcript_variant.transcript.gene
-					gene.inheritance_pattern = cleaned_data['inheritance_pattern']
-					gene.conditions = cleaned_data['conditions']
+
+					if cleaned_data['conditions'] != '':
+
+						new_phenotype = GenePhenotype(gene=gene, inheritance=cleaned_data['inheritance_pattern'], disease_name= cleaned_data['conditions'], manual=True)
+						new_phenotype.save()
+
+
 					gene.save()
 
 				# reload dict variables for rendering
@@ -180,6 +194,7 @@ def first_check(request, pk):
 
 						# if not already initiated, make new classification answers
 						if len(answers) == 0:
+
 							classification.initiate_classification()
 
 						# save final_class as output of calculate_acmg_score_first
@@ -210,6 +225,13 @@ def first_check(request, pk):
 
 						classification.genuine = '4'
 						classification.first_final_class = '6'
+
+
+					elif cleaned_data['genuine'] == '5':
+
+						classification.genuine = '5'
+						classification.first_final_class = '8'
+
 						
 					classification.save()
 
@@ -231,6 +253,14 @@ def first_check(request, pk):
 
 				finalise_form = FinaliseClassificationForm(request.POST, classification_pk=classification.pk)
 
+				phenotypes = GenePhenotype.objects.filter(gene=classification.selected_transcript_variant.transcript.gene)
+
+				no_phenotypes = False
+
+				if len(phenotypes) == 0:
+
+					no_phenotypes = True
+
 				if finalise_form.is_valid():
 
 					cleaned_data = finalise_form.cleaned_data
@@ -240,11 +270,9 @@ def first_check(request, pk):
 
 						context['warn'] += ['Select whether the variant is genuine or artefact']
 
-					if classification.selected_transcript_variant.transcript.gene.inheritance_pattern == None or classification.selected_transcript_variant.transcript.gene.inheritance_pattern == '':
+					if no_phenotypes:
 
 						context['warn'] += ['Inheritence pattern has not been set']
-
-					if classification.selected_transcript_variant.transcript.gene.conditions == None or classification.selected_transcript_variant.transcript.gene.conditions == '':
 
 						context['warn'] += ['Gene associated conditions have not been set']
 
@@ -269,7 +297,7 @@ def first_check(request, pk):
 							classification.first_final_class = classification.calculate_acmg_score_first()
 
 						# if anything other than 'dont override' selected, then change the classification
-						if cleaned_data['final_classification'] != '8':
+						if cleaned_data['final_classification'] != '9':
 
 							classification.first_final_class = cleaned_data['final_classification']
 
@@ -287,6 +315,8 @@ def first_check(request, pk):
 						))
 
 			return render(request, 'acmg_db/first_check.html', context)
+
+
 		return render(request, 'acmg_db/first_check.html', context)
 
 
@@ -317,7 +347,15 @@ def ajax_acmg_classification_first(request):
 
 			raise PermissionDenied('You do not have permission to start this classification.')
 
-		correct_number_of_questions = ClassificationQuestion.objects.all().count()
+		# for TSC
+		if classification.sample.analysis_performed.panel[0:4].lower() == 'tsc_':
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().count()
+
+		else:
+
+			correct_number_of_questions = ClassificationQuestion.objects.all().exclude(category = 'Familial Cancer Specific').count()
+
 		if len(classification_answers) != correct_number_of_questions:
 			raise Exception('Wrong number of questions')
 

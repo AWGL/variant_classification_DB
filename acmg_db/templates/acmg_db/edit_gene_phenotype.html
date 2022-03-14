@@ -1,0 +1,13 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+{% csrf_token %}
+<br> <br>
+
+{% crispy form %}
+
+
+{% endblock %}

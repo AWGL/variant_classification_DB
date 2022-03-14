@@ -34,6 +34,9 @@ urlpatterns = [
 
     path('download_variant_list/', views.download_variant_list, name='download_variant_list'),
 
+    path('view_gene_phenotypes/<str:pk>/', views.view_gene_phenotypes, name='view_gene_phenotypes'),
+    path('edit_gene_phenotype/<int:pk>/', views.edit_gene_phenotype, name='edit_gene_phenotype'),
+    path('delete_gene_phenotype/<int:pk>/', views.delete_gene_phenotype, name='delete_gene_phenotype'),
 
     path('search/', views.search, name='search'),
     path('view_gene/<str:pk>/', views.view_gene, name='view_gene'),

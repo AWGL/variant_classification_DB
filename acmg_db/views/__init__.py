@@ -12,3 +12,4 @@ from acmg_db.views.api_views import *
 from acmg_db.views.cnv_views import *
 from acmg_db.views.cnv_first_check_views import *
 from acmg_db.views.cnv_second_check_views import *
+from acmg_db.views.gene_views import *

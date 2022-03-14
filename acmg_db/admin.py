@@ -11,6 +11,7 @@ class ClassificationQuestionAdmin(admin.ModelAdmin):
     search_fields = ('acmg_code', 'text', 'default_strength', 'allowed_strength_change',)
 admin.site.register(ClassificationQuestion, ClassificationQuestionAdmin)
 
+
 class ClassificationAdmin(admin.ModelAdmin):
     list_display = ('id', 'variant', 'selected_transcript_variant', 'user_first_checker', 'user_second_checker', 'status',)
     search_fields = ('id',) # cant add variant as its split into chr,pos,ref,alt in model
@@ -23,8 +24,8 @@ class EvidenceAdmin(admin.ModelAdmin):
 admin.site.register(Evidence, EvidenceAdmin)
 
 class GeneAdmin(admin.ModelAdmin):
-    list_display = ('name', 'inheritance_pattern', 'conditions',)
-    search_fields = ('name', 'inheritance_pattern', 'conditions',)
+    list_display = ('name',)
+    search_fields = ('name',)
 admin.site.register(Gene, GeneAdmin)
 
 class SampleAdmin(admin.ModelAdmin):
@@ -91,3 +92,6 @@ class CNVGeneAdmin(admin.ModelAdmin):
 	list_display = ('gene','cnv',)
 	search_fields = ('gene','cnv',)
 admin.site.register(CNVGene, CNVGeneAdmin)
+
+
+admin.site.register(GenePhenotype)
