@@ -1,0 +1,94 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<br>
+<h5>Artefact Check for Analysis ID {{classifications.0.analysis_id}}</h5>
+<table class = "table table-hover table-bordered col-5">
+	<tr>
+		<td style="width: 20%">Sample</td>
+		<td style="width: 20%"> {{classifications.0.sample.sample_name_only}}</td>
+	</tr>
+	<tr>
+		<td>Worklist</td>
+		<td>{{classifications.0.sample.worklist }}</td>
+	</tr>
+</table>
+
+
+
+
+
+<br>
+
+<form action="" method="post"> 
+
+{% csrf_token %}
+
+
+<input type="submit" value="Submit" class="btn btn-primary">
+
+<br>
+<br>
+
+<table id="classifications" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Variant</th>
+	  <th>Analysis Performed</th>
+	  <th>Gene</th>
+	  <th>Genuine</th>
+	  <th>Previous Classification </th>
+	  <th>Status </th>
+	  <th>Genuine </th>
+
+
+	</tr>
+  </thead>
+
+  <tbody>
+  	{% for classification in classifications %}
+	<tr>
+		<td> <a href="http://localhost:60151/goto?locus={{classification.get_igv_locus}}">{{classification.variant|truncatechars:15}}</a></td>
+		<td> {{classification.sample.analysis_performed}} </td>
+		<td> {{classification.selected_transcript_variant.transcript.gene}} </td>
+
+
+
+		{% if classification.display_genuine != 'Genuine - New Classification' and classification.display_status == 'First Check' %}
+
+		<td> 
+			  <select name="{{classification.pk}}" id="{{classification.pk}}">
+			  <option value="None">None</option>
+			  <option value="Genuine - New Classification">Genuine - New Classification</option>
+			  <option value="Genuine - Use Previous Classification">Genuine - Use Previous Classification</option>
+			  <option value="Artefact">Artefact</option>
+			  </select> 
+
+        </td>
+
+        {% else %}
+        <td> {{classification.display_genuine}} </td>
+
+        {% endif %}
+
+
+
+		<td> {{classification.variant.most_recent_classification.0}} </td>
+		<td> {{classification.display_status}} </td>
+		<td> {{classification.display_genuine}} </td>
+
+
+	</tr>
+	{% endfor %}
+  </tbody>
+  </table>
+
+
+
+
+  
+</form>
+{% endblock %}

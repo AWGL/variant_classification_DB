@@ -78,7 +78,7 @@ class Variant(models.Model):
 
 		classifications = Classification.objects.filter(variant=self, status__in=['2', '3']).order_by('-second_check_date')
 
-		if len(classifications) >0:
+		if len(classifications) > 0:
 
 			most_recent = classifications[0]
 
@@ -299,7 +299,9 @@ class Classification(models.Model):
 	genotype = models.IntegerField(null=True, blank=True)
 	guideline_version = models.CharField(max_length=20)
 	vep_version = models.CharField(max_length=20)
-	analysis_id = models.IntegerField(null=True, blank=True)
+	analysis_id = models.IntegerField(null=True, blank=True, db_index=True)
+	artefact_checker = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.CASCADE, related_name='artefact_checker')
+	artefact_check_date = models.DateTimeField(null=True, blank=True)
 
 	def __str__(self):
 		return f'{self.id}'
@@ -334,7 +336,7 @@ class Classification(models.Model):
 
 		This displays the result of the second check analysis.
 		"""
-		if  self.second_final_class == 'False':
+		if self.second_final_class == 'False':
 			return 'False'
 		else:
 			return self.FINAL_CLASS_CHOICES[int(self.second_final_class)][1]	
@@ -505,6 +507,16 @@ class Classification(models.Model):
 		else:
 
 			return 'NA'
+
+	def get_igv_locus(self):
+		"""
+		Return the variant position for IGV
+
+		"""
+
+		variant = self.variant
+
+		return f'{variant.chromosome}:{variant.position-20}-{variant.position+20}'
 
 
 class ClassificationQuestion(models.Model):

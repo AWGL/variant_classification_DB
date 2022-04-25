@@ -14,7 +14,7 @@ import os
 
 # Is the instance of the database being run on a local development computer or on the cluster
 # options are 'local' or 'cluster'
-DB_INSTANCE = 'cluster'
+DB_INSTANCE = 'local'
 
 # path to file containing database password
 PASSWORD_FILE = '/export/home/webapps/password.txt'
