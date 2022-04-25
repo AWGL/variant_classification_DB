@@ -282,6 +282,7 @@ def calculate_acmg_class(score):
 			return "0"
 		else:
 			print("ERROR! Class could not be calculated")
+			return "Error"
 	
 		
 		
