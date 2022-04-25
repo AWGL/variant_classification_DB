@@ -262,16 +262,20 @@ def calculate_acmg_class(score):
 	print(score)
 	if score == "NA":
 		return "5"
-	elif score >= 0.99:
-		return "4"
-	elif 0.90 <= score <= 0.98:
-		return "3"
-	elif -(0.89) <= score <= 0.89:
-		return "2"
-	elif -(0.98) <= score <= -(0.90):
-		return "1"
-	elif score <= -(0.99):
-		return "0"
+	else:
+		score = float(score) #bug fix, without this the elif statements below don't work correctly
+		if score >= 0.99:
+			return "4"
+		elif 0.90 <= score <= 0.98: 
+			return "3"
+		elif -(0.89) <= score <= 0.89:
+			return "2"
+		elif -(0.98) <= score <= -(0.90):
+			return "1"
+		elif score <= -(0.99):
+			return "0"
+		else:
+			print("ERROR! Class could not be calculated")
 	
 		
 		

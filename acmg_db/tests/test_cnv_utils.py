@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from acmg_db.models import *
-from acmg_db.utils.cnv_utils import process_cnv_input, cnv_previous_classifications
+from acmg_db.utils.cnv_utils import process_cnv_input, cnv_previous_classifications, calculate_acmg_class
 
 class TestProcessCNV(TestCase):
 	"""
@@ -30,6 +30,47 @@ class TestProcessCNV(TestCase):
 		self.assertEqual(process_cnv_input(cnv2), ['5','111111','2222222'])
 		self.assertEqual(process_cnv_input(cnv3), ['Y','1','1000000'])
 		self.assertEqual(process_cnv_input(cnv4), ['X','500','501'])
+		
+class TestScoreCNV(TestCase):
+	"""
+	Testing calculate_acmg_class from cnv utils
+	"""
+	def setUp(self):
+		
+		self.user= User.objects.create_user('test', 'admin@test.com', 'hello123')
+		self.client.login(username='test', password= 'hello123')
+	
+	def test_calculate_acmg_clas(self):
+	
+		score1 = "NA"
+		score2 = 1.5 #Definitely pathogenic
+		score3 = 0.99 #On the cut off of pathogenic
+		score4 = 0.98 #On the cut off of likely pathogenic
+		score5 = 0.95 #Definitely likely pathogenic
+		score6 = 0.90 #On the cut off of likely pathogenic
+		score7 = 0.89 #On the cut off of VUS
+		score8 = 0 #Definitely VUS
+		score9 = -(0.89) #On the cut off of VUS
+		score10 = -(0.90) #On the cut off of likely benign
+		score11 = -(0.95) #Definitely likely benign
+		score12 = -(0.98) #On the cut off of likely benign
+		score13 = -(0.99) #On the cut off of benign
+		score14 = -(1.5) #Definitely benign
+		
+		self.assertEqual(calculate_acmg_class(score1), '5')
+		self.assertEqual(calculate_acmg_class(score2), '4')
+		self.assertEqual(calculate_acmg_class(score3), '4')
+		self.assertEqual(calculate_acmg_class(score4), '3')
+		self.assertEqual(calculate_acmg_class(score5), '3')
+		self.assertEqual(calculate_acmg_class(score6), '3')
+		self.assertEqual(calculate_acmg_class(score7), '2')
+		self.assertEqual(calculate_acmg_class(score8), '2')
+		self.assertEqual(calculate_acmg_class(score9), '2')
+		self.assertEqual(calculate_acmg_class(score10), '1')
+		self.assertEqual(calculate_acmg_class(score11), '1')
+		self.assertEqual(calculate_acmg_class(score12), '1')
+		self.assertEqual(calculate_acmg_class(score13), '0')
+		self.assertEqual(calculate_acmg_class(score14), '0')
 
 class TestProcessCNV(TestCase):	
 	"""
