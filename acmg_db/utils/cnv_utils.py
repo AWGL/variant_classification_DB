@@ -259,7 +259,6 @@ def get_vep_info_local_cnv(cnv_list, vep_info, sample):
 #-------------------------------------------
 def calculate_acmg_class(score):
 	
-	print(score)
 	if score == "NA":
 		return "5"
 	else:
@@ -276,6 +275,7 @@ def calculate_acmg_class(score):
 			return "0"
 		else:
 			print("ERROR! Class could not be calculated")
+			return "Error"
 	
 		
 		
