@@ -303,16 +303,6 @@
 	<br>
 	<hr>
 		
-		<h5>Change ACMG Guidelines</h5>
-		
-		Only fill out this box if you have justification for changing the ACMG Guidelines used from the default. Please evidence this in the comments. 
-		<br>
-		<br>Warning! By clicking submit below, any scores or classifications calculated already will be deleted and reset.  
-		<br>
-		{% crispy method_form %}		
-		
-		
-		<hr>
 		
 		<h5> Is this CNV Genuine? </h5>
 		<!-- Genuine/ artefact sections section-->
@@ -334,7 +324,18 @@
 		<br>
 		<br>
 		{% crispy details_form %}
+	
+		<hr>
+		<h5>Change ACMG Guidelines</h5>
 		
+		Only fill out this box if you have justification for changing the ACMG Guidelines used from the default. Please evidence this in the comments. 
+		<br>
+		<br>Warning! By clicking submit below, any scores or classifications calculated already will be deleted and reset.  
+		<br>
+		{% crispy method_form %}		
+		
+		
+		<hr>	
 	</div>
 	
 	<!-- ACMG RULES SECTION -->
@@ -367,6 +368,7 @@
 			</div>
 			{% endif %}
 		{% endif %}
+		
 		
 		<br>
 		ACMG CNV Classification Criteria have been defined in the publication <a href=https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7313390/ target="_blank">HERE</a> and within the SOP LP-GEN-CNVInvestigation. 
