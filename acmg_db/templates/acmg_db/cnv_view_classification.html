@@ -169,32 +169,32 @@
           {% if 'Pathogenic' in cnv.display_first_classification %}
             <button type="button" class="btn btn-danger" style="width: 40rem;">First Check: {{cnv.display_first_classification}} |  Score = {{ cnv.first_final_score }}</button>
           {% elif 'Benign' in cnv.display_first_classification %}
-            <button type="button" class="btn btn-info" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+            <button type="button" class="btn btn-info" style="width: 40rem;">First Check: {{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
           {% elif 'VUS' in cnv.display_first_classification %}
-            <button type="button" class="btn btn-warning" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+            <button type="button" class="btn btn-warning" style="width: 40rem;">First Check: {{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
           {% elif 'Artefact' in cnv.display_first_classification %}
-            <button type="button" class="btn btn-secondary" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+            <button type="button" class="btn btn-secondary" style="width: 40rem;">First Check: {{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
           {% elif 'Contradictory' in cnv.display_first_classification %}
-            <button type="button" class="btn btn-primary" style="width: 40rem;">{{cnv.display_first_classification}}  |  Score = {{ cnv.first_final_score }}</button>
+            <button type="button" class="btn btn-primary" style="width: 40rem;">First Check: {{cnv.display_first_classification}}  |  Score = {{ cnv.first_final_score }}</button>
           {% else %}
-            <button type="button" class="btn btn-light" style="width: 40rem;">{{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
+            <button type="button" class="btn btn-light" style="width: 40rem;">First Check: {{cnv.display_first_classification}} |  Score =  {{ cnv.first_final_score }}</button>
           {% endif %}
 
           <br>
           <br>
 
           {% if 'Pathogenic' in cnv.display_classification %}
-            <button type="button" class="btn btn-danger" style="width: 40rem;">First Check: {{cnv.display_classification}} |  Score = {{ cnv.second_final_score }}</button>
+            <button type="button" class="btn btn-danger" style="width: 40rem;">Second Check: {{cnv.display_classification}} |  Score = {{ cnv.second_final_score }}</button>
           {% elif 'Benign' in cnv.display_classification %}
-            <button type="button" class="btn btn-info" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+            <button type="button" class="btn btn-info" style="width: 40rem;">Second Check: {{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
           {% elif 'VUS' in cnv.display_classification %}
-            <button type="button" class="btn btn-warning" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+            <button type="button" class="btn btn-warning" style="width: 40rem;">Second Check: {{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
           {% elif 'Artefact' in cnv.display_classification %}
-            <button type="button" class="btn btn-secondary" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+            <button type="button" class="btn btn-secondary" style="width: 40rem;">Second Check: {{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
           {% elif 'Contradictory' in cnv.display_classification %}
-            <button type="button" class="btn btn-primary" style="width: 40rem;">{{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
+            <button type="button" class="btn btn-primary" style="width: 40rem;">Second Check: {{cnv.display_classification}} |  Score =  {{ cnv.second_final_score }}</button>
           {% else %}
-            <button type="button" class="btn btn-light" style="width: 40rem;">{{cnv.display_classification}}  |  Score = {{ cnv.second_final_score }}</button>
+            <button type="button" class="btn btn-light" style="width: 40rem;">Second Check: {{cnv.display_classification}}  |  Score = {{ cnv.second_final_score }}</button>
           {% endif %}
 
           <br>
