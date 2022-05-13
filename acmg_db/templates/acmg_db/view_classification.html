@@ -95,6 +95,22 @@
         <td> {{classification.user_creator }} </td>
       </tr>
       <tr>
+        <td> Artefact Check User</td>
+        <td> {{classification.artefact_checker }} </td>
+      </tr>
+      <tr>
+        <td> Artefact Check Date</td>
+        <td> {{classification.artefact_check_date }} </td>
+      </tr>
+
+
+
+
+
+
+
+
+      <tr>
         <td> First Check Date </td>
         <td> {{ classification.first_check_date|date:"d/m/Y"}} </td>
       </tr>
@@ -134,6 +150,11 @@
         <td> Analysis Performed </td>
         <td> {{classification.sample.analysis_performed|linebreaksbr }} </td>
       </tr>
+      <tr>
+        <td> VariantBank Analysis ID </td>
+        <td> {{classification.analysis_id }} </td>
+      </tr>
+
       <tr>
         <td> Other Changes </td>
         <td> {{classification.sample.other_changes|linebreaksbr }} </td>

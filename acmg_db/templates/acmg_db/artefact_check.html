@@ -14,6 +14,10 @@
 		<td>Worklist</td>
 		<td>{{classifications.0.sample.worklist }}</td>
 	</tr>
+	<tr>
+		<td>Genome Build</td>
+		<td>{{classifications.0.sample.genome }}</td>
+	</tr>
 </table>
 
 
@@ -57,7 +61,7 @@
 
 
 
-		{% if classification.display_genuine != 'Genuine - New Classification' and classification.display_status == 'First Check' %}
+		{% if classification.display_genuine != 'Genuine - New Classification' and classification.display_status == 'First Check' and classification.user_first_checker is None %}
 
 		<td> 
 			  <select name="{{classification.pk}}" id="{{classification.pk}}">

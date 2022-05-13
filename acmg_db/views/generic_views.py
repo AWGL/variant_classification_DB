@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 
 from acmg_db.models import *
+from acmg_db.forms import SelectAnalysisArtefacts
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
@@ -106,6 +107,36 @@ def ajax_delete_comment(request):
 
 @transaction.atomic
 @login_required
+def artefact_check_select(request):
+	"""
+	Select which analysis ID you want to do an artefact check for
+	"""
+
+	form = SelectAnalysisArtefacts()
+
+	if request.method == 'POST':
+
+		form = SelectAnalysisArtefacts(request.POST)
+
+		if form.is_valid():
+
+			analysis_id = form.cleaned_data['analysis_id']
+
+			classifications = Classification.objects.filter(analysis_id=analysis_id)
+
+			if len(classifications) == 0:
+
+				error = f'There are no classifications belonging to VariantBank analysis ID {analysis_id}'
+
+				return render(request, 'acmg_db/artefact_check_select.html', {'form': form, 'error': error})
+
+			return redirect('artefact_check', pk=analysis_id)
+	
+	return render(request, 'acmg_db/artefact_check_select.html', {'form': form})
+
+
+@transaction.atomic
+@login_required
 def artefact_check(request, pk):
 	"""
 	Allow arbitrary users to perform artefact checks
@@ -126,6 +157,9 @@ def artefact_check(request, pk):
 			classification_obj = Classification.objects.get(pk=key)
 
 			previous_classifications = Classification.objects.filter(variant=classification_obj.variant,variant__genome=classification_obj.variant.genome, status__in=['2', '3']).exclude(pk=classification_obj.pk).order_by('-second_check_date')
+
+
+			print(classification_obj.user_first_checker)
 
 			# only update if no user assigned and first check
 			if classification_obj.status == '0' and classification_obj.user_first_checker is None:
@@ -171,7 +205,12 @@ def artefact_check(request, pk):
 
 						classification_obj.first_final_class = previous_full_classifications[0].second_final_class
 
-						classification_obj.save()				
+						classification_obj.save()
+
+
+				else:
+
+					print('User cannot edit the status of the classification')			
 				
 
 

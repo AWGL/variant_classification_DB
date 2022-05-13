@@ -1113,6 +1113,43 @@ class DownloadCNVListForm(forms.Form):
 			Field('white_list', placeholder='CNV classifications to whitelist.', title=False),
 		)
 
+class SelectAnalysisArtefacts(forms.Form):
+	"""
+	Form for downloading variant lists.
+	"""
+
+	analysis_id = forms.IntegerField()
+
+
+	def __init__(self, *args, **kwargs):
+		
+		super(SelectAnalysisArtefacts, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'artefact_check'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('artefact_check_select')
+		self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('analysis_id', placeholder='Which VariantBank Analysis to check', title=False),
+		)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Create the form class.
 class PhenotypeForm(ModelForm):
