@@ -208,29 +208,41 @@ class AddVariantsForAnalysis(APIView):
 						name = gene_symbol
 						)
 
-					transcript_obj, created = Transcript.objects.get_or_create(
-							name = transcript_id,
-							gene = gene_obj
-						)
+					transcript_obj = Transcript.objects.filter(name=transcript_id, gene=gene_obj)
 
-					transcript_variant_obj, created = TranscriptVariant.objects.get_or_create(
-						variant = variant_obj,
-						transcript = transcript_obj,
-						hgvs_c = transcript_hgvsc,
-						hgvs_p = transcript_hgvsp,
-						exon = exon,
-						consequence = impact
-						)
+					if len(transcript_obj) == 0:
+					
+						transcript_obj = Transcript(name=transcript_id, gene=gene_obj)
+						transcript_obj.save()
 
-					# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
-					if genome == "GRCh37":
-						vep_version = settings.VEP_VERSION_37
-					elif genome == "GRCh38":
-						vep_version = settings.VEP_VERSION_38
+					else:
+
+						transcript_obj = transcript_obj[0]
+
+					transcript_variant_obj = TranscriptVariant.objects.filter(variant=variant_obj, transcript=transcript_obj)
+					
+					if len(transcript_variant_obj) == 0:
 						
-					if created:
+						transcript_variant_obj = TranscriptVariant(variant = variant_obj,
+											transcript = transcript_obj,
+                                                					hgvs_c = transcript_hgvsc,
+                                                					hgvs_p = transcript_hgvsp,
+                                                					exon = exon,
+                                                					consequence = impact)
+
+						# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
+						if genome == "GRCh37":
+							vep_version = settings.VEP_VERSION_37
+						elif genome == "GRCh38":
+							vep_version = settings.VEP_VERSION_38
+						
 						transcript_variant_obj.vep_version = vep_version
 						transcript_variant_obj.save()
+					
+					else:
+
+						transcript_variant_obj = transcript_variant_obj[0]
+
 
 					# Find the transcript that VEP has picked
 					if 'pick' in consequence:
