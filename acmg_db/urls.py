@@ -43,6 +43,8 @@ urlpatterns = [
     path('view_sample/<str:pk>/', views.view_sample, name='view_sample'),
 
     path('ajax/delete_comment/', views.ajax_delete_comment, name='ajax_delete_comment'),
+    path('artefact_check_select/', views.artefact_check_select, name='artefact_check_select'),
+    path('artefact_check/<int:pk>', views.artefact_check, name='artefact_check'),
 
 
     path('api-token-auth/', rest_views.obtain_auth_token),

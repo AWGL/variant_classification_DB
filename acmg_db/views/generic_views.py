@@ -5,8 +5,10 @@ from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+from django.utils import timezone
 
 from acmg_db.models import *
+from acmg_db.forms import SelectAnalysisArtefacts
 
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic
@@ -100,3 +102,116 @@ def ajax_delete_comment(request):
 	else:
 
 			raise PermissionDenied('You do not have permission to delete this comment.')
+
+
+
+@transaction.atomic
+@login_required
+def artefact_check_select(request):
+	"""
+	Select which analysis ID you want to do an artefact check for
+	"""
+
+	form = SelectAnalysisArtefacts()
+
+	if request.method == 'POST':
+
+		form = SelectAnalysisArtefacts(request.POST)
+
+		if form.is_valid():
+
+			analysis_id = form.cleaned_data['analysis_id']
+
+			classifications = Classification.objects.filter(analysis_id=analysis_id)
+
+			if len(classifications) == 0:
+
+				error = f'There are no classifications belonging to VariantBank analysis ID {analysis_id}'
+
+				return render(request, 'acmg_db/artefact_check_select.html', {'form': form, 'error': error})
+
+			return redirect('artefact_check', pk=analysis_id)
+	
+	return render(request, 'acmg_db/artefact_check_select.html', {'form': form})
+
+
+@transaction.atomic
+@login_required
+def artefact_check(request, pk):
+	"""
+	Allow arbitrary users to perform artefact checks
+	"""
+
+	classifications = Classification.objects.filter(analysis_id=pk)
+
+	if request.method == 'POST':
+
+		post_params = request.POST.dict()
+
+		del post_params['csrfmiddlewaretoken']
+
+		for key in post_params:
+
+			genuine_status = request.POST[key]
+
+			classification_obj = Classification.objects.get(pk=key)
+
+			previous_classifications = Classification.objects.filter(variant=classification_obj.variant,variant__genome=classification_obj.variant.genome, status__in=['2', '3']).exclude(pk=classification_obj.pk).order_by('-second_check_date')
+
+
+			print(classification_obj.user_first_checker)
+
+			# only update if no user assigned and first check
+			if classification_obj.status == '0' and classification_obj.user_first_checker is None:
+
+				if genuine_status == 'Artefact':
+
+					classification_obj.genuine = '4'
+					classification_obj.artefact_checker = request.user
+					classification_obj.artefact_check_date = timezone.now()
+					classification_obj.status = '1'
+					classification_obj.first_final_class = '6'
+					classification_obj.user_first_checker = request.user
+					classification_obj.first_check_date = timezone.now() 
+
+					classification_obj.save()
+
+				elif genuine_status == 'Genuine - New Classification':
+
+					classification_obj.genuine = '1'
+					classification_obj.artefact_checker = request.user
+					classification_obj.artefact_check_date = timezone.now()
+
+					# initiate classification 
+					classification_obj.initiate_classification()
+
+
+					classification_obj.save()
+
+
+				elif genuine_status == 'Genuine - Use Previous Classification':
+
+					# if there isnt a previous classification, throw a warning and stop
+					if len(previous_classifications) == 0:
+
+						print('No classification to use for previous')
+						# if there is, update final class to whatever it was previously
+					else:
+
+						classification_obj.genuine = '2'
+						classification_obj.artefact_checker = request.user
+						classification_obj.artefact_check_date = timezone.now()
+						classification_obj.status = '1'
+
+						classification_obj.first_final_class = previous_full_classifications[0].second_final_class
+
+						classification_obj.save()
+
+
+				else:
+
+					print('User cannot edit the status of the classification')			
+				
+
+
+	return render(request, 'acmg_db/artefact_check.html', {'classifications':classifications})
