@@ -133,6 +133,11 @@ class AddVariantsForAnalysis(APIView):
 					'version': settings.VEP_VERSION_38
 				}
 
+			# set vep version
+			if genome == "GRCh37":
+				vep_version = settings.VEP_VERSION_37
+			elif genome == "GRCh38":
+				vep_version = settings.VEP_VERSION_38
 
 			just_variants = [variant[0] for variant in variant_list]
 
@@ -229,13 +234,13 @@ class AddVariantsForAnalysis(APIView):
                                                 					hgvs_p = transcript_hgvsp,
                                                 					exon = exon,
                                                 					consequence = impact)
-
+						"""
 						# only add the vep version if its a new transcript, otherwise there will be duplicates for each vep version
 						if genome == "GRCh37":
 							vep_version = settings.VEP_VERSION_37
 						elif genome == "GRCh38":
 							vep_version = settings.VEP_VERSION_38
-						
+						"""
 						transcript_variant_obj.vep_version = vep_version
 						transcript_variant_obj.save()
 					
