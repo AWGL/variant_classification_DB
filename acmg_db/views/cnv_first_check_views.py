@@ -301,7 +301,10 @@ def cnv_first_check(request, pk):
 						cnv.save()
 
 						#return redirect('home')
-						return redirect('/cnv_pending')
+						return redirect('/cnv_pending?sample={}&worksheet={}&panel={}'.format(
+							cnv.sample.sample_name,
+							cnv.sample.worklist,
+							cnv.sample.analysis_performed.panel))
 			
 			return render(request, 'acmg_db/cnv_first_check.html', context)
 	
