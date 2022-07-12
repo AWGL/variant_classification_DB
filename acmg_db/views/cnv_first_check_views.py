@@ -312,7 +312,6 @@ def cnv_first_check(request, pk):
 				
 					if cnv.genuine  == '2' and cleaned_data['final_classification'] == '8':
 						#Get current classication
-						print(cnv.first_final_class)
 						if cnv.first_final_class not in class_options:
 							context['warn'] += ['You selected to use a previous classification, but the selected classification does not match any previous classifications for this CNV. Please contact bioinformatics to reset this CNV']
 					elif cnv.genuine == '2':
