@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
-from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, CNVFinaliseClassificationForm, CNVDetailsForm, CNVMethodForm
+from acmg_db.forms import CNVSampleInfoForm, CNVGenuineArtefactForm, CNVFinaliseClassificationForm, CNVDetailsForm, CNVMethodForm, CNVPreviousClassificationsForm
 from acmg_db.models import *
 from acmg_db.utils.cnv_utils import calculate_acmg_class, cnv_previous_classifications
 
@@ -103,6 +103,7 @@ def cnv_first_check(request, pk):
 			'genuine_form': genuine_form,
 			'method_form': method_form,
 			'finalise_form': finalise_form,
+			'prev_class_form': None,
 			'warn': []
 		}
 		#-------
@@ -162,6 +163,7 @@ def cnv_first_check(request, pk):
 			if 'genuine' in request.POST:
 
 				genuine_form = CNVGenuineArtefactForm(request.POST, cnv_pk=cnv.pk)
+				prev_class_form = None
 
 				if genuine_form.is_valid():
 					cleaned_data = genuine_form.cleaned_data
@@ -183,11 +185,25 @@ def cnv_first_check(request, pk):
 
 							context['warn'] += ['There are no previous classifications to use.']
 
-						# if there is, update final class to whatever it was previously
+						# if there is, update final class to whatever it was previously if only one type of classification, otherwise give a form to choose which
 						else:
+							#Get all previous full classifications
+							class_options = []
+							for entry in previous_full_classifications:
+								class_options.append(entry.display_final_classification())
+							
+							#Get unique previous full classifications
+							uni_class_options = list(set(class_options))
+							
+							#If only one type of classification, set it as that
+							if len(uni_class_options) == 1:
+								cnv.genuine = '2'
+								cnv.first_final_class = previous_full_classifications[0].second_final_class
+							#Otherwise render form to give options
+							else:
+								cnv.genuine = '2'
+								prev_class_form = CNVPreviousClassificationsForm(request.POST, cnv_pk=cnv.pk)
 
-							cnv.genuine = '2'
-							cnv.first_final_class = previous_full_classifications[0].second_final_class
 
 					# genuine - not analysed - update final_class to 'not analysed'
 					elif cleaned_data['genuine'] == '3':
@@ -208,7 +224,22 @@ def cnv_first_check(request, pk):
 				context['result'] = result
 				context['cnv'] = get_object_or_404(CNV, pk=pk)
 				context['genuine_form'] = CNVGenuineArtefactForm(cnv_pk=cnv.pk)
+				context['prev_class_form'] = prev_class_form
 		
+			if 'previous_classification' in request.POST:
+				
+				prev_class_form = CNVPreviousClassificationsForm(request.POST, cnv_pk=cnv.pk)
+				
+				if prev_class_form.is_valid():
+					cleaned_data = prev_class_form.cleaned_data
+					new_class = cleaned_data['previous_classification']
+					cnv.first_final_class = new_class
+					cnv.save()
+				# reload dict variables for rendering
+				result = cnv.display_first_classification()
+				context['result'] = result
+				context['cnv'] = get_object_or_404(CNV, pk=pk)
+			
 			# Changing ACMG Method Form
 			if 'method' in request.POST:
 
@@ -273,11 +304,21 @@ def cnv_first_check(request, pk):
 					if cnv.inheritance == None or cnv.inheritance == '':
 
 						context['warn'] += ['Inheritence pattern has not been set']
-
-					if cnv.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
-
-						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
-
+					#Modifying this check as the last full classification might not match what they want to use if there are differing previous classifications. Therefore check if in any of the previous classifications
+					#Get all previous classifications
+					class_options = []
+					for entry in previous_full_classifications:
+						class_options.append(entry.second_final_class)
+				
+					if cnv.genuine  == '2' and cleaned_data['final_classification'] == '8':
+						#Get current classication
+						print(cnv.first_final_class)
+						if cnv.first_final_class not in class_options:
+							context['warn'] += ['You selected to use a previous classification, but the selected classification does not match any previous classifications for this CNV. Please contact bioinformatics to reset this CNV']
+					elif cnv.genuine == '2':
+						if cleaned_data['final_classification'] not in class_options:
+							context['warn'] += ['You selected to use a previous classification, but the selected classification does not match any previous classifications for this CNV.']				
+					
 					if cnv.genuine  == '3' and (cleaned_data['final_classification'] != '5' ):
 
 						context['warn'] += ['This classification was selected as Not Analysed - therefore the only valid option is Not Analysed']
