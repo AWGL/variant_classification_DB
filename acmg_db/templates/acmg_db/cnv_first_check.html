@@ -240,28 +240,31 @@
 		<p>An identical CNV, or a CNV which has at least 50% reciprocal overlap has been seen <b>{{ previous_classifications|length }} times</b> before. These CNVs may not be the same type (i.e. gain or loss) and may differ considerably in size, therefore these MUST be checked in detail.</p>
 		<table class="table">
 			<tr>
-				<td style="width: 20%"><b>Last seen:</b></td>
-				<td style="width: 20%">{{ previous_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+			{% for classification in previous_classifications %}
+				<td style="width: 20%"><b>Date:</b></td>
+				<td style="width: 20%">{{ classification.second_check_date|date:"d/m/Y"}}</td>
 				<td style="width: 20%">
-					{% if 'Pathogenic' in previous_classifications.0.display_final_classification %}
+					{% if 'Pathogenic' in classification.display_final_classification %}
 					<button type="button" class="btn btn-danger btn-sm">
-					{% elif 'Benign' in previous_classifications.0.display_final_classification %}
+					{% elif 'Benign' in classification.display_final_classification %}
 					<button type="button" class="btn btn-info btn-sm">
-					{% elif 'VUS' in previous_classifications.0.display_final_classification %}
+					{% elif 'VUS' in classification.display_final_classification %}
 					<button type="button" class="btn btn-warning btn-sm">
-					{% elif 'Artefact' in previous_classifications.0.display_final_classification %}
+					{% elif 'Artefact' in classification.display_final_classification %}
 					<button type="button" class="btn btn-secondary btn-sm">
-					{% elif 'Contradictory' in previous_classifications.0.display_final_classification %}
+					{% elif 'Contradictory' in classification.display_final_classification %}
                     			<button type="button" class="btn btn-primary btn-sm">
 					{% else %}
 					<button type="button" class="btn btn-light btn-sm">
 					{% endif %}
-						{{ previous_classifications.0.display_final_classification }}
+						{{ classification.display_final_classification }}
 					</button>
 				</td>
-				<td style="width: 20%">{{ previous_classifications.0.guideline_version}}</td>
-				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=previous_classifications.0.pk %}" role="button">View</a></td>
+				<td style="width: 20%">{{ classification.guideline_version}}</td>
+				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=classification.pk %}" role="button">View</a></td>
 			</tr>
+			
+			{% endfor %}
 
 			{% if previous_full_classifications|length  > 0 %}
 			<tr>
@@ -315,6 +318,11 @@
 			This Classification has been set as {{ cnv.display_genuine }}. To change this you will need to reset the classification.
 			</div>
 
+		{% endif %}
+		
+		{% if prev_class_form != None %}
+		<br>Please select the previous classification you would like to use.</br>
+			{% crispy prev_class_form %}
 		{% endif %}
 		
 		<hr>

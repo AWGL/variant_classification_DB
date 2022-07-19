@@ -250,9 +250,20 @@ def cnv_second_check(request, pk):
 						context['warn'] += ['Select whether the variant is genuine or artefact']
 
 
-					if cnv.genuine  == '2' and (cleaned_data['final_classification'] != previous_full_classifications[0].second_final_class):
+					#Now check all previous classifications and make sure that it's in this list
+					class_options = []
+					for entry in previous_full_classifications:
+						class_options.append(entry.second_final_class)
+						
+					if cnv.genuine  == '2' and (cleaned_data['final_classification'] not in class_options):
+						
+						context['warn'] += ['You selected to use a previous classification, but the selected classification does not match any previous classifications']
+					#Add check here that the decided previous classification matches between the checkers:	
+					elif cnv.genuine == '2':
+										
+						if cnv.first_final_class != cleaned_data['final_classification']:
+							context['warn'] += ['You selected to use a different previous classification than the first checker']
 
-						context['warn'] += ['You selected to use the last full classification, but the selected classification does not match']
 
 					if cnv.genuine  == '3' and cleaned_data['final_classification'] != '5':
 
