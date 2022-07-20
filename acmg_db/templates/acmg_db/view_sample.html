@@ -16,6 +16,7 @@
 	  <th>Panel</th>
 	  <th>Affected With</th>
 	  <th>Other Changes</th>
+	  <th>Completed Classifications</th>
 
 	</tr>
   </thead>
@@ -23,11 +24,12 @@
   <tbody>
 	{% for sample in samples %}
 	<tr>
-		<td> {{sample.sample_name_only}} </td>
-		<td> {{sample.worklist.name}} </td>
-		<td> {{sample.analysis_performed}} </td>
-		<td> {{sample.affected_with}} </td>
-		<td> {{sample.other_changes}} </td>
+		<td> {{sample.0.sample_name_only}} </td>
+		<td> {{sample.0.worklist.name}} </td>
+		<td> {{sample.0.analysis_performed}} </td>
+		<td> {{sample.0.affected_with}} </td>
+		<td> {{sample.0.other_changes}} </td>
+		<td> {{sample.1.sample_finished_count}} /  {{sample.1.sample_total_count}}</td>
 	 
 	</tr>
 	{% endfor %}
@@ -37,7 +39,7 @@
 </table>
 
 <br>
-<h4> All Completed Classifications Performed on Sample : {{sample_name}} </h4>
+<h4> All {{count}} Classifications Performed on Sample : {{sample_name}} </h4>
 <br>
 
 <table id="classifications" class = "table table-hover table-bordered" style="width:100%">
