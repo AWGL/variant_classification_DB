@@ -158,9 +158,6 @@ def artefact_check(request, pk):
 
 			previous_classifications = Classification.objects.filter(variant=classification_obj.variant,variant__genome=classification_obj.variant.genome, status__in=['2', '3']).exclude(pk=classification_obj.pk).order_by('-second_check_date')
 
-
-			print(classification_obj.user_first_checker)
-
 			# only update if no user assigned and first check
 			if classification_obj.status == '0' and classification_obj.user_first_checker is None:
 
@@ -206,6 +203,34 @@ def artefact_check(request, pk):
 						classification_obj.first_final_class = previous_full_classifications[0].second_final_class
 
 						classification_obj.save()
+
+				elif genuine_status == 'Not analysed':
+
+					classification_obj.genuine = '3'
+					classification_obj.artefact_checker = request.user
+					classification_obj.artefact_check_date = timezone.now()
+
+					classification_obj.status = '1'
+					classification_obj.first_final_class = '7'
+					classification_obj.user_first_checker = request.user
+					classification_obj.first_check_date = timezone.now() 
+
+
+					classification_obj.save()
+
+				elif genuine_status == 'Not Analysed Unrelated to Phenotype':
+
+					classification_obj.genuine = '5'
+					classification_obj.artefact_checker = request.user
+					classification_obj.artefact_check_date = timezone.now()
+
+					classification_obj.status = '1'
+					classification_obj.first_final_class = '8'
+					classification_obj.user_first_checker = request.user
+					classification_obj.first_check_date = timezone.now() 
+
+
+					classification_obj.save()
 
 
 				else:

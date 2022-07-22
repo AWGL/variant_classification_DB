@@ -159,11 +159,6 @@ def load_bluefuse(input_file):
 			
 			continue
 	
-	print(headers)
-	print(data_values)
-	print(meta_dict)
-	print(max_values)
-	
 	# pull out metadata
 	report_info = []
 
@@ -178,8 +173,6 @@ def load_bluefuse(input_file):
 
 	df = pd.concat([df_values,df_max], axis=1)
 	
-	print(df)
-
 	#add to meta dictionary
 	meta_dict['report_info'] = report_info
 

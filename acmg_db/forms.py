@@ -431,6 +431,33 @@ class CNVGenuineArtefactForm(forms.Form):
 		self.helper.layout = Layout(
 			Field('genuine', id='genuine_field'),
 		)
+		
+class CNVPreviousClassificationsForm(forms.Form):
+	"""
+	Form to list all previous classifications as a drop down, allowing you to select which one you'd like to use for classification
+	"""
+	class_choices = CNV.FINAL_CLASS_CHOICES
+	previous_classification = forms.ChoiceField(choices=class_choices)
+	
+	def __init__(self, *args, **kwargs):
+	
+		self.cnv_pk = kwargs.pop('cnv_pk')
+		self.cnv = CNV.objects.get(pk = self.cnv_pk)
+		
+		super(CNVPreviousClassificationsForm, self).__init__(*args, **kwargs)
+
+		self.helper = FormHelper()
+		self.helper.form_id = 'genuine-artefact-form'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = reverse('cnv_first_check',kwargs={'pk':self.cnv_pk})
+		self.helper.add_input(Submit('submit', 'Update', css_class='btn-success'))
+		self.helper.form_class = 'form-horizontal'
+		self.helper.layout = Layout(
+			Field('previous_classification', id='previous_classifiction'),
+		)
+	
 
 
 class FinaliseClassificationForm(forms.Form):
