@@ -35,6 +35,8 @@ def search(request):
 			# check if we've searched for sample
 			x = re.search("^\d{2}M\d{5}", search_input)
 
+			print(search_input)
+
 			if x != None:
 
 				samples = Sample.objects.filter(sample_name_only= search_input)
@@ -237,13 +239,42 @@ def view_sample(request, pk):
 
 	# A sample pk is worksheet_id + '-' + sample_id + '-' + analysis performed
 	# so loop through and get all classifications which match just the sample id bit
+
+	sample_count_dict = {}
+
 	for sample in samples:
+
+		sample_count_dict[sample.name] = {}
 
 		classifications = list(Classification.objects.filter(sample = sample))
 
+		sample_total_count = 0
+		sample_finished_count = 0
+
+		for clss in classifications:
+
+			sample_total_count = sample_total_count + 1
+
+			if int(clss.status) >=2:
+
+				sample_finished_count = sample_finished_count +1
+
+		sample_count_dict[sample.name]['sample_total_count'] = sample_total_count
+		sample_count_dict[sample.name]['sample_finished_count'] = sample_finished_count
+
+
 		all_classifications = all_classifications + classifications
 
-	return render(request, 'acmg_db/view_sample.html', {'samples': samples, 'all_classifications': all_classifications, 'sample_name': pk})
+	count = len(all_classifications)
+
+
+	sample_tuples = []
+	for sample in samples:
+
+		sample_tuples.append((sample, sample_count_dict[sample.name]))
+
+
+	return render(request, 'acmg_db/view_sample.html', {'samples': sample_tuples, 'all_classifications': all_classifications, 'sample_name': pk, 'count': count, 'sample_count_dict': sample_count_dict})
 
 #--------
 @transaction.atomic

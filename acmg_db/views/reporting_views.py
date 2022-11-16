@@ -37,7 +37,9 @@ def reporting(request):
 	# if form is submitted
 	if request.method == 'POST':
 		form = ReportingSearchForm(request.POST, options=PANEL_OPTIONS)
+
 		if form.is_valid():
+			
 			cleaned_data = form.cleaned_data
 
 			# pull out classifications
