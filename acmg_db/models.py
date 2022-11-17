@@ -1006,6 +1006,7 @@ class CNVLossClassificationQuestion(models.Model):
 	max_score = models.FloatField(null=True)
 	category = models.TextField(choices= CATEGORY_CHOICES)
 	qu_type = models.TextField(choices=TYPE_CHOICES)
+	order = models.IntegerField(blank=True, null=True)
 	
 	def score_range_pos(self):
 		
@@ -1076,6 +1077,7 @@ class CNVGainClassificationQuestion(models.Model):
 	max_score = models.FloatField(null=True)
 	category = models.TextField(choices= CATEGORY_CHOICES)
 	qu_type = models.TextField(choices=TYPE_CHOICES)
+	order = models.IntegerField(blank=True, null=True)
 	
 	#Function to produce range of values for the scoring
 	def score_range_pos(self):
