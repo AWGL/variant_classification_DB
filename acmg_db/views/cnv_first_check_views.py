@@ -61,21 +61,21 @@ def cnv_first_check(request, pk):
 		
 		if cnv.method == 'Gain':
 
-			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
+			answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__order')
 
 			if len(answers) == 0:
 
 				cnv.initiate_classification()
-				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__order')
 
 		elif cnv.method == 'Loss':
 
-			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
+			answers = CNVLossClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__order')
 
 			if len(answers) == 0:
 				
 				cnv.initiate_classification()
-				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__pk')
+				answers = CNVGainClassificationAnswer.objects.filter(cnv=cnv).order_by('cnv_classification_question__order')
 
 		comments = CNVUserComment.objects.filter(classification=cnv, visible=True)
 		result = cnv.display_first_classification()  # current class to display
