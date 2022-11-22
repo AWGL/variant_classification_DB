@@ -882,7 +882,11 @@ class CNV(models.Model):
 			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
 
 			#Check we have all the answers
-			if len(classification_answers) != all_questions_count:
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
 				return 'NA'
 
 			final_score = 0
@@ -900,7 +904,11 @@ class CNV(models.Model):
 			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
 
 			#Check we have all the answers
-			if len(classification_answers) != all_questions_count:
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
 				return 'NA'
 
 			final_score = 0
@@ -920,13 +928,17 @@ class CNV(models.Model):
 		FINAL_CLASS_CHOICES above
 		"""
 		
-		if self.gain_loss == 'Gain':
+		if self.method == 'Gain':
 			# pull out all classification questions and answers
 			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
 			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
 
 			#Check we have all the answers
-			if len(classification_answers) != all_questions_count:
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
 				return 'NA'
 
 			final_score = 0
@@ -937,14 +949,18 @@ class CNV(models.Model):
 
 			return final_score
 		
-		elif self.gain_loss == 'Loss':
-			
+		elif self.method == 'Loss':
+
 			# pull out all classification questions and answers
 			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
 			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
 
 			#Check we have all the answers
-			if len(classification_answers) != all_questions_count:
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
 				return 'NA'
 
 			final_score = 0
@@ -962,7 +978,11 @@ class CNV(models.Model):
 			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
 
 			#Check we have all the answers
-			if len(classification_answers) != all_questions_count:
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
 				return 'NA'
 
 			final_score = 0
