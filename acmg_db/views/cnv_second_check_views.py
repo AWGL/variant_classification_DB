@@ -41,7 +41,11 @@ def ajax_acmg_cnv_classification_second(request):
 		
 		if cnv.method == "Gain":
 			correct_number_of_questions = CNVGainClassificationQuestion.objects.all().count()
-			if len(classification_answers) != correct_number_of_questions:
+			if len(classification_answers) == correct_number_of_questions:
+				pass
+			elif len(classification_answers) == (correct_number_of_questions - 1):
+				pass
+			else:
 				raise Exception('Wrong number of questions')
 
 			# Update the classification answers
@@ -60,7 +64,11 @@ def ajax_acmg_cnv_classification_second(request):
 			
 		elif cnv.method == "Loss":
 			correct_number_of_questions = CNVLossClassificationQuestion.objects.all().count()
-			if len(classification_answers) != correct_number_of_questions:
+			if len(classification_answers) == correct_number_of_questions:
+				pass
+			elif len(classification_answers) == (correct_number_of_questions - 1):
+				pass
+			else:
 				raise Exception('Wrong number of questions')
 			
 			# Update the classification answers

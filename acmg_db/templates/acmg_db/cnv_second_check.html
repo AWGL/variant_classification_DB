@@ -291,7 +291,8 @@
 						{{ classification.display_final_classification }}
 					</button>
 				</td>
-				<td style="width: 20%">{{ classification.guideline_version}}</td>
+				<td style="width: 20%">{{ classification.method }}</td>
+				<td style="width: 20%">{{ classification.display_status }}</td>
 				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=classification.pk %}" role="button">View</a></td>
 			</tr>
 			
@@ -319,7 +320,8 @@
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>
 				</td>
-				<td style="width: 20%">{{ previous_full_classifications.0.guideline_version}}</td>
+				<td style="width: 20%">{{ previous_full_classifications.0.method }}</td>
+				<td style="width: 20%">{{ previous_full_classifications.0.display_status }}</td>
 				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 				
 			</tr>
@@ -395,6 +397,7 @@
 		  <th style="width: 15.00%" class='strength'> Suggested points/case </th>
 		  <th style="width: 5.00%" class='selected_first'> Max score </th>
 		  <th style="width: 5.00%" class='comment'> First Check Allocated score </th>
+		  <th style="width: 5.00%" class='comment'> First Check Comment </th>
 		  <th style="width: 5.00%" class='selected_second'> Second Check Allocated score </th>
 		  <th style="width: 36.00%" class='comment'> Comment </th>
 		</tr>
@@ -413,6 +416,8 @@
 		  <td class='description' style="width: 15.00%"> {{ answer.cnv_classification_question.suggested | safe }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.cnv_classification_question.max_score }}</td>
 		  <td class='description' style="width: 5.00%"> {{ answer.score }}
+		  <td class='description' style="width: 5.00%"> {{ answer.comment }}
+		  
 		  
 		  {% if answer.cnv_classification_question.qu_type == "Pathogenic Supporting" %}
 		  <td class='score' style="width: 5.00%"> <select size="1" id="score-{{answer.pk}}" name="score-{{answer.pk}}">
