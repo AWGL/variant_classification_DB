@@ -261,7 +261,7 @@
 					</button>
 				</td>
 				<td style="width: 20%">{{ classification.method }}</td>
-				<td style="width: 20%">{{ classification.display_status }}</td>
+				<td style="width: 20%">{{ classification.display_genuine }}</td>
 				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=classification.pk %}" role="button">View</a></td>
 			</tr>
 			
@@ -290,7 +290,7 @@
 					</button>
 				</td>
 				<td style="width: 20%">{{ previous_full_classifications.0.method }}</td>
-				<td style="width: 20%">{{ previous_full_classifications.0.display_status }}</td>
+				<td style="width: 20%">{{ previous_full_classifications.0.display_genuine }}</td>
 				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 				
 			</tr>
