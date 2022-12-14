@@ -268,12 +268,26 @@
 		<h5><b>Previous classifications</b></h5>
 
 		{% if previous_classifications|length  > 0 %}
-		<p>An identical CNV, or a CNV which has at least 50% reciprocal overlap has been seen <b>{{ previous_classifications|length }} times</b> before. These CNVs may not be the same type (i.e. gain or loss) and may differ considerably in size, therefore these MUST be checked in detail.</p>
+		<p>An identical CNV, or a CNV which has at least 50% reciprocal overlap has been seen <b>{{ previous_classifications|length }} times</b> before. Below lists those which have undergone a full CNV classification. These CNVs may not be the same type (i.e. gain or loss) and may differ considerably in size, therefore these MUST be checked in detail.</p>
 		<table class="table">
+		<td><b> Date </b></td>
+		<td><b> CNV </b></td>
+		<td><b> Gene(s) </b></td>
+		<td><b> Classification </b></td>
+		<td><b> Gain or Loss? </b></td>
+		<td><b> Full Analysis? </b></td> 
+		<td><b> Link </b></td>
 			<tr>
 				{% for classification in previous_classifications %}
-					<td style="width: 20%"><b>Date:</b></td>
-				<td style="width: 20%">{{ classification.second_check_date|date:"d/m/Y"}}</td>
+				{% if classification.genuine != "2" %}
+
+				<td style="width: 10%">{{ classification.second_check_date|date:"d/m/Y"}}</td>
+				<td style="width: 20%"> {{ classification.display }} </td>
+				<td style="width: 20%">
+				{% for gene in cnv.genes_as_list %}
+						<span class="badge badge-warning">{{ gene.gene }}</span>
+	  				{% endfor %}
+	  			</td>
 				<td style="width: 20%">
 					{% if 'Pathogenic' in classification.display_final_classification %}
 					<button type="button" class="btn btn-danger btn-sm">
@@ -291,18 +305,27 @@
 						{{ classification.display_final_classification }}
 					</button>
 				</td>
-				<td style="width: 20%">{{ classification.method }}</td>
+				<td style="width: 10%">{{ classification.method }}</td>
 				<td style="width: 20%">{{ classification.display_genuine }}</td>
-				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=classification.pk %}" role="button">View</a></td>
+				<td style="width: 10%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=classification.pk %}" role="button">View</a></td>
 			</tr>
 			
+			{% endif %}
 			{% endfor %}
 
 			{% if previous_full_classifications|length  > 0 %}
 			<tr>
-				<td style="width: 20%"><b>Last full classification:</b></td>
+			<td><b>Last full classification:</b></td>
+			</tr>
 
-				<td style="width: 20%">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+			<tr>
+				<td style="width: 10%">{{ previous_full_classifications.0.second_check_date|date:"d/m/Y"}}</td>
+				<td style="width: 20%">{{ previous_full_classifications.0.display }} </td>
+				<td style="width: 20%">
+				{% for gene in previous_full_classifications.0.genes_as_list %}
+						<span class="badge badge-warning">{{ gene.gene }}</span>
+	  				{% endfor %}
+	  			</td>
 				<td style="width: 20%">
 					{% if 'Pathogenic' in previous_full_classifications.0.display_final_classification %}
 					<button type="button" class="btn btn-danger btn-sm">
@@ -320,9 +343,9 @@
 						{{ previous_full_classifications.0.display_final_classification }}
 					</button>
 				</td>
-				<td style="width: 20%">{{ previous_full_classifications.0.method }}</td>
+				<td style="width: 10%">{{ previous_full_classifications.0.method }}</td>
 				<td style="width: 20%">{{ previous_full_classifications.0.display_genuine }}</td>
-				<td style="width: 20%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
+				<td style="width: 10%"><a class="btn btn-light btn-sm" href="{% url 'cnv_view_classification' pk=previous_full_classifications.0.pk %}" role="button">View</a></td>
 				
 			</tr>
 			{% endif %}
