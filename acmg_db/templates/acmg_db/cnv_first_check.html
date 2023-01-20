@@ -254,7 +254,7 @@
 				<td style="width: 10%">{{ classification.second_check_date|date:"d/m/Y"}}</td>
 				<td style="width: 20%"> {{ classification.display }} </td>
 				<td style="width: 20%">
-				{% for gene in cnv.genes_as_list %}
+				{% for gene in classification.genes_as_list %}
 						<span class="badge badge-warning">{{ gene.gene }}</span>
 	  				{% endfor %}
 	  			</td>
