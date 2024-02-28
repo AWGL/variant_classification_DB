@@ -72,5 +72,6 @@ urlpatterns = [
     path('download_cnv_list/', views.download_cnv_list, name='download_cnv_list'),
     path('ajax/cnv_decipher_download/', views.ajax_cnv_decipher_download, name='ajax_cnv_decipher_download'),
     path('cnv_view_region/<str:pk>/', views.cnv_view_region, name='cnv_view_region'),
+    path('cnv_download_xml/<str:pk>/', views.cnv_download_xml, name='cnv_download_xml'),
     
 ]

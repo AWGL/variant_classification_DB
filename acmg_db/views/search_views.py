@@ -3,12 +3,14 @@ import re
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.db.models import Prefetch
+from django.template.loader import get_template
 
 from acmg_db.models import *
 from acmg_db.forms import SearchForm, CNVSearchForm, CNVAdvancedSearchForm
 from acmg_db.utils.variant_utils import get_variant_hash
+
 
 
 @transaction.atomic
@@ -300,6 +302,77 @@ def cnv_view_sample(request, pk):
 		all_cnvs = all_cnvs + cnv
 
 	return render(request, 'acmg_db/cnv_view_sample.html', {'samples': samples, 'all_cnvs': all_cnvs, 'sample_name': pk})
+
+
+def cnv_download_xml(request, pk):
+
+	"""
+	Show all completed classifications for a sample.
+	"""
+	samples = CNVSample.objects.filter(sample_name = pk)
+
+	print(samples)
+
+	if len(samples) == 0:
+
+		return HttpResponseNotFound(f'No sample found for this id: {pk}')
+
+	if len(samples) > 1:
+
+		return HttpResponseNotFound(f'Multiple Samples: {pk}')
+
+	sample_obj = samples[0]
+
+	#Getting XML download for LIMS
+	if 'submit' in request.GET:
+		
+		variant_list = []
+		
+		#Get info needed for each variant
+		for variant in request.GET:
+
+			#Skip submit (from button, don't know how to get rid of this)
+			if variant != 'submit':
+			
+				#Get variant set variant
+
+				my_cnv = CNV.objects.get(pk=variant)
+
+				print(my_cnv)
+
+				variant_list.append(my_cnv)
+
+		# Create XML from template and information for render
+		filename = f'Download_{pk}.xml'
+		template = get_template('acmg_db/germline_lims_transfer.xml')
+		html = template.render({'sample_obj': sample_obj, 'variant_list': variant_list})
+		
+		#Return XML
+		response = HttpResponse(html, content_type='application/xml')
+
+		response['Content-Disposition'] = f'attachment; filename={filename}'
+
+		return response	
+
+
+	else:
+
+		all_cnvs = []
+
+		# A sample pk is worksheet_id + '-' + sample_id + '-' + analysis performed
+		# so loop through and get all classifications which match just the sample id bit
+		for sample in samples:
+
+			cnv = list(CNV.objects.filter(sample = sample, status__in=['2','3']))
+
+			all_cnvs = all_cnvs + cnv
+
+		return render(request, 'acmg_db/download_xml.html', {'samples': samples, 'all_cnvs': all_cnvs, 'sample_name': pk})
+
+
+
+
+
 	
 #--------------------------------------------------------------------------------------------------
 @transaction.atomic

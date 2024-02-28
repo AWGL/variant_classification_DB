@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+{% autoescape off %}
+<ngs_data>
+    <sample_info>
+        <worksheet_id>{{ sample_obj.worklist.name }}</worksheet_id>
+        <sample_id>{{ sample_obj.sample_name }}</sample_id>
+		<referral >{{ sample_obj.analysis_performed }}</referral> <!-- This would be the referal reason for the sample - should be allowed to be blank -->
+		<awmgs_db_pk> {{ sample_obj.pk }} </awmgs_db_pk> <!-- our reference back to the original DB -->
+	</sample_info>
+	
+	
+	<!-- an entry for each variant to be uploaded -->
+	<variants>
+		{% for cnv in variant_list %}
+		<variant>
+		
+			<!-- generic to all variants types -->
+
+			{% if cnv.gain_loss == 'Gain' %}
+
+			<id>{{ cnv.cnv.full }}DUP</id> <!-- can be split into chr, pos, ref, alt if needed - for CNVs will be chr:pos-endtype e.g. 1:123-456DEL-->
+			{% elif cnv.gain_loss == 'Loss' %}
+			<id>{{ cnv.cnv.full }}DEL</id> <!-- can be split into chr, pos, ref, alt if needed - for CNVs will be chr:pos-endtype e.g. 1:123-456DEL-->
+			{% endif %}
+			
+			<genome_build>{{ cnv.cnv.genome }}</genome_build>
+
+			<variant_type>SV</variant_type>
+
+			<!-- if germline variant (otherwise these will be null) -->
+			<zygosity>{{ variant.0.genotype }}</zygosity>
+			
+			<!-- Variant set variant decision -->
+			<acmg_class>{{ cnv.display_classification }}</acmg_class>
+
+			<first_check_user>{{ cnv.user_first_checker}}</first_check_user>
+			<second_check_user>{{ cnv.user_second_checker }}</second_check_user>
+
+			<!-- Classification Information - note there are different guidelines for SNP and CNV intepretation -->
+			<!-- SNPs (ACGS_2020_SNP) codes will have id and strength whilst CNV e.g. ACGS_2020_CNV_DEL will have id and score -->
+						
+			<acmg_guidelines>{{ cnv.method }}</acmg_guidelines> <!-- String describing which guidelines can be used-->
+			
+			<!-- Score for CNV given on a per classification basis -->
+			<acmg_score>{{ cnv.calculate_acmg_score_second }}</acmg_score>
+
+			<acmg_codes>
+
+			{% for answer in cnv.get_answers_for_download %}
+					{% if answer.score_second != 0.00 %}
+					<code>
+						<id>{{ answer.cnv_classification_question.evidence }}</id>
+						<strength></strength>
+						<score>{{ answer.score_second }}</score> <!-- will be null for SNPs -->
+					</code>
+					{% endif %}	
+			{% endfor %}
+			</acmg_codes>
+	
+			<!-- if dosage included (otherwise these will be null) -->
+			<start_pos>{{ cnv.cnv.start }}</start_pos>
+			<end_pos>{{ cnv.cnv.stop }}</end_pos>
+			<copy_number>{{ cnv.gain_loss }}</copy_number>
+			<overlapping_genes>{{  cnv.genes_as_str }}</overlapping_genes>
+			<cytogenetic_location>{{ cnv.cnv.cyto_loc }}</cytogenetic_location> <!-- string -->
+			<iscn></iscn>
+				
+		</variant>
+		{% endfor %}
+		
+	</variants>
+
+	<coverage_summary>
+		<panel_coverage> NA </panel_coverage> <!-- number denoting the coverage over the panel -->
+		<problem_genes>NA </problem_genes> <!--problematic genes -->
+
+	</coverage_summary>
+</ngs_data>
+
+{% endautoescape %}

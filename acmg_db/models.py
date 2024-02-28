@@ -758,6 +758,13 @@ class CNV(models.Model):
 	
 	def genes_as_list(self):
 		return CNVGene.objects.filter(cnv=self)
+
+	def genes_as_str(self):
+		genes =  CNVGene.objects.filter(cnv=self)
+
+		genes = [gene.gene.name for gene in genes]
+
+		return ','.join(genes)
 	
 	def count_genes(self):
 
@@ -992,6 +999,55 @@ class CNV(models.Model):
 				final_score+=answer.score_second
 
 			return final_score
+
+	def get_answers_for_download(self):
+
+		if self.method == 'Gain':
+			# pull out all classification questions and answers
+			classification_answers = CNVGainClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVGainClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
+				return 'NA'
+
+			return classification_answers
+		
+		elif self.method == 'Loss':
+
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
+				return 'NA'
+
+			return classification_answers
+
+		elif self.gain_loss == 'Loh':
+			
+			# pull out all classification questions and answers
+			classification_answers = CNVLossClassificationAnswer.objects.filter(cnv=self)
+			all_questions_count = CNVLossClassificationQuestion.objects.all().count()
+
+			#Check we have all the answers
+			if len(classification_answers) == all_questions_count:
+				pass
+			elif len(classification_answers) == (all_questions_count - 1):
+				pass
+			else:
+				return 'NA'
+
+			return classification_answers
 	
 	
 			
