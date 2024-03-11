@@ -1,0 +1,100 @@
+{% extends 'acmg_db/base.html' %}
+{% load static %} 
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<br>
+<h2> Select Variants for Download </h2>
+
+
+<table id="samples" class = "table table-hover table-bordered" style="width:100%">
+
+  <thead>
+	<tr>
+	  <th>Sample Name </th>
+	  <th>Cyto ID </th>
+	  <th>Worklist</th>
+	  <th>Panel</th>
+	  <th>Affected With</th>
+	  <th>Platform</th>
+
+	</tr>
+  </thead>
+
+  <tbody>
+	{% for sample in samples %}
+	<tr>
+		<td> {{sample.sample_name}} </td>
+		<td> {{sample.cyto}}</td>
+		<td> {{sample.worklist.name}} </td>
+		<td> {{sample.analysis_performed}} </td>
+		<td> {{sample.affected_with}} </td>
+		<td> {{sample.platform}}</td>
+		
+	 
+	</tr>
+	{% endfor %}
+  </tbody>
+
+
+</table>
+
+<form>
+<table id="view_classify_variants" class="table table-hover table-bordered" >
+
+	<thead>
+		<tr>
+			<th>Select</th>
+			<th>Variant</th>
+			<th>Type</th>
+			<th>Final Class</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		{%  for cnv in all_cnvs %}
+		<tr>
+			<td><input type="checkbox" id="{{cnv.pk}}" name="{{cnv.pk}}" value="{{cnv.pk}}"></td>
+		<td>
+	  	{% if cnv.cnv.genome == 'GRCh37' %}
+	  		{{ cnv.cnv.full }}<br><span class="badge badge-info badge-pill">{{ cnv.cnv.genome }} </span>
+	  	{% elif cnv.cnv.genome == 'GRCh38' %}
+	  		{{ cnv.cnv.full }}<br><span class="badge badge-success badge-pill">{{ cnv.cnv.genome }} </span>	
+	  	{% endif %}
+	  	</td>
+	  	<td> {{cnv.gain_loss}}</td>
+	  	<td>
+		{% if 'Benign' in cnv.display_classification %}
+		<a class="btn btn-sm btn-info" href="" role="button"> 
+		{% elif 'Pathogenic' in cnv.display_classification %}
+		<a class="btn btn-sm btn-danger" href="" role="button"> 
+		{% elif 'VUS' in cnv.display_classification %}
+		<a class="btn btn-sm btn-warning" href="" role="button"> 
+		{% elif 'Artefact' in cnv.display_classification %}
+		<a class="btn btn-sm btn-secondary" href="" role="button"> 
+		{% elif 'Contradictory' in cnv.display_classification %}
+		<a class="btn btn-sm btn-primary" href="" role="button"> 
+		{% else %}
+		<a class="btn btn-sm btn-light" href="" role="button"> 
+		{% endif %}
+		{{ cnv.display_classification}} 
+		</a>
+
+	  	 </td>
+
+
+		</tr>
+		{% endfor %}
+	</tbody>
+	
+</table>
+
+<div>
+	<button type="submit" name="submit" class="btn btn-success submit-selected text-center">Download</button>
+</div>
+
+</form>
+
+{% endblock %}
