@@ -11,7 +11,7 @@ python manage.py productivity_report --output temp/temp_raw_data.csv
 cut -f 2 -d "," temp/temp_raw_data.csv | sort -u > temp/temp_checkers
 
 #Write out headers
-echo "Checker,First Checks,First Check Samples,Second Checks,Second Check Samples" > "checker_report_$(date -I).csv"
+echo "Checker,First Checks,First Check Samples,Second Checks,Second Check Samples" > "../CNV_reports/checker_report_$(date -I).csv"
 
 #Get number of first checks, first check samples, second checks, second check samples per checker
 while read checker; do
@@ -21,7 +21,7 @@ while read checker; do
 	second_checks=$(awk -F ',' -v checker=$checker '($2==checker && $3=="Second_Check"){print}' temp/temp_raw_data.csv | wc -l)
 	second_check_samples=$(awk -F ',' -v checker=$checker '($2==checker && $3=="Second_Check"){print $1}' temp/temp_raw_data.csv | sort -u | wc -l)
 	
-	echo $checker,$first_checks,$first_check_samples,$second_checks,$second_check_samples >> "checker_report_$(date -I).csv"
+	echo $checker,$first_checks,$first_check_samples,$second_checks,$second_check_samples >> "../CNV_reports/checker_report_$(date -I).csv"
 
 done < temp/temp_checkers
 
