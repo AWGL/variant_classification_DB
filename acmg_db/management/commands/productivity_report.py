@@ -18,6 +18,8 @@ class Command(BaseCommand):
 
         output = options['output_file'][0]
 
+        out = open(output, "w")
+
         #Set capture date range
         end_date = datetime.now()
         start_date = end_date - timedelta(days=28)
@@ -36,10 +38,7 @@ class Command(BaseCommand):
 
                     if cnv.first_check_date != None:
 
-                        print(cnv.sample.sample_name,cnv.user_first_checker,cnv.first_check_date.date(),"First_Check")
-                    else:
-
-                        print(cnv.sample.sample_name,cnv.user_first_checker)
+                        out.write(f"{cnv.sample.sample_name},{cnv.user_first_checker},First_Check\n")
 
             #Get second checks
             if cnv.second_check_date != None:
@@ -50,12 +49,5 @@ class Command(BaseCommand):
 
                     if cnv.second_check_date != None:
 
-                        print(cnv.sample.sample_name,cnv.user_second_checker,cnv.second_check_date.date(),"Second_Check")
-                    else:
-
-                        print(cnv.sample.sample_name,cnv.user_second_checker)
-
-
-
-
+                        out.write(f"{cnv.sample.sample_name},{cnv.user_second_checker},Second_Check\n")
 
