@@ -37,8 +37,22 @@ def search(request):
 			# check if we've searched for sample
 			x = re.search("^\d{2}M\d{5}", search_input)
 
-			print(search_input)
+			if x != None:
 
+				samples = Sample.objects.filter(sample_name_only= search_input)
+
+				if len(samples) == 0:
+
+					message = f'Cannot find a sample with id {search_input}'
+					return render(request, 'acmg_db/search.html', {'form': form, 'message': message})	
+
+				else:	
+
+					return redirect('view_sample', pk=search_input)
+					
+			# New LIMS formatting
+			x = re.search("^\d{2}-\d{3}-*", search_input)
+			
 			if x != None:
 
 				samples = Sample.objects.filter(sample_name_only= search_input)
@@ -120,6 +134,22 @@ def cnv_search(request):
 				# check if we've searched for sample
 				x = re.search("^\d{2}M\d{5}", search_input)
 
+				if x != None:
+
+					samples = CNVSample.objects.filter(sample_name= search_input)
+
+					if len(samples) == 0:
+
+						message = f'Cannot find a sample with id {search_input}'
+						return render(request, 'acmg_db/cnv_search.html', {'form': form, 'adv_form' : adv_form, 'message': message})	
+
+					else:	
+
+						return redirect('cnv_view_sample', pk=search_input)
+						
+				# New LIMS formatting
+				x = re.search("^\d{2}-\d{3}-*", search_input)
+			
 				if x != None:
 
 					samples = CNVSample.objects.filter(sample_name= search_input)
